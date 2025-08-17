@@ -1,0 +1,18 @@
+[project]
+name = "algomanim"
+version = "0.1.0"
+description = "Manim-powered algorithm tasks visualizations for LeetCode and beyond"
+authors = [
+    {name = "Benedict Abub",email = "fkhurkhd2123dfs@tutamail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = "^3.9"
+dependencies = [
+    "manim (>=0.19.0,<0.20.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
