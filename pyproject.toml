@@ -5,7 +5,7 @@ description = "Manim-powered algorithm tasks visualizations for LeetCode and bey
 authors = [
     {name = "Benedict Abub",email = "fkhurkhd2123dfs@tutamail.com"}
 ]
-license = {text = "MIT"}
+license = "MIT"
 readme = "README.md"
 requires-python = "^3.9"
 dependencies = [
