@@ -28,7 +28,7 @@ class Array(mn.VGroup):
         # and some methods will break for unknown reasons
         self.sq_mob = mn.VGroup(
             *[
-                mn.Square().set_fill(self.bg_color, 1).set_width(0.7).set_height(0.7)
+                mn.Square().set_fill(self.bg_color, 1).set(width=0.7, height=0.7)
                 for _ in arr
             ]
         )

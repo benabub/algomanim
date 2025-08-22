@@ -13,6 +13,9 @@ ENV/
 venv/
 .venv*/
 
+# Output and build artifacts
+/media/
+
 # Distribution / packaging
 .Python
 build/
