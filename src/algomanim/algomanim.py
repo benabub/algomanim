@@ -1,5 +1,6 @@
-from typing import List, Tuple, Callable, Any
+from typing import List, Tuple, Callable, Any, Union
 import manim as mn  # type: ignore
+from manim import ManimColor
 
 
 class Array(mn.VGroup):
@@ -55,7 +56,7 @@ class Array(mn.VGroup):
                     mn.Triangle(
                         color=self.bg_color,
                     )
-                    .stretch_to_fit_width(0.5 * square.width)
+                    .stretch_to_fit_width(square.width)
                     .scale(0.1)
                     .rotate(mn.PI)
                     for _ in range(3)
@@ -72,7 +73,7 @@ class Array(mn.VGroup):
                     mn.Triangle(
                         color=self.bg_color,
                     )
-                    .stretch_to_fit_width(0.5 * square.width)
+                    .stretch_to_fit_width(square.width)
                     .scale(0.1)
                     for _ in range(3)
                 ]
@@ -88,6 +89,48 @@ class Array(mn.VGroup):
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         scene.play(mn.FadeIn(self), run_time=time)
+
+    def update_numbers(
+        self,
+        scene: mn.Scene,
+        new_values: List[int],
+        animate: bool = True,
+        run_time: float = 0.2,
+    ) -> None:
+        """
+        Update all text mobjects in the array.
+        Can perform the update with or without animation.
+
+        Args:
+            scene: The scene to play animations in
+            new_values: New array values to display
+            animate: Whether to animate the changes (True) or
+                     update instantly (False)
+            run_time: Duration of animation if animate=True
+
+        Raises:
+            ValueError: If new_values length doesn't match array length
+        """
+        if len(new_values) != len(self.arr):
+            raise ValueError(
+                f"Length mismatch: array has {len(self.arr)} elements, "
+                f"but {len(new_values)} new values provided"
+            )
+
+        animations = []
+
+        for i in range(len(new_values)):
+            new_val_str = str(new_values[i])
+
+            new_text = mn.Text(new_val_str).move_to(self.sq_mob[i])
+
+            if animate:
+                animations.append(self.num_mob[i].animate.become(new_text))
+            else:
+                self.num_mob[i].become(new_text)
+
+        if animate and animations:
+            scene.play(*animations, run_time=run_time)
 
     def pointers_1(
         self,
@@ -203,7 +246,7 @@ class Array(mn.VGroup):
         k_color=mn.BLUE,
     ):
         """
-        Highlight two pointers at one side (top | bottom) in the
+        Highlight three pointers at one side (top | bottom) in the
         array visualization.
 
         Args:
@@ -294,50 +337,15 @@ class Array(mn.VGroup):
             else:
                 mob.set_fill(self.bg_color)
 
-    # Animation of changing values in the array
-    def update_number_mobject(
-        self, scene: mn.Scene, i: int, add_arr: List[int], j: int
-    ):
-        """
-        Animate the change of a number in the array visualization.
-        The number at index i in num_mob is replaced with a new value
-        from add_arr[j], and the new text is positioned at the center
-        of the corresponding square.
-
-        Args:
-            i (int): Index in the array to update.
-            add_arr (List[int]): Source array for the new value.
-            j (int): Index in add_arr to get the new value from.
-        """
-        # self.num_mob - group of text objects in the array
-        # .animate.become() - animation of transforming the receiver object
-        # into the argument
-        # mn.Text(str(arr[i])) - construction of a new text object
-        # self.arr_mob - group of graphical square objects
-        # .move_to(self.arr_mob[j]) - positioning the new text object
-        # in the same location, that self.arr_mob[k] has
-        # location in Manim is the center of mass
-
-        # Animate replacing the text at index i with new value from add_arr[j]
-        scene.play(
-            self.num_mob[i].animate.become(
-                mn.Text(
-                    str(add_arr[j]),
-                ).move_to(self.sq_mob[i])
-            ),
-            # animation duration
-            run_time=0.2,
-        )
-
 
 class TopText(mn.VGroup):
     def __init__(
         self,
         mob_center: mn.Mobject,
-        *vars: Tuple[str, Callable[[], Any], str],
+        *vars: Tuple[str, Callable[[], Any], Union[str, ManimColor]],
         font_size=40,
         buff=0.7,
-        vector=mn.UP * 1.2,
+        vector=mn.UP * 1.4,
     ):
         super().__init__()
         self.mob_center = mob_center
