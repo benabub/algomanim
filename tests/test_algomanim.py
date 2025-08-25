@@ -2,6 +2,9 @@ import pytest  # type: ignore
 from algomanim.algomanim import Array, TopText, CodeBlock  # type: ignore
 import manim as mn  # type: ignore
 
+##########
+from unittest.mock import Mock, patch
+
 
 class TestArray:
     @pytest.fixture
@@ -417,6 +420,116 @@ class TestCodeBlock:
         position = mn.Dot(mn.ORIGIN)
         return CodeBlock(code_lines, position)
 
+    @pytest.fixture
+    def mock_scene(self):
+        scene = Mock()
+        scene.play = Mock()
+        return scene
+
     def test_init(self, codeblock_obj):
         assert hasattr(codeblock_obj, "code_vgroup")
         assert len(codeblock_obj.code_vgroup) == 2
+        assert isinstance(codeblock_obj.code_vgroup, mn.VGroup)
+
+        # Test that all code lines are present
+        for i, line in enumerate(["a = 1", "b = 2"]):
+            assert line in str(codeblock_obj.code_vgroup[i])
+
+    def test_init_with_custom_font_settings(self):
+        code_lines = ["def test():", "    return True"]
+        position = mn.Dot(mn.LEFT)
+        font_size = 30
+        font = "Arial"
+
+        codeblock = CodeBlock(code_lines, position, font_size=font_size, font=font)
+
+        assert len(codeblock.code_vgroup) == 2
+        # Check that font settings are applied (indirectly through text properties)
+        for text_mob in codeblock.code_vgroup:
+            assert hasattr(text_mob, "font_size")
+            assert hasattr(text_mob, "font")
+
+    def test_init_empty_code_lines(self):
+        position = mn.Dot(mn.ORIGIN)
+        codeblock = CodeBlock([], position)
+
+        assert len(codeblock.code_vgroup) == 0
+        assert isinstance(codeblock.code_vgroup, mn.VGroup)
+
+    def test_first_appear(self, codeblock_obj, mock_scene):
+        run_time = 0.3
+
+        codeblock_obj.first_appear(mock_scene, time=run_time)
+
+        # Verify that play was called with FadeIn animation
+        mock_scene.play.assert_called_once()
+        args, _ = mock_scene.play.call_args
+        assert len(args) == 1
+        assert isinstance(args[0], mn.FadeIn)
+
+    def test_highlight_line(self, codeblock_obj, mock_scene):
+        line_to_highlight = 0  # First line
+
+        codeblock_obj.highlight_line(mock_scene, line_to_highlight)
+
+        # Verify that play was called with appropriate animations
+        mock_scene.play.assert_called_once()
+        args, _ = mock_scene.play.call_args
+
+        # Should have multiple FadeToColor animations (one for each line)
+        assert len(args) == len(codeblock_obj.code_vgroup)
+        for i, anim in enumerate(args):
+            assert isinstance(anim, mn.FadeToColor)
+            assert anim.mobject == codeblock_obj.code_vgroup[i]
+
+    def test_highlight_line_out_of_bounds(self, codeblock_obj, mock_scene):
+        # Should not raise an error but might have unexpected behavior
+        # This tests the robustness of the method
+        try:
+            codeblock_obj.highlight_line(mock_scene, 10)  # Out of bounds
+            codeblock_obj.highlight_line(mock_scene, -1)  # Negative index
+        except Exception as e:
+            pytest.fail(f"highlight_line raised unexpected exception: {e}")
+
+    def test_highlight_line_single_line(self, mock_scene):
+        code_lines = ["single_line = True"]
+        position = mn.Dot(mn.ORIGIN)
+        codeblock = CodeBlock(code_lines, position)
+
+        codeblock.highlight_line(mock_scene, 0)
+
+        mock_scene.play.assert_called_once()
+        args, _ = mock_scene.play.call_args
+        assert len(args) == 1  # Only one animation for single line
+
+    def test_code_vgroup_arrangement(self):
+        code_lines = ["line1", "line2", "line3"]
+        position = mn.Dot(mn.ORIGIN)
+        codeblock = CodeBlock(code_lines, position)
+
+        # Test that we have the correct number of lines
+        assert len(codeblock.code_vgroup) == 3
+        assert isinstance(codeblock.code_vgroup, mn.VGroup)
+
+    def test_positioning(self):
+        target_position = mn.Dot(mn.RIGHT * 2)
+        code_lines = ["x = 10", "y = 20"]
+
+        codeblock = CodeBlock(code_lines, target_position)
+
+        # The center of the code block should be near the target position
+        # (Using approximate comparison due to floating point precision)
+        assert codeblock.code_vgroup.get_center()[0] == pytest.approx(
+            target_position.get_center()[0], abs=0.1
+        )
+
+    @patch("manim.Text")
+    def test_text_creation(self, mock_text):
+        # This test verifies that Text is called with expected arguments
+        code_lines = ["test_line"]
+        position = mn.Dot(mn.ORIGIN)
+
+        CodeBlock(code_lines, position, font_size=25, font="MesloLGS NF")
+
+        # Verify Text was called with correct parameters
+        mock_text.assert_called_with("test_line", font="MesloLGS NF", font_size=25)
