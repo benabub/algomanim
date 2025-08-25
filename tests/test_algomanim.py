@@ -158,11 +158,101 @@ class TestArray:
                         array_obj.pointers[0][idx][tri_idx].color == array_obj.bg_color
                     )
 
-    def test_highlight_blocks_2(self, array_obj):
-        array_obj.highlight_blocks_2(0, 2, i_color=mn.RED, j_color=mn.BLUE)
+    def test_highlight_blocks_1(self, array_obj):
+        # Test normal case
+        array_obj.highlight_blocks_1(1, i_color=mn.GREEN)
+
+        for idx, square in enumerate(array_obj.sq_mob):
+            expected = mn.GREEN if idx == 1 else array_obj.bg_color
+            assert square.fill_color == expected
+
+        # Test different color
+        array_obj.highlight_blocks_1(0, i_color=mn.RED)
         assert array_obj.sq_mob[0].fill_color == mn.RED
+        assert array_obj.sq_mob[1].fill_color == array_obj.bg_color  # Reset
+        assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
+
+    def test_highlight_blocks_2(self, array_obj):
+        # Test case 1: Different indices
+        array_obj.highlight_blocks_2(0, 2, i_color=mn.RED, j_color=mn.BLUE)
+        assert array_obj.sq_mob[0].fill_color == mn.RED  # i
+        assert array_obj.sq_mob[1].fill_color == array_obj.bg_color  # neither
+        assert array_obj.sq_mob[2].fill_color == mn.BLUE  # j
+
+        # Test case 2: Same indices (special color)
+        array_obj.highlight_blocks_2(
+            1, 1, i_color=mn.RED, j_color=mn.BLUE, ij_color=mn.PURPLE
+        )
+        assert array_obj.sq_mob[0].fill_color == array_obj.bg_color
+        assert array_obj.sq_mob[1].fill_color == mn.PURPLE  # i == j
+        assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
+
+        # Test case 3: Custom colors
+        array_obj.highlight_blocks_2(
+            0, 1, i_color=mn.YELLOW, j_color=mn.ORANGE, ij_color=mn.PINK
+        )
+        assert array_obj.sq_mob[0].fill_color == mn.YELLOW
+        assert array_obj.sq_mob[1].fill_color == mn.ORANGE
+        assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
+
+    def test_highlight_blocks_3(self, array_obj):
+        # Test case 1: All different
+        array_obj.highlight_blocks_3(
+            0, 1, 2, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE
+        )
+        assert array_obj.sq_mob[0].fill_color == mn.RED
+        assert array_obj.sq_mob[1].fill_color == mn.GREEN
         assert array_obj.sq_mob[2].fill_color == mn.BLUE
+
+        # Test case 2: Two same (i == j)
+        array_obj.highlight_blocks_3(
+            1,
+            1,
+            2,
+            i_color=mn.RED,
+            j_color=mn.GREEN,
+            k_color=mn.BLUE,
+            ij_color=mn.YELLOW,
+        )
+        assert array_obj.sq_mob[0].fill_color == array_obj.bg_color
+        assert array_obj.sq_mob[1].fill_color == mn.YELLOW  # i == j
+        assert array_obj.sq_mob[2].fill_color == mn.BLUE  # k
+
+        # Test case 3: All three same
+        array_obj.highlight_blocks_3(
+            0,
+            0,
+            0,
+            i_color=mn.RED,
+            j_color=mn.GREEN,
+            k_color=mn.BLUE,
+            ijk_color=mn.BLACK,
+        )
+        assert array_obj.sq_mob[0].fill_color == mn.BLACK  # all same
         assert array_obj.sq_mob[1].fill_color == array_obj.bg_color
+        assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
+
+        # Test case 4: j and k same
+        array_obj.highlight_blocks_3(
+            0, 2, 2, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE, jk_color=mn.TEAL
+        )
+        assert array_obj.sq_mob[0].fill_color == mn.RED  # i
+        assert array_obj.sq_mob[1].fill_color == array_obj.bg_color
+        assert array_obj.sq_mob[2].fill_color == mn.TEAL  # j == k
+
+        # Test case 5: i and k same
+        array_obj.highlight_blocks_3(
+            1,
+            0,
+            1,
+            i_color=mn.RED,
+            j_color=mn.GREEN,
+            k_color=mn.BLUE,
+            ik_color=mn.PURPLE,
+        )
+        assert array_obj.sq_mob[0].fill_color == mn.GREEN  # j
+        assert array_obj.sq_mob[1].fill_color == mn.PURPLE  # i == k
+        assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
 
 
 class TestTopText:

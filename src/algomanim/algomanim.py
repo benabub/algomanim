@@ -152,22 +152,6 @@ class Array(mn.VGroup):
         for idx, _ in enumerate(self.sq_mob):
             self.pointers[pos][idx][1].set_color(i_color if idx == i else self.bg_color)
 
-    # Highlight blocks for 1 index
-    def highlight_blocks_1(
-        self,
-        i: int,
-        i_color=mn.GREEN,
-    ):
-        """
-        Highlight a single block in the array visualization.
-
-        Args:
-            i (int): Index of the block to highlight.
-            i_color: Color for the highlighted block.
-        """
-        for idx, mob in enumerate(self.sq_mob):
-            mob.set_fill(i_color if idx == i else self.bg_color)
-
     def pointers_2(
         self,
         i: int,
@@ -204,36 +188,6 @@ class Array(mn.VGroup):
                 self.pointers[pos][idx][0].set_color(self.bg_color)
                 self.pointers[pos][idx][1].set_color(self.bg_color)
                 self.pointers[pos][idx][2].set_color(self.bg_color)
-
-    # Highlight blocks for 2 indices
-    def highlight_blocks_2(
-        self,
-        i: int,
-        j: int,
-        i_color=mn.RED,
-        j_color=mn.BLUE,
-        ij_color=mn.PURPLE,
-    ):
-        """
-        Highlight two blocks in the array visualization.
-        If indices coincide, use a special color.
-
-        Args:
-            i (int): First index to highlight.
-            j (int): Second index to highlight.
-            i_color: Color for the first index.
-            j_color: Color for the second index.
-            ij_color: Color if both indices are the same.
-        """
-        for idx, mob in enumerate(self.sq_mob):
-            if idx == i == j:
-                mob.set_fill(ij_color)
-            elif idx == i:
-                mob.set_fill(i_color)
-            elif idx == j:
-                mob.set_fill(j_color)
-            else:
-                mob.set_fill(self.bg_color)
 
     def pointers_3(
         self,
@@ -288,6 +242,52 @@ class Array(mn.VGroup):
                 self.pointers[pos][idx][0].set_color(self.bg_color)
                 self.pointers[pos][idx][1].set_color(self.bg_color)
                 self.pointers[pos][idx][2].set_color(self.bg_color)
+
+    # Highlight blocks for 1 index
+    def highlight_blocks_1(
+        self,
+        i: int,
+        i_color=mn.GREEN,
+    ):
+        """
+        Highlight a single block in the array visualization.
+
+        Args:
+            i (int): Index of the block to highlight.
+            i_color: Color for the highlighted block.
+        """
+        for idx, mob in enumerate(self.sq_mob):
+            mob.set_fill(i_color if idx == i else self.bg_color)
+
+    # Highlight blocks for 2 indices
+    def highlight_blocks_2(
+        self,
+        i: int,
+        j: int,
+        i_color=mn.RED,
+        j_color=mn.BLUE,
+        ij_color=mn.PURPLE,
+    ):
+        """
+        Highlight two blocks in the array visualization.
+        If indices coincide, use a special color.
+
+        Args:
+            i (int): First index to highlight.
+            j (int): Second index to highlight.
+            i_color: Color for the first index.
+            j_color: Color for the second index.
+            ij_color: Color if both indices are the same.
+        """
+        for idx, mob in enumerate(self.sq_mob):
+            if idx == i == j:
+                mob.set_fill(ij_color)
+            elif idx == i:
+                mob.set_fill(i_color)
+            elif idx == j:
+                mob.set_fill(j_color)
+            else:
+                mob.set_fill(self.bg_color)
 
     # Highlight blocks for 3 indices
     def highlight_blocks_3(
