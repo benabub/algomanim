@@ -132,6 +132,26 @@ class Array(mn.VGroup):
         if animate and animations:
             scene.play(*animations, run_time=run_time)
 
+    def pointer_special(
+        self,
+        val: int,
+        pos: int = 1,
+        pnt_color=mn.WHITE,
+    ):
+        """
+        Highlight a pointer at one side (top or bottom) in the
+        array visualization based on integer value comparison.
+
+        Args:
+            val (int): The value to compare with array elements
+            pos (int): 0 for top pointers, 1 for bottom pointers. Defaults to 1.
+            pnt_color: Color for the highlighted pointer. Defaults to mn.WHITE.
+        """
+        for idx, _ in enumerate(self.sq_mob):
+            self.pointers[pos][idx][1].set_color(
+                pnt_color if self.arr[idx] == val else self.bg_color
+            )
+
     def pointers_1(
         self,
         i: int,
