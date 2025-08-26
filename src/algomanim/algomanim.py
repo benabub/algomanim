@@ -368,7 +368,7 @@ class TopText(mn.VGroup):
     def first_appear(self, scene: mn.Scene, time=0.5):
         scene.play(mn.FadeIn(self), run_time=time)
 
-    def update_text(self, scene: mn.Scene, time=0.1):
+    def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
         # Create a new object with the same parameters
         # (vars may be updated)
         new_group = TopText(
@@ -378,7 +378,12 @@ class TopText(mn.VGroup):
             buff=self.buff,
             vector=self.vector,
         )
-        scene.play(mn.Transform(self, new_group), run_time=time)
+        if animate:
+            scene.play(mn.Transform(self, new_group), run_time=time)
+        else:
+            scene.remove(self)
+            self.become(new_group)
+            scene.add(self)
 
 
 class CodeBlock(mn.VGroup):
