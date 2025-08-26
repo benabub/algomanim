@@ -1,5 +1,3 @@
-from .algomanim import (
-    Array, TopText, CodeBlock,
-)
+from .algomanim import Array, TopText, CodeBlock, TitleTop
 
-__all__ = ["Array", "TopText", "CodeBlock",]
+__all__ = ["Array", "TopText", "CodeBlock", "TitleTop"]

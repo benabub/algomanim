@@ -452,3 +452,36 @@ class CodeBlock(mn.VGroup):
                 for k, mob in enumerate(self.code_vgroup)
             ]
         )
+
+
+class TitleTop(mn.Text):
+    def __init__(
+        self,
+        text: str,
+        position: mn.Mobject = mn.Dot(mn.UP * 2.7),
+        text_color="#FFA116",
+        font="FiraCode-Retina",
+        font_size=50,
+        **kwargs,
+    ):
+        """
+        Specialized class for creating titles at the top of the scene.
+
+        Inherits all functionality from manim.Text with predefined parameters
+        for convenient title creation.
+
+        Attributes:
+            text: Text string to display.
+            position: Position of the title on the scene. Defaults to top-left corner.
+            text_color: Color of the text. Defaults to WHITE.
+            font: Font name. Defaults to 'MesloLGS NF'.
+            font_size: Font size. Defaults to 40.
+            **kwargs: Additional arguments passed to manim.Text.
+        """
+        super().__init__(
+            text, font=font, font_size=font_size, color=text_color, **kwargs
+        )
+        self.move_to(position)
+
+    def appear(self, scene: mn.Scene):
+        scene.add(self)
