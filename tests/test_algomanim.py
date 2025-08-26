@@ -1,5 +1,5 @@
 import pytest  # type: ignore
-from algomanim.algomanim import Array, TopText, CodeBlock  # type: ignore
+from algomanim.algomanim import Array, TopText, CodeBlock, TitleTop  # type: ignore
 import manim as mn  # type: ignore
 from unittest.mock import Mock, patch
 
@@ -29,7 +29,6 @@ class TestArray:
         assert array_obj.sq_mob[0].fill_color == mn.DARK_GRAY
 
     def test_pointer_special_highlights_correct_indices(self, array_obj):
-        """Test that pointer_special highlights only indices with matching values"""
         # Mock set_color for all pointers
         for pointer_group in array_obj.pointers[0]:
             pointer_group[1].set_color = Mock()
@@ -49,7 +48,6 @@ class TestArray:
         )  # index 2: value 3
 
     def test_pointer_special_bottom_position(self, array_obj):
-        """Test that bottom pointers work correctly"""
         for pointer_group in array_obj.pointers[1]:
             pointer_group[1].set_color = Mock()
 
@@ -61,7 +59,6 @@ class TestArray:
         array_obj.pointers[1][2][1].set_color.assert_called_with(mn.BLUE)
 
     def test_pointer_special_default_parameters(self, array_obj):
-        """Test that default parameters work (bottom position, white color)"""
         for pointer_group in array_obj.pointers[1]:
             pointer_group[1].set_color = Mock()
 
@@ -575,3 +572,27 @@ class TestCodeBlock:
 
         # Verify Text was called with correct parameters
         mock_text.assert_called_with("test_line", font="MesloLGS NF", font_size=25)
+
+
+class TestTitleTop:
+    @pytest.fixture
+    def title_obj(self):
+        return TitleTop("Test Title")
+
+    def test_initialization_defaults(self, title_obj):
+        assert "Test" in title_obj.text
+        assert "Title" in title_obj.text
+        assert title_obj.font_size == 50
+        assert abs(title_obj.get_center()[1] - 2.7) < 0.1
+
+    def test_appear_method(self, title_obj):
+        class MockScene:
+            def __init__(self):
+                self.add_called = False
+
+            def add(self, _):
+                self.add_called = True
+
+        mock_scene = MockScene()
+        title_obj.appear(mock_scene)
+        assert mock_scene.add_called is True
