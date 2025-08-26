@@ -1,8 +1,6 @@
 import pytest  # type: ignore
 from algomanim.algomanim import Array, TopText, CodeBlock  # type: ignore
 import manim as mn  # type: ignore
-
-##########
 from unittest.mock import Mock, patch
 
 
@@ -29,6 +27,50 @@ class TestArray:
         assert array_obj.sq_mob[1].get_center()[0] < array_obj.sq_mob[2].get_center()[0]
         # squares attrs:
         assert array_obj.sq_mob[0].fill_color == mn.DARK_GRAY
+
+    def test_pointer_special_highlights_correct_indices(self, array_obj):
+        """Test that pointer_special highlights only indices with matching values"""
+        # Mock set_color for all pointers
+        for pointer_group in array_obj.pointers[0]:
+            pointer_group[1].set_color = Mock()
+
+        # Test highlighting value 2 at top position
+        array_obj.pointer_special(2, pos=0, pnt_color=mn.RED)
+
+        # Verify only index 1 (value 2) is highlighted
+        array_obj.pointers[0][0][1].set_color.assert_called_with(
+            array_obj.bg_color
+        )  # index 0: value 1
+        array_obj.pointers[0][1][1].set_color.assert_called_with(
+            mn.RED
+        )  # index 1: value 2 ✓
+        array_obj.pointers[0][2][1].set_color.assert_called_with(
+            array_obj.bg_color
+        )  # index 2: value 3
+
+    def test_pointer_special_bottom_position(self, array_obj):
+        """Test that bottom pointers work correctly"""
+        for pointer_group in array_obj.pointers[1]:
+            pointer_group[1].set_color = Mock()
+
+        array_obj.pointer_special(3, pos=1, pnt_color=mn.BLUE)
+
+        # Verify only index 2 (value 3) is highlighted at bottom
+        array_obj.pointers[1][0][1].set_color.assert_called_with(array_obj.bg_color)
+        array_obj.pointers[1][1][1].set_color.assert_called_with(array_obj.bg_color)
+        array_obj.pointers[1][2][1].set_color.assert_called_with(mn.BLUE)
+
+    def test_pointer_special_default_parameters(self, array_obj):
+        """Test that default parameters work (bottom position, white color)"""
+        for pointer_group in array_obj.pointers[1]:
+            pointer_group[1].set_color = Mock()
+
+        array_obj.pointer_special(1)  # Default: pos=1, pnt_color=mn.WHITE
+
+        # Verify index 0 highlighted with white at bottom
+        array_obj.pointers[1][0][1].set_color.assert_called_with(mn.WHITE)
+        array_obj.pointers[1][1][1].set_color.assert_called_with(array_obj.bg_color)
+        array_obj.pointers[1][2][1].set_color.assert_called_with(array_obj.bg_color)
 
     def test_pointers_1(self, array_obj):
         array_obj.pointers_1(1, pos=0, i_color=mn.GREEN)
