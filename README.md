@@ -12,10 +12,6 @@ A Manim-based library for visualizing algorithms and explaining LeetCode-style s
 
 ![gif](assets/bubble_sort.gif)
 
-### mp4
-
-![mp4](assets/bubble_sort.mp4)
-
 ## Installation
 
 ```sh
