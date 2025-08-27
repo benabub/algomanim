@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "algomanim"
-version = "0.1.0"
+version = "0.1.4"
 description = "Manim-powered algorithm tasks visualizations for LeetCode and beyond"
 authors = ["Benedict Abub <fkhurkhd2123dfs@tutamail.com>"]
 license = "MIT"
