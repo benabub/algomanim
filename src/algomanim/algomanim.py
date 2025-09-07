@@ -1,4 +1,4 @@
-from typing import List, Tuple, Callable, Any, Union
+from typing import List, Tuple, Callable, Any, Union, Optional
 import manim as mn  # type: ignore
 from manim import ManimColor
 
@@ -413,6 +413,9 @@ class CodeBlock(mn.VGroup):
         position: mn.Mobject,
         font_size=25,
         font="MesloLGS NF",
+        font_color_regular="white",
+        font_color_highlight="yellow",
+        bg_highlight_color="blue",
     ):
         """
         Creates a code block visualization on the screen.
@@ -425,33 +428,60 @@ class CodeBlock(mn.VGroup):
         """
         super().__init__()
         # Construction
-        code_mobs = [
-            mn.Text(line, font=font, font_size=font_size) for line in code_lines
+        self.font_color_regular = font_color_regular
+        self.font_color_highlight = font_color_highlight
+        self.bg_highlight_color = bg_highlight_color
+
+        self.code_mobs = [
+            mn.Text(line, font=font, font_size=font_size, color=self.font_color_regular)
+            for line in code_lines
         ]
-        code_vgroup = mn.VGroup(*code_mobs).arrange(mn.DOWN, aligned_edge=mn.LEFT)
+        self.bg_rects: List[Optional[mn.Rectangle]] = [None] * len(
+            code_lines
+        )  # List to save links on all possible rectangles and to manage=delete them
+
+        code_vgroup = mn.VGroup(*self.code_mobs).arrange(mn.DOWN, aligned_edge=mn.LEFT)
         code_vgroup.move_to(position)
         self.code_vgroup = code_vgroup
-        # Construstion: add to scene
+        # Animation
         self.add(self.code_vgroup)
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         scene.play(mn.FadeIn(self), run_time=time)
 
-    def highlight_line(self, scene: mn.Scene, i: int):
+    def highlight_line(self, i: int):
         """
-        Highlights a single line of code in the code block by fading it
-        to yellow, instead of white.
+        Highlights a single line of code by changing both text color and background.
 
         Args:
-            scene (mn.Scene): The scene to play the animation in.
             i (int): Index of the line to highlight.
         """
-        scene.play(
-            *[
-                mn.FadeToColor(mob, "yellow" if k == i else "white", run_time=0.2)
-                for k, mob in enumerate(self.code_vgroup)
-            ]
-        )
+        for k, mob in enumerate(self.code_mobs):
+            if k == i:
+                # Change font color
+                mob.set_color(self.font_color_highlight)
+                # Create bg rectangle
+                if self.bg_rects[k] is None:
+                    bg_rect = mn.Rectangle(
+                        width=mob.width + 0.2,
+                        height=mob.height + 0.1,
+                        fill_color=self.bg_highlight_color,
+                        fill_opacity=0.3,
+                        stroke_width=0,
+                    )
+                    bg_rect.move_to(mob.get_center())
+                    self.add(bg_rect)
+                    bg_rect.z_index = -1  # Send background to back
+                    self.bg_rects[k] = bg_rect
+            else:
+                # Normal line:
+                # regular font color
+                mob.set_color(self.font_color_regular)
+                # remove rect
+                bg_rect = self.bg_rects[k]
+                if bg_rect:
+                    self.remove(bg_rect)
+                    self.bg_rects[k] = None
 
 
 class TitleTop(mn.Text):
