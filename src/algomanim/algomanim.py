@@ -1,10 +1,17 @@
 from typing import List, Tuple, Callable, Any, Union, Optional
+import numpy as np
 import manim as mn  # type: ignore
 from manim import ManimColor
 
 
 class Array(mn.VGroup):
-    def __init__(self, arr: List[int], position: mn.Mobject, bg_color=mn.DARK_GRAY):
+    def __init__(
+        self,
+        arr: List[int],
+        vector: np.ndarray,
+        bg_color=mn.DARK_GRAY,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+    ):
         """
         Create a Manim array visualization as a VGroup.
 
@@ -35,8 +42,9 @@ class Array(mn.VGroup):
         )
         # Construction: Arrange squares in a row
         self.sq_mob.arrange(mn.RIGHT, buff=0.1)
+
         # Construction: Move array to the specified position
-        self.sq_mob.move_to(position)
+        self.sq_mob.move_to(mob_center.get_center() + vector)
 
         # Construction: Create text mobjects and center them in squares
         self.num_mob = mn.VGroup(
@@ -365,7 +373,7 @@ class TopText(mn.VGroup):
         *vars: Tuple[str, Callable[[], Any], Union[str, ManimColor]],
         font_size=40,
         buff=0.7,
-        vector=mn.UP * 1.4,
+        vector: np.ndarray = mn.UP * 1.4,
     ):
         super().__init__()
         self.mob_center = mob_center
@@ -373,10 +381,8 @@ class TopText(mn.VGroup):
         self.font_size = font_size
         self.buff = buff
         self.vector = vector
-        self._refresh()
 
-    def _refresh(self):
-        self.submobjects = []
+        self.submobjects: List = []
         parts = [
             mn.Text(f"{name} = {value()}", font_size=self.font_size, color=color)
             for name, value, color in self.vars
@@ -410,12 +416,13 @@ class CodeBlock(mn.VGroup):
     def __init__(
         self,
         code_lines: List[str],
-        position: mn.Mobject,
+        vector: np.ndarray,
         font_size=25,
         font="MesloLGS NF",
         font_color_regular="white",
         font_color_highlight="yellow",
         bg_highlight_color="blue",
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
         """
         Creates a code block visualization on the screen.
@@ -441,7 +448,7 @@ class CodeBlock(mn.VGroup):
         )  # List to save links on all possible rectangles and to manage=delete them
 
         code_vgroup = mn.VGroup(*self.code_mobs).arrange(mn.DOWN, aligned_edge=mn.LEFT)
-        code_vgroup.move_to(position)
+        code_vgroup.move_to(mob_center.get_center() + vector)
         self.code_vgroup = code_vgroup
         # Animation
         self.add(self.code_vgroup)
@@ -488,10 +495,11 @@ class TitleTop(mn.Text):
     def __init__(
         self,
         text: str,
-        position: mn.Mobject = mn.Dot(mn.UP * 2.7),
+        vector: np.ndarray = mn.UP * 2.7,
         text_color="#FFA116",
         font="FiraCode-Retina",
         font_size=50,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         **kwargs,
     ):
         """
@@ -511,7 +519,7 @@ class TitleTop(mn.Text):
         super().__init__(
             text, font=font, font_size=font_size, color=text_color, **kwargs
         )
-        self.move_to(position)
+        self.move_to(mob_center.get_center() + vector)
 
     def appear(self, scene: mn.Scene):
         scene.add(self)
