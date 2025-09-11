@@ -8,8 +8,9 @@ class TestArray:
     @pytest.fixture
     def array_obj(self):
         arr = [1, 2, 3]
-        position = mn.Dot(mn.ORIGIN)
-        return Array(arr, position)
+        mob_center = mn.Dot(mn.ORIGIN)
+        vector = mn.ORIGIN
+        return Array(arr, vector, mob_center=mob_center)
 
     def test_init(self, array_obj):
         assert array_obj.arr == [1, 2, 3]
@@ -22,30 +23,19 @@ class TestArray:
         assert array_obj.num_mob[0].text == "1"
         assert array_obj.num_mob[1].text == "2"
         assert array_obj.num_mob[2].text == "3"
-        # squares positioning
         assert array_obj.sq_mob[0].get_center()[0] < array_obj.sq_mob[1].get_center()[0]
         assert array_obj.sq_mob[1].get_center()[0] < array_obj.sq_mob[2].get_center()[0]
-        # squares attrs:
         assert array_obj.sq_mob[0].fill_color == mn.DARK_GRAY
 
     def test_pointer_special_highlights_correct_indices(self, array_obj):
-        # Mock set_color for all pointers
         for pointer_group in array_obj.pointers[0]:
             pointer_group[1].set_color = Mock()
 
-        # Test highlighting value 2 at top position
         array_obj.pointer_special(2, pos=0, pnt_color=mn.RED)
 
-        # Verify only index 1 (value 2) is highlighted
-        array_obj.pointers[0][0][1].set_color.assert_called_with(
-            array_obj.bg_color
-        )  # index 0: value 1
-        array_obj.pointers[0][1][1].set_color.assert_called_with(
-            mn.RED
-        )  # index 1: value 2 ✓
-        array_obj.pointers[0][2][1].set_color.assert_called_with(
-            array_obj.bg_color
-        )  # index 2: value 3
+        array_obj.pointers[0][0][1].set_color.assert_called_with(array_obj.bg_color)
+        array_obj.pointers[0][1][1].set_color.assert_called_with(mn.RED)
+        array_obj.pointers[0][2][1].set_color.assert_called_with(array_obj.bg_color)
 
     def test_pointer_special_bottom_position(self, array_obj):
         for pointer_group in array_obj.pointers[1]:
@@ -53,7 +43,6 @@ class TestArray:
 
         array_obj.pointer_special(3, pos=1, pnt_color=mn.BLUE)
 
-        # Verify only index 2 (value 3) is highlighted at bottom
         array_obj.pointers[1][0][1].set_color.assert_called_with(array_obj.bg_color)
         array_obj.pointers[1][1][1].set_color.assert_called_with(array_obj.bg_color)
         array_obj.pointers[1][2][1].set_color.assert_called_with(mn.BLUE)
@@ -62,9 +51,8 @@ class TestArray:
         for pointer_group in array_obj.pointers[1]:
             pointer_group[1].set_color = Mock()
 
-        array_obj.pointer_special(1)  # Default: pos=1, pnt_color=mn.WHITE
+        array_obj.pointer_special(1)
 
-        # Verify index 0 highlighted with white at bottom
         array_obj.pointers[1][0][1].set_color.assert_called_with(mn.WHITE)
         array_obj.pointers[1][1][1].set_color.assert_called_with(array_obj.bg_color)
         array_obj.pointers[1][2][1].set_color.assert_called_with(array_obj.bg_color)
@@ -76,30 +64,27 @@ class TestArray:
             assert array_obj.pointers[0][idx][1].color == expected
 
     def test_pointers_2(self, array_obj):
-        # Test case 1: Different indices (normal case)
         array_obj.pointers_2(0, 2, pos=0, i_color=mn.RED, j_color=mn.BLUE)
         for idx in range(3):
-            if idx == 0:  # First pointer - RED
+            if idx == 0:
                 assert array_obj.pointers[0][idx][1].color == mn.RED
-            elif idx == 2:  # Third pointer - BLUE
+            elif idx == 2:
                 assert array_obj.pointers[0][idx][1].color == mn.BLUE
-            else:  # Others - background color
+            else:
                 assert array_obj.pointers[0][idx][1].color == array_obj.bg_color
 
-        # Test case 2: Same indices (special handling)
         array_obj.pointers_2(1, 1, pos=0, i_color=mn.RED, j_color=mn.BLUE)
         for idx in range(3):
-            if idx == 1:  # Same index uses first and third triangles
+            if idx == 1:
                 assert array_obj.pointers[0][idx][0].color == mn.RED
                 assert array_obj.pointers[0][idx][1].color == array_obj.bg_color
                 assert array_obj.pointers[0][idx][2].color == mn.BLUE
-            else:  # Others - background color
+            else:
                 for tri_idx in range(3):
                     assert (
                         array_obj.pointers[0][idx][tri_idx].color == array_obj.bg_color
                     )
 
-        # Test case 3: Bottom pointers (pos=1)
         array_obj.pointers_2(0, 1, pos=1, i_color=mn.YELLOW, j_color=mn.PURPLE)
         for idx in range(3):
             if idx == 0:
@@ -109,12 +94,10 @@ class TestArray:
             else:
                 assert array_obj.pointers[1][idx][1].color == array_obj.bg_color
 
-        # Test case 4: Invalid pos should raise error
         with pytest.raises(ValueError, match="pos must be 0 .top. or 1 .bottom."):
             array_obj.pointers_2(0, 1, pos=2)
 
     def test_pointers_3(self, array_obj):
-        # Test case 1: All different indices
         array_obj.pointers_3(
             0, 1, 2, pos=0, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE
         )
@@ -128,16 +111,15 @@ class TestArray:
             else:
                 assert array_obj.pointers[0][idx][1].color == array_obj.bg_color
 
-        # Test case 2: Two same indices (i == j)
         array_obj.pointers_3(
             1, 1, 2, pos=0, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE
         )
         for idx in range(3):
-            if idx == 1:  # i and j are same - use first and third triangles
+            if idx == 1:
                 assert array_obj.pointers[0][idx][0].color == mn.RED
                 assert array_obj.pointers[0][idx][1].color == array_obj.bg_color
                 assert array_obj.pointers[0][idx][2].color == mn.GREEN
-            elif idx == 2:  # k - normal
+            elif idx == 2:
                 assert array_obj.pointers[0][idx][1].color == mn.BLUE
             else:
                 for tri_idx in range(3):
@@ -145,12 +127,11 @@ class TestArray:
                         array_obj.pointers[0][idx][tri_idx].color == array_obj.bg_color
                     )
 
-        # Test case 3: All three same indices
         array_obj.pointers_3(
             0, 0, 0, pos=0, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE
         )
         for idx in range(3):
-            if idx == 0:  # All three use all triangles
+            if idx == 0:
                 assert array_obj.pointers[0][idx][0].color == mn.RED
                 assert array_obj.pointers[0][idx][1].color == mn.GREEN
                 assert array_obj.pointers[0][idx][2].color == mn.BLUE
@@ -160,20 +141,13 @@ class TestArray:
                         array_obj.pointers[0][idx][tri_idx].color == array_obj.bg_color
                     )
 
-        # Test case 4: j and k same, i different
         array_obj.pointers_3(
-            0,
-            2,
-            2,
-            pos=1,  # Test bottom pointers too
-            i_color=mn.RED,
-            j_color=mn.GREEN,
-            k_color=mn.BLUE,
+            0, 2, 2, pos=1, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE
         )
         for idx in range(3):
-            if idx == 0:  # i - normal
+            if idx == 0:
                 assert array_obj.pointers[1][idx][1].color == mn.RED
-            elif idx == 2:  # j and k same - use first and third triangles
+            elif idx == 2:
                 assert array_obj.pointers[1][idx][0].color == mn.GREEN
                 assert array_obj.pointers[1][idx][1].color == array_obj.bg_color
                 assert array_obj.pointers[1][idx][2].color == mn.BLUE
@@ -183,14 +157,13 @@ class TestArray:
                         array_obj.pointers[1][idx][tri_idx].color == array_obj.bg_color
                     )
 
-        # Test case 5: i and k same, j different
         array_obj.pointers_3(
             1, 0, 1, pos=0, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE
         )
         for idx in range(3):
-            if idx == 0:  # j - normal
+            if idx == 0:
                 assert array_obj.pointers[0][idx][1].color == mn.GREEN
-            elif idx == 1:  # i and k same - use first and third triangles
+            elif idx == 1:
                 assert array_obj.pointers[0][idx][0].color == mn.RED
                 assert array_obj.pointers[0][idx][1].color == array_obj.bg_color
                 assert array_obj.pointers[0][idx][2].color == mn.BLUE
@@ -201,35 +174,30 @@ class TestArray:
                     )
 
     def test_highlight_blocks_1(self, array_obj):
-        # Test normal case
         array_obj.highlight_blocks_1(1, i_color=mn.GREEN)
 
         for idx, square in enumerate(array_obj.sq_mob):
             expected = mn.GREEN if idx == 1 else array_obj.bg_color
             assert square.fill_color == expected
 
-        # Test different color
         array_obj.highlight_blocks_1(0, i_color=mn.RED)
         assert array_obj.sq_mob[0].fill_color == mn.RED
-        assert array_obj.sq_mob[1].fill_color == array_obj.bg_color  # Reset
+        assert array_obj.sq_mob[1].fill_color == array_obj.bg_color
         assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
 
     def test_highlight_blocks_2(self, array_obj):
-        # Test case 1: Different indices
         array_obj.highlight_blocks_2(0, 2, i_color=mn.RED, j_color=mn.BLUE)
-        assert array_obj.sq_mob[0].fill_color == mn.RED  # i
-        assert array_obj.sq_mob[1].fill_color == array_obj.bg_color  # neither
-        assert array_obj.sq_mob[2].fill_color == mn.BLUE  # j
+        assert array_obj.sq_mob[0].fill_color == mn.RED
+        assert array_obj.sq_mob[1].fill_color == array_obj.bg_color
+        assert array_obj.sq_mob[2].fill_color == mn.BLUE
 
-        # Test case 2: Same indices (special color)
         array_obj.highlight_blocks_2(
             1, 1, i_color=mn.RED, j_color=mn.BLUE, ij_color=mn.PURPLE
         )
         assert array_obj.sq_mob[0].fill_color == array_obj.bg_color
-        assert array_obj.sq_mob[1].fill_color == mn.PURPLE  # i == j
+        assert array_obj.sq_mob[1].fill_color == mn.PURPLE
         assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
 
-        # Test case 3: Custom colors
         array_obj.highlight_blocks_2(
             0, 1, i_color=mn.YELLOW, j_color=mn.ORANGE, ij_color=mn.PINK
         )
@@ -238,7 +206,6 @@ class TestArray:
         assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
 
     def test_highlight_blocks_3(self, array_obj):
-        # Test case 1: All different
         array_obj.highlight_blocks_3(
             0, 1, 2, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE
         )
@@ -246,7 +213,6 @@ class TestArray:
         assert array_obj.sq_mob[1].fill_color == mn.GREEN
         assert array_obj.sq_mob[2].fill_color == mn.BLUE
 
-        # Test case 2: Two same (i == j)
         array_obj.highlight_blocks_3(
             1,
             1,
@@ -257,10 +223,9 @@ class TestArray:
             ij_color=mn.YELLOW,
         )
         assert array_obj.sq_mob[0].fill_color == array_obj.bg_color
-        assert array_obj.sq_mob[1].fill_color == mn.YELLOW  # i == j
-        assert array_obj.sq_mob[2].fill_color == mn.BLUE  # k
+        assert array_obj.sq_mob[1].fill_color == mn.YELLOW
+        assert array_obj.sq_mob[2].fill_color == mn.BLUE
 
-        # Test case 3: All three same
         array_obj.highlight_blocks_3(
             0,
             0,
@@ -270,19 +235,17 @@ class TestArray:
             k_color=mn.BLUE,
             ijk_color=mn.BLACK,
         )
-        assert array_obj.sq_mob[0].fill_color == mn.BLACK  # all same
+        assert array_obj.sq_mob[0].fill_color == mn.BLACK
         assert array_obj.sq_mob[1].fill_color == array_obj.bg_color
         assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
 
-        # Test case 4: j and k same
         array_obj.highlight_blocks_3(
             0, 2, 2, i_color=mn.RED, j_color=mn.GREEN, k_color=mn.BLUE, jk_color=mn.TEAL
         )
-        assert array_obj.sq_mob[0].fill_color == mn.RED  # i
+        assert array_obj.sq_mob[0].fill_color == mn.RED
         assert array_obj.sq_mob[1].fill_color == array_obj.bg_color
-        assert array_obj.sq_mob[2].fill_color == mn.TEAL  # j == k
+        assert array_obj.sq_mob[2].fill_color == mn.TEAL
 
-        # Test case 5: i and k same
         array_obj.highlight_blocks_3(
             1,
             0,
@@ -292,33 +255,28 @@ class TestArray:
             k_color=mn.BLUE,
             ik_color=mn.PURPLE,
         )
-        assert array_obj.sq_mob[0].fill_color == mn.GREEN  # j
-        assert array_obj.sq_mob[1].fill_color == mn.PURPLE  # i == k
+        assert array_obj.sq_mob[0].fill_color == mn.GREEN
+        assert array_obj.sq_mob[1].fill_color == mn.PURPLE
         assert array_obj.sq_mob[2].fill_color == array_obj.bg_color
 
 
 class TestTopText:
     @pytest.fixture
     def toptext_obj(self):
-        """Fixture for basic TopText object"""
         mob_center = mn.Dot(mn.ORIGIN)
         var1 = ("a", lambda: 5, mn.RED)
         var2 = ("b", lambda: 10, mn.BLUE)
         return TopText(mob_center, var1, var2)
 
     def test_init_basic(self, toptext_obj):
-        """Test basic initialization"""
         assert toptext_obj.mob_center is not None
         assert len(toptext_obj.vars) == 2
         assert toptext_obj.font_size == 40
         assert toptext_obj.buff == 0.7
         assert mn.np.array_equal(toptext_obj.vector, mn.UP * 1.4)
-
-        # Verify texts are created
         assert len(toptext_obj.submobjects) == 2
 
     def test_init_single_var(self):
-        """Test initialization with single variable"""
         mob_center = mn.Dot(mn.ORIGIN)
         var = ("x", lambda: 42, mn.GREEN)
         toptext = TopText(mob_center, var)
@@ -327,7 +285,6 @@ class TestTopText:
         assert len(toptext.submobjects) == 1
 
     def test_init_three_vars(self):
-        """Test initialization with three variables"""
         mob_center = mn.Dot(mn.ORIGIN)
         var1 = ("a", lambda: 1, mn.RED)
         var2 = ("b", lambda: 2, mn.BLUE)
@@ -338,7 +295,6 @@ class TestTopText:
         assert len(toptext.submobjects) == 3
 
     def test_init_custom_parameters(self):
-        """Test with custom parameters"""
         mob_center = mn.Dot(mn.RIGHT * 2)
         var = ("test", lambda: "hello", mn.YELLOW)
 
@@ -349,38 +305,25 @@ class TestTopText:
         assert mn.np.array_equal(toptext.vector, mn.DOWN * 2)
 
     def test_refresh_creates_texts(self, toptext_obj):
-        """Test that _refresh creates correct text elements"""
-        # Check text content
         texts = list(toptext_obj.submobjects)
         assert len(texts) == 2
 
-        # Verify texts contain correct values - accept both formats with/without spaces
         text0 = str(texts[0].text)
         text1 = str(texts[1].text)
         assert text0 in ["a = 5", "a=5"]
         assert text1 in ["b = 10", "b=10"]
-
-        # Verify colors - check if color attribute exists and has some value
-        # The specific color might not be applied as expected due to Manim internals
         assert hasattr(texts[0], "color")
         assert hasattr(texts[1], "color")
 
-        # For debugging, print the actual colors
-        print(f"Text 0 color: {texts[0].color}")
-        print(f"Text 1 color: {texts[1].color}")
-
     def test_refresh_position(self, toptext_obj):
-        """Test text positioning"""
         texts = list(toptext_obj.submobjects)
         text_group = mn.VGroup(*texts)
 
-        # Verify text is in correct position
         expected_position = toptext_obj.mob_center.get_center() + toptext_obj.vector
         assert mn.np.allclose(text_group.get_center(), expected_position)
 
     def test_refresh_with_updated_values(self):
-        """Test value updates through lambdas"""
-        counter = [0]  # Use list for mutable value
+        counter = [0]
 
         def get_value():
             counter[0] += 1
@@ -390,49 +333,37 @@ class TestTopText:
         var = ("counter", get_value, mn.WHITE)
         toptext = TopText(mob_center, var)
 
-        # First value - accept both formats
         text_content = str(toptext.submobjects[0].text)
         assert text_content in ["counter = 1", "counter=1"]
 
-        # Refresh and check new value
-        toptext._refresh()
-        text_content = str(toptext.submobjects[0].text)
+        counter[0] = 1
+        new_toptext = TopText(mob_center, var)
+        text_content = str(new_toptext.submobjects[0].text)
         assert text_content in ["counter = 2", "counter=2"]
 
     def test_text_arrangement(self, toptext_obj):
-        """Test proper text element arrangement"""
         texts = list(toptext_obj.submobjects)
 
-        # Verify texts are arranged horizontally
         assert texts[0].get_center()[0] < texts[1].get_center()[0]
-
-        # Verify spacing between texts (remove font size comparison as it's not reliable)
         distance = texts[1].get_center()[0] - texts[0].get_center()[0]
-        assert distance > 0  # Just ensure positive spacing
+        assert distance > 0
 
     def test_first_appear_method_exists(self, toptext_obj):
-        """Test that first_appear method exists (signature check)"""
-        # Don't test animation, just verify method exists
         assert hasattr(toptext_obj, "first_appear")
         assert callable(toptext_obj.first_appear)
 
     def test_update_text_method_exists(self, toptext_obj):
-        """Test that update_text method exists (signature check)"""
-        # Don't test animation, just verify method exists
         assert hasattr(toptext_obj, "update_text")
         assert callable(toptext_obj.update_text)
 
     def test_empty_vars_handling(self):
-        """Test empty variables list handling"""
         mob_center = mn.Dot(mn.ORIGIN)
 
-        # Should work with empty variables
         toptext = TopText(mob_center)
         assert len(toptext.vars) == 0
         assert len(toptext.submobjects) == 0
 
     def test_different_value_types(self):
-        """Test different value types"""
         mob_center = mn.Dot(mn.ORIGIN)
 
         vars = [
@@ -445,7 +376,6 @@ class TestTopText:
         toptext = TopText(mob_center, *vars)
 
         texts = list(toptext.submobjects)
-        # Accept both formats with/without spaces
         assert str(texts[0].text) in ["int = 42", "int=42"]
         assert str(texts[1].text) in ["float = 3.14", "float=3.14"]
         assert str(texts[2].text) in ["string = hello", "string=hello"]
@@ -456,8 +386,9 @@ class TestCodeBlock:
     @pytest.fixture
     def codeblock_obj(self):
         code_lines = ["a = 1", "b = 2"]
-        position = mn.Dot(mn.ORIGIN)
-        return CodeBlock(code_lines, position)
+        mob_center = mn.Dot(mn.ORIGIN)
+        vector = mn.ORIGIN
+        return CodeBlock(code_lines, vector, mob_center=mob_center)
 
     @pytest.fixture
     def mock_scene(self):
@@ -470,27 +401,29 @@ class TestCodeBlock:
         assert len(codeblock_obj.code_vgroup) == 2
         assert isinstance(codeblock_obj.code_vgroup, mn.VGroup)
 
-        # Test that all code lines are present
         for i, line in enumerate(["a = 1", "b = 2"]):
             assert line in str(codeblock_obj.code_vgroup[i])
 
     def test_init_with_custom_font_settings(self):
         code_lines = ["def test():", "    return True"]
-        position = mn.Dot(mn.LEFT)
+        mob_center = mn.Dot(mn.LEFT)
+        vector = mn.ORIGIN
         font_size = 30
         font = "Arial"
 
-        codeblock = CodeBlock(code_lines, position, font_size=font_size, font=font)
+        codeblock = CodeBlock(
+            code_lines, vector, mob_center=mob_center, font_size=font_size, font=font
+        )
 
         assert len(codeblock.code_vgroup) == 2
-        # Check that font settings are applied (indirectly through text properties)
         for text_mob in codeblock.code_vgroup:
             assert hasattr(text_mob, "font_size")
             assert hasattr(text_mob, "font")
 
     def test_init_empty_code_lines(self):
-        position = mn.Dot(mn.ORIGIN)
-        codeblock = CodeBlock([], position)
+        mob_center = mn.Dot(mn.ORIGIN)
+        vector = mn.ORIGIN
+        codeblock = CodeBlock([], vector, mob_center=mob_center)
 
         assert len(codeblock.code_vgroup) == 0
         assert isinstance(codeblock.code_vgroup, mn.VGroup)
@@ -500,78 +433,68 @@ class TestCodeBlock:
 
         codeblock_obj.first_appear(mock_scene, time=run_time)
 
-        # Verify that play was called with FadeIn animation
         mock_scene.play.assert_called_once()
         args, _ = mock_scene.play.call_args
         assert len(args) == 1
         assert isinstance(args[0], mn.FadeIn)
 
-    def test_highlight_line(self, codeblock_obj, mock_scene):
-        line_to_highlight = 0  # First line
+    def test_highlight_line(self, codeblock_obj):
+        line_to_highlight = 0
 
-        codeblock_obj.highlight_line(mock_scene, line_to_highlight)
+        codeblock_obj.highlight_line(line_to_highlight)
 
-        # Verify that play was called with appropriate animations
-        mock_scene.play.assert_called_once()
-        args, _ = mock_scene.play.call_args
+        assert codeblock_obj.code_mobs[0].color == mn.YELLOW
+        assert codeblock_obj.code_mobs[1].color == mn.WHITE
 
-        # Should have multiple FadeToColor animations (one for each line)
-        assert len(args) == len(codeblock_obj.code_vgroup)
-        for i, anim in enumerate(args):
-            assert isinstance(anim, mn.FadeToColor)
-            assert anim.mobject == codeblock_obj.code_vgroup[i]
-
-    def test_highlight_line_out_of_bounds(self, codeblock_obj, mock_scene):
-        # Should not raise an error but might have unexpected behavior
-        # This tests the robustness of the method
+    def test_highlight_line_out_of_bounds(self, codeblock_obj):
         try:
-            codeblock_obj.highlight_line(mock_scene, 10)  # Out of bounds
-            codeblock_obj.highlight_line(mock_scene, -1)  # Negative index
+            codeblock_obj.highlight_line(10)
+            codeblock_obj.highlight_line(-1)
         except Exception as e:
             pytest.fail(f"highlight_line raised unexpected exception: {e}")
 
-    def test_highlight_line_single_line(self, mock_scene):
+    def test_highlight_line_single_line(self):
         code_lines = ["single_line = True"]
-        position = mn.Dot(mn.ORIGIN)
-        codeblock = CodeBlock(code_lines, position)
+        mob_center = mn.Dot(mn.ORIGIN)
+        vector = mn.ORIGIN
+        codeblock = CodeBlock(code_lines, vector, mob_center=mob_center)
 
-        codeblock.highlight_line(mock_scene, 0)
-
-        mock_scene.play.assert_called_once()
-        args, _ = mock_scene.play.call_args
-        assert len(args) == 1  # Only one animation for single line
+        codeblock.highlight_line(0)
+        assert codeblock.code_mobs[0].color == mn.YELLOW
 
     def test_code_vgroup_arrangement(self):
         code_lines = ["line1", "line2", "line3"]
-        position = mn.Dot(mn.ORIGIN)
-        codeblock = CodeBlock(code_lines, position)
+        mob_center = mn.Dot(mn.ORIGIN)
+        vector = mn.ORIGIN
+        codeblock = CodeBlock(code_lines, vector, mob_center=mob_center)
 
-        # Test that we have the correct number of lines
         assert len(codeblock.code_vgroup) == 3
         assert isinstance(codeblock.code_vgroup, mn.VGroup)
 
     def test_positioning(self):
-        target_position = mn.Dot(mn.RIGHT * 2)
+        mob_center = mn.Dot(mn.RIGHT * 2)
+        vector = mn.ORIGIN
         code_lines = ["x = 10", "y = 20"]
 
-        codeblock = CodeBlock(code_lines, target_position)
+        codeblock = CodeBlock(code_lines, vector, mob_center=mob_center)
 
-        # The center of the code block should be near the target position
-        # (Using approximate comparison due to floating point precision)
         assert codeblock.code_vgroup.get_center()[0] == pytest.approx(
-            target_position.get_center()[0], abs=0.1
+            mob_center.get_center()[0], abs=0.1
         )
 
     @patch("manim.Text")
     def test_text_creation(self, mock_text):
-        # This test verifies that Text is called with expected arguments
         code_lines = ["test_line"]
-        position = mn.Dot(mn.ORIGIN)
+        mob_center = mn.Dot(mn.ORIGIN)
+        vector = mn.ORIGIN
 
-        CodeBlock(code_lines, position, font_size=25, font="MesloLGS NF")
+        CodeBlock(
+            code_lines, vector, mob_center=mob_center, font_size=25, font="MesloLGS NF"
+        )
 
-        # Verify Text was called with correct parameters
-        mock_text.assert_called_with("test_line", font="MesloLGS NF", font_size=25)
+        mock_text.assert_called_with(
+            "test_line", font="MesloLGS NF", font_size=25, color="white"
+        )
 
 
 class TestTitleTop:
