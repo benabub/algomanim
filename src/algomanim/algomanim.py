@@ -374,9 +374,9 @@ class RelativeText(mn.VGroup):
         mob_center: mn.Mobject,
         *vars: Tuple[str, Callable[[], Any], Union[str, ManimColor]],
         font="",
-        font_size=40,
-        buff=0.7,
-        vector: np.ndarray = mn.UP * 1.4,
+        font_size=35,
+        buff=0.5,
+        vector: np.ndarray = mn.UP * 1.2,
     ):
         super().__init__()
         self.mob_center = mob_center
@@ -396,7 +396,9 @@ class RelativeText(mn.VGroup):
             )
             for name, value, color in self.vars
         ]
-        top_text = mn.VGroup(*parts).arrange(mn.RIGHT, buff=self.buff)
+        top_text = mn.VGroup(*parts).arrange(
+            mn.RIGHT, buff=self.buff, aligned_edge=mn.UP
+        )
         top_text.move_to(self.mob_center.get_center() + self.vector)
         self.add(*top_text)
 
@@ -412,6 +414,7 @@ class RelativeText(mn.VGroup):
             font_size=self.font_size,
             buff=self.buff,
             vector=self.vector,
+            font=self.font,
         )
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=time)
@@ -456,7 +459,9 @@ class CodeBlock(mn.VGroup):
             code_lines
         )  # List to save links on all possible rectangles and to manage=delete them
 
-        code_vgroup = mn.VGroup(*self.code_mobs).arrange(mn.DOWN, aligned_edge=mn.LEFT)
+        code_vgroup = mn.VGroup(*self.code_mobs).arrange(
+            mn.DOWN, aligned_edge=mn.LEFT, buff=0.05
+        )
         code_vgroup.move_to(mob_center.get_center() + vector)
         self.code_vgroup = code_vgroup
         # Animation
