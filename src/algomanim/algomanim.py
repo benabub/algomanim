@@ -9,6 +9,7 @@ class Array(mn.VGroup):
         self,
         arr: List[int],
         vector: np.ndarray,
+        font="",
         bg_color=mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
@@ -30,6 +31,7 @@ class Array(mn.VGroup):
         # Add class attributes
         self.arr = arr
         self.bg_color = bg_color
+        self.font = font
 
         # Construction: Create square mobjects for each array element
         # NB: if opacity is not specified, it will be set to None
@@ -49,7 +51,7 @@ class Array(mn.VGroup):
         # Construction: Create text mobjects and center them in squares
         self.num_mob = mn.VGroup(
             *[
-                mn.Text(str(num)).move_to(square)
+                mn.Text(str(num), font=self.font).move_to(square)
                 for num, square in zip(arr, self.sq_mob)
             ]
         )
@@ -130,7 +132,7 @@ class Array(mn.VGroup):
         for i in range(len(new_values)):
             new_val_str = str(new_values[i])
 
-            new_text = mn.Text(new_val_str).move_to(self.sq_mob[i])
+            new_text = mn.Text(new_val_str, font=self.font).move_to(self.sq_mob[i])
 
             if animate:
                 animations.append(self.num_mob[i].animate.become(new_text))
@@ -152,8 +154,8 @@ class Array(mn.VGroup):
 
         Args:
             val (int): The value to compare with array elements
-            pos (int): 0 for top pointers, 1 for bottom pointers. Defaults to 1.
-            pnt_color: Color for the highlighted pointer. Defaults to mn.WHITE.
+            pos (int): 0 for top pointers, 1 for bottom pointers.
+            pnt_color: Color for the highlighted pointer.
         """
         for idx, _ in enumerate(self.sq_mob):
             self.pointers[pos][idx][1].set_color(
@@ -172,8 +174,8 @@ class Array(mn.VGroup):
 
         Args:
             i (int): Index of the block whose pointer to highlight.
-            pos (int): 0 for top pointers, 1 for bottom. Defaults to 0.
-            i_color: Color for the highlighted pointer. Defaults to mn.GREEN.
+            pos (int): 0 for top pointers, 1 for bottom.
+            i_color: Color for the highlighted pointer.
         """
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
@@ -194,8 +196,8 @@ class Array(mn.VGroup):
 
         Args:
             i (int), j (int): Indices of the block whose pointer to highlight.
-            pos (int): 0 for top pointers, 1 for bottom. Defaults to 0.
-            i_color: Color for the highlighted pointer. Defaults to mn.GREEN.
+            pos (int): 0 for top pointers, 1 for bottom.
+            i_color: Color for the highlighted pointer.
         """
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
@@ -234,8 +236,8 @@ class Array(mn.VGroup):
         Args:
             i (int), j (int), k (int): Indices of the block whose pointer
                 to highlight.
-            pos (int): 0 for top pointers, 1 for bottom. Defaults to 0.
-            i_color: Color for the highlighted pointer. Defaults to mn.GREEN.
+            pos (int): 0 for top pointers, 1 for bottom.
+            i_color: Color for the highlighted pointer.
         """
         for idx, _ in enumerate(self.sq_mob):
             if idx == i == j == k:
@@ -366,11 +368,12 @@ class Array(mn.VGroup):
                 mob.set_fill(self.bg_color)
 
 
-class TopText(mn.VGroup):
+class RelativeText(mn.VGroup):
     def __init__(
         self,
         mob_center: mn.Mobject,
         *vars: Tuple[str, Callable[[], Any], Union[str, ManimColor]],
+        font="",
         font_size=40,
         buff=0.7,
         vector: np.ndarray = mn.UP * 1.4,
@@ -378,13 +381,19 @@ class TopText(mn.VGroup):
         super().__init__()
         self.mob_center = mob_center
         self.vars = vars
+        self.font = font
         self.font_size = font_size
         self.buff = buff
         self.vector = vector
 
         self.submobjects: List = []
         parts = [
-            mn.Text(f"{name} = {value()}", font_size=self.font_size, color=color)
+            mn.Text(
+                f"{name} = {value()}",
+                font=self.font,
+                font_size=self.font_size,
+                color=color,
+            )
             for name, value, color in self.vars
         ]
         top_text = mn.VGroup(*parts).arrange(mn.RIGHT, buff=self.buff)
@@ -397,7 +406,7 @@ class TopText(mn.VGroup):
     def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
         # Create a new object with the same parameters
         # (vars may be updated)
-        new_group = TopText(
+        new_group = RelativeText(
             self.mob_center,
             *self.vars,
             font_size=self.font_size,
@@ -418,7 +427,7 @@ class CodeBlock(mn.VGroup):
         code_lines: List[str],
         vector: np.ndarray,
         font_size=25,
-        font="MesloLGS NF",
+        font="",
         font_color_regular="white",
         font_color_highlight="yellow",
         bg_highlight_color="blue",
@@ -491,35 +500,254 @@ class CodeBlock(mn.VGroup):
                     self.bg_rects[k] = None
 
 
-class TitleTop(mn.Text):
+class TitleText(mn.VGroup):
+    """
+    A title group for Manim scenes, consisting of a text label, an optional decorative flourish underneath, and
+    an optional undercaption.
+
+    Args:
+        text (str): The title text to display.
+        vector (np.ndarray, optional): Offset vector from the center for positioning the group.
+        text_color (str, optional): Color of the title text.
+        font (str, optional): Font family for the title text.
+        font_size (float, optional): Font size for the title text.
+        mob_center (mn.Mobject, optional): Reference mobject for positioning.
+        flourish (bool, optional): Whether to render the flourish under the text.
+        flourish_color (str, optional): Color of the flourish line.
+        flourish_stroke_width (float, optional): Stroke width of the flourish.
+        flourish_padding (float, optional): Padding between text and flourish.
+        flourish_buff (float, optional): Buffer between text and flourish.
+        spiral_offset (float, optional): Vertical offset of the spirals relative to the flourish line.
+        spiral_radius (float, optional): Radius of the spiral ends of the flourish.
+        spiral_turns (float, optional): Number of turns in each spiral.
+        undercaption (str, optional): Text under the flourish.
+        undercaption_color (str, optional): Color of the undercaption text.
+        undercaption_font (str, optional): Font family for the undercaption.
+        undercaption_font_size (float, optional): Font size for the undercaption.
+        undercaption_buff (float, optional): Buffer between text and undercaption.
+        **kwargs: Additional keyword arguments for the text mobject.
+    """
+
     def __init__(
         self,
+        # --------- text --------------
         text: str,
         vector: np.ndarray = mn.UP * 2.7,
-        text_color="#FFA116",
-        font="FiraCode-Retina",
-        font_size=50,
+        text_color: str = "white",
+        font: str = "",
+        font_size: float = 50,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        # ------- flourish ------------
+        flourish: bool = False,
+        flourish_color: str = "white",
+        flourish_stroke_width: float = 4,
+        flourish_padding: float = 0.2,
+        flourish_buff: float = 0.15,
+        spiral_offset: float = 0.3,
+        spiral_radius: float = 0.15,
+        spiral_turns: float = 1.0,
+        # ------- undercaption ------------
+        undercaption: str = "",
+        undercaption_color: str = "white",
+        undercaption_font: str = "",
+        undercaption_font_size: float = 20,
+        undercaption_buff: float = 0.23,
+        # ----------- kwargs ------------
         **kwargs,
     ):
-        """
-        Specialized class for creating titles at the top of the scene.
+        super().__init__()
 
-        Inherits all functionality from manim.Text with predefined parameters
-        for convenient title creation.
-
-        Attributes:
-            text: Text string to display.
-            position: Position of the title on the scene. Defaults to top-left corner.
-            text_color: Color of the text. Defaults to WHITE.
-            font: Font name. Defaults to 'MesloLGS NF'.
-            font_size: Font size. Defaults to 40.
-            **kwargs: Additional arguments passed to manim.Text.
-        """
-        super().__init__(
-            text, font=font, font_size=font_size, color=text_color, **kwargs
+        # Create the text mobject
+        self.text_mobject = mn.Text(
+            text,
+            font=font,
+            font_size=font_size,
+            color=text_color,
+            **kwargs,
         )
+        self.add(self.text_mobject)
+
+        # Optionally create the flourish under the text
+        if flourish:
+            flourish_width = (
+                # self.text_mobject.width * flourish_width_ratio + flourish_padding
+                self.text_mobject.width + flourish_padding
+            )
+            self.flourish = self._create_flourish(
+                width=flourish_width,
+                color=flourish_color,
+                stroke_width=flourish_stroke_width,
+                spiral_radius=spiral_radius,
+                spiral_turns=spiral_turns,
+                spiral_offset=spiral_offset,
+            )
+            # Position the flourish below the text
+            self.flourish.next_to(self.text_mobject, mn.DOWN, flourish_buff)
+            self.add(self.flourish)
+
+        # Optionally create the undercaption under the text
+        if undercaption:
+            # Create the text mobject
+            self.undercaption = mn.Text(
+                undercaption,
+                font=undercaption_font,
+                font_size=undercaption_font_size,
+                color=undercaption_color,
+                **kwargs,
+            )
+            self.undercaption.next_to(self.text_mobject, mn.DOWN, undercaption_buff)
+            self.add(self.undercaption)
+
+        # Position the entire group relative to the reference mobject and offset vector
         self.move_to(mob_center.get_center() + vector)
 
+    def _create_flourish(
+        self,
+        width: float,
+        color: str,
+        stroke_width: float,
+        spiral_radius: float,
+        spiral_turns: float,
+        spiral_offset: float,
+    ) -> mn.VGroup:
+        """
+        Create a decorative flourish consisting of a horizontal line with symmetric spiral ends.
+
+        Args:
+            width (float): Total width of the flourish.
+            color (str): Color of the flourish.
+            stroke_width (float): Stroke width of the flourish.
+            spiral_radius (float): Radius of the spiral ends.
+            spiral_turns (float): Number of turns in each spiral.
+            spiral_offset (float): Vertical offset of the spirals.
+
+        Returns:
+            mn.VGroup: The group containing the flourish components.
+        """
+        # Left spiral (from outer to inner)
+        left_center = np.array([-width / 2, -spiral_offset, 0])
+        left_spiral = []
+        for t in np.linspace(0, 1, 100):
+            angle = 2 * np.pi * spiral_turns * t
+            current_radius = spiral_radius * (1 - t)
+            rotated_angle = angle + 1.2217
+            x = left_center[0] + current_radius * np.cos(rotated_angle)
+            y = left_center[1] + current_radius * np.sin(rotated_angle)
+            left_spiral.append(np.array([x, y, 0]))
+
+        # Right spiral (from outer to inner)
+        right_center = np.array([width / 2, -spiral_offset, 0])
+        right_spiral = []
+        for t in np.linspace(0, 1, 100):
+            angle = -2 * np.pi * spiral_turns * t
+            current_radius = spiral_radius * (1 - t)
+            rotated_angle = angle + 1.9199
+            x = right_center[0] + current_radius * np.cos(rotated_angle)
+            y = right_center[1] + current_radius * np.sin(rotated_angle)
+            right_spiral.append(np.array([x, y, 0]))
+
+        # Line between the outer points of the spirals (slightly overlaps into the spirals)
+        straight_start = left_spiral[1]
+        straight_end = right_spiral[1]
+        straight_line = [
+            straight_start + t * (straight_end - straight_start)
+            for t in np.linspace(0, 1, 50)
+        ]
+
+        # Create separate VMobjects for each part
+        flourish_line = mn.VMobject()
+        flourish_line.set_color(color)
+        flourish_line.set_stroke(width=stroke_width)
+        flourish_line.set_points_smoothly(straight_line)
+
+        flourish_right = mn.VMobject()
+        flourish_right.set_color(color)
+        flourish_right.set_stroke(width=stroke_width)
+        flourish_right.set_points_smoothly(right_spiral)
+
+        flourish_left = mn.VMobject()
+        flourish_left.set_color(color)
+        flourish_left.set_stroke(width=stroke_width)
+        flourish_left.set_points_smoothly(left_spiral)
+
+        # Group all parts into a single VGroup
+        flourish_path = mn.VGroup(flourish_line, flourish_right, flourish_left)
+
+        return flourish_path
+
     def appear(self, scene: mn.Scene):
+        """
+        Add the entire title group to the given Manim scene.
+
+        Args:
+            scene (mn.Scene): The Manim scene to add the logo group to.
+        """
+        scene.add(self)
+
+
+class TitleLogo(mn.VGroup):
+    """
+    A group for displaying an SVG logo with optional text, positioned relative to a reference mobject.
+
+    Args:
+        svg (str): Path to the SVG file.
+        svg_height (float, optional): Height of the SVG.
+        mob_center (mn.Mobject, optional): Reference mobject for positioning.
+        svg_vector (np.ndarray, optional): Offset vector for the SVG.
+        text (str, optional): Optional text to display with the logo.
+        text_color (str, optional): Color of the text.
+        font (str, optional): Font family for the text.
+        font_size (float, optional): Font size for the text.
+        text_vector (np.ndarray, optional): Offset vector for the text.
+        **kwargs: Additional keyword arguments for the SVG and text mobjects.
+    """
+
+    def __init__(
+        self,
+        svg: str,
+        # ----------- svg -------------
+        svg_height: float = 2.0,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        svg_vector: np.ndarray = mn.ORIGIN,
+        # --------- text --------------
+        text: str | None = None,
+        text_color: str = "white",
+        font: str = "",
+        font_size: float = 31,
+        text_vector: np.ndarray = mn.ORIGIN,
+        # --------- kwargs -------------
+        **kwargs,
+    ):
+        super().__init__()
+
+        # Create the svg mobject
+        self.svg = mn.SVGMobject(
+            svg,
+            height=svg_height,
+            **kwargs,
+        )
+        self.add(self.svg)
+
+        # Create the text mobject
+        if text:
+            self.text_mobject = mn.Text(
+                text,
+                font=font,
+                font_size=font_size,
+                color=text_color,
+                **kwargs,
+            )
+            self.text_mobject.move_to(self.svg.get_center() + text_vector)
+            self.add(self.text_mobject)
+
+        # Position the entire group relative to the reference mobject and offset vector
+        self.move_to(mob_center.get_center() + svg_vector)
+
+    def appear(self, scene: mn.Scene):
+        """
+        Add the entire logo group to the given Manim scene.
+
+        Args:
+            scene (mn.Scene): The Manim scene to add the logo group to.
+        """
         scene.add(self)
