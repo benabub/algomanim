@@ -431,9 +431,9 @@ class CodeBlock(mn.VGroup):
         vector: np.ndarray,
         font_size=25,
         font="",
-        font_color_regular="white",
-        font_color_highlight="yellow",
-        bg_highlight_color="blue",
+        font_color_regular="WHITE",
+        font_color_highlight="YELLOW",
+        bg_highlight_color="BLUE",
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
         """
@@ -538,13 +538,13 @@ class TitleText(mn.VGroup):
         # --------- text --------------
         text: str,
         vector: np.ndarray = mn.UP * 2.7,
-        text_color: str = "white",
+        text_color: str = "WHITE",
         font: str = "",
         font_size: float = 50,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         # ------- flourish ------------
         flourish: bool = False,
-        flourish_color: str = "white",
+        flourish_color: str = "WHITE",
         flourish_stroke_width: float = 4,
         flourish_padding: float = 0.2,
         flourish_buff: float = 0.15,
@@ -553,7 +553,7 @@ class TitleText(mn.VGroup):
         spiral_turns: float = 1.0,
         # ------- undercaption ------------
         undercaption: str = "",
-        undercaption_color: str = "white",
+        undercaption_color: str = "WHITE",
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
         undercaption_buff: float = 0.23,
@@ -716,7 +716,7 @@ class TitleLogo(mn.VGroup):
         svg_vector: np.ndarray = mn.ORIGIN,
         # --------- text --------------
         text: str | None = None,
-        text_color: str = "white",
+        text_color: str = "WHITE",
         font: str = "",
         font_size: float = 31,
         text_vector: np.ndarray = mn.ORIGIN,
