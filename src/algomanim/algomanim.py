@@ -166,7 +166,7 @@ class Array(mn.VGroup):
         self,
         i: int,
         pos: int = 0,
-        i_color=mn.GREEN,
+        i_color=mn.RED,
     ):
         """
         Highlight a single pointer at one side (top | bottom) in the
@@ -277,7 +277,7 @@ class Array(mn.VGroup):
     def highlight_blocks_1(
         self,
         i: int,
-        i_color=mn.GREEN,
+        i_color=mn.RED,
     ):
         """
         Highlight a single block in the array visualization.
@@ -376,8 +376,23 @@ class RelativeText(mn.VGroup):
         font="",
         font_size=35,
         buff=0.5,
+        align_left: bool = False,
+        equal_sign: bool = True,
         vector: np.ndarray = mn.UP * 1.2,
     ):
+        """
+        Text group positioned relative to another mobject with update capability.
+
+        Args:
+            mob_center: Reference mobject for positioning.
+            *vars: Tuples of (name, value_getter, color) for each text element.
+            font: Text font family.
+            font_size: Text font size.
+            buff: Spacing between text elements.
+            align_left: Whether to left-align text to reference mobject.
+            equal_sign: Whether to use equals sign between name and value.
+            vector: Offset vector from reference mobject center.
+        """
         super().__init__()
         self.mob_center = mob_center
         self.vars = vars
@@ -385,11 +400,12 @@ class RelativeText(mn.VGroup):
         self.font_size = font_size
         self.buff = buff
         self.vector = vector
+        self.align_left = align_left
 
         self.submobjects: List = []
         parts = [
             mn.Text(
-                f"{name} = {value()}",
+                f"{name} = {value()}" if equal_sign else f"{name}  {value()}",
                 font=self.font,
                 font_size=self.font_size,
                 color=color,
@@ -399,7 +415,14 @@ class RelativeText(mn.VGroup):
         top_text = mn.VGroup(*parts).arrange(
             mn.RIGHT, buff=self.buff, aligned_edge=mn.UP
         )
-        top_text.move_to(self.mob_center.get_center() + self.vector)
+
+        if align_left:
+            top_text.move_to(self.mob_center.get_center())
+            top_text.align_to(self.mob_center, mn.LEFT)
+            top_text.shift(self.vector)
+        else:
+            top_text.move_to(self.mob_center.get_center() + self.vector)
+
         self.add(*top_text)
 
     def first_appear(self, scene: mn.Scene, time=0.5):
@@ -416,12 +439,20 @@ class RelativeText(mn.VGroup):
             vector=self.vector,
             font=self.font,
         )
-        if animate:
-            scene.play(mn.Transform(self, new_group), run_time=time)
-        else:
+
+        if self.align_left:
+            left_point = self.get_left()
+            new_group.move_to(left_point, aligned_edge=mn.LEFT)
             scene.remove(self)
             self.become(new_group)
             scene.add(self)
+        else:
+            if animate:
+                scene.play(mn.Transform(self, new_group), run_time=time)
+            else:
+                scene.remove(self)
+                self.become(new_group)
+                scene.add(self)
 
 
 class CodeBlock(mn.VGroup):
