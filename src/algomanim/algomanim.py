@@ -429,24 +429,35 @@ class CodeBlock(mn.VGroup):
         self,
         code_lines: List[str],
         vector: np.ndarray,
+        pre_code_lines: List[str] = [],
         font_size=25,
         font="",
         font_color_regular="WHITE",
         font_color_highlight="YELLOW",
         bg_highlight_color="BLUE",
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        inter_block_buff=0.5,
+        pre_code_buff=0.15,
+        code_buff=0.05,
     ):
         """
         Creates a code block visualization on the screen.
 
         Args:
             code_lines (List[str]): List of code lines to display.
-            position (mn.Mobject): Position to place the code block.
+            vector (np.ndarray): Position vector to place the code block.
+            pre_code_lines (List[str]): Lines to display before the main code.
             font_size (int, optional): Font size for the code text.
             font (str, optional): Font for the code text.
+            font_color_regular (str): Color for regular text.
+            font_color_highlight (str): Color for highlighted text.
+            bg_highlight_color (str): Background color for highlighted lines.
+            mob_center (mn.Mobject): Center object for positioning.
+            inter_block_buff (float): Buffer between pre-code and code blocks.
+            pre_code_buff (float): Buffer between pre-code lines.
+            code_buff (float): Buffer between code lines.
         """
         super().__init__()
-        # Construction
         self.font_color_regular = font_color_regular
         self.font_color_highlight = font_color_highlight
         self.bg_highlight_color = bg_highlight_color
@@ -460,12 +471,35 @@ class CodeBlock(mn.VGroup):
         )  # List to save links on all possible rectangles and to manage=delete them
 
         code_vgroup = mn.VGroup(*self.code_mobs).arrange(
-            mn.DOWN, aligned_edge=mn.LEFT, buff=0.05
+            mn.DOWN,
+            aligned_edge=mn.LEFT,
+            buff=code_buff,
         )
-        code_vgroup.move_to(mob_center.get_center() + vector)
-        self.code_vgroup = code_vgroup
+
+        if pre_code_lines:
+            self.pre_code_mobs = [
+                mn.Text(
+                    line, font=font, font_size=font_size, color=self.font_color_regular
+                )
+                for line in pre_code_lines
+            ]
+            pre_code_vgroup = mn.VGroup(*self.pre_code_mobs).arrange(
+                mn.DOWN,
+                aligned_edge=mn.LEFT,
+                buff=pre_code_buff,
+            )
+            block_vgroup = mn.VGroup(pre_code_vgroup, code_vgroup).arrange(
+                mn.DOWN,
+                aligned_edge=mn.LEFT,
+                buff=inter_block_buff,
+            )
+        else:
+            block_vgroup = code_vgroup
+
+        block_vgroup.move_to(mob_center.get_center() + vector)
+        self.block_vgroup = block_vgroup
         # Animation
-        self.add(self.code_vgroup)
+        self.add(self.block_vgroup)
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         scene.play(mn.FadeIn(self), run_time=time)
