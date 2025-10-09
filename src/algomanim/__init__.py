@@ -1,5 +1,6 @@
 from .algomanim import (
     Array,
+    String,
     RelativeText,
     CodeBlock,
     TitleText,
@@ -8,6 +9,7 @@ from .algomanim import (
 
 __all__ = [
     "Array",
+    "String",
     "RelativeText",
     "CodeBlock",
     "TitleText",

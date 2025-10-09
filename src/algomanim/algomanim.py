@@ -7,10 +7,10 @@ from manim import ManimColor
 class Array(mn.VGroup):
     def __init__(
         self,
-        arr: List[int],
+        arr: List,
         vector: np.ndarray,
         font="",
-        bg_color=mn.DARK_GRAY,
+        bg_color: mn.utils.color.core.ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
         """
@@ -368,6 +368,412 @@ class Array(mn.VGroup):
                 mob.set_fill(self.bg_color)
 
 
+class String(mn.VGroup):
+    def __init__(
+        self,
+        string: str,
+        vector: np.ndarray,
+        font="",
+        weight: str = "NORMAL",
+        color: mn.utils.color.core.ManimColor | str = mn.WHITE,
+        bg_color=mn.DARK_GRAY,
+        fill_color=mn.GRAY,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+    ):
+        """
+        String visualization class that displays a string as a sequence of
+        characters enclosed in quotes. The class creates a visual representation
+        of a string where each character is contained within a square box.
+
+        Args:
+            string: The text string to visualize
+            vector: Position offset for the entire string visualization
+            font: Font family for the text
+            weight: Font weight (NORMAL, BOLD, etc.)
+            color: Text color
+            bg_color: Scene background color
+            fill_color: Fill color for squares
+            mob_center: Center point for positioning
+        """
+        # Call __init__ of the parent classes
+        super().__init__()
+        # Add class attributes
+        self.string = string
+        self.bg_color = bg_color
+        self.fill_color = fill_color
+        self.font = font
+
+        # NB: if opacity is not specified, it will be set to None
+        # and some methods will break for unknown reasons
+        SQUARE_CONFIG = {
+            "side_length": 0.7,
+            "color": bg_color,
+            "fill_opacity": 1,
+        }
+        TEXT_CONFIG = {
+            "font": font,
+            "color": color,
+            "weight": weight,
+        }
+
+        # Construction: Create square mobjects for each array element
+        self.letters_sq_mob = mn.VGroup(
+            *[mn.Square(**SQUARE_CONFIG, fill_color=fill_color) for _ in string]
+        )
+        # Construction: Arrange squares in a row
+        self.letters_sq_mob.arrange(mn.RIGHT, buff=0.0)
+
+        self.quote_sq_mob = [
+            mn.Square(**SQUARE_CONFIG, fill_color=bg_color) for _ in range(2)
+        ]
+
+        self.all_sq_mob = mn.VGroup(
+            [self.quote_sq_mob[0], self.letters_sq_mob, self.quote_sq_mob[1]],
+        )
+
+        # Construction: Arrange VGroups in a row
+        self.all_sq_mob.arrange(mn.RIGHT, buff=0.0)
+
+        # Construction: Move array to the specified position
+        self.all_sq_mob.move_to(mob_center.get_center() + vector)
+
+        # Construction: text mobs quotes group
+        self.quotes_mob = mn.VGroup(
+            mn.Text('"', **TEXT_CONFIG).move_to(
+                self.quote_sq_mob[0], aligned_edge=mn.UP + mn.RIGHT
+            ),
+            mn.Text('"', **TEXT_CONFIG).move_to(
+                self.quote_sq_mob[1], aligned_edge=mn.UP + mn.LEFT
+            ),
+        )
+
+        # Construction: Create text mobjects and center them in squares
+        self.letters_mob = mn.VGroup(
+            *[
+                mn.Text(str(letter), **TEXT_CONFIG).move_to(square)
+                for letter, square in zip(string, self.letters_sq_mob)
+            ]
+        )
+
+        # Create pointers as a list with top and bottom groups
+        self.pointers: List[List[Any]] = [[], []]  # [0] for top, [1] for bottom
+
+        for square in self.letters_sq_mob:
+            # Create top triangles (3 per square)
+            top_tri_group = mn.VGroup(
+                *[
+                    mn.Triangle(
+                        color=self.bg_color,
+                    )
+                    .stretch_to_fit_width(square.width)
+                    .scale(0.1)
+                    .rotate(mn.PI)
+                    for _ in range(3)
+                ]
+            )
+            # Arrange top triangles horizontally above the square
+            top_tri_group.arrange(mn.RIGHT, buff=0.08)
+            top_tri_group.next_to(square, mn.UP, buff=0.15)
+            self.pointers[0].append(top_tri_group)
+
+            # Create bottom triangles (3 per square)
+            bottom_tri_group = mn.VGroup(
+                *[
+                    mn.Triangle(
+                        color=self.bg_color,
+                    )
+                    .stretch_to_fit_width(square.width)
+                    .scale(0.1)
+                    for _ in range(3)
+                ]
+            )
+            # Arrange bottom triangles horizontally below the square
+            bottom_tri_group.arrange(mn.RIGHT, buff=0.08)
+            bottom_tri_group.next_to(square, mn.DOWN, buff=0.15)
+            self.pointers[1].append(bottom_tri_group)
+
+        # Adds local objects as instance attributes
+        self.add(
+            self.letters_sq_mob,
+            self.letters_mob,
+            self.quote_sq_mob,
+            self.quotes_mob,
+        )
+        self.add(*[ptr for group in self.pointers for ptr in group])
+
+    def first_appear(self, scene: mn.Scene, time=0.5):
+        scene.play(mn.FadeIn(self), run_time=time)
+
+    def update_numbers(
+        self,
+        scene: mn.Scene,
+        new_values: str,
+        animate: bool = True,
+        run_time: float = 0.2,
+    ) -> None:
+        """
+        Update all text mobjects in the string.
+        Can perform the update with or without animation.
+
+        Args:
+            scene: The scene to play animations in
+            new_values: New array values to display
+            animate: Whether to animate the changes (True) or
+                     update instantly (False)
+            run_time: Duration of animation if animate=True
+
+        Raises:
+            ValueError: If new_values length doesn't match string length
+        """
+        if len(new_values) != len(self.string):
+            raise ValueError(
+                f"Length mismatch: string has {len(self.string)} elements, "
+                f"but {len(new_values)} new values provided"
+            )
+
+        animations = []
+
+        for i in range(len(new_values)):
+            new_val_str = str(new_values[i])
+
+            new_text = mn.Text(new_val_str, font=self.font).move_to(
+                self.letters_sq_mob[i]
+            )
+
+            if animate:
+                animations.append(self.letters_mob[i].animate.become(new_text))
+            else:
+                self.letters_mob[i].become(new_text)
+
+        if animate and animations:
+            scene.play(*animations, run_time=run_time)
+
+    def pointer_special(
+        self,
+        val: int,
+        pos: int = 1,
+        pnt_color=mn.WHITE,
+    ):
+        """
+        Highlight a pointer at one side (top or bottom) in the
+        string visualization based on integer value comparison.
+
+        Args:
+            val (int): The value to compare with string elements
+            pos (int): 0 for top pointers, 1 for bottom pointers.
+            pnt_color: Color for the highlighted pointer.
+        """
+        for idx, _ in enumerate(self.letters_sq_mob):
+            self.pointers[pos][idx][1].set_color(
+                pnt_color if self.string[idx] == val else self.bg_color
+            )
+
+    def pointers_1(
+        self,
+        i: int,
+        pos: int = 0,
+        i_color=mn.RED,
+    ):
+        """
+        Highlight a single pointer at one side (top | bottom) in the
+        string visualization.
+
+        Args:
+            i (int): Index of the block whose pointer to highlight.
+            pos (int): 0 for top pointers, 1 for bottom.
+            i_color: Color for the highlighted pointer.
+        """
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+        for idx, _ in enumerate(self.letters_sq_mob):
+            self.pointers[pos][idx][1].set_color(i_color if idx == i else self.bg_color)
+
+    def pointers_2(
+        self,
+        i: int,
+        j: int,
+        pos: int = 0,
+        i_color=mn.RED,
+        j_color=mn.BLUE,
+    ):
+        """
+        Highlight two pointers at one side (top | bottom) in the
+        string visualization.
+
+        Args:
+            i (int), j (int): Indices of the block whose pointer to highlight.
+            pos (int): 0 for top pointers, 1 for bottom.
+            i_color: Color for the highlighted pointer.
+        """
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+        for idx, _ in enumerate(self.letters_sq_mob):
+            if idx == i == j:
+                self.pointers[pos][idx][0].set_color(i_color)
+                self.pointers[pos][idx][1].set_color(self.bg_color)
+                self.pointers[pos][idx][2].set_color(j_color)
+            elif idx == i:
+                self.pointers[pos][idx][0].set_color(self.bg_color)
+                self.pointers[pos][idx][1].set_color(i_color)
+                self.pointers[pos][idx][2].set_color(self.bg_color)
+            elif idx == j:
+                self.pointers[pos][idx][0].set_color(self.bg_color)
+                self.pointers[pos][idx][1].set_color(j_color)
+                self.pointers[pos][idx][2].set_color(self.bg_color)
+            else:
+                self.pointers[pos][idx][0].set_color(self.bg_color)
+                self.pointers[pos][idx][1].set_color(self.bg_color)
+                self.pointers[pos][idx][2].set_color(self.bg_color)
+
+    def pointers_3(
+        self,
+        i: int,
+        j: int,
+        k: int,
+        pos: int = 0,
+        i_color=mn.RED,
+        j_color=mn.GREEN,
+        k_color=mn.BLUE,
+    ):
+        """
+        Highlight three pointers at one side (top | bottom) in the
+        string visualization.
+
+        Args:
+            i (int), j (int), k (int): Indices of the block whose pointer
+                to highlight.
+            pos (int): 0 for top pointers, 1 for bottom.
+            i_color: Color for the highlighted pointer.
+        """
+        for idx, _ in enumerate(self.letters_sq_mob):
+            if idx == i == j == k:
+                self.pointers[pos][idx][0].set_color(i_color)
+                self.pointers[pos][idx][1].set_color(j_color)
+                self.pointers[pos][idx][2].set_color(k_color)
+            elif idx == i == j:
+                self.pointers[pos][idx][0].set_color(i_color)
+                self.pointers[pos][idx][1].set_color(self.bg_color)
+                self.pointers[pos][idx][2].set_color(j_color)
+            elif idx == i == k:
+                self.pointers[pos][idx][0].set_color(i_color)
+                self.pointers[pos][idx][1].set_color(self.bg_color)
+                self.pointers[pos][idx][2].set_color(k_color)
+            elif idx == k == j:
+                self.pointers[pos][idx][0].set_color(j_color)
+                self.pointers[pos][idx][1].set_color(self.bg_color)
+                self.pointers[pos][idx][2].set_color(k_color)
+            elif idx == i:
+                self.pointers[pos][idx][0].set_color(self.bg_color)
+                self.pointers[pos][idx][1].set_color(i_color)
+                self.pointers[pos][idx][2].set_color(self.bg_color)
+            elif idx == j:
+                self.pointers[pos][idx][0].set_color(self.bg_color)
+                self.pointers[pos][idx][1].set_color(j_color)
+                self.pointers[pos][idx][2].set_color(self.bg_color)
+            elif idx == k:
+                self.pointers[pos][idx][0].set_color(self.bg_color)
+                self.pointers[pos][idx][1].set_color(k_color)
+                self.pointers[pos][idx][2].set_color(self.bg_color)
+            else:
+                self.pointers[pos][idx][0].set_color(self.bg_color)
+                self.pointers[pos][idx][1].set_color(self.bg_color)
+                self.pointers[pos][idx][2].set_color(self.bg_color)
+
+    # Highlight blocks for 1 index
+    def highlight_blocks_1(
+        self,
+        i: int,
+        i_color=mn.RED,
+    ):
+        """
+        Highlight a single block in the string visualization.
+
+        Args:
+            i (int): Index of the block to highlight.
+            i_color: Color for the highlighted block.
+        """
+        for idx, mob in enumerate(self.letters_sq_mob):
+            mob.set_fill(i_color if idx == i else self.fill_color)
+
+    # Highlight blocks for 2 indices
+    def highlight_blocks_2(
+        self,
+        i: int,
+        j: int,
+        i_color=mn.RED,
+        j_color=mn.BLUE,
+        ij_color=mn.PURPLE,
+    ):
+        """
+        Highlight two blocks in the string visualization.
+        If indices coincide, use a special color.
+
+        Args:
+            i (int): First index to highlight.
+            j (int): Second index to highlight.
+            i_color: Color for the first index.
+            j_color: Color for the second index.
+            ij_color: Color if both indices are the same.
+        """
+        for idx, mob in enumerate(self.letters_sq_mob):
+            if idx == i == j:
+                mob.set_fill(ij_color)
+            elif idx == i:
+                mob.set_fill(i_color)
+            elif idx == j:
+                mob.set_fill(j_color)
+            else:
+                mob.set_fill(self.fill_color)
+
+    # Highlight blocks for 3 indices
+    def highlight_blocks_3(
+        self,
+        i: int,
+        j: int,
+        k: int,
+        i_color=mn.RED,
+        j_color=mn.GREEN,
+        k_color=mn.BLUE,
+        ijk_color=mn.BLACK,
+        ij_color=mn.YELLOW_E,
+        ik_color=mn.PURPLE,
+        jk_color=mn.TEAL,
+    ):
+        """
+        Highlight three blocks in the string visualization.
+        Use special colors for index coincidences.
+
+        Args:
+            i (int): First index to highlight.
+            j (int): Second index to highlight.
+            k (int): Third index to highlight.
+            i_color: Color for the first index.
+            j_color: Color for the second index.
+            k_color: Color for the third index.
+            ijk_color: Color if all three indices are the same.
+            ij_color: Color if i and j are the same.
+            ik_color: Color if i and k are the same.
+            jk_color: Color if j and k are the same.
+        """
+        for idx, mob in enumerate(self.letters_sq_mob):
+            if idx == i == j == k:
+                mob.set_fill(ijk_color)
+            elif idx == i == j:
+                mob.set_fill(ij_color)
+            elif idx == i == k:
+                mob.set_fill(ik_color)
+            elif idx == k == j:
+                mob.set_fill(jk_color)
+            elif idx == i:
+                mob.set_fill(i_color)
+            elif idx == j:
+                mob.set_fill(j_color)
+            elif idx == k:
+                mob.set_fill(k_color)
+            else:
+                mob.set_fill(self.fill_color)
+
+
 class RelativeText(mn.VGroup):
     def __init__(
         self,
@@ -461,11 +867,11 @@ class CodeBlock(mn.VGroup):
         code_lines: List[str],
         vector: np.ndarray,
         pre_code_lines: List[str] = [],
-        font_size=25,
+        font_size=20,
         font="",
-        font_color_regular="WHITE",
-        font_color_highlight="YELLOW",
-        bg_highlight_color="BLUE",
+        font_color_regular: mn.utils.color.core.ManimColor | str = "WHITE",
+        font_color_highlight: mn.utils.color.core.ManimColor | str = "YELLOW",
+        bg_highlight_color: mn.utils.color.core.ManimColor | str = "BLUE",
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         inter_block_buff=0.5,
         pre_code_buff=0.15,
@@ -603,13 +1009,13 @@ class TitleText(mn.VGroup):
         # --------- text --------------
         text: str,
         vector: np.ndarray = mn.UP * 2.7,
-        text_color: str = "WHITE",
+        text_color: mn.utils.color.core.ManimColor | str = "WHITE",
         font: str = "",
         font_size: float = 50,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         # ------- flourish ------------
         flourish: bool = False,
-        flourish_color: str = "WHITE",
+        flourish_color: mn.utils.color.core.ManimColor | str = "WHITE",
         flourish_stroke_width: float = 4,
         flourish_padding: float = 0.2,
         flourish_buff: float = 0.15,
@@ -618,7 +1024,7 @@ class TitleText(mn.VGroup):
         spiral_turns: float = 1.0,
         # ------- undercaption ------------
         undercaption: str = "",
-        undercaption_color: str = "WHITE",
+        undercaption_color: mn.utils.color.core.ManimColor | str = "WHITE",
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
         undercaption_buff: float = 0.23,
@@ -674,7 +1080,7 @@ class TitleText(mn.VGroup):
     def _create_flourish(
         self,
         width: float,
-        color: str,
+        color: mn.utils.color.core.ManimColor | str,
         stroke_width: float,
         spiral_radius: float,
         spiral_turns: float,
@@ -781,7 +1187,7 @@ class TitleLogo(mn.VGroup):
         svg_vector: np.ndarray = mn.ORIGIN,
         # --------- text --------------
         text: str | None = None,
-        text_color: str = "WHITE",
+        text_color: mn.utils.color.core.ManimColor | str = "WHITE",
         font: str = "",
         font_size: float = 31,
         text_vector: np.ndarray = mn.ORIGIN,
