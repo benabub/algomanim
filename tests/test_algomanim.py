@@ -1,5 +1,5 @@
 import pytest  # type: ignore
-from algomanim.algomanim import Array, RelativeText, CodeBlock, TitleText  # type: ignore
+from algomanim.algomanim import Array, RelativeTextValue, CodeBlock, TitleText  # type: ignore
 import manim as mn  # type: ignore
 from unittest.mock import Mock, patch
 
@@ -266,7 +266,7 @@ class TestTopText:
         mob_center = mn.Dot(mn.ORIGIN)
         var1 = ("a", lambda: 5, mn.RED)
         var2 = ("b", lambda: 10, mn.BLUE)
-        return RelativeText(mob_center, var1, var2)
+        return RelativeTextValue(mob_center, var1, var2)
 
     def test_init_basic(self, toptext_obj):
         assert toptext_obj.mob_center is not None
@@ -279,7 +279,7 @@ class TestTopText:
     def test_init_single_var(self):
         mob_center = mn.Dot(mn.ORIGIN)
         var = ("x", lambda: 42, mn.GREEN)
-        toptext = RelativeText(mob_center, var)
+        toptext = RelativeTextValue(mob_center, var)
 
         assert len(toptext.vars) == 1
         assert len(toptext.submobjects) == 1
@@ -289,7 +289,7 @@ class TestTopText:
         var1 = ("a", lambda: 1, mn.RED)
         var2 = ("b", lambda: 2, mn.BLUE)
         var3 = ("c", lambda: 3, mn.GREEN)
-        toptext = RelativeText(mob_center, var1, var2, var3)
+        toptext = RelativeTextValue(mob_center, var1, var2, var3)
 
         assert len(toptext.vars) == 3
         assert len(toptext.submobjects) == 3
@@ -298,7 +298,7 @@ class TestTopText:
         mob_center = mn.Dot(mn.RIGHT * 2)
         var = ("test", lambda: "hello", mn.YELLOW)
 
-        toptext = RelativeText(
+        toptext = RelativeTextValue(
             mob_center, var, font_size=30, buff=1.0, vector=mn.DOWN * 2
         )
 
@@ -333,13 +333,13 @@ class TestTopText:
 
         mob_center = mn.Dot(mn.ORIGIN)
         var = ("counter", get_value, mn.WHITE)
-        toptext = RelativeText(mob_center, var)
+        toptext = RelativeTextValue(mob_center, var)
 
         text_content = str(toptext.submobjects[0].text)
         assert text_content in ["counter = 1", "counter=1"]
 
         counter[0] = 1
-        new_toptext = RelativeText(mob_center, var)
+        new_toptext = RelativeTextValue(mob_center, var)
         text_content = str(new_toptext.submobjects[0].text)
         assert text_content in ["counter = 2", "counter=2"]
 
@@ -361,7 +361,7 @@ class TestTopText:
     def test_empty_vars_handling(self):
         mob_center = mn.Dot(mn.ORIGIN)
 
-        toptext = RelativeText(mob_center)
+        toptext = RelativeTextValue(mob_center)
         assert len(toptext.vars) == 0
         assert len(toptext.submobjects) == 0
 
@@ -375,7 +375,7 @@ class TestTopText:
             ("bool", lambda: True, mn.YELLOW),
         ]
 
-        toptext = RelativeText(mob_center, *vars)
+        toptext = RelativeTextValue(mob_center, *vars)
 
         texts = list(toptext.submobjects)
         assert str(texts[0].text) in ["int = 42", "int=42"]

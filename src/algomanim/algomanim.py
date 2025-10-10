@@ -1,4 +1,4 @@
-from typing import List, Tuple, Callable, Any, Union, Optional
+from typing import List, Tuple, Callable, Any, Union, Optional, Literal
 import numpy as np
 import manim as mn  # type: ignore
 from manim import ManimColor
@@ -10,7 +10,7 @@ class Array(mn.VGroup):
         arr: List,
         vector: np.ndarray,
         font="",
-        bg_color: mn.utils.color.core.ManimColor | str = mn.DARK_GRAY,
+        bg_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
         """
@@ -146,7 +146,7 @@ class Array(mn.VGroup):
         self,
         val: int,
         pos: int = 1,
-        pnt_color=mn.WHITE,
+        pnt_color: ManimColor | str = mn.WHITE,
     ):
         """
         Highlight a pointer at one side (top or bottom) in the
@@ -166,7 +166,7 @@ class Array(mn.VGroup):
         self,
         i: int,
         pos: int = 0,
-        i_color=mn.RED,
+        i_color: ManimColor | str = mn.RED,
     ):
         """
         Highlight a single pointer at one side (top | bottom) in the
@@ -187,8 +187,8 @@ class Array(mn.VGroup):
         i: int,
         j: int,
         pos: int = 0,
-        i_color=mn.RED,
-        j_color=mn.BLUE,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.BLUE,
     ):
         """
         Highlight two pointers at one side (top | bottom) in the
@@ -198,6 +198,7 @@ class Array(mn.VGroup):
             i (int), j (int): Indices of the block whose pointer to highlight.
             pos (int): 0 for top pointers, 1 for bottom.
             i_color: Color for the highlighted pointer.
+            j_color: Color for the highlighted pointer.
         """
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
@@ -225,9 +226,9 @@ class Array(mn.VGroup):
         j: int,
         k: int,
         pos: int = 0,
-        i_color=mn.RED,
-        j_color=mn.GREEN,
-        k_color=mn.BLUE,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.GREEN,
+        k_color: ManimColor | str = mn.BLUE,
     ):
         """
         Highlight three pointers at one side (top | bottom) in the
@@ -238,6 +239,8 @@ class Array(mn.VGroup):
                 to highlight.
             pos (int): 0 for top pointers, 1 for bottom.
             i_color: Color for the highlighted pointer.
+            j_color: Color for the highlighted pointer.
+            k_color: Color for the highlighted pointer.
         """
         for idx, _ in enumerate(self.sq_mob):
             if idx == i == j == k:
@@ -277,7 +280,7 @@ class Array(mn.VGroup):
     def highlight_blocks_1(
         self,
         i: int,
-        i_color=mn.RED,
+        i_color: ManimColor | str = mn.RED,
     ):
         """
         Highlight a single block in the array visualization.
@@ -294,9 +297,9 @@ class Array(mn.VGroup):
         self,
         i: int,
         j: int,
-        i_color=mn.RED,
-        j_color=mn.BLUE,
-        ij_color=mn.PURPLE,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.BLUE,
+        ij_color: ManimColor | str = mn.PURPLE,
     ):
         """
         Highlight two blocks in the array visualization.
@@ -325,13 +328,13 @@ class Array(mn.VGroup):
         i: int,
         j: int,
         k: int,
-        i_color=mn.RED,
-        j_color=mn.GREEN,
-        k_color=mn.BLUE,
-        ijk_color=mn.BLACK,
-        ij_color=mn.YELLOW_E,
-        ik_color=mn.PURPLE,
-        jk_color=mn.TEAL,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.GREEN,
+        k_color: ManimColor | str = mn.BLUE,
+        ijk_color: ManimColor | str = mn.BLACK,
+        ij_color: ManimColor | str = mn.YELLOW_E,
+        ik_color: ManimColor | str = mn.PURPLE,
+        jk_color: ManimColor | str = mn.TEAL,
     ):
         """
         Highlight three blocks in the array visualization.
@@ -373,11 +376,13 @@ class String(mn.VGroup):
         self,
         string: str,
         vector: np.ndarray,
+        square_side_length: float = 0.6,
         font="",
+        font_size: float = 40,
         weight: str = "NORMAL",
-        color: mn.utils.color.core.ManimColor | str = mn.WHITE,
-        bg_color=mn.DARK_GRAY,
-        fill_color=mn.GRAY,
+        color: ManimColor | str = mn.WHITE,
+        bg_color: ManimColor | str = mn.DARK_GRAY,
+        fill_color: ManimColor | str = mn.GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
         """
@@ -406,7 +411,7 @@ class String(mn.VGroup):
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         SQUARE_CONFIG = {
-            "side_length": 0.7,
+            "side_length": square_side_length,
             "color": bg_color,
             "fill_opacity": 1,
         }
@@ -414,6 +419,7 @@ class String(mn.VGroup):
             "font": font,
             "color": color,
             "weight": weight,
+            "font_size": font_size,
         }
 
         # Construction: Create square mobjects for each array element
@@ -552,7 +558,7 @@ class String(mn.VGroup):
         self,
         val: int,
         pos: int = 1,
-        pnt_color=mn.WHITE,
+        pnt_color: ManimColor | str = mn.WHITE,
     ):
         """
         Highlight a pointer at one side (top or bottom) in the
@@ -572,7 +578,7 @@ class String(mn.VGroup):
         self,
         i: int,
         pos: int = 0,
-        i_color=mn.RED,
+        i_color: ManimColor | str = mn.RED,
     ):
         """
         Highlight a single pointer at one side (top | bottom) in the
@@ -593,8 +599,8 @@ class String(mn.VGroup):
         i: int,
         j: int,
         pos: int = 0,
-        i_color=mn.RED,
-        j_color=mn.BLUE,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.BLUE,
     ):
         """
         Highlight two pointers at one side (top | bottom) in the
@@ -631,9 +637,9 @@ class String(mn.VGroup):
         j: int,
         k: int,
         pos: int = 0,
-        i_color=mn.RED,
-        j_color=mn.GREEN,
-        k_color=mn.BLUE,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.GREEN,
+        k_color: ManimColor | str = mn.BLUE,
     ):
         """
         Highlight three pointers at one side (top | bottom) in the
@@ -683,7 +689,7 @@ class String(mn.VGroup):
     def highlight_blocks_1(
         self,
         i: int,
-        i_color=mn.RED,
+        i_color: ManimColor | str = mn.RED,
     ):
         """
         Highlight a single block in the string visualization.
@@ -700,9 +706,9 @@ class String(mn.VGroup):
         self,
         i: int,
         j: int,
-        i_color=mn.RED,
-        j_color=mn.BLUE,
-        ij_color=mn.PURPLE,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.BLUE,
+        ij_color: ManimColor | str = mn.PURPLE,
     ):
         """
         Highlight two blocks in the string visualization.
@@ -731,13 +737,13 @@ class String(mn.VGroup):
         i: int,
         j: int,
         k: int,
-        i_color=mn.RED,
-        j_color=mn.GREEN,
-        k_color=mn.BLUE,
-        ijk_color=mn.BLACK,
-        ij_color=mn.YELLOW_E,
-        ik_color=mn.PURPLE,
-        jk_color=mn.TEAL,
+        i_color: ManimColor | str = mn.RED,
+        j_color: ManimColor | str = mn.GREEN,
+        k_color: ManimColor | str = mn.BLUE,
+        ijk_color: ManimColor | str = mn.BLACK,
+        ij_color: ManimColor | str = mn.YELLOW_E,
+        ik_color: ManimColor | str = mn.PURPLE,
+        jk_color: ManimColor | str = mn.TEAL,
     ):
         """
         Highlight three blocks in the string visualization.
@@ -774,7 +780,7 @@ class String(mn.VGroup):
                 mob.set_fill(self.fill_color)
 
 
-class RelativeText(mn.VGroup):
+class RelativeTextValue(mn.VGroup):
     def __init__(
         self,
         mob_center: mn.Mobject,
@@ -787,7 +793,8 @@ class RelativeText(mn.VGroup):
         vector: np.ndarray = mn.UP * 1.2,
     ):
         """
-        Text group positioned relative to another mobject with update capability.
+        A text group that shows scope variables values, positioned relative
+        to another mobject and capable of updating.
 
         Args:
             mob_center: Reference mobject for positioning.
@@ -837,7 +844,7 @@ class RelativeText(mn.VGroup):
     def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
         # Create a new object with the same parameters
         # (vars may be updated)
-        new_group = RelativeText(
+        new_group = RelativeTextValue(
             self.mob_center,
             *self.vars,
             font_size=self.font_size,
@@ -861,6 +868,67 @@ class RelativeText(mn.VGroup):
                 scene.add(self)
 
 
+class RelativeText(mn.VGroup):
+    def __init__(
+        self,
+        text: str,
+        mob_center: mn.Mobject,
+        vector: np.ndarray = mn.ORIGIN,
+        font="",
+        font_size=35,
+        font_color: str | ManimColor = mn.WHITE,
+        weight: str = "NORMAL",
+        align_edge: Literal["UP", "DOWN", "LEFT", "RIGHT"] | None = None,
+    ):
+        """
+        Text group positioned relative to another mobject.
+
+        Args:
+            text: The text string to visualize
+            mob_center: Reference mobject for positioning.
+            vector: Offset vector from reference mobject center.
+            font: Text font family.
+            font_size: Text font size.
+            font_color: Text color.
+            weight: Text weight
+            align_edge: Edge to align with reference mobject. If None, centers at position.
+        """
+        super().__init__()
+
+        text_mob = mn.Text(
+            text,
+            font=font,
+            color=font_color,
+            font_size=font_size,
+            weight=weight,
+        )
+
+        if align_edge:
+            if align_edge in ["UP", "up"]:
+                text_mob.move_to(mob_center.get_center())
+                text_mob.align_to(mob_center, mn.UP)
+                text_mob.shift(vector)
+            elif align_edge in ["DOWN", "down"]:
+                text_mob.move_to(mob_center.get_center())
+                text_mob.align_to(mob_center, mn.DOWN)
+                text_mob.shift(vector)
+            elif align_edge in ["RIGHT", "right"]:
+                text_mob.move_to(mob_center.get_center())
+                text_mob.align_to(mob_center, mn.RIGHT)
+                text_mob.shift(vector)
+            elif align_edge in ["LEFT", "left"]:
+                text_mob.move_to(mob_center.get_center())
+                text_mob.align_to(mob_center, mn.LEFT)
+                text_mob.shift(vector)
+        else:
+            text_mob.move_to(mob_center.get_center() + vector)
+
+        self.add(text_mob)
+
+    def first_appear(self, scene: mn.Scene, time=0.5):
+        scene.play(mn.FadeIn(self), run_time=time)
+
+
 class CodeBlock(mn.VGroup):
     def __init__(
         self,
@@ -869,9 +937,9 @@ class CodeBlock(mn.VGroup):
         pre_code_lines: List[str] = [],
         font_size=20,
         font="",
-        font_color_regular: mn.utils.color.core.ManimColor | str = "WHITE",
-        font_color_highlight: mn.utils.color.core.ManimColor | str = "YELLOW",
-        bg_highlight_color: mn.utils.color.core.ManimColor | str = "BLUE",
+        font_color_regular: ManimColor | str = "WHITE",
+        font_color_highlight: ManimColor | str = "YELLOW",
+        bg_highlight_color: ManimColor | str = "BLUE",
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         inter_block_buff=0.5,
         pre_code_buff=0.15,
@@ -1009,13 +1077,13 @@ class TitleText(mn.VGroup):
         # --------- text --------------
         text: str,
         vector: np.ndarray = mn.UP * 2.7,
-        text_color: mn.utils.color.core.ManimColor | str = "WHITE",
+        text_color: ManimColor | str = "WHITE",
         font: str = "",
         font_size: float = 50,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         # ------- flourish ------------
         flourish: bool = False,
-        flourish_color: mn.utils.color.core.ManimColor | str = "WHITE",
+        flourish_color: ManimColor | str = "WHITE",
         flourish_stroke_width: float = 4,
         flourish_padding: float = 0.2,
         flourish_buff: float = 0.15,
@@ -1024,7 +1092,7 @@ class TitleText(mn.VGroup):
         spiral_turns: float = 1.0,
         # ------- undercaption ------------
         undercaption: str = "",
-        undercaption_color: mn.utils.color.core.ManimColor | str = "WHITE",
+        undercaption_color: ManimColor | str = "WHITE",
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
         undercaption_buff: float = 0.23,
@@ -1080,7 +1148,7 @@ class TitleText(mn.VGroup):
     def _create_flourish(
         self,
         width: float,
-        color: mn.utils.color.core.ManimColor | str,
+        color: ManimColor | str,
         stroke_width: float,
         spiral_radius: float,
         spiral_turns: float,
@@ -1187,7 +1255,7 @@ class TitleLogo(mn.VGroup):
         svg_vector: np.ndarray = mn.ORIGIN,
         # --------- text --------------
         text: str | None = None,
-        text_color: mn.utils.color.core.ManimColor | str = "WHITE",
+        text_color: ManimColor | str = "WHITE",
         font: str = "",
         font_size: float = 31,
         text_vector: np.ndarray = mn.ORIGIN,
