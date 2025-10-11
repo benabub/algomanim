@@ -146,9 +146,9 @@ class Array(mn.VGroup):
         self,
         idx_list: list[int],
         pos: int = 0,
-        i_color: ManimColor | str = mn.RED,
-        j_color: ManimColor | str = mn.GREEN,
-        k_color: ManimColor | str = mn.BLUE,
+        color_1: ManimColor | str = mn.RED,
+        color_2: ManimColor | str = mn.GREEN,
+        color_3: ManimColor | str = mn.BLUE,
     ):
         """
         Highlight pointers at one side (top | bottom) in the
@@ -157,9 +157,9 @@ class Array(mn.VGroup):
         Args:
             idx_list: List of indices of the block whose pointer to highlight.
             pos (int): 0 for top side, 1 for bottom.
-            i_color: idx_list[0] highlighted pointer color.
-            j_color: idx_list[1] highlighted pointer color.
-            k_color: idx_list[2] highlighted pointer color.
+            color_1: idx_list[0] highlighted pointer color.
+            color_2: idx_list[1] highlighted pointer color.
+            color_3: idx_list[2] highlighted pointer color.
         """
 
         if not 1 <= len(idx_list) <= 3:
@@ -173,7 +173,7 @@ class Array(mn.VGroup):
 
             for idx, _ in enumerate(self.sq_mob):
                 self.pointers_list[pos][idx][1].set_color(
-                    i_color if idx == i else self.bg_color
+                    color_1 if idx == i else self.bg_color
                 )
 
         elif len(idx_list) == 2:
@@ -182,16 +182,16 @@ class Array(mn.VGroup):
 
             for idx, _ in enumerate(self.sq_mob):
                 if idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(j_color)
+                    self.pointers_list[pos][idx][2].set_color(color_2)
                 elif idx == i:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(i_color)
+                    self.pointers_list[pos][idx][1].set_color(color_1)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 elif idx == j:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(j_color)
+                    self.pointers_list[pos][idx][1].set_color(color_2)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 else:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
@@ -205,32 +205,32 @@ class Array(mn.VGroup):
 
             for idx, _ in enumerate(self.sq_mob):
                 if idx == i == j == k:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
-                    self.pointers_list[pos][idx][1].set_color(j_color)
-                    self.pointers_list[pos][idx][2].set_color(k_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
+                    self.pointers_list[pos][idx][1].set_color(color_2)
+                    self.pointers_list[pos][idx][2].set_color(color_3)
                 elif idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(j_color)
+                    self.pointers_list[pos][idx][2].set_color(color_2)
                 elif idx == i == k:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(k_color)
+                    self.pointers_list[pos][idx][2].set_color(color_3)
                 elif idx == k == j:
-                    self.pointers_list[pos][idx][0].set_color(j_color)
+                    self.pointers_list[pos][idx][0].set_color(color_2)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(k_color)
+                    self.pointers_list[pos][idx][2].set_color(color_3)
                 elif idx == i:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(i_color)
+                    self.pointers_list[pos][idx][1].set_color(color_1)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 elif idx == j:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(j_color)
+                    self.pointers_list[pos][idx][1].set_color(color_2)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 elif idx == k:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(k_color)
+                    self.pointers_list[pos][idx][1].set_color(color_3)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 else:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
@@ -260,13 +260,13 @@ class Array(mn.VGroup):
     def highlight_blocks(
         self,
         idx_list: list[int],
-        i_color: ManimColor | str = mn.RED,
-        j_color: ManimColor | str = mn.GREEN,
-        k_color: ManimColor | str = mn.BLUE,
-        ijk_color: ManimColor | str = mn.BLACK,
-        ij_color: ManimColor | str = mn.YELLOW_E,
-        ik_color: ManimColor | str = mn.PURPLE,
-        jk_color: ManimColor | str = mn.TEAL,
+        color_1: ManimColor | str = mn.RED,
+        color_2: ManimColor | str = mn.GREEN,
+        color_3: ManimColor | str = mn.BLUE,
+        ijcolor_3: ManimColor | str = mn.BLACK,
+        icolor_2: ManimColor | str = mn.YELLOW_E,
+        icolor_3: ManimColor | str = mn.PURPLE,
+        jcolor_3: ManimColor | str = mn.TEAL,
     ):
         """
         Highlight blocks in the array visualization.
@@ -274,13 +274,13 @@ class Array(mn.VGroup):
 
         Args:
             idx_list: List of indices to highlight.
-            i_color: Color for the idx_list[0].
-            j_color: Color for the idx_list[1].
-            k_color: Color for the idx_list[2].
-            ijk_color: Color if all three indices are the same.
-            ij_color: Color if idx_list[0] == idx_list[1].
-            ik_color: Color if idx_list[0] == idx_list[2].
-            jk_color: Color if idx_list[1] == idx_list[2].
+            color_1: Color for the idx_list[0].
+            color_2: Color for the idx_list[1].
+            color_3: Color for the idx_list[2].
+            ijcolor_3: Color if all three indices are the same.
+            icolor_2: Color if idx_list[0] == idx_list[1].
+            icolor_3: Color if idx_list[0] == idx_list[2].
+            jcolor_3: Color if idx_list[1] == idx_list[2].
         """
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -289,7 +289,7 @@ class Array(mn.VGroup):
             i = idx_list[0]
 
             for idx, mob in enumerate(self.sq_mob):
-                mob.set_fill(i_color if idx == i else self.bg_color)
+                mob.set_fill(color_1 if idx == i else self.bg_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
@@ -297,11 +297,11 @@ class Array(mn.VGroup):
 
             for idx, mob in enumerate(self.sq_mob):
                 if idx == i == j:
-                    mob.set_fill(ij_color)
+                    mob.set_fill(icolor_2)
                 elif idx == i:
-                    mob.set_fill(i_color)
+                    mob.set_fill(color_1)
                 elif idx == j:
-                    mob.set_fill(j_color)
+                    mob.set_fill(color_2)
                 else:
                     mob.set_fill(self.bg_color)
 
@@ -312,19 +312,19 @@ class Array(mn.VGroup):
 
             for idx, mob in enumerate(self.sq_mob):
                 if idx == i == j == k:
-                    mob.set_fill(ijk_color)
+                    mob.set_fill(ijcolor_3)
                 elif idx == i == j:
-                    mob.set_fill(ij_color)
+                    mob.set_fill(icolor_2)
                 elif idx == i == k:
-                    mob.set_fill(ik_color)
+                    mob.set_fill(icolor_3)
                 elif idx == k == j:
-                    mob.set_fill(jk_color)
+                    mob.set_fill(jcolor_3)
                 elif idx == i:
-                    mob.set_fill(i_color)
+                    mob.set_fill(color_1)
                 elif idx == j:
-                    mob.set_fill(j_color)
+                    mob.set_fill(color_2)
                 elif idx == k:
-                    mob.set_fill(k_color)
+                    mob.set_fill(color_3)
                 else:
                     mob.set_fill(self.bg_color)
 
@@ -515,9 +515,9 @@ class String(mn.VGroup):
         self,
         idx_list: list[int],
         pos: int = 0,
-        i_color: ManimColor | str = mn.RED,
-        j_color: ManimColor | str = mn.GREEN,
-        k_color: ManimColor | str = mn.BLUE,
+        color_1: ManimColor | str = mn.RED,
+        color_2: ManimColor | str = mn.GREEN,
+        color_3: ManimColor | str = mn.BLUE,
     ):
         """
         Highlight pointers at one side (top | bottom) in the
@@ -526,9 +526,9 @@ class String(mn.VGroup):
         Args:
             idx_list: List of indices of the block whose pointer to highlight.
             pos (int): 0 for top side, 1 for bottom.
-            i_color: idx_list[0] highlighted pointer color.
-            j_color: idx_list[1] highlighted pointer color.
-            k_color: idx_list[2] highlighted pointer color.
+            color_1: idx_list[0] highlighted pointer color.
+            color_2: idx_list[1] highlighted pointer color.
+            color_3: idx_list[2] highlighted pointer color.
         """
 
         if not 1 <= len(idx_list) <= 3:
@@ -542,7 +542,7 @@ class String(mn.VGroup):
 
             for idx, _ in enumerate(self.letters_sq_mob):
                 self.pointers_list[pos][idx][1].set_color(
-                    i_color if idx == i else self.bg_color
+                    color_1 if idx == i else self.bg_color
                 )
 
         elif len(idx_list) == 2:
@@ -551,16 +551,16 @@ class String(mn.VGroup):
 
             for idx, _ in enumerate(self.letters_sq_mob):
                 if idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(j_color)
+                    self.pointers_list[pos][idx][2].set_color(color_2)
                 elif idx == i:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(i_color)
+                    self.pointers_list[pos][idx][1].set_color(color_1)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 elif idx == j:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(j_color)
+                    self.pointers_list[pos][idx][1].set_color(color_2)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 else:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
@@ -574,32 +574,32 @@ class String(mn.VGroup):
 
             for idx, _ in enumerate(self.letters_sq_mob):
                 if idx == i == j == k:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
-                    self.pointers_list[pos][idx][1].set_color(j_color)
-                    self.pointers_list[pos][idx][2].set_color(k_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
+                    self.pointers_list[pos][idx][1].set_color(color_2)
+                    self.pointers_list[pos][idx][2].set_color(color_3)
                 elif idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(j_color)
+                    self.pointers_list[pos][idx][2].set_color(color_2)
                 elif idx == i == k:
-                    self.pointers_list[pos][idx][0].set_color(i_color)
+                    self.pointers_list[pos][idx][0].set_color(color_1)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(k_color)
+                    self.pointers_list[pos][idx][2].set_color(color_3)
                 elif idx == k == j:
-                    self.pointers_list[pos][idx][0].set_color(j_color)
+                    self.pointers_list[pos][idx][0].set_color(color_2)
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(k_color)
+                    self.pointers_list[pos][idx][2].set_color(color_3)
                 elif idx == i:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(i_color)
+                    self.pointers_list[pos][idx][1].set_color(color_1)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 elif idx == j:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(j_color)
+                    self.pointers_list[pos][idx][1].set_color(color_2)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 elif idx == k:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(k_color)
+                    self.pointers_list[pos][idx][1].set_color(color_3)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
                 else:
                     self.pointers_list[pos][idx][0].set_color(self.bg_color)
@@ -609,13 +609,13 @@ class String(mn.VGroup):
     def highlight_blocks(
         self,
         idx_list: list[int],
-        i_color: ManimColor | str = mn.RED,
-        j_color: ManimColor | str = mn.GREEN,
-        k_color: ManimColor | str = mn.BLUE,
-        ijk_color: ManimColor | str = mn.BLACK,
-        ij_color: ManimColor | str = mn.YELLOW_E,
-        ik_color: ManimColor | str = mn.PURPLE,
-        jk_color: ManimColor | str = mn.TEAL,
+        color_1: ManimColor | str = mn.RED,
+        color_2: ManimColor | str = mn.GREEN,
+        color_3: ManimColor | str = mn.BLUE,
+        ijcolor_3: ManimColor | str = mn.BLACK,
+        icolor_2: ManimColor | str = mn.YELLOW_E,
+        icolor_3: ManimColor | str = mn.PURPLE,
+        jcolor_3: ManimColor | str = mn.TEAL,
     ):
         """
         Highlight blocks in the string visualization.
@@ -623,13 +623,13 @@ class String(mn.VGroup):
 
         Args:
             idx_list: List of indices to highlight.
-            i_color: Color for the idx_list[0].
-            j_color: Color for the idx_list[1].
-            k_color: Color for the idx_list[2].
-            ijk_color: Color if all three indices are the same.
-            ij_color: Color if idx_list[0] == idx_list[1].
-            ik_color: Color if idx_list[0] == idx_list[2].
-            jk_color: Color if idx_list[1] == idx_list[2].
+            color_1: Color for the idx_list[0].
+            color_2: Color for the idx_list[1].
+            color_3: Color for the idx_list[2].
+            ijcolor_3: Color if all three indices are the same.
+            icolor_2: Color if idx_list[0] == idx_list[1].
+            icolor_3: Color if idx_list[0] == idx_list[2].
+            jcolor_3: Color if idx_list[1] == idx_list[2].
         """
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -638,7 +638,7 @@ class String(mn.VGroup):
             i = idx_list[0]
 
             for idx, mob in enumerate(self.letters_sq_mob):
-                mob.set_fill(i_color if idx == i else self.fill_color)
+                mob.set_fill(color_1 if idx == i else self.fill_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
@@ -646,11 +646,11 @@ class String(mn.VGroup):
 
             for idx, mob in enumerate(self.letters_sq_mob):
                 if idx == i == j:
-                    mob.set_fill(ij_color)
+                    mob.set_fill(icolor_2)
                 elif idx == i:
-                    mob.set_fill(i_color)
+                    mob.set_fill(color_1)
                 elif idx == j:
-                    mob.set_fill(j_color)
+                    mob.set_fill(color_2)
                 else:
                     mob.set_fill(self.fill_color)
 
@@ -661,19 +661,19 @@ class String(mn.VGroup):
 
             for idx, mob in enumerate(self.letters_sq_mob):
                 if idx == i == j == k:
-                    mob.set_fill(ijk_color)
+                    mob.set_fill(ijcolor_3)
                 elif idx == i == j:
-                    mob.set_fill(ij_color)
+                    mob.set_fill(icolor_2)
                 elif idx == i == k:
-                    mob.set_fill(ik_color)
+                    mob.set_fill(icolor_3)
                 elif idx == k == j:
-                    mob.set_fill(jk_color)
+                    mob.set_fill(jcolor_3)
                 elif idx == i:
-                    mob.set_fill(i_color)
+                    mob.set_fill(color_1)
                 elif idx == j:
-                    mob.set_fill(j_color)
+                    mob.set_fill(color_2)
                 elif idx == k:
-                    mob.set_fill(k_color)
+                    mob.set_fill(color_3)
                 else:
                     mob.set_fill(self.fill_color)
 
