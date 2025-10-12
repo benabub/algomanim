@@ -5,6 +5,18 @@ from manim import ManimColor
 
 
 def square_scale(size: Literal["s", "m", "l"]) -> dict[str, float]:
+    """Returns scaling parameters for a square mobject.
+
+    Args:
+        size: Size identifier - 's' (small), 'm' (medium), 'l' (large).
+
+    Returns:
+        Dictionary containing 'side_length' and 'font_size'.
+
+    Raises:
+        ValueError: if invalid size is provided.
+    """
+
     SIZES = {
         "s": {"side_length": 0.5, "font_size": 35},
         "m": {"side_length": 0.6, "font_size": 40},
@@ -17,6 +29,20 @@ def square_scale(size: Literal["s", "m", "l"]) -> dict[str, float]:
 
 
 class Array(mn.VGroup):
+    """Array visualization as a VGroup of squares with values and pointers.
+
+    Args:
+        arr: The array of values to visualize.
+        vector: Position offset vector for array placement.
+        font: Font family for text elements.
+        square_size: Size preset for squares - 's', 'm', or 'l'.
+        bg_color: Background color for squares and default pointer color.
+        mob_center: Mobject to use as center reference for array placement.
+
+    Raises:
+        ValueError: If square_size is not 's', 'm', or 'l'.
+    """
+
     def __init__(
         self,
         arr: List,
@@ -26,19 +52,6 @@ class Array(mn.VGroup):
         bg_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
-        """
-        Create a Manim array visualization as a VGroup.
-
-        Args:
-            arr (List[int]): The array of values to visualize.
-            position (mn.Mobject): The position to place the array
-            on the screen.
-
-        Attributes:
-            arr (List[int]): The data array.
-            sq_mob (mn.VGroup): Group of square mobjects for array cells.
-            num_mob (mn.VGroup): Group of text mobjects for array values.
-        """
         # Call __init__ of the parent classes
         super().__init__()
         # Add class attributes
@@ -117,6 +130,13 @@ class Array(mn.VGroup):
         self.add(*[ptr for group in self.pointers_list for ptr in group])
 
     def first_appear(self, scene: mn.Scene, time=0.5):
+        """Animate the initial appearance of the array in scene.
+
+        Args:
+            scene: The scene to play the animation in.
+            time: Duration of the fade-in animation.
+        """
+
         scene.play(mn.FadeIn(self), run_time=time)
 
     def update_numbers(
@@ -126,20 +146,19 @@ class Array(mn.VGroup):
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
-        """
-        Update all text mobjects in the array.
-        Can perform the update with or without animation.
+        """Update all text mobjects in the array.
 
         Args:
-            scene: The scene to play animations in
-            new_values: New array values to display
-            animate: Whether to animate the changes (True) or
-                     update instantly (False)
-            run_time: Duration of animation if animate=True
+            scene: The scene to play animations in.
+            new_values: New array values to display.
+            animate: Whether to animate the changes (True) or update
+                instantly (False).
+            run_time: Duration of animation if animate=True.
 
         Raises:
-            ValueError: If new_values length doesn't match array length
+            ValueError: If new_values length doesn't match array length.
         """
+
         if len(new_values) != len(self.arr):
             raise ValueError(
                 f"Length mismatch: array has {len(self.arr)} elements, "
@@ -169,16 +188,18 @@ class Array(mn.VGroup):
         color_2: ManimColor | str = mn.BLUE,
         color_3: ManimColor | str = mn.GREEN,
     ):
-        """
-        Highlight pointers at one side (top | bottom) in the
-        array visualization.
+        """Highlight pointers at one side (top | bottom) in array.
 
         Args:
-            idx_list: List of indices of the block whose pointer to highlight.
-            pos (int): 0 for top side, 1 for bottom.
+            idx_list: List of indices of the block whose pointer to
+                highlight.
+            pos: 0 for top side, 1 for bottom.
             color_1: idx_list[0] highlighted pointer color.
             color_2: idx_list[1] highlighted pointer color.
             color_3: idx_list[2] highlighted pointer color.
+
+        Raises:
+            ValueError: If idx_list has invalid length or pos is invalid.
         """
 
         if not 1 <= len(idx_list) <= 3:
@@ -262,15 +283,14 @@ class Array(mn.VGroup):
         pos: int = 1,
         pnt_color: ManimColor | str = mn.WHITE,
     ):
-        """
-        Highlight a pointer at one side (top or bottom) in the
-        array visualization based on integer value comparison.
+        """Highlight pointer based on integer value comparison.
 
         Args:
-            val (int): The value to compare with array elements
-            pos (int): 0 for top pointers, 1 for bottom pointers.
+            val: The value to compare with array elements.
+            pos: 0 for top pointers, 1 for bottom pointers.
             pnt_color: Color for the highlighted pointer.
         """
+
         for idx, _ in enumerate(self.sq_mob):
             self.pointers_list[pos][idx][1].set_color(
                 pnt_color if self.arr[idx] == val else self.bg_color
@@ -287,9 +307,7 @@ class Array(mn.VGroup):
         color_13: ManimColor | str = mn.YELLOW_E,
         color_23: ManimColor | str = mn.TEAL,
     ):
-        """
-        Highlight blocks in the array visualization.
-        Use special colors for index coincidences.
+        """Highlight blocks in the array visualization.
 
         Args:
             idx_list: List of indices to highlight.
@@ -300,7 +318,11 @@ class Array(mn.VGroup):
             color_12: Color if idx_list[0] == idx_list[1].
             color_13: Color if idx_list[0] == idx_list[2].
             color_23: Color if idx_list[1] == idx_list[2].
+
+        Raises:
+            ValueError: If idx_list has invalid length.
         """
+
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
 
@@ -349,6 +371,23 @@ class Array(mn.VGroup):
 
 
 class String(mn.VGroup):
+    """String visualization as a VGroup of character squares with quotes.
+
+    Args:
+        string: The text string to visualize.
+        vector: Position offset for the entire string visualization.
+        square_size: Size preset for squares - 's', 'm', or 'l'.
+        font: Font family for the text.
+        weight: Font weight (NORMAL, BOLD, etc.).
+        color: Text color.
+        bg_color: Scene background color.
+        fill_color: Fill color for character squares.
+        mob_center: Center point for positioning.
+
+    Raises:
+        ValueError: If square_size is not 's', 'm', or 'l'.
+    """
+
     def __init__(
         self,
         string: str,
@@ -361,21 +400,6 @@ class String(mn.VGroup):
         fill_color: ManimColor | str = mn.GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
-        """
-        String visualization class that displays a string as a sequence of
-        characters enclosed in quotes. The class creates a visual representation
-        of a string where each character is contained within a square box.
-
-        Args:
-            string: The text string to visualize
-            vector: Position offset for the entire string visualization
-            font: Font family for the text
-            weight: Font weight (NORMAL, BOLD, etc.)
-            color: Text color
-            bg_color: Scene background color
-            fill_color: Fill color for squares
-            mob_center: Center point for positioning
-        """
         # Call __init__ of the parent classes
         super().__init__()
         # Add class attributes
@@ -483,6 +507,13 @@ class String(mn.VGroup):
         self.add(*[ptr for group in self.pointers_list for ptr in group])
 
     def first_appear(self, scene: mn.Scene, time=0.5):
+        """Animate the initial appearance of the string in scene.
+
+        Args:
+            scene: The scene to play the animation in.
+            time: Duration of the fade-in animation.
+        """
+
         scene.play(mn.FadeIn(self), run_time=time)
 
     def update_numbers(
@@ -492,20 +523,19 @@ class String(mn.VGroup):
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
-        """
-        Update all text mobjects in the string.
-        Can perform the update with or without animation.
+        """Update all text mobjects in the string.
 
         Args:
-            scene: The scene to play animations in
-            new_values: New array values to display
-            animate: Whether to animate the changes (True) or
-                     update instantly (False)
-            run_time: Duration of animation if animate=True
+            scene: The scene to play animations in.
+            new_values: New string values to display.
+            animate: Whether to animate the changes (True) or update
+                instantly (False).
+            run_time: Duration of animation if animate=True.
 
         Raises:
-            ValueError: If new_values length doesn't match string length
+            ValueError: If new_values length doesn't match string length.
         """
+
         if len(new_values) != len(self.string):
             raise ValueError(
                 f"Length mismatch: string has {len(self.string)} elements, "
@@ -537,16 +567,18 @@ class String(mn.VGroup):
         color_2: ManimColor | str = mn.BLUE,
         color_3: ManimColor | str = mn.GREEN,
     ):
-        """
-        Highlight pointers at one side (top | bottom) in the
-        string visualization.
+        """Highlight pointers at one side (top | bottom) in string.
 
         Args:
-            idx_list: List of indices of the block whose pointer to highlight.
-            pos (int): 0 for top side, 1 for bottom.
+            idx_list: List of indices of the block whose pointer to
+                highlight.
+            pos: 0 for top side, 1 for bottom.
             color_1: idx_list[0] highlighted pointer color.
             color_2: idx_list[1] highlighted pointer color.
             color_3: idx_list[2] highlighted pointer color.
+
+        Raises:
+            ValueError: If idx_list has invalid length or pos is invalid.
         """
 
         if not 1 <= len(idx_list) <= 3:
@@ -635,9 +667,7 @@ class String(mn.VGroup):
         color_13: ManimColor | str = mn.YELLOW_E,
         color_23: ManimColor | str = mn.TEAL,
     ):
-        """
-        Highlight blocks in the string visualization.
-        Use special colors for index coincidences.
+        """Highlight blocks in the string visualization.
 
         Args:
             idx_list: List of indices to highlight.
@@ -648,7 +678,11 @@ class String(mn.VGroup):
             color_12: Color if idx_list[0] == idx_list[1].
             color_13: Color if idx_list[0] == idx_list[2].
             color_23: Color if idx_list[1] == idx_list[2].
+
+        Raises:
+            ValueError: If idx_list has invalid length.
         """
+
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
 
@@ -697,6 +731,23 @@ class String(mn.VGroup):
 
 
 class RelativeTextValue(mn.VGroup):
+    """Text group showing scope variables positioned relative to mobject.
+
+    Args:
+        mob_center: Reference mobject for positioning.
+        *vars: Tuples of (name, value_getter, color) for each text.
+        font: Text font family.
+        font_size: Text font size.
+        buff: Spacing between text elements.
+        equal_sign: Whether to use equals sign between name and value.
+        vector: Offset vector from reference mobject center.
+        align_edge: Edge to align with reference mobject. If None,
+            centers at mobject center.
+
+    Raises:
+        ValueError: If align_edge is not valid direction.
+    """
+
     def __init__(
         self,
         mob_center: mn.Mobject,
@@ -708,20 +759,6 @@ class RelativeTextValue(mn.VGroup):
         vector: np.ndarray = mn.UP * 1.2,
         align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
-        """
-        A text group that shows scope variables values, positioned relative
-        to another mobject and capable of updating.
-
-        Args:
-            mob_center: Reference mobject for positioning.
-            *vars: Tuples of (name, value_getter, color) for each text element.
-            font: Text font family.
-            font_size: Text font size.
-            buff: Spacing between text elements.
-            align_left: Whether to left-align text to reference mobject.
-            equal_sign: Whether to use equals sign between name and value.
-            vector: Offset vector from reference mobject center.
-        """
         super().__init__()
         self.mob_center = mob_center
         self.vars = vars
@@ -768,9 +805,24 @@ class RelativeTextValue(mn.VGroup):
         self.add(*text_mob)
 
     def first_appear(self, scene: mn.Scene, time=0.5):
+        """Animate the initial appearance of the text group in scene.
+
+        Args:
+            scene: The scene to play the animation in.
+            time: Duration of the fade-in animation.
+        """
+
         scene.play(mn.FadeIn(self), run_time=time)
 
     def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
+        """Update text values with current variable values.
+
+        Args:
+            scene: The scene to play animations in.
+            time: Duration of animation if animate=True.
+            animate: Whether to animate the update.
+        """
+
         # Create a new object with the same parameters
         # (vars may be updated)
         new_group = RelativeTextValue(
@@ -818,6 +870,23 @@ class RelativeTextValue(mn.VGroup):
 
 
 class RelativeText(mn.VGroup):
+    """Text group positioned relative to another mobject.
+
+    Args:
+        text: The text string to visualize.
+        mob_center: Reference mobject for positioning.
+        vector: Offset vector from reference mobject center.
+        font: Text font family.
+        font_size: Text font size.
+        font_color: Text color.
+        weight: Text weight (NORMAL, BOLD, etc.).
+        align_edge: Edge to align with reference mobject. If None,
+            centers at mobject center.
+
+    Raises:
+        ValueError: If align_edge is not valid direction.
+    """
+
     def __init__(
         self,
         text: str,
@@ -829,19 +898,6 @@ class RelativeText(mn.VGroup):
         weight: str = "NORMAL",
         align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
-        """
-        Text group positioned relative to another mobject.
-
-        Args:
-            text: The text string to visualize
-            mob_center: Reference mobject for positioning.
-            vector: Offset vector from reference mobject center.
-            font: Text font family.
-            font_size: Text font size.
-            font_color: Text color.
-            weight: Text weight
-            align_edge: Edge to align with reference mobject. If None, centers at position.
-        """
         super().__init__()
 
         text_mob = mn.Text(
@@ -875,10 +931,34 @@ class RelativeText(mn.VGroup):
         self.add(text_mob)
 
     def first_appear(self, scene: mn.Scene, time=0.5):
+        """Animate the initial appearance of the text in scene.
+
+        Args:
+            scene: The scene to play the animation in.
+            time: Duration of the fade-in animation.
+        """
+
         scene.play(mn.FadeIn(self), run_time=time)
 
 
 class CodeBlock(mn.VGroup):
+    """Code block visualization with syntax highlighting capabilities.
+
+    Args:
+        code_lines: List of code lines to display.
+        vector: Position vector to place the code block.
+        pre_code_lines: Lines to display before the main code.
+        font_size: Font size for the code text.
+        font: Font for the code text.
+        font_color_regular: Color for regular text.
+        font_color_highlight: Color for highlighted text.
+        bg_highlight_color: Background color for highlighted lines.
+        mob_center: Center object for positioning.
+        inter_block_buff: Buffer between pre-code and code blocks.
+        pre_code_buff: Buffer between pre-code lines.
+        code_buff: Buffer between code lines.
+    """
+
     def __init__(
         self,
         code_lines: List[str],
@@ -894,23 +974,6 @@ class CodeBlock(mn.VGroup):
         pre_code_buff=0.15,
         code_buff=0.05,
     ):
-        """
-        Creates a code block visualization on the screen.
-
-        Args:
-            code_lines (List[str]): List of code lines to display.
-            vector (np.ndarray): Position vector to place the code block.
-            pre_code_lines (List[str]): Lines to display before the main code.
-            font_size (int, optional): Font size for the code text.
-            font (str, optional): Font for the code text.
-            font_color_regular (str): Color for regular text.
-            font_color_highlight (str): Color for highlighted text.
-            bg_highlight_color (str): Background color for highlighted lines.
-            mob_center (mn.Mobject): Center object for positioning.
-            inter_block_buff (float): Buffer between pre-code and code blocks.
-            pre_code_buff (float): Buffer between pre-code lines.
-            code_buff (float): Buffer between code lines.
-        """
         super().__init__()
         self.font_color_regular = font_color_regular
         self.font_color_highlight = font_color_highlight
@@ -955,15 +1018,22 @@ class CodeBlock(mn.VGroup):
         self.add(block_vgroup)
 
     def first_appear(self, scene: mn.Scene, time=0.5):
+        """Animate the initial appearance of the code block in scene.
+
+        Args:
+            scene: The scene to play the animation in.
+            time: Duration of the fade-in animation.
+        """
+
         scene.play(mn.FadeIn(self), run_time=time)
 
     def highlight_line(self, i: int):
-        """
-        Highlights a single line of code by changing both text color and background.
+        """Highlights a single line of code with background and text color.
 
         Args:
-            i (int): Index of the line to highlight.
+            i: Index of the line to highlight.
         """
+
         for k, mob in enumerate(self.code_mobs):
             if k == i:
                 # Change font color
@@ -993,31 +1063,29 @@ class CodeBlock(mn.VGroup):
 
 
 class TitleText(mn.VGroup):
-    """
-    A title group for Manim scenes, consisting of a text label, an optional decorative flourish underneath, and
-    an optional undercaption.
+    """Title group with optional decorative flourish and undercaption.
 
     Args:
-        text (str): The title text to display.
-        vector (np.ndarray, optional): Offset vector from the center for positioning the group.
-        text_color (str, optional): Color of the title text.
-        font (str, optional): Font family for the title text.
-        font_size (float, optional): Font size for the title text.
-        mob_center (mn.Mobject, optional): Reference mobject for positioning.
-        flourish (bool, optional): Whether to render the flourish under the text.
-        flourish_color (str, optional): Color of the flourish line.
-        flourish_stroke_width (float, optional): Stroke width of the flourish.
-        flourish_padding (float, optional): Padding between text and flourish.
-        flourish_buff (float, optional): Buffer between text and flourish.
-        spiral_offset (float, optional): Vertical offset of the spirals relative to the flourish line.
-        spiral_radius (float, optional): Radius of the spiral ends of the flourish.
-        spiral_turns (float, optional): Number of turns in each spiral.
-        undercaption (str, optional): Text under the flourish.
-        undercaption_color (str, optional): Color of the undercaption text.
-        undercaption_font (str, optional): Font family for the undercaption.
-        undercaption_font_size (float, optional): Font size for the undercaption.
-        undercaption_buff (float, optional): Buffer between text and undercaption.
-        **kwargs: Additional keyword arguments for the text mobject.
+        text: The title text to display.
+        vector: Offset vector from center for positioning.
+        text_color: Color of the title text.
+        font: Font family for the title text.
+        font_size: Font size for the title text.
+        mob_center: Reference mobject for positioning.
+        flourish: Whether to render flourish under the text.
+        flourish_color: Color of the flourish line.
+        flourish_stroke_width: Stroke width of the flourish.
+        flourish_padding: Padding between text and flourish.
+        flourish_buff: Buffer between text and flourish.
+        spiral_offset: Vertical offset of spirals relative to flourish.
+        spiral_radius: Radius of the spiral ends of the flourish.
+        spiral_turns: Number of turns in each spiral.
+        undercaption: Text under the flourish.
+        undercaption_color: Color of the undercaption text.
+        undercaption_font: Font family for the undercaption.
+        undercaption_font_size: Font size for the undercaption.
+        undercaption_buff: Buffer between text and undercaption.
+        **kwargs: Additional keyword arguments for text mobject.
     """
 
     def __init__(
@@ -1102,20 +1170,20 @@ class TitleText(mn.VGroup):
         spiral_turns: float,
         spiral_offset: float,
     ) -> mn.VGroup:
-        """
-        Create a decorative flourish consisting of a horizontal line with symmetric spiral ends.
+        """Create decorative flourish with horizontal line and spiral ends.
 
         Args:
-            width (float): Total width of the flourish.
-            color (str): Color of the flourish.
-            stroke_width (float): Stroke width of the flourish.
-            spiral_radius (float): Radius of the spiral ends.
-            spiral_turns (float): Number of turns in each spiral.
-            spiral_offset (float): Vertical offset of the spirals.
+            width: Total width of the flourish.
+            color: Color of the flourish.
+            stroke_width: Stroke width of the flourish.
+            spiral_radius: Radius of the spiral ends.
+            spiral_turns: Number of turns in each spiral.
+            spiral_offset: Vertical offset of the spirals.
 
         Returns:
-            mn.VGroup: The group containing the flourish components.
+            Group containing the flourish components.
         """
+
         # Left spiral (from outer to inner)
         left_center = np.array([-width / 2, -spiral_offset, 0])
         left_spiral = []
@@ -1168,30 +1236,29 @@ class TitleText(mn.VGroup):
         return flourish_path
 
     def appear(self, scene: mn.Scene):
-        """
-        Add the entire title group to the given Manim scene.
+        """Add the entire title group to the given scene.
 
         Args:
-            scene (mn.Scene): The Manim scene to add the logo group to.
+            scene: The scene to add the title group to.
         """
+
         scene.add(self)
 
 
 class TitleLogo(mn.VGroup):
-    """
-    A group for displaying an SVG logo with optional text, positioned relative to a reference mobject.
+    """Group for displaying SVG logo with optional text.
 
     Args:
-        svg (str): Path to the SVG file.
-        svg_height (float, optional): Height of the SVG.
-        mob_center (mn.Mobject, optional): Reference mobject for positioning.
-        svg_vector (np.ndarray, optional): Offset vector for the SVG.
-        text (str, optional): Optional text to display with the logo.
-        text_color (str, optional): Color of the text.
-        font (str, optional): Font family for the text.
-        font_size (float, optional): Font size for the text.
-        text_vector (np.ndarray, optional): Offset vector for the text.
-        **kwargs: Additional keyword arguments for the SVG and text mobjects.
+        svg: Path to the SVG file.
+        svg_height: Height of the SVG.
+        mob_center: Reference mobject for positioning.
+        svg_vector: Offset vector for the SVG.
+        text: Optional text to display with the logo.
+        text_color: Color of the text.
+        font: Font family for the text.
+        font_size: Font size for the text.
+        text_vector: Offset vector for the text.
+        **kwargs: Additional keyword arguments for SVG and text mobjects.
     """
 
     def __init__(
@@ -1236,10 +1303,9 @@ class TitleLogo(mn.VGroup):
         self.move_to(mob_center.get_center() + svg_vector)
 
     def appear(self, scene: mn.Scene):
-        """
-        Add the entire logo group to the given Manim scene.
+        """Add the entire logo group to the given scene.
 
         Args:
-            scene (mn.Scene): The Manim scene to add the logo group to.
+            scene: The scene to add the logo group to.
         """
         scene.add(self)
