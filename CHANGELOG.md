@@ -38,3 +38,27 @@
 
 ## Refactored
 - `TopText` -> `RelativeText`
+
+---
+
+# [0.2.1] - 2025-10-12
+
+## Added
+- `String` class
+- `RelativeText` class (the old one was renamed)
+- `square_scale()` function
+
+## Changed
+- `RelativeText`: add `align_edge` param
+- `CodeBlock`: add `pre_code_lines` param
+
+## Refactored
+- `RelativeText` -> `RelativeTextValue`
+- `{i,j,k}_color` -> `color_{1,2,3}`
+- `{ij,ik,jk}_color` -> `color_{12,13,23}`
+- `pointers_{1,2,3}()` -> `pointers()`
+- `highlight_blocks_{1,2,3}()` -> `highlight_blocks()`
+- `pointer_special()` -> `pointer_on_value()`
+
+## Removed
+- `tests/` directory
