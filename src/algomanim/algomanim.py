@@ -4,12 +4,25 @@ import manim as mn  # type: ignore
 from manim import ManimColor
 
 
+def square_scale(size: Literal["s", "m", "l"]) -> dict[str, float]:
+    SIZES = {
+        "s": {"side_length": 0.5, "font_size": 35},
+        "m": {"side_length": 0.6, "font_size": 40},
+        "l": {"side_length": 0.7, "font_size": 50},
+    }
+    if size not in SIZES:
+        available_sizes = ", ".join(f"'{s}'" for s in SIZES.keys())
+        raise ValueError(f"size must be one of: {available_sizes}")
+    return SIZES[size]
+
+
 class Array(mn.VGroup):
     def __init__(
         self,
         arr: List,
         vector: np.ndarray,
         font="",
+        square_size: Literal["s", "m", "l"] = "l",
         bg_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ):
@@ -33,14 +46,20 @@ class Array(mn.VGroup):
         self.bg_color = bg_color
         self.font = font
 
+        SQUARE_CONFIG = {
+            "side_length": square_scale(square_size)["side_length"],
+            "fill_opacity": 1,
+        }
+        self.TEXT_CONFIG = {
+            "font": font,
+            "font_size": square_scale(square_size)["font_size"],
+        }
+
         # Construction: Create square mobjects for each array element
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         self.sq_mob = mn.VGroup(
-            *[
-                mn.Square().set_fill(self.bg_color, 1).set(width=0.7, height=0.7)
-                for _ in arr
-            ]
+            *[mn.Square(**SQUARE_CONFIG).set_fill(bg_color) for _ in arr]
         )
         # Construction: Arrange squares in a row
         self.sq_mob.arrange(mn.RIGHT, buff=0.1)
@@ -51,7 +70,7 @@ class Array(mn.VGroup):
         # Construction: Create text mobjects and center them in squares
         self.num_mob = mn.VGroup(
             *[
-                mn.Text(str(num), font=self.font).move_to(square)
+                mn.Text(str(num), **self.TEXT_CONFIG).move_to(square)
                 for num, square in zip(arr, self.sq_mob)
             ]
         )
@@ -132,7 +151,7 @@ class Array(mn.VGroup):
         for i in range(len(new_values)):
             new_val_str = str(new_values[i])
 
-            new_text = mn.Text(new_val_str, font=self.font).move_to(self.sq_mob[i])
+            new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(self.sq_mob[i])
 
             if animate:
                 animations.append(self.num_mob[i].animate.become(new_text))
@@ -147,8 +166,8 @@ class Array(mn.VGroup):
         idx_list: list[int],
         pos: int = 0,
         color_1: ManimColor | str = mn.RED,
-        color_2: ManimColor | str = mn.GREEN,
-        color_3: ManimColor | str = mn.BLUE,
+        color_2: ManimColor | str = mn.BLUE,
+        color_3: ManimColor | str = mn.GREEN,
     ):
         """
         Highlight pointers at one side (top | bottom) in the
@@ -261,12 +280,12 @@ class Array(mn.VGroup):
         self,
         idx_list: list[int],
         color_1: ManimColor | str = mn.RED,
-        color_2: ManimColor | str = mn.GREEN,
-        color_3: ManimColor | str = mn.BLUE,
-        ijcolor_3: ManimColor | str = mn.BLACK,
-        icolor_2: ManimColor | str = mn.YELLOW_E,
-        icolor_3: ManimColor | str = mn.PURPLE,
-        jcolor_3: ManimColor | str = mn.TEAL,
+        color_2: ManimColor | str = mn.BLUE,
+        color_3: ManimColor | str = mn.GREEN,
+        color_123: ManimColor | str = mn.BLACK,
+        color_12: ManimColor | str = mn.PURPLE,
+        color_13: ManimColor | str = mn.YELLOW_E,
+        color_23: ManimColor | str = mn.TEAL,
     ):
         """
         Highlight blocks in the array visualization.
@@ -277,10 +296,10 @@ class Array(mn.VGroup):
             color_1: Color for the idx_list[0].
             color_2: Color for the idx_list[1].
             color_3: Color for the idx_list[2].
-            ijcolor_3: Color if all three indices are the same.
-            icolor_2: Color if idx_list[0] == idx_list[1].
-            icolor_3: Color if idx_list[0] == idx_list[2].
-            jcolor_3: Color if idx_list[1] == idx_list[2].
+            color_123: Color if all three indices are the same.
+            color_12: Color if idx_list[0] == idx_list[1].
+            color_13: Color if idx_list[0] == idx_list[2].
+            color_23: Color if idx_list[1] == idx_list[2].
         """
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -297,7 +316,7 @@ class Array(mn.VGroup):
 
             for idx, mob in enumerate(self.sq_mob):
                 if idx == i == j:
-                    mob.set_fill(icolor_2)
+                    mob.set_fill(color_12)
                 elif idx == i:
                     mob.set_fill(color_1)
                 elif idx == j:
@@ -312,13 +331,13 @@ class Array(mn.VGroup):
 
             for idx, mob in enumerate(self.sq_mob):
                 if idx == i == j == k:
-                    mob.set_fill(ijcolor_3)
+                    mob.set_fill(color_123)
                 elif idx == i == j:
-                    mob.set_fill(icolor_2)
+                    mob.set_fill(color_12)
                 elif idx == i == k:
-                    mob.set_fill(icolor_3)
+                    mob.set_fill(color_13)
                 elif idx == k == j:
-                    mob.set_fill(jcolor_3)
+                    mob.set_fill(color_23)
                 elif idx == i:
                     mob.set_fill(color_1)
                 elif idx == j:
@@ -334,9 +353,8 @@ class String(mn.VGroup):
         self,
         string: str,
         vector: np.ndarray,
-        square_side_length: float = 0.6,
+        square_size: Literal["s", "m", "l"] = "m",
         font="",
-        font_size: float = 40,
         weight: str = "NORMAL",
         color: ManimColor | str = mn.WHITE,
         bg_color: ManimColor | str = mn.DARK_GRAY,
@@ -369,15 +387,15 @@ class String(mn.VGroup):
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         SQUARE_CONFIG = {
-            "side_length": square_side_length,
+            "side_length": square_scale(square_size)["side_length"],
             "color": bg_color,
             "fill_opacity": 1,
         }
-        TEXT_CONFIG = {
+        self.TEXT_CONFIG = {
+            "font_size": square_scale(square_size)["font_size"],
             "font": font,
             "color": color,
             "weight": weight,
-            "font_size": font_size,
         }
 
         # Construction: Create square mobjects for each array element
@@ -403,10 +421,10 @@ class String(mn.VGroup):
 
         # Construction: text mobs quotes group
         quotes_mob = mn.VGroup(
-            mn.Text('"', **TEXT_CONFIG).move_to(
+            mn.Text('"', **self.TEXT_CONFIG).move_to(
                 quote_sq_mob[0], aligned_edge=mn.UP + mn.RIGHT
             ),
-            mn.Text('"', **TEXT_CONFIG).move_to(
+            mn.Text('"', **self.TEXT_CONFIG).move_to(
                 quote_sq_mob[1], aligned_edge=mn.UP + mn.LEFT
             ),
         )
@@ -414,7 +432,7 @@ class String(mn.VGroup):
         # Construction: Create text mobjects and center them in squares
         self.letters_mob = mn.VGroup(
             *[
-                mn.Text(str(letter), **TEXT_CONFIG).move_to(square)
+                mn.Text(str(letter), **self.TEXT_CONFIG).move_to(square)
                 for letter, square in zip(string, self.letters_sq_mob)
             ]
         )
@@ -499,7 +517,7 @@ class String(mn.VGroup):
         for i in range(len(new_values)):
             new_val_str = str(new_values[i])
 
-            new_text = mn.Text(new_val_str, font=self.font).move_to(
+            new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(
                 self.letters_sq_mob[i]
             )
 
@@ -516,8 +534,8 @@ class String(mn.VGroup):
         idx_list: list[int],
         pos: int = 0,
         color_1: ManimColor | str = mn.RED,
-        color_2: ManimColor | str = mn.GREEN,
-        color_3: ManimColor | str = mn.BLUE,
+        color_2: ManimColor | str = mn.BLUE,
+        color_3: ManimColor | str = mn.GREEN,
     ):
         """
         Highlight pointers at one side (top | bottom) in the
@@ -610,12 +628,12 @@ class String(mn.VGroup):
         self,
         idx_list: list[int],
         color_1: ManimColor | str = mn.RED,
-        color_2: ManimColor | str = mn.GREEN,
-        color_3: ManimColor | str = mn.BLUE,
-        ijcolor_3: ManimColor | str = mn.BLACK,
-        icolor_2: ManimColor | str = mn.YELLOW_E,
-        icolor_3: ManimColor | str = mn.PURPLE,
-        jcolor_3: ManimColor | str = mn.TEAL,
+        color_2: ManimColor | str = mn.BLUE,
+        color_3: ManimColor | str = mn.GREEN,
+        color_123: ManimColor | str = mn.BLACK,
+        color_12: ManimColor | str = mn.PURPLE,
+        color_13: ManimColor | str = mn.YELLOW_E,
+        color_23: ManimColor | str = mn.TEAL,
     ):
         """
         Highlight blocks in the string visualization.
@@ -626,10 +644,10 @@ class String(mn.VGroup):
             color_1: Color for the idx_list[0].
             color_2: Color for the idx_list[1].
             color_3: Color for the idx_list[2].
-            ijcolor_3: Color if all three indices are the same.
-            icolor_2: Color if idx_list[0] == idx_list[1].
-            icolor_3: Color if idx_list[0] == idx_list[2].
-            jcolor_3: Color if idx_list[1] == idx_list[2].
+            color_123: Color if all three indices are the same.
+            color_12: Color if idx_list[0] == idx_list[1].
+            color_13: Color if idx_list[0] == idx_list[2].
+            color_23: Color if idx_list[1] == idx_list[2].
         """
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -646,7 +664,7 @@ class String(mn.VGroup):
 
             for idx, mob in enumerate(self.letters_sq_mob):
                 if idx == i == j:
-                    mob.set_fill(icolor_2)
+                    mob.set_fill(color_12)
                 elif idx == i:
                     mob.set_fill(color_1)
                 elif idx == j:
@@ -661,13 +679,13 @@ class String(mn.VGroup):
 
             for idx, mob in enumerate(self.letters_sq_mob):
                 if idx == i == j == k:
-                    mob.set_fill(ijcolor_3)
+                    mob.set_fill(color_123)
                 elif idx == i == j:
-                    mob.set_fill(icolor_2)
+                    mob.set_fill(color_12)
                 elif idx == i == k:
-                    mob.set_fill(icolor_3)
+                    mob.set_fill(color_13)
                 elif idx == k == j:
-                    mob.set_fill(jcolor_3)
+                    mob.set_fill(color_23)
                 elif idx == i:
                     mob.set_fill(color_1)
                 elif idx == j:
@@ -688,7 +706,7 @@ class RelativeTextValue(mn.VGroup):
         buff=0.5,
         equal_sign: bool = True,
         vector: np.ndarray = mn.UP * 1.2,
-        align_edge: Literal["UP", "DOWN", "LEFT", "RIGHT"] | None = None,
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
         """
         A text group that shows scope variables values, positioned relative
@@ -809,7 +827,7 @@ class RelativeText(mn.VGroup):
         font_size=35,
         font_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
-        align_edge: Literal["UP", "DOWN", "LEFT", "RIGHT"] | None = None,
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
         """
         Text group positioned relative to another mobject.
