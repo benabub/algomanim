@@ -18,15 +18,6 @@ A Manim-based library for visualizing algorithms and explaining LeetCode-style s
 pip install algomanim
 ```
 
-## Development & Testing
-
-Clone the repository and run:
-
-```sh
-poetry install
-poetry run pytest
-```
-
 ## License
 
 MIT
