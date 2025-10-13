@@ -48,9 +48,10 @@ class Array(mn.VGroup):
         arr: List,
         vector: np.ndarray,
         font="",
-        square_size: Literal["s", "m", "l"] = "l",
+        size: Literal["s", "m", "l"] = "l",
         bg_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
         # Call __init__ of the parent classes
         super().__init__()
@@ -60,12 +61,12 @@ class Array(mn.VGroup):
         self.font = font
 
         SQUARE_CONFIG = {
-            "side_length": square_scale(square_size)["side_length"],
+            "side_length": square_scale(size)["side_length"],
             "fill_opacity": 1,
         }
         self.TEXT_CONFIG = {
             "font": font,
-            "font_size": square_scale(square_size)["font_size"],
+            "font_size": square_scale(size)["font_size"],
         }
 
         # Construction: Create square mobjects for each array element
@@ -77,8 +78,26 @@ class Array(mn.VGroup):
         # Construction: Arrange squares in a row
         self.sq_mob.arrange(mn.RIGHT, buff=0.1)
 
-        # Construction: Move array to the specified position
-        self.sq_mob.move_to(mob_center.get_center() + vector)
+        # # Construction: Move VGroup to the specified position
+        if align_edge:
+            if align_edge in ["UP", "up"]:
+                self.sq_mob.move_to(mob_center.get_center())
+                self.sq_mob.align_to(mob_center, mn.UP)
+                self.sq_mob.shift(vector)
+            elif align_edge in ["DOWN", "down"]:
+                self.sq_mob.move_to(mob_center.get_center())
+                self.sq_mob.align_to(mob_center, mn.DOWN)
+                self.sq_mob.shift(vector)
+            elif align_edge in ["RIGHT", "right"]:
+                self.sq_mob.move_to(mob_center.get_center())
+                self.sq_mob.align_to(mob_center, mn.RIGHT)
+                self.sq_mob.shift(vector)
+            elif align_edge in ["LEFT", "left"]:
+                self.sq_mob.move_to(mob_center.get_center())
+                self.sq_mob.align_to(mob_center, mn.LEFT)
+                self.sq_mob.shift(vector)
+        else:
+            self.sq_mob.move_to(mob_center.get_center() + vector)
 
         # Construction: Create text mobjects and center them in squares
         self.num_mob = mn.VGroup(
@@ -392,13 +411,14 @@ class String(mn.VGroup):
         self,
         string: str,
         vector: np.ndarray,
-        square_size: Literal["s", "m", "l"] = "m",
+        size: Literal["s", "m", "l"] = "m",
         font="",
         weight: str = "NORMAL",
         color: ManimColor | str = mn.WHITE,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
         # Call __init__ of the parent classes
         super().__init__()
@@ -411,18 +431,18 @@ class String(mn.VGroup):
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         SQUARE_CONFIG = {
-            "side_length": square_scale(square_size)["side_length"],
+            "side_length": square_scale(size)["side_length"],
             "color": bg_color,
             "fill_opacity": 1,
         }
         self.TEXT_CONFIG = {
-            "font_size": square_scale(square_size)["font_size"],
+            "font_size": square_scale(size)["font_size"],
             "font": font,
             "color": color,
             "weight": weight,
         }
 
-        # Construction: Create square mobjects for each array element
+        # Construction: Create square mobjects for each letter
         self.letters_sq_mob = mn.VGroup(
             *[mn.Square(**SQUARE_CONFIG, fill_color=fill_color) for _ in string]
         )
@@ -440,8 +460,26 @@ class String(mn.VGroup):
         # Construction: Arrange VGroups in a row
         all_sq_mob.arrange(mn.RIGHT, buff=0.0)
 
-        # Construction: Move array to the specified position
-        all_sq_mob.move_to(mob_center.get_center() + vector)
+        # # Construction: Move VGroup to the specified position
+        if align_edge:
+            if align_edge in ["UP", "up"]:
+                all_sq_mob.move_to(mob_center.get_center())
+                all_sq_mob.align_to(mob_center, mn.UP)
+                all_sq_mob.shift(vector)
+            elif align_edge in ["DOWN", "down"]:
+                all_sq_mob.move_to(mob_center.get_center())
+                all_sq_mob.align_to(mob_center, mn.DOWN)
+                all_sq_mob.shift(vector)
+            elif align_edge in ["RIGHT", "right"]:
+                all_sq_mob.move_to(mob_center.get_center())
+                all_sq_mob.align_to(mob_center, mn.RIGHT)
+                all_sq_mob.shift(vector)
+            elif align_edge in ["LEFT", "left"]:
+                all_sq_mob.move_to(mob_center.get_center())
+                all_sq_mob.align_to(mob_center, mn.LEFT)
+                all_sq_mob.shift(vector)
+        else:
+            all_sq_mob.move_to(mob_center.get_center() + vector)
 
         # Construction: text mobs quotes group
         quotes_mob = mn.VGroup(
@@ -504,6 +542,7 @@ class String(mn.VGroup):
             self.letters_mob,
             quotes_mob,
         )
+
         self.add(*[ptr for group in self.pointers_list for ptr in group])
 
     def first_appear(self, scene: mn.Scene, time=0.5):
@@ -516,7 +555,7 @@ class String(mn.VGroup):
 
         scene.play(mn.FadeIn(self), run_time=time)
 
-    def update_numbers(
+    def update_text(
         self,
         scene: mn.Scene,
         new_values: str,
@@ -656,6 +695,25 @@ class String(mn.VGroup):
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
 
+    def pointer_on_value(
+        self,
+        val: str,
+        pos: int = 1,
+        pnt_color: ManimColor | str = mn.WHITE,
+    ):
+        """Highlight pointer based on integer value comparison.
+
+        Args:
+            val: The value to compare with array elements.
+            pos: 0 for top pointers, 1 for bottom pointers.
+            pnt_color: Color for the highlighted pointer.
+        """
+
+        for idx, _ in enumerate(self.letters_sq_mob):
+            self.pointers_list[pos][idx][1].set_color(
+                pnt_color if self.string[idx] == val else self.bg_color
+            )
+
     def highlight_blocks(
         self,
         idx_list: list[int],
@@ -750,8 +808,8 @@ class RelativeTextValue(mn.VGroup):
 
     def __init__(
         self,
-        mob_center: mn.Mobject,
         *vars: Tuple[str, Callable[[], Any], Union[str, ManimColor]],
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         font="",
         font_size=35,
         buff=0.5,
@@ -760,8 +818,8 @@ class RelativeTextValue(mn.VGroup):
         align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
         super().__init__()
-        self.mob_center = mob_center
         self.vars = vars
+        self.mob_center = mob_center
         self.font = font
         self.font_size = font_size
         self.buff = buff
@@ -826,8 +884,8 @@ class RelativeTextValue(mn.VGroup):
         # Create a new object with the same parameters
         # (vars may be updated)
         new_group = RelativeTextValue(
-            self.mob_center,
             *self.vars,
+            mob_center=self.mob_center,
             font_size=self.font_size,
             buff=self.buff,
             vector=self.vector,
@@ -890,7 +948,7 @@ class RelativeText(mn.VGroup):
     def __init__(
         self,
         text: str,
-        mob_center: mn.Mobject,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.ORIGIN,
         font="",
         font_size=35,
