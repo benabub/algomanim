@@ -826,6 +826,7 @@ class RelativeTextValue(mn.VGroup):
         self.buff = buff
         self.vector = vector
         self.align_edge = align_edge
+        self.equal_sign = equal_sign
 
         self.submobjects: List = []
         parts = [
@@ -841,7 +842,7 @@ class RelativeTextValue(mn.VGroup):
             mn.RIGHT, buff=self.buff, aligned_edge=mn.UP
         )
 
-        # Construction: Move VGroup to the specified position
+        # construction: Move VGroup to the specified position
         utils.position(text_mob, mob_center, align_edge, vector)
 
         self.add(*text_mob)
@@ -856,7 +857,6 @@ class RelativeTextValue(mn.VGroup):
 
         scene.play(mn.FadeIn(self), run_time=time)
 
-    # TODO: get position before
     def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
         """Update text values with current variable values.
 
@@ -866,50 +866,29 @@ class RelativeTextValue(mn.VGroup):
             animate: Whether to animate the update.
         """
 
-        # Create a new object with the same parameters
-        # (vars may be updated)
+        # save position
+        old_left_edge = self.get_left()
+        old_y = self.get_y()
+
+        # create a new object with the same parameters
         new_group = RelativeTextValue(
             *self.vars,
-            mob_center=self.mob_center,
             font_size=self.font_size,
             buff=self.buff,
-            vector=self.vector,
             font=self.font,
+            equal_sign=self.equal_sign,
         )
 
-        if self.align_edge:
-            if self.align_edge in ["UP", "up"]:
-                point = self.get_top()
-                new_group.move_to(point, aligned_edge=mn.UP)
-                scene.remove(self)
-                self.become(new_group)
-                scene.add(self)
-            elif self.align_edge in ["DOWN", "down"]:
-                point = self.get_bottom()
-                new_group.move_to(point, aligned_edge=mn.DOWN)
-                scene.remove(self)
-                self.become(new_group)
-                scene.add(self)
-            elif self.align_edge in ["RIGHT", "right"]:
-                point = self.get_right()
-                new_group.move_to(point, aligned_edge=mn.RIGHT)
-                scene.remove(self)
-                self.become(new_group)
-                scene.add(self)
-            elif self.align_edge in ["LEFT", "left"]:
-                point = self.get_left()
-                new_group.move_to(point, aligned_edge=mn.LEFT)
-                scene.remove(self)
-                self.become(new_group)
-                scene.add(self)
+        # move to position
+        new_group.align_to(old_left_edge, mn.LEFT)
+        new_group.set_y(old_y)
 
+        if animate:
+            scene.play(mn.Transform(self, new_group), run_time=time)
         else:
-            if animate:
-                scene.play(mn.Transform(self, new_group), run_time=time)
-            else:
-                scene.remove(self)
-                self.become(new_group)
-                scene.add(self)
+            scene.remove(self)
+            self.become(new_group)
+            scene.add(self)
 
 
 class RelativeText(mn.VGroup):
