@@ -1,31 +1,8 @@
-from typing import List, Tuple, Callable, Any, Union, Optional, Literal
+from typing import cast, List, Tuple, Callable, Any, Union, Optional, Literal
 import numpy as np
 import manim as mn  # type: ignore
 from manim import ManimColor
-
-
-def square_scale(size: Literal["s", "m", "l"]) -> dict[str, float]:
-    """Returns scaling parameters for a square mobject.
-
-    Args:
-        size: Size identifier - 's' (small), 'm' (medium), 'l' (large).
-
-    Returns:
-        Dictionary containing 'side_length' and 'font_size'.
-
-    Raises:
-        ValueError: if invalid size is provided.
-    """
-
-    SIZES = {
-        "s": {"side_length": 0.5, "font_size": 35},
-        "m": {"side_length": 0.6, "font_size": 40},
-        "l": {"side_length": 0.7, "font_size": 50},
-    }
-    if size not in SIZES:
-        available_sizes = ", ".join(f"'{s}'" for s in SIZES.keys())
-        raise ValueError(f"size must be one of: {available_sizes}")
-    return SIZES[size]
+from . import utils
 
 
 class Array(mn.VGroup):
@@ -46,7 +23,7 @@ class Array(mn.VGroup):
     def __init__(
         self,
         arr: List,
-        vector: np.ndarray,
+        vector: np.ndarray = mn.ORIGIN,
         font="",
         size: Literal["s", "m", "l"] = "l",
         bg_color: ManimColor | str = mn.DARK_GRAY,
@@ -61,12 +38,12 @@ class Array(mn.VGroup):
         self.font = font
 
         SQUARE_CONFIG = {
-            "side_length": square_scale(size)["side_length"],
+            "side_length": utils.square_scale(size)["side_length"],
             "fill_opacity": 1,
         }
         self.TEXT_CONFIG = {
             "font": font,
-            "font_size": square_scale(size)["font_size"],
+            "font_size": utils.square_scale(size)["font_size"],
         }
 
         # Construction: Create square mobjects for each array element
@@ -78,26 +55,8 @@ class Array(mn.VGroup):
         # Construction: Arrange squares in a row
         self.sq_mob.arrange(mn.RIGHT, buff=0.1)
 
-        # # Construction: Move VGroup to the specified position
-        if align_edge:
-            if align_edge in ["UP", "up"]:
-                self.sq_mob.move_to(mob_center.get_center())
-                self.sq_mob.align_to(mob_center, mn.UP)
-                self.sq_mob.shift(vector)
-            elif align_edge in ["DOWN", "down"]:
-                self.sq_mob.move_to(mob_center.get_center())
-                self.sq_mob.align_to(mob_center, mn.DOWN)
-                self.sq_mob.shift(vector)
-            elif align_edge in ["RIGHT", "right"]:
-                self.sq_mob.move_to(mob_center.get_center())
-                self.sq_mob.align_to(mob_center, mn.RIGHT)
-                self.sq_mob.shift(vector)
-            elif align_edge in ["LEFT", "left"]:
-                self.sq_mob.move_to(mob_center.get_center())
-                self.sq_mob.align_to(mob_center, mn.LEFT)
-                self.sq_mob.shift(vector)
-        else:
-            self.sq_mob.move_to(mob_center.get_center() + vector)
+        # Construction: Move VGroup to the specified position
+        utils.position(self.sq_mob, mob_center, align_edge, vector)
 
         # Construction: Create text mobjects and center them in squares
         self.num_mob = mn.VGroup(
@@ -161,7 +120,7 @@ class Array(mn.VGroup):
     def update_numbers(
         self,
         scene: mn.Scene,
-        new_values: List[int],
+        new_value: List[int],
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
@@ -178,16 +137,16 @@ class Array(mn.VGroup):
             ValueError: If new_values length doesn't match array length.
         """
 
-        if len(new_values) != len(self.arr):
+        if len(new_value) != len(self.arr):
             raise ValueError(
                 f"Length mismatch: array has {len(self.arr)} elements, "
-                f"but {len(new_values)} new values provided"
+                f"but {len(new_value)} new values provided"
             )
 
         animations = []
 
-        for i in range(len(new_values)):
-            new_val_str = str(new_values[i])
+        for i in range(len(new_value)):
+            new_val_str = str(new_value[i])
 
             new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(self.sq_mob[i])
 
@@ -296,13 +255,14 @@ class Array(mn.VGroup):
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
 
-    def pointer_on_value(
+    def pointers_on_value(
         self,
         val: int,
         pos: int = 1,
-        pnt_color: ManimColor | str = mn.WHITE,
+        color: ManimColor | str = mn.WHITE,
     ):
-        """Highlight pointer based on integer value comparison.
+        """Highlight middle pointers on all squares whose values
+        equal the provided value.
 
         Args:
             val: The value to compare with array elements.
@@ -312,7 +272,7 @@ class Array(mn.VGroup):
 
         for idx, _ in enumerate(self.sq_mob):
             self.pointers_list[pos][idx][1].set_color(
-                pnt_color if self.arr[idx] == val else self.bg_color
+                color if self.arr[idx] == val else self.bg_color
             )
 
     def highlight_blocks(
@@ -388,6 +348,20 @@ class Array(mn.VGroup):
                 else:
                     mob.set_fill(self.bg_color)
 
+    def highlight_blocks_with_value(
+        self,
+        val: int | str,
+        color: ManimColor | str = mn.WHITE,
+    ):
+        """Highlight all squares whose values equal the provided value.
+
+        Args:
+            val: The value to compare with array elements.
+            pnt_color: Color for the highlighted pointer.
+        """
+        for idx, mob in enumerate(self.sq_mob):
+            mob.set_fill(color if self.arr[idx] == val else self.fill_color)
+
 
 class String(mn.VGroup):
     """String visualization as a VGroup of character squares with quotes.
@@ -410,7 +384,7 @@ class String(mn.VGroup):
     def __init__(
         self,
         string: str,
-        vector: np.ndarray,
+        vector: np.ndarray = mn.ORIGIN,
         size: Literal["s", "m", "l"] = "m",
         font="",
         weight: str = "NORMAL",
@@ -424,19 +398,25 @@ class String(mn.VGroup):
         super().__init__()
         # Add class attributes
         self.string = string
+        self.vector = vector
+        self.size = size
+        self.font = font
+        self.weight = weight
+        self.color = color
         self.bg_color = bg_color
         self.fill_color = fill_color
-        self.font = font
+        self.mob_center = mob_center
+        self.align_edge = align_edge
 
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
-        SQUARE_CONFIG = {
-            "side_length": square_scale(size)["side_length"],
+        self.SQUARE_CONFIG = {
+            "side_length": utils.square_scale(size)["side_length"],
             "color": bg_color,
             "fill_opacity": 1,
         }
         self.TEXT_CONFIG = {
-            "font_size": square_scale(size)["font_size"],
+            "font_size": utils.square_scale(size)["font_size"],
             "font": font,
             "color": color,
             "weight": weight,
@@ -444,13 +424,13 @@ class String(mn.VGroup):
 
         # Construction: Create square mobjects for each letter
         self.letters_sq_mob = mn.VGroup(
-            *[mn.Square(**SQUARE_CONFIG, fill_color=fill_color) for _ in string]
+            *[mn.Square(**self.SQUARE_CONFIG, fill_color=fill_color) for _ in string]
         )
         # Construction: Arrange squares in a row
         self.letters_sq_mob.arrange(mn.RIGHT, buff=0.0)
 
         quote_sq_mob = [
-            mn.Square(**SQUARE_CONFIG, fill_color=bg_color) for _ in range(2)
+            mn.Square(**self.SQUARE_CONFIG, fill_color=bg_color) for _ in range(2)
         ]
 
         all_sq_mob = mn.VGroup(
@@ -460,26 +440,8 @@ class String(mn.VGroup):
         # Construction: Arrange VGroups in a row
         all_sq_mob.arrange(mn.RIGHT, buff=0.0)
 
-        # # Construction: Move VGroup to the specified position
-        if align_edge:
-            if align_edge in ["UP", "up"]:
-                all_sq_mob.move_to(mob_center.get_center())
-                all_sq_mob.align_to(mob_center, mn.UP)
-                all_sq_mob.shift(vector)
-            elif align_edge in ["DOWN", "down"]:
-                all_sq_mob.move_to(mob_center.get_center())
-                all_sq_mob.align_to(mob_center, mn.DOWN)
-                all_sq_mob.shift(vector)
-            elif align_edge in ["RIGHT", "right"]:
-                all_sq_mob.move_to(mob_center.get_center())
-                all_sq_mob.align_to(mob_center, mn.RIGHT)
-                all_sq_mob.shift(vector)
-            elif align_edge in ["LEFT", "left"]:
-                all_sq_mob.move_to(mob_center.get_center())
-                all_sq_mob.align_to(mob_center, mn.LEFT)
-                all_sq_mob.shift(vector)
-        else:
-            all_sq_mob.move_to(mob_center.get_center() + vector)
+        # Construction: Move VGroup to the specified position
+        utils.position(all_sq_mob, mob_center, align_edge, vector)
 
         # Construction: text mobs quotes group
         quotes_mob = mn.VGroup(
@@ -558,7 +520,7 @@ class String(mn.VGroup):
     def update_text(
         self,
         scene: mn.Scene,
-        new_values: str,
+        new_value: str,
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
@@ -570,33 +532,57 @@ class String(mn.VGroup):
             animate: Whether to animate the changes (True) or update
                 instantly (False).
             run_time: Duration of animation if animate=True.
-
-        Raises:
-            ValueError: If new_values length doesn't match string length.
         """
 
-        if len(new_values) != len(self.string):
-            raise ValueError(
-                f"Length mismatch: string has {len(self.string)} elements, "
-                f"but {len(new_values)} new values provided"
+        if len(new_value) == len(self.string):  # Use existing mobject
+            animations = []
+
+            for i in range(len(new_value)):
+                new_val_str = str(new_value[i])
+
+                new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(
+                    self.letters_sq_mob[i]
+                )
+
+                if animate:
+                    animations.append(self.letters_mob[i].animate.become(new_text))
+                else:
+                    self.letters_mob[i].become(new_text)
+            if animate and animations:
+                scene.play(*animations, run_time=run_time)
+
+            self.string = new_value
+
+        else:  # Replace mobject with new one
+            old_left_edge = self.get_left()
+            old_y = self.get_y()
+
+            scene.remove(self)
+
+            new_group = String(
+                new_value,
+                size=cast(Literal["s", "m", "l"], self.size),
+                font=self.font,
+                weight=self.weight,
+                color=self.color,
+                bg_color=self.bg_color,
+                fill_color=self.fill_color,
             )
 
-        animations = []
+            # attr update
+            self.string = new_value
+            self.letters_sq_mob = new_group.letters_sq_mob
+            self.letters_mob = new_group.letters_mob
+            self.pointers_list = new_group.pointers_list
 
-        for i in range(len(new_values)):
-            new_val_str = str(new_values[i])
+            # Очистка и добавление новых mobject'ов
+            self.submobjects = []
+            self.add(*new_group.submobjects)
 
-            new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(
-                self.letters_sq_mob[i]
-            )
+            self.align_to(old_left_edge, mn.LEFT)
+            self.set_y(old_y)
 
-            if animate:
-                animations.append(self.letters_mob[i].animate.become(new_text))
-            else:
-                self.letters_mob[i].become(new_text)
-
-        if animate and animations:
-            scene.play(*animations, run_time=run_time)
+            scene.add(self)
 
     def pointers(
         self,
@@ -695,13 +681,14 @@ class String(mn.VGroup):
                     self.pointers_list[pos][idx][1].set_color(self.bg_color)
                     self.pointers_list[pos][idx][2].set_color(self.bg_color)
 
-    def pointer_on_value(
+    def pointers_on_value(
         self,
         val: str,
         pos: int = 1,
-        pnt_color: ManimColor | str = mn.WHITE,
+        color: ManimColor | str = mn.WHITE,
     ):
-        """Highlight pointer based on integer value comparison.
+        """Highlight middle pointers on all squares whose values
+        equal the provided value.
 
         Args:
             val: The value to compare with array elements.
@@ -711,7 +698,7 @@ class String(mn.VGroup):
 
         for idx, _ in enumerate(self.letters_sq_mob):
             self.pointers_list[pos][idx][1].set_color(
-                pnt_color if self.string[idx] == val else self.bg_color
+                color if self.string[idx] == val else self.bg_color
             )
 
     def highlight_blocks(
@@ -787,6 +774,20 @@ class String(mn.VGroup):
                 else:
                     mob.set_fill(self.fill_color)
 
+    def highlight_blocks_with_value(
+        self,
+        val: str,
+        color: ManimColor | str = mn.WHITE,
+    ):
+        """Highlight all squares whose values equal the provided value.
+
+        Args:
+            val: The value to compare with array elements.
+            pnt_color: Color for the highlighted pointer.
+        """
+        for idx, mob in enumerate(self.letters_sq_mob):
+            mob.set_fill(color if self.string[idx] == val else self.fill_color)
+
 
 class RelativeTextValue(mn.VGroup):
     """Text group showing scope variables positioned relative to mobject.
@@ -840,25 +841,8 @@ class RelativeTextValue(mn.VGroup):
             mn.RIGHT, buff=self.buff, aligned_edge=mn.UP
         )
 
-        if align_edge:
-            if align_edge in ["UP", "up"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.UP)
-                text_mob.shift(vector)
-            elif align_edge in ["DOWN", "down"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.DOWN)
-                text_mob.shift(vector)
-            elif align_edge in ["RIGHT", "right"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.RIGHT)
-                text_mob.shift(vector)
-            elif align_edge in ["LEFT", "left"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.LEFT)
-                text_mob.shift(vector)
-        else:
-            text_mob.move_to(mob_center.get_center() + vector)
+        # Construction: Move VGroup to the specified position
+        utils.position(text_mob, mob_center, align_edge, vector)
 
         self.add(*text_mob)
 
@@ -872,6 +856,7 @@ class RelativeTextValue(mn.VGroup):
 
         scene.play(mn.FadeIn(self), run_time=time)
 
+    # TODO: get position before
     def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
         """Update text values with current variable values.
 
@@ -966,25 +951,8 @@ class RelativeText(mn.VGroup):
             weight=weight,
         )
 
-        if align_edge:
-            if align_edge in ["UP", "up"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.UP)
-                text_mob.shift(vector)
-            elif align_edge in ["DOWN", "down"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.DOWN)
-                text_mob.shift(vector)
-            elif align_edge in ["RIGHT", "right"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.RIGHT)
-                text_mob.shift(vector)
-            elif align_edge in ["LEFT", "left"]:
-                text_mob.move_to(mob_center.get_center())
-                text_mob.align_to(mob_center, mn.LEFT)
-                text_mob.shift(vector)
-        else:
-            text_mob.move_to(mob_center.get_center() + vector)
+        # Construction: Move VGroup to the specified position
+        utils.position(text_mob, mob_center, align_edge, vector)
 
         self.add(text_mob)
 
@@ -1028,6 +996,7 @@ class CodeBlock(mn.VGroup):
         font_color_highlight: ManimColor | str = "YELLOW",
         bg_highlight_color: ManimColor | str = "BLUE",
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
         inter_block_buff=0.5,
         pre_code_buff=0.15,
         code_buff=0.05,
@@ -1071,8 +1040,9 @@ class CodeBlock(mn.VGroup):
         else:
             block_vgroup = code_vgroup
 
-        block_vgroup.move_to(mob_center.get_center() + vector)
-        # Animation
+        # Construction: Move VGroup to the specified position
+        utils.position(block_vgroup, mob_center, align_edge, vector)
+
         self.add(block_vgroup)
 
     def first_appear(self, scene: mn.Scene, time=0.5):
@@ -1155,6 +1125,7 @@ class TitleText(mn.VGroup):
         font: str = "",
         font_size: float = 50,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
         # ------- flourish ------------
         flourish: bool = False,
         flourish_color: ManimColor | str = "WHITE",
@@ -1183,6 +1154,9 @@ class TitleText(mn.VGroup):
             color=text_color,
             **kwargs,
         )
+
+        utils.position(text_mobject, mob_center, align_edge, vector)
+
         self.add(text_mobject)
 
         # Optionally create the flourish under the text
@@ -1215,9 +1189,6 @@ class TitleText(mn.VGroup):
             )
             self.undercaption.next_to(text_mobject, mn.DOWN, undercaption_buff)
             self.add(self.undercaption)
-
-        # Position the entire group relative to the reference mobject and offset vector
-        self.move_to(mob_center.get_center() + vector)
 
     def _create_flourish(
         self,
@@ -1325,7 +1296,8 @@ class TitleLogo(mn.VGroup):
         # ----------- svg -------------
         svg_height: float = 2.0,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        svg_vector: np.ndarray = mn.ORIGIN,
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        vector: np.ndarray = mn.ORIGIN,
         # --------- text --------------
         text: str | None = None,
         text_color: ManimColor | str = "WHITE",
@@ -1343,6 +1315,10 @@ class TitleLogo(mn.VGroup):
             height=svg_height,
             **kwargs,
         )
+
+        # Position the entire group relative to the reference mobject and offset vector
+        utils.position(self.svg, mob_center, align_edge, vector)
+
         self.add(self.svg)
 
         # Create the text mobject
@@ -1356,9 +1332,6 @@ class TitleLogo(mn.VGroup):
             )
             self.text_mobject.move_to(self.svg.get_center() + text_vector)
             self.add(self.text_mobject)
-
-        # Position the entire group relative to the reference mobject and offset vector
-        self.move_to(mob_center.get_center() + svg_vector)
 
     def appear(self, scene: mn.Scene):
         """Add the entire logo group to the given scene.
