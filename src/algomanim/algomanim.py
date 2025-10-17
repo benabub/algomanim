@@ -12,12 +12,14 @@ class Array(mn.VGroup):
         arr: The array of values to visualize.
         vector: Position offset vector for array placement.
         font: Font family for text elements.
-        square_size: Size preset for squares - 's', 'm', or 'l'.
+        size: Size preset for squares - 's', 'm', or 'l'.
         bg_color: Background color for squares and default pointer color.
         mob_center: Mobject to use as center reference for array placement.
+        align_edge: Edge to align with reference mobject. If None,
+            centers at mobject center.
 
     Raises:
-        ValueError: If square_size is not 's', 'm', or 'l'.
+        ValueError: If size is not 's', 'm', or 'l'.
     """
 
     def __init__(
@@ -30,14 +32,15 @@ class Array(mn.VGroup):
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
-        # Call __init__ of the parent classes
+        # call __init__ of the parent classes
         super().__init__()
-        # Add class attributes
-        self.arr = arr
+        # add class attributes
+        self.arr = arr.copy()
         self.bg_color = bg_color
         self.font = font
+        self.size = size
 
-        SQUARE_CONFIG = {
+        self.SQUARE_CONFIG = {
             "side_length": utils.square_scale(size)["side_length"],
             "fill_opacity": 1,
         }
@@ -46,19 +49,19 @@ class Array(mn.VGroup):
             "font_size": utils.square_scale(size)["font_size"],
         }
 
-        # Construction: Create square mobjects for each array element
+        # construction: Create square mobjects for each array element
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         self.sq_mob = mn.VGroup(
-            *[mn.Square(**SQUARE_CONFIG).set_fill(bg_color) for _ in arr]
+            *[mn.Square(**self.SQUARE_CONFIG).set_fill(bg_color) for _ in arr]
         )
-        # Construction: Arrange squares in a row
+        # construction: Arrange squares in a row
         self.sq_mob.arrange(mn.RIGHT, buff=0.1)
 
-        # Construction: Move VGroup to the specified position
+        # construction: Move VGroup to the specified position
         utils.position(self.sq_mob, mob_center, align_edge, vector)
 
-        # Construction: Create text mobjects and center them in squares
+        # construction: Create text mobjects and center them in squares
         self.num_mob = mn.VGroup(
             *[
                 mn.Text(str(num), **self.TEXT_CONFIG).move_to(square)
@@ -66,11 +69,11 @@ class Array(mn.VGroup):
             ]
         )
 
-        # Create pointers as a list with top and bottom groups
+        # create pointers as a list with top and bottom groups
         self.pointers_list: List[List[Any]] = [[], []]  # [0] for top, [1] for bottom
 
         for square in self.sq_mob:
-            # Create top triangles (3 per square)
+            # create top triangles (3 per square)
             top_tri_group = mn.VGroup(
                 *[
                     mn.Triangle(
@@ -82,12 +85,12 @@ class Array(mn.VGroup):
                     for _ in range(3)
                 ]
             )
-            # Arrange top triangles horizontally above the square
+            # arrange top triangles horizontally above the square
             top_tri_group.arrange(mn.RIGHT, buff=0.08)
             top_tri_group.next_to(square, mn.UP, buff=0.15)
             self.pointers_list[0].append(top_tri_group)
 
-            # Create bottom triangles (3 per square)
+            # create bottom triangles (3 per square)
             bottom_tri_group = mn.VGroup(
                 *[
                     mn.Triangle(
@@ -98,12 +101,12 @@ class Array(mn.VGroup):
                     for _ in range(3)
                 ]
             )
-            # Arrange bottom triangles horizontally below the square
+            # arrange bottom triangles horizontally below the square
             bottom_tri_group.arrange(mn.RIGHT, buff=0.08)
             bottom_tri_group.next_to(square, mn.DOWN, buff=0.15)
             self.pointers_list[1].append(bottom_tri_group)
 
-        # Adds local objects as instance attributes
+        # adds local objects as instance attributes
         self.add(self.sq_mob, self.num_mob)
         self.add(*[ptr for group in self.pointers_list for ptr in group])
 
@@ -132,31 +135,53 @@ class Array(mn.VGroup):
             animate: Whether to animate the changes (True) or update
                 instantly (False).
             run_time: Duration of animation if animate=True.
-
-        Raises:
-            ValueError: If new_values length doesn't match array length.
         """
 
-        if len(new_value) != len(self.arr):
-            raise ValueError(
-                f"Length mismatch: array has {len(self.arr)} elements, "
-                f"but {len(new_value)} new values provided"
+        if len(new_value) == len(self.arr):  # use existing mobject
+            animations = []
+
+            for i in range(len(new_value)):
+                new_val_str = str(new_value[i])
+
+                new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(
+                    self.sq_mob[i]
+                )
+
+                if animate:
+                    animations.append(self.num_mob[i].animate.become(new_text))
+                else:
+                    self.num_mob[i].become(new_text)
+
+            if animate and animations:
+                scene.play(*animations, run_time=run_time)
+
+        else:  # replace mobject with new one
+            old_left_edge = self.get_left()
+            old_y = self.get_y()
+
+            scene.remove(self)
+
+            new_group = Array(
+                new_value,
+                font=self.font,
+                size=cast(Literal["s", "m", "l"], self.size),
+                bg_color=self.bg_color,
             )
 
-        animations = []
+            # attr update
+            self.arr = new_value.copy()
+            self.sq_mob = new_group.sq_mob
+            self.num_mob = new_group.num_mob
+            self.pointers_list = new_group.pointers_list
 
-        for i in range(len(new_value)):
-            new_val_str = str(new_value[i])
+            # clear and add new mobjects
+            self.submobjects = []
+            self.add(*new_group.submobjects)
 
-            new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(self.sq_mob[i])
+            self.align_to(old_left_edge, mn.LEFT)
+            self.set_y(old_y)
 
-            if animate:
-                animations.append(self.num_mob[i].animate.become(new_text))
-            else:
-                self.num_mob[i].become(new_text)
-
-        if animate and animations:
-            scene.play(*animations, run_time=run_time)
+            scene.add(self)
 
     def pointers(
         self,
@@ -357,7 +382,7 @@ class Array(mn.VGroup):
 
         Args:
             val: The value to compare with array elements.
-            pnt_color: Color for the highlighted pointer.
+            color: Color for the highlighted pointer.
         """
         for idx, mob in enumerate(self.sq_mob):
             mob.set_fill(color if self.arr[idx] == val else self.fill_color)
@@ -369,13 +394,15 @@ class String(mn.VGroup):
     Args:
         string: The text string to visualize.
         vector: Position offset for the entire string visualization.
-        square_size: Size preset for squares - 's', 'm', or 'l'.
+        size: Size preset for squares - 's', 'm', or 'l'.
         font: Font family for the text.
         weight: Font weight (NORMAL, BOLD, etc.).
         color: Text color.
         bg_color: Scene background color.
         fill_color: Fill color for character squares.
         mob_center: Center point for positioning.
+        align_edge: Edge to align with reference mobject. If None,
+            centers at mobject center.
 
     Raises:
         ValueError: If square_size is not 's', 'm', or 'l'.
@@ -394,9 +421,9 @@ class String(mn.VGroup):
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
-        # Call __init__ of the parent classes
+        # call __init__ of the parent classes
         super().__init__()
-        # Add class attributes
+        # add class attributes
         self.string = string
         self.vector = vector
         self.size = size
@@ -422,11 +449,11 @@ class String(mn.VGroup):
             "weight": weight,
         }
 
-        # Construction: Create square mobjects for each letter
+        # construction: Create square mobjects for each letter
         self.letters_sq_mob = mn.VGroup(
             *[mn.Square(**self.SQUARE_CONFIG, fill_color=fill_color) for _ in string]
         )
-        # Construction: Arrange squares in a row
+        # construction: Arrange squares in a row
         self.letters_sq_mob.arrange(mn.RIGHT, buff=0.0)
 
         quote_sq_mob = [
@@ -437,13 +464,13 @@ class String(mn.VGroup):
             [quote_sq_mob[0], self.letters_sq_mob, quote_sq_mob[1]],
         )
 
-        # Construction: Arrange VGroups in a row
+        # construction: Arrange VGroups in a row
         all_sq_mob.arrange(mn.RIGHT, buff=0.0)
 
-        # Construction: Move VGroup to the specified position
+        # construction: Move VGroup to the specified position
         utils.position(all_sq_mob, mob_center, align_edge, vector)
 
-        # Construction: text mobs quotes group
+        # construction: text mobs quotes group
         quotes_mob = mn.VGroup(
             mn.Text('"', **self.TEXT_CONFIG).move_to(
                 quote_sq_mob[0], aligned_edge=mn.UP + mn.RIGHT
@@ -453,7 +480,7 @@ class String(mn.VGroup):
             ),
         )
 
-        # Construction: Create text mobjects and center them in squares
+        # construction: Create text mobjects and center them in squares
         self.letters_mob = mn.VGroup(
             *[
                 mn.Text(str(letter), **self.TEXT_CONFIG).move_to(square)
@@ -461,11 +488,11 @@ class String(mn.VGroup):
             ]
         )
 
-        # Create pointers as a list with top and bottom groups
+        # create pointers as a list with top and bottom groups
         self.pointers_list: List[List[Any]] = [[], []]  # [0] for top, [1] for bottom
 
         for square in self.letters_sq_mob:
-            # Create top triangles (3 per square)
+            # create top triangles (3 per square)
             top_tri_group = mn.VGroup(
                 *[
                     mn.Triangle(
@@ -477,12 +504,12 @@ class String(mn.VGroup):
                     for _ in range(3)
                 ]
             )
-            # Arrange top triangles horizontally above the square
+            # arrange top triangles horizontally above the square
             top_tri_group.arrange(mn.RIGHT, buff=0.08)
             top_tri_group.next_to(square, mn.UP, buff=0.15)
             self.pointers_list[0].append(top_tri_group)
 
-            # Create bottom triangles (3 per square)
+            # create bottom triangles (3 per square)
             bottom_tri_group = mn.VGroup(
                 *[
                     mn.Triangle(
@@ -493,12 +520,12 @@ class String(mn.VGroup):
                     for _ in range(3)
                 ]
             )
-            # Arrange bottom triangles horizontally below the square
+            # arrange bottom triangles horizontally below the square
             bottom_tri_group.arrange(mn.RIGHT, buff=0.08)
             bottom_tri_group.next_to(square, mn.DOWN, buff=0.15)
             self.pointers_list[1].append(bottom_tri_group)
 
-        # Adds local objects as instance attributes
+        # adds local objects as instance attributes
         self.add(
             all_sq_mob,
             self.letters_mob,
@@ -528,13 +555,13 @@ class String(mn.VGroup):
 
         Args:
             scene: The scene to play animations in.
-            new_values: New string values to display.
+            new_values: New string value to display.
             animate: Whether to animate the changes (True) or update
                 instantly (False).
             run_time: Duration of animation if animate=True.
         """
 
-        if len(new_value) == len(self.string):  # Use existing mobject
+        if len(new_value) == len(self.string):  # use existing mobject
             animations = []
 
             for i in range(len(new_value)):
@@ -553,7 +580,7 @@ class String(mn.VGroup):
 
             self.string = new_value
 
-        else:  # Replace mobject with new one
+        else:  # replace mobject with new one
             old_left_edge = self.get_left()
             old_y = self.get_y()
 
@@ -575,7 +602,7 @@ class String(mn.VGroup):
             self.letters_mob = new_group.letters_mob
             self.pointers_list = new_group.pointers_list
 
-            # Очистка и добавление новых mobject'ов
+            # clear and add new mobjects
             self.submobjects = []
             self.add(*new_group.submobjects)
 
@@ -693,7 +720,7 @@ class String(mn.VGroup):
         Args:
             val: The value to compare with array elements.
             pos: 0 for top pointers, 1 for bottom pointers.
-            pnt_color: Color for the highlighted pointer.
+            color: Color for the highlighted pointer.
         """
 
         for idx, _ in enumerate(self.letters_sq_mob):
@@ -793,8 +820,8 @@ class RelativeTextValue(mn.VGroup):
     """Text group showing scope variables positioned relative to mobject.
 
     Args:
-        mob_center: Reference mobject for positioning.
         *vars: Tuples of (name, value_getter, color) for each text.
+        mob_center: Reference mobject for positioning.
         font: Text font family.
         font_size: Text font size.
         buff: Spacing between text elements.
@@ -930,7 +957,7 @@ class RelativeText(mn.VGroup):
             weight=weight,
         )
 
-        # Construction: Move VGroup to the specified position
+        # construction: Move VGroup to the specified position
         utils.position(text_mob, mob_center, align_edge, vector)
 
         self.add(text_mob)
@@ -958,10 +985,12 @@ class CodeBlock(mn.VGroup):
         font_color_regular: Color for regular text.
         font_color_highlight: Color for highlighted text.
         bg_highlight_color: Background color for highlighted lines.
-        mob_center: Center object for positioning.
         inter_block_buff: Buffer between pre-code and code blocks.
         pre_code_buff: Buffer between pre-code lines.
         code_buff: Buffer between code lines.
+        mob_center: Center object for positioning.
+        align_edge: Edge to align with reference mobject. If None,
+            centers at mobject center.
     """
 
     def __init__(
@@ -974,11 +1003,11 @@ class CodeBlock(mn.VGroup):
         font_color_regular: ManimColor | str = "WHITE",
         font_color_highlight: ManimColor | str = "YELLOW",
         bg_highlight_color: ManimColor | str = "BLUE",
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
         inter_block_buff=0.5,
         pre_code_buff=0.15,
         code_buff=0.05,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
         super().__init__()
         self.font_color_regular = font_color_regular
@@ -991,7 +1020,7 @@ class CodeBlock(mn.VGroup):
         ]
         self.bg_rects: List[Optional[mn.Rectangle]] = [None] * len(
             code_lines
-        )  # List to save links on all possible rectangles and to manage=delete them
+        )  # list to save links on all possible rectangles and to manage=delete them
 
         code_vgroup = mn.VGroup(*self.code_mobs).arrange(
             mn.DOWN,
@@ -1019,7 +1048,7 @@ class CodeBlock(mn.VGroup):
         else:
             block_vgroup = code_vgroup
 
-        # Construction: Move VGroup to the specified position
+        # construction: Move VGroup to the specified position
         utils.position(block_vgroup, mob_center, align_edge, vector)
 
         self.add(block_vgroup)
@@ -1043,9 +1072,9 @@ class CodeBlock(mn.VGroup):
 
         for k, mob in enumerate(self.code_mobs):
             if k == i:
-                # Change font color
+                # change font color
                 mob.set_color(self.font_color_highlight)
-                # Create bg rectangle
+                # create bg rectangle
                 if self.bg_rects[k] is None:
                     bg_rect = mn.Rectangle(
                         width=mob.width + 0.2,
@@ -1056,11 +1085,10 @@ class CodeBlock(mn.VGroup):
                     )
                     bg_rect.move_to(mob.get_center())
                     self.add(bg_rect)
-                    bg_rect.z_index = -1  # Send background to back
+                    bg_rect.z_index = -1  # send background to back
                     self.bg_rects[k] = bg_rect
             else:
-                # Normal line:
-                # regular font color
+                # normal line: regular font color
                 mob.set_color(self.font_color_regular)
                 # remove rect
                 bg_rect = self.bg_rects[k]
@@ -1079,6 +1107,8 @@ class TitleText(mn.VGroup):
         font: Font family for the title text.
         font_size: Font size for the title text.
         mob_center: Reference mobject for positioning.
+        align_edge: Edge to align with reference mobject. If None,
+            centers at mobject center.
         flourish: Whether to render flourish under the text.
         flourish_color: Color of the flourish line.
         flourish_stroke_width: Stroke width of the flourish.
@@ -1125,7 +1155,7 @@ class TitleText(mn.VGroup):
     ):
         super().__init__()
 
-        # Create the text mobject
+        # create the text mobject
         text_mobject = mn.Text(
             text,
             font=font,
@@ -1138,7 +1168,7 @@ class TitleText(mn.VGroup):
 
         self.add(text_mobject)
 
-        # Optionally create the flourish under the text
+        # optionally create the flourish under the text
         if flourish:
             flourish_width = (
                 # self.text_mobject.width * flourish_width_ratio + flourish_padding
@@ -1152,13 +1182,13 @@ class TitleText(mn.VGroup):
                 spiral_turns=spiral_turns,
                 spiral_offset=spiral_offset,
             )
-            # Position the flourish below the text
+            # position the flourish below the text
             self.flourish.next_to(text_mobject, mn.DOWN, flourish_buff)
             self.add(self.flourish)
 
-        # Optionally create the undercaption under the text
+        # optionally create the undercaption under the text
         if undercaption:
-            # Create the text mobject
+            # create the text mobject
             self.undercaption = mn.Text(
                 undercaption,
                 font=undercaption_font,
@@ -1192,7 +1222,7 @@ class TitleText(mn.VGroup):
             Group containing the flourish components.
         """
 
-        # Left spiral (from outer to inner)
+        # left spiral (from outer to inner)
         left_center = np.array([-width / 2, -spiral_offset, 0])
         left_spiral = []
         for t in np.linspace(0, 1, 100):
@@ -1203,7 +1233,7 @@ class TitleText(mn.VGroup):
             y = left_center[1] + current_radius * np.sin(rotated_angle)
             left_spiral.append(np.array([x, y, 0]))
 
-        # Right spiral (from outer to inner)
+        # right spiral (from outer to inner)
         right_center = np.array([width / 2, -spiral_offset, 0])
         right_spiral = []
         for t in np.linspace(0, 1, 100):
@@ -1214,7 +1244,7 @@ class TitleText(mn.VGroup):
             y = right_center[1] + current_radius * np.sin(rotated_angle)
             right_spiral.append(np.array([x, y, 0]))
 
-        # Line between the outer points of the spirals (slightly overlaps into the spirals)
+        # line between the outer points of the spirals (slightly overlaps into the spirals)
         straight_start = left_spiral[1]
         straight_end = right_spiral[1]
         straight_line = [
@@ -1222,7 +1252,7 @@ class TitleText(mn.VGroup):
             for t in np.linspace(0, 1, 50)
         ]
 
-        # Create separate VMobjects for each part
+        # create separate VMobjects for each part
         flourish_line = mn.VMobject()
         flourish_line.set_color(color)
         flourish_line.set_stroke(width=stroke_width)
@@ -1238,7 +1268,7 @@ class TitleText(mn.VGroup):
         flourish_left.set_stroke(width=stroke_width)
         flourish_left.set_points_smoothly(left_spiral)
 
-        # Group all parts into a single VGroup
+        # group all parts into a single VGroup
         flourish_path = mn.VGroup(flourish_line, flourish_right, flourish_left)
 
         return flourish_path
@@ -1260,7 +1290,9 @@ class TitleLogo(mn.VGroup):
         svg: Path to the SVG file.
         svg_height: Height of the SVG.
         mob_center: Reference mobject for positioning.
-        svg_vector: Offset vector for the SVG.
+        align_edge: Edge to align with reference mobject. If None,
+            centers at mobject center.
+        vector: Offset vector for the SVG.
         text: Optional text to display with the logo.
         text_color: Color of the text.
         font: Font family for the text.
@@ -1288,19 +1320,19 @@ class TitleLogo(mn.VGroup):
     ):
         super().__init__()
 
-        # Create the svg mobject
+        # create the svg mobject
         self.svg = mn.SVGMobject(
             svg,
             height=svg_height,
             **kwargs,
         )
 
-        # Position the entire group relative to the reference mobject and offset vector
+        # position the entire group relative to the reference mobject and offset vector
         utils.position(self.svg, mob_center, align_edge, vector)
 
         self.add(self.svg)
 
-        # Create the text mobject
+        # create the text mobject
         if text:
             self.text_mobject = mn.Text(
                 text,
