@@ -4,11 +4,12 @@ import manim as mn  # type: ignore
 from manim import ManimColor
 
 
-def square_scale(size: Literal["s", "m", "l"]) -> dict[str, float]:
+def square_scale(size: Literal["s", "m", "l", "ls"]) -> dict[str, float]:
     """Returns scaling parameters for a square mobject.
 
     Args:
-        size: Size identifier - 's' (small), 'm' (medium), 'l' (large).
+        size: Size identifier - 's' (small), 'm' (medium), 'l' (large),
+        'ls' (large squares, small font).
 
     Returns:
         Dictionary containing 'side_length' and 'font_size'.
@@ -21,6 +22,7 @@ def square_scale(size: Literal["s", "m", "l"]) -> dict[str, float]:
         "s": {"side_length": 0.5, "font_size": 35},
         "m": {"side_length": 0.6, "font_size": 40},
         "l": {"side_length": 0.7, "font_size": 50},
+        "ls": {"side_length": 0.7, "font_size": 35},
     }
     if size not in SIZES:
         available_sizes = ", ".join(f"'{s}'" for s in SIZES.keys())
