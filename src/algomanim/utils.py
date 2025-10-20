@@ -1,7 +1,39 @@
-from typing import cast, List, Tuple, Callable, Any, Union, Optional, Literal
+from typing import (
+    # cast,
+    # List,
+    # Tuple,
+    # Callable,
+    # Any,
+    # Union,
+    # Optional,
+    Literal,
+)
 import numpy as np
 import manim as mn  # type: ignore
-from manim import ManimColor
+# from manim import ManimColor
+
+
+def get_cell_height(
+    font_size: float,
+    inter_buff: float,
+    test_sign: str = "0",
+) -> float:
+    zero_mob = mn.Text(test_sign, font_size=font_size)
+    zero_mob_height = zero_mob.height
+    return inter_buff * 2 + zero_mob_height
+
+
+def get_cell_width(
+    text_mob: mn.Mobject,
+    inter_buff: float,
+    square_height: float,
+) -> float:
+    text_mob_height = text_mob.width
+    res = inter_buff * 2.5 + text_mob_height
+    if square_height >= res:
+        return square_height
+    else:
+        return res
 
 
 def square_scale(size: Literal["s", "m", "l", "ls"]) -> dict[str, float]:
