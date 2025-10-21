@@ -1,4 +1,12 @@
-from typing import cast, List, Tuple, Callable, Any, Union, Optional, Literal
+from typing import (
+    List,
+    Tuple,
+    Callable,
+    Any,
+    Union,
+    Optional,
+    Literal,
+)
 import numpy as np
 import manim as mn  # type: ignore
 from manim import ManimColor
@@ -43,7 +51,7 @@ class Array(mn.VGroup):
         self.font_size = font_size
         self.font_color = font_color
         self.inter_buff = inter_buff
-        self.cell_height = utils.get_cell_height(font_size, inter_buff)
+        self.cell_height = utils.get_cell_height(font_size, font, inter_buff)
 
         self.TEXT_CONFIG = {
             "font": font,
@@ -153,7 +161,6 @@ class Array(mn.VGroup):
         scene: mn.Scene,
         new_value: List[int],
         animate: bool = False,
-        # animate: bool = True,
         left_aligned=True,
         run_time: float = 0.2,
     ) -> None:
@@ -397,35 +404,35 @@ class Array(mn.VGroup):
 
 
 class String(mn.VGroup):
-    """String visualization as a VGroup of character squares with quotes.
+    """String visualization as a VGroup of character cells with quotes.
 
     Args:
         string: The text string to visualize.
-        vector: Position offset for the entire string visualization.
-        size: Size preset for squares - 's', 'm', or 'l'.
-        font: Font family for the text.
+        vector: Position offset from mob_center.
+        font: Font family for text elements.
+        font_size: Font size for text, also scale the whole mobject.
         weight: Font weight (NORMAL, BOLD, etc.).
-        color: Text color.
-        bg_color: Scene background color.
-        fill_color: Fill color for character squares.
-        mob_center: Center point for positioning.
-        align_edge: Edge to align with reference mobject. If None,
-            centers at mobject center.
-
-    Raises:
-        ValueError: If square_size is not 's', 'm', or 'l'.
+        font_color: Color for text elements.
+        bg_color: Background color for cells and default pointer color.
+        fill_color: Fill color for character cells.
+        inter_buff: Internal padding within cells.
+        cell_color: Border color for cells.
+        mob_center: Reference mobject for positioning.
+        align_edge: Edge alignment relative to mob_center.
     """
 
     def __init__(
         self,
         string: str,
         vector: np.ndarray = mn.ORIGIN,
-        size: Literal["s", "m", "l", "ls"] = "l",
         font="",
+        font_size=35,
         weight: str = "NORMAL",
-        color: ManimColor | str = mn.WHITE,
+        font_color: ManimColor | str = mn.WHITE,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
+        inter_buff: float = 0.15,
+        cell_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
@@ -434,10 +441,9 @@ class String(mn.VGroup):
         # add class attributes
         self.string = string
         self.vector = vector
-        self.size = size
         self.font = font
         self.weight = weight
-        self.color = color
+        self.font_color = font_color
         self.bg_color = bg_color
         self.fill_color = fill_color
         self.mob_center = mob_center
@@ -446,26 +452,29 @@ class String(mn.VGroup):
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         self.SQUARE_CONFIG = {
-            "side_length": utils.square_scale(size)["side_length"],
-            "color": bg_color,
+            "side_length": utils.get_cell_height(font_size, font, inter_buff),
             "fill_opacity": 1,
         }
         self.TEXT_CONFIG = {
-            "font_size": utils.square_scale(size)["font_size"],
+            "font_size": font_size,
             "font": font,
-            "color": color,
+            "color": font_color,
             "weight": weight,
         }
 
         # construction: Create square mobjects for each letter
         self.letters_cell_mob = mn.VGroup(
-            *[mn.Square(**self.SQUARE_CONFIG, fill_color=fill_color) for _ in string]
+            *[
+                mn.Square(**self.SQUARE_CONFIG, color=cell_color, fill_color=fill_color)
+                for _ in string
+            ]
         )
         # construction: Arrange squares in a row
         self.letters_cell_mob.arrange(mn.RIGHT, buff=0.0)
 
         quote_cell_mob = [
-            mn.Square(**self.SQUARE_CONFIG, fill_color=bg_color) for _ in range(2)
+            mn.Square(**self.SQUARE_CONFIG, color=bg_color, fill_color=bg_color)
+            for _ in range(2)
         ]
 
         all_cell_mob = mn.VGroup(
@@ -496,42 +505,45 @@ class String(mn.VGroup):
             ]
         )
 
+        # ----- pointers -------
+
         # create pointers as a list with top and bottom groups
         self.pointers_list: List[List[Any]] = [[], []]  # [0] for top, [1] for bottom
 
-        for square in self.letters_cell_mob:
-            # create top triangles (3 per square)
-            top_tri_group = mn.VGroup(
-                *[
-                    mn.Triangle(
-                        color=self.bg_color,
-                    )
-                    .stretch_to_fit_width(square.width)
-                    .scale(0.1)
-                    .rotate(mn.PI)
-                    for _ in range(3)
-                ]
-            )
-            # arrange top triangles horizontally above the square
-            top_tri_group.arrange(mn.RIGHT, buff=0.08)
-            top_tri_group.next_to(square, mn.UP, buff=0.15)
-            self.pointers_list[0].append(top_tri_group)
+        # create template triangles
+        top_triangle = (
+            mn.Triangle(color=self.bg_color)
+            .stretch_to_fit_width(0.7)
+            .scale(0.1)
+            .rotate(mn.PI)
+        )
+        bottom_triangle = (
+            mn.Triangle(color=self.bg_color).stretch_to_fit_width(0.7).scale(0.1)
+        )
 
-            # create bottom triangles (3 per square)
-            bottom_tri_group = mn.VGroup(
-                *[
-                    mn.Triangle(
-                        color=self.bg_color,
-                    )
-                    .stretch_to_fit_width(square.width)
-                    .scale(0.1)
-                    for _ in range(3)
-                ]
-            )
-            # arrange bottom triangles horizontally below the square
-            bottom_tri_group.arrange(mn.RIGHT, buff=0.08)
-            bottom_tri_group.next_to(square, mn.DOWN, buff=0.15)
-            self.pointers_list[1].append(bottom_tri_group)
+        for cell in self.letters_cell_mob:
+            # create top triangles (3 per cell)
+            top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
+            # arrange top triangles horizontally above the cell
+            top_triple_group.arrange(mn.RIGHT, buff=0.08)
+            top_triple_group.next_to(cell, mn.UP, buff=0.15)
+            self.pointers_list[0].append(top_triple_group)
+
+            # create bottom triangles (3 per cell)
+            bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
+            # arrange bottom triangles horizontally below the cell
+            bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
+            bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
+            self.pointers_list[1].append(bottom_triple_group)
+
+        # at this moment:
+        # self.pointers_list[0] = [
+        #     nameless_top_triple_Vgroup_0,
+        #     nameless_top_triple_Vgroup_1,
+        #     ... for each cell in self cell_mob
+        # ]
+
+        # ------- add ----------
 
         # adds local objects as instance attributes
         self.add(
@@ -552,71 +564,61 @@ class String(mn.VGroup):
 
         scene.play(mn.FadeIn(self), run_time=time)
 
-    def update_text(
+    def _update_internal_state(self, new_group: "String", new_value: str):
+        """Update internal state for new made class instance.
+
+        Args:
+            new_group: New String instance to copy state from.
+            new_value: New string value.
+        """
+
+        self.string = new_value
+        self.letters_cell_mob = new_group.letters_cell_mob
+        self.letters_mob = new_group.letters_mob
+        self.pointers_list = new_group.pointers_list
+        self.submobjects = new_group.submobjects.copy()
+
+    def update_value(
         self,
         scene: mn.Scene,
         new_value: str,
-        animate: bool = True,
+        animate: bool = False,
+        left_aligned=True,
         run_time: float = 0.2,
     ) -> None:
-        """Update all text mobjects in the string.
+        """Replace mobject with new one based on new_value.
 
         Args:
             scene: The scene to play animations in.
-            new_values: New string value to display.
-            animate: Whether to animate the changes (True) or update
-                instantly (False).
+            new_value: New string value to display.
+            animate: Whether to animate the changes.
+            left_aligned: Whether to maintain left edge alignment.
             run_time: Duration of animation if animate=True.
         """
 
-        if len(new_value) == len(self.string):  # use existing mobject
-            animations = []
+        old_left_edge = self.get_left()
+        old_y = self.get_y()
 
-            for i in range(len(new_value)):
-                new_val_str = str(new_value[i])
+        new_group = String(
+            new_value,
+            font=self.font,
+            weight=self.weight,
+            font_color=self.font_color,
+            bg_color=self.bg_color,
+            fill_color=self.fill_color,
+        )
 
-                new_text = mn.Text(new_val_str, **self.TEXT_CONFIG).move_to(
-                    self.letters_cell_mob[i]
-                )
+        if left_aligned:
+            new_group.align_to(old_left_edge, mn.LEFT)
+            new_group.set_y(old_y)
 
-                if animate:
-                    animations.append(self.letters_mob[i].animate.become(new_text))
-                else:
-                    self.letters_mob[i].become(new_text)
-            if animate and animations:
-                scene.play(*animations, run_time=run_time)
+        if animate:
+            scene.play(mn.Transform(self, new_group), run_time=run_time)
+            self._update_internal_state(new_group, new_value)
 
-            self.string = new_value
-
-        else:  # replace mobject with new one
-            old_left_edge = self.get_left()
-            old_y = self.get_y()
-
+        else:
             scene.remove(self)
-
-            new_group = String(
-                new_value,
-                size=cast(Literal["s", "m", "l"], self.size),
-                font=self.font,
-                weight=self.weight,
-                color=self.color,
-                bg_color=self.bg_color,
-                fill_color=self.fill_color,
-            )
-
-            # attr update
-            self.string = new_value
-            self.letters_cell_mob = new_group.letters_cell_mob
-            self.letters_mob = new_group.letters_mob
-            self.pointers_list = new_group.pointers_list
-
-            # clear and add new mobjects
-            self.submobjects = []
-            self.add(*new_group.submobjects)
-
-            self.align_to(old_left_edge, mn.LEFT)
-            self.set_y(old_y)
-
+            self._update_internal_state(new_group, new_value)
             scene.add(self)
 
     def pointers(
@@ -630,12 +632,11 @@ class String(mn.VGroup):
         """Highlight pointers at one side (top | bottom) in string.
 
         Args:
-            idx_list: List of indices of the block whose pointer to
-                highlight.
-            pos: 0 for top side, 1 for bottom.
-            color_1: idx_list[0] highlighted pointer color.
-            color_2: idx_list[1] highlighted pointer color.
-            color_3: idx_list[2] highlighted pointer color.
+            idx_list: List of indices to highlight (1-3 elements).
+            pos: 0 for top pointers, 1 for bottom pointers.
+            color_1: Color for idx_list[0] pointer.
+            color_2: Color for idx_list[1] pointer.
+            color_3: Color for idx_list[2] pointer.
 
         Raises:
             ValueError: If idx_list has invalid length or pos is invalid.
@@ -722,13 +723,12 @@ class String(mn.VGroup):
         pos: int = 1,
         color: ManimColor | str = mn.WHITE,
     ):
-        """Highlight middle pointers on all squares whose values
-        equal the provided value.
+        """Highlight middle pointers on cells with matching value.
 
         Args:
-            val: The value to compare with array elements.
+            val: The value to compare with string elements.
             pos: 0 for top pointers, 1 for bottom pointers.
-            color: Color for the highlighted pointer.
+            color: Color for highlighted pointers.
         """
 
         for idx, _ in enumerate(self.letters_cell_mob):
@@ -812,13 +812,13 @@ class String(mn.VGroup):
     def highlight_blocks_with_value(
         self,
         val: str,
-        color: ManimColor | str = mn.WHITE,
+        color: ManimColor | str = mn.BLACK,
     ):
-        """Highlight all squares whose values equal the provided value.
+        """Highlight all cells whose values equal the provided value.
 
         Args:
-            val: The value to compare with array elements.
-            pnt_color: Color for the highlighted pointer.
+            val: The value to compare with string elements.
+            color: Color for highlighted cells.
         """
         for idx, mob in enumerate(self.letters_cell_mob):
             mob.set_fill(color if self.string[idx] == val else self.fill_color)
