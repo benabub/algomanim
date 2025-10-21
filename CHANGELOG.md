@@ -62,3 +62,21 @@
 
 ## Removed
 - `tests/` directory
+
+---
+
+# [0.2.2] - 2025-10-22
+
+## Added
+- `utils.py` module
+
+## Changed
+- {`Array`, `String`}: unified scaling via `font_size`, removed `square_size` param
+- {`Array`, `String`}: support dynamic length changes in `update_value()`
+
+## Refactored
+- `Array`: `update_numbers()` -> `update_value()`
+- `String`: `update_numbers()` -> `update_value()`
+
+## Removed
+- `square_scale()` function
