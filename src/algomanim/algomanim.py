@@ -58,6 +58,26 @@ class Array(mn.VGroup):
             "font_size": self.font_size,
         }
 
+        # -------------------------
+
+        if not arr:
+            self.text_mob = mn.Text("[]", **self.TEXT_CONFIG)
+            self.cell_mob = mn.Rectangle(
+                height=self.cell_height,
+                width=utils.get_cell_width(self.text_mob, inter_buff, self.cell_height),
+                color=bg_color,
+                fill_opacity=1.0,
+            )
+            self.cell_mob.set_fill(bg_color)
+            utils.position(self.cell_mob, mob_center, align_edge, vector)
+            self.text_mob.move_to(self.cell_mob.get_center())
+            self.text_mob.align_to(self.cell_mob, mn.DOWN)
+            self.text_mob.align_to(self.cell_mob, mn.LEFT)
+            self.add(self.cell_mob, self.text_mob)
+            return
+
+        # -------------------------
+
         text_mobs_list = [mn.Text(str(val), **self.TEXT_CONFIG) for val in arr]
 
         # NB: if opacity is not specified, it will be set to None
@@ -152,9 +172,10 @@ class Array(mn.VGroup):
         """
         self.arr = new_value.copy()
         self.cell_mob = new_group.cell_mob
-        self.val_mob = new_group.val_mob
-        self.pointers_list = new_group.pointers_list
         self.submobjects = new_group.submobjects.copy()
+        if self.arr:
+            self.val_mob = new_group.val_mob
+            self.pointers_list = new_group.pointers_list
 
     def update_value(
         self,
@@ -174,6 +195,9 @@ class Array(mn.VGroup):
             left_aligned: Whether to maintain left edge alignment.
             run_time: Duration of animation if animate=True.
         """
+
+        if not self.arr and not new_value:
+            return
 
         old_left_edge = self.get_left()
         old_y = self.get_y()
@@ -219,6 +243,9 @@ class Array(mn.VGroup):
         Raises:
             ValueError: If idx_list has invalid length or pos is invalid.
         """
+
+        if not self.arr:
+            return
 
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -310,12 +337,15 @@ class Array(mn.VGroup):
             color: Color for the highlighted pointer.
         """
 
+        if not self.arr:
+            return
+
         for idx, _ in enumerate(self.cell_mob):
             self.pointers_list[pos][idx][1].set_color(
                 color if self.arr[idx] == val else self.bg_color
             )
 
-    def highlight_blocks(
+    def highlight_cells(
         self,
         idx_list: list[int],
         color_1: ManimColor | str = mn.RED,
@@ -326,7 +356,11 @@ class Array(mn.VGroup):
         color_13: ManimColor | str = mn.YELLOW_E,
         color_23: ManimColor | str = mn.TEAL,
     ):
-        """Highlight blocks in the array visualization.
+        """Highlight cells in the array visualization.
+
+        Note:
+            Cell coloring methods are mutually exclusive - the last called
+            method determines the final appearance.
 
         Args:
             idx_list: List of indices to highlight.
@@ -341,6 +375,9 @@ class Array(mn.VGroup):
         Raises:
             ValueError: If idx_list has invalid length.
         """
+
+        if not self.arr:
+            return
 
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -388,17 +425,25 @@ class Array(mn.VGroup):
                 else:
                     mob.set_fill(self.bg_color)
 
-    def highlight_blocks_with_value(
+    def highlight_cells_with_value(
         self,
         val: int | str,
         color: ManimColor | str = mn.BLACK,
     ):
         """Highlight all cells whose values equal the provided value.
 
+        Note:
+            Cell coloring methods are mutually exclusive - the last called
+            method determines the final appearance.
+
         Args:
             val: The value to compare with array elements.
             color: Color for the highlighted pointer.
         """
+
+        if not self.arr:
+            return
+
         for idx, mob in enumerate(self.cell_mob):
             mob.set_fill(color if self.arr[idx] == val else self.bg_color)
 
@@ -892,7 +937,7 @@ class RelativeTextValue(mn.VGroup):
 
         scene.play(mn.FadeIn(self), run_time=time)
 
-    def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
+    def update_text(self, scene: mn.Scene, time=0.1, animate: bool = False):
         """Update text values with current variable values.
 
         Args:
