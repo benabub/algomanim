@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -13,8 +13,18 @@ ENV/
 venv/
 .venv*/
 
+**/del/*
+
 # Output and build artifacts
-/media/
+**/media/
+
+# Dirs with rendered example videos
+**/high_quality/*
+!**/high_quality/.gitkeep
+**/medium_quality/*
+!**/medium_quality/.gitkeep
+**/low_quality/*
+!**/low_quality/.gitkeep
 
 # Distribution / packaging
 .Python

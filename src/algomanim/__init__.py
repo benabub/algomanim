@@ -8,8 +8,6 @@ from .algomanim import (
     TitleLogo,
 )
 
-from . import utils
-
 __all__ = [
     "Array",
     "String",
@@ -18,5 +16,4 @@ __all__ = [
     "CodeBlock",
     "TitleText",
     "TitleLogo",
-    "utils",
 ]
