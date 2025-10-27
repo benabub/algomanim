@@ -12,7 +12,6 @@ git clone https://github.com/benabub/algomanim.git
 ```
 
 This will create an `algomanim/` folder with the `examples/` directory inside it.  
-Make sure to run the example scripts from within this cloned folder, and that your Python environment has algomanim installed.
 
 > **Note:**  
 > You do not actually need the entire repository for running examples — only the `examples/` folder is required.  

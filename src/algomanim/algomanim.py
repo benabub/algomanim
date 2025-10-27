@@ -471,7 +471,7 @@ class String(mn.VGroup):
         string: str,
         vector: np.ndarray = mn.ORIGIN,
         font="",
-        font_size=35,
+        font_size=30,
         weight: str = "NORMAL",
         font_color: ManimColor | str = mn.WHITE,
         bg_color: ManimColor | str = mn.DARK_GRAY,
@@ -493,6 +493,9 @@ class String(mn.VGroup):
         self.fill_color = fill_color
         self.mob_center = mob_center
         self.align_edge = align_edge
+        real_stroke_width = 0.02  # (not mn.DEFAULT_STROKE_WIDTH=4)
+        top_buff = 0.09
+        cell_letter_buff = inter_buff + real_stroke_width
 
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
@@ -510,45 +513,62 @@ class String(mn.VGroup):
         # construction: Create square mobjects for each letter
         self.letters_cell_mob = mn.VGroup(
             *[
-                mn.Square(**self.SQUARE_CONFIG, color=cell_color, fill_color=fill_color)
+                mn.Square(
+                    **self.SQUARE_CONFIG,
+                    color=cell_color,
+                    fill_color=fill_color,
+                )
                 for _ in string
             ]
         )
         # construction: Arrange squares in a row
         self.letters_cell_mob.arrange(mn.RIGHT, buff=0.0)
 
+        # construction: Move VGroup to the specified position
+        utils.position(self.letters_cell_mob, mob_center, align_edge, vector)
+
         quote_cell_mob = [
             mn.Square(**self.SQUARE_CONFIG, color=bg_color, fill_color=bg_color)
             for _ in range(2)
         ]
 
+        quote_cell_mob[0].next_to(self.letters_cell_mob, mn.LEFT, buff=0.0)
+        quote_cell_mob[1].next_to(self.letters_cell_mob, mn.RIGHT, buff=0.0)
+
         all_cell_mob = mn.VGroup(
             [quote_cell_mob[0], self.letters_cell_mob, quote_cell_mob[1]],
         )
 
-        # construction: Arrange VGroups in a row
-        all_cell_mob.arrange(mn.RIGHT, buff=0.0)
-
-        # construction: Move VGroup to the specified position
-        utils.position(all_cell_mob, mob_center, align_edge, vector)
-
         # construction: text mobs quotes group
         quotes_mob = mn.VGroup(
-            mn.Text('"', **self.TEXT_CONFIG).move_to(
-                quote_cell_mob[0], aligned_edge=mn.UP + mn.RIGHT
-            ),
-            mn.Text('"', **self.TEXT_CONFIG).move_to(
-                quote_cell_mob[1], aligned_edge=mn.UP + mn.LEFT
-            ),
+            mn.Text('"', **self.TEXT_CONFIG)
+            .move_to(quote_cell_mob[0], aligned_edge=mn.UP + mn.RIGHT)
+            .shift(mn.DOWN * top_buff),
+            mn.Text('"', **self.TEXT_CONFIG)
+            .move_to(quote_cell_mob[1], aligned_edge=mn.UP + mn.LEFT)
+            .shift(mn.DOWN * top_buff),
         )
 
-        # construction: Create text mobjects and center them in squares
+        # construction: Create text mobjects and move them in squares
         self.letters_mob = mn.VGroup(
-            *[
-                mn.Text(str(letter), **self.TEXT_CONFIG).move_to(square)
-                for letter, square in zip(string, self.letters_cell_mob)
-            ]
+            *[mn.Text(str(letter), **self.TEXT_CONFIG) for letter in string]
         )
+
+        for i in range(len(string)):
+            if string[i] in "\"'^`":  # top alignment
+                self.letters_mob[i].next_to(
+                    self.letters_cell_mob[i].get_top(),
+                    direction=mn.DOWN,
+                    buff=top_buff,
+                )
+            elif string[i] in "-=+~:#%*[]{}()\\/|@&$":  # center alignment
+                self.letters_mob[i].move_to(self.letters_cell_mob[i])
+            else:  # bottom alignment
+                self.letters_mob[i].next_to(
+                    self.letters_cell_mob[i].get_bottom(),
+                    direction=mn.UP,
+                    buff=cell_letter_buff,
+                )
 
         # ----- pointers -------
 
@@ -781,7 +801,7 @@ class String(mn.VGroup):
                 color if self.string[idx] == val else self.bg_color
             )
 
-    def highlight_blocks(
+    def highlight_cells(
         self,
         idx_list: list[int],
         color_1: ManimColor | str = mn.RED,
@@ -854,7 +874,7 @@ class String(mn.VGroup):
                 else:
                     mob.set_fill(self.fill_color)
 
-    def highlight_blocks_with_value(
+    def highlight_cells_with_value(
         self,
         val: str,
         color: ManimColor | str = mn.BLACK,
