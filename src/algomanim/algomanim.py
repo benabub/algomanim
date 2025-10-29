@@ -52,6 +52,8 @@ class Array(mn.VGroup):
         self.font_color = font_color
         self.inter_buff = inter_buff
         self.cell_height = utils.get_cell_height(font_size, font, inter_buff)
+        top_buff = 0.09
+        bottom_buff = inter_buff + 0.01
 
         self.TEXT_CONFIG = {
             "font": font,
@@ -101,13 +103,62 @@ class Array(mn.VGroup):
         # construction: Move VGroup to the specified position
         utils.position(self.cell_mob, mob_center, align_edge, vector)
 
-        # construction: Group text mobjects and center them in cells
+        # ------ self.val_mob ------
+
+        # construction: Create text mobjects and move them in squares
         self.val_mob = mn.VGroup(
-            *[
-                text_mob.move_to(rect_mob.get_center())
-                for text_mob, rect_mob in zip(text_mobs_list, self.cell_mob)
-            ]
+            *[mn.Text(str(val), **self.TEXT_CONFIG) for val in arr]
         )
+
+        for i in range(len(arr)):
+            if not isinstance(arr[i], str):
+                self.val_mob[i].move_to(self.cell_mob[i])
+            else:
+                val_set = set(arr[i])
+                if not {
+                    "\\",
+                    "/",
+                    "|",
+                    "(",
+                    ")",
+                    "[",
+                    "]",
+                    "{",
+                    "}",
+                    "&",
+                    "$",
+                }.isdisjoint(val_set) or val_set.issubset(
+                    {
+                        ":",
+                        "*",
+                        "-",
+                        "+",
+                        "=",
+                        "#",
+                        "~",
+                        "%",
+                    }
+                ):  # center alignment
+                    self.val_mob[i].move_to(self.cell_mob[i])
+                elif val_set.issubset(
+                    {
+                        '"',
+                        "'",
+                        "^",
+                        "`",
+                    }
+                ):  # top alignment
+                    self.val_mob[i].next_to(
+                        self.cell_mob[i].get_top(),
+                        direction=mn.DOWN,
+                        buff=top_buff,
+                    )
+                else:  # bottom alignment
+                    self.val_mob[i].next_to(
+                        self.cell_mob[i].get_bottom(),
+                        direction=mn.UP,
+                        buff=bottom_buff,
+                    )
 
         # ----- pointers -------
 
@@ -493,9 +544,9 @@ class String(mn.VGroup):
         self.fill_color = fill_color
         self.mob_center = mob_center
         self.align_edge = align_edge
-        real_stroke_width = 0.02  # (not mn.DEFAULT_STROKE_WIDTH=4)
+        # real_stroke_width = 0.02  # (not mn.DEFAULT_STROKE_WIDTH=4)
         top_buff = 0.09
-        cell_letter_buff = inter_buff + real_stroke_width
+        bottom_buff = inter_buff + 0.01
 
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
@@ -510,6 +561,28 @@ class String(mn.VGroup):
             "weight": weight,
         }
 
+        # -------------------------
+
+        if not string:
+            self.text_mob = mn.Text('""', **self.TEXT_CONFIG)
+            self.letters_cell_mob = mn.Square(
+                **self.SQUARE_CONFIG,
+                color=cell_color,
+                fill_color=fill_color,
+            )
+            utils.position(self.letters_cell_mob, mob_center, align_edge, vector)
+            # self.letters_cell_left_edge = self.letters_cell_mob.get_left()
+            # self.coordinate_y = self.get_y()
+            self.text_mob.next_to(
+                self.letters_cell_mob.get_top(),
+                direction=mn.DOWN,
+                buff=top_buff,
+            )
+            self.add(self.letters_cell_mob, self.text_mob)
+            return
+
+        # -------------------------
+
         # construction: Create square mobjects for each letter
         self.letters_cell_mob = mn.VGroup(
             *[
@@ -523,6 +596,7 @@ class String(mn.VGroup):
         )
         # construction: Arrange squares in a row
         self.letters_cell_mob.arrange(mn.RIGHT, buff=0.0)
+        self.letters_cell_left_edge = self.letters_cell_mob.get_left()
 
         # construction: Move VGroup to the specified position
         utils.position(self.letters_cell_mob, mob_center, align_edge, vector)
@@ -534,6 +608,8 @@ class String(mn.VGroup):
 
         quote_cell_mob[0].next_to(self.letters_cell_mob, mn.LEFT, buff=0.0)
         quote_cell_mob[1].next_to(self.letters_cell_mob, mn.RIGHT, buff=0.0)
+
+        self.quote_cell_left_edge = quote_cell_mob[0].get_left()
 
         all_cell_mob = mn.VGroup(
             [quote_cell_mob[0], self.letters_cell_mob, quote_cell_mob[1]],
@@ -567,7 +643,7 @@ class String(mn.VGroup):
                 self.letters_mob[i].next_to(
                     self.letters_cell_mob[i].get_bottom(),
                     direction=mn.UP,
-                    buff=cell_letter_buff,
+                    buff=bottom_buff,
                 )
 
         # ----- pointers -------
@@ -618,6 +694,7 @@ class String(mn.VGroup):
         )
 
         self.add(*[ptr for group in self.pointers_list for ptr in group])
+        self.coordinate_y = self.get_y()
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         """Animate the initial appearance of the string in scene.
@@ -639,9 +716,10 @@ class String(mn.VGroup):
 
         self.string = new_value
         self.letters_cell_mob = new_group.letters_cell_mob
-        self.letters_mob = new_group.letters_mob
-        self.pointers_list = new_group.pointers_list
         self.submobjects = new_group.submobjects.copy()
+        if self.string:
+            self.letters_mob = new_group.letters_mob
+            self.pointers_list = new_group.pointers_list
 
     def update_value(
         self,
@@ -661,8 +739,13 @@ class String(mn.VGroup):
             run_time: Duration of animation if animate=True.
         """
 
-        old_left_edge = self.get_left()
-        old_y = self.get_y()
+        if not self.string and not new_value:
+            return
+
+        if new_value:
+            left_edge = self.quote_cell_left_edge
+        else:
+            left_edge = self.letters_cell_left_edge
 
         new_group = String(
             new_value,
@@ -672,10 +755,13 @@ class String(mn.VGroup):
             bg_color=self.bg_color,
             fill_color=self.fill_color,
         )
+        new_group.coordinate_y = self.coordinate_y
+        new_group.quote_cell_left_edge = self.quote_cell_left_edge
+        new_group.letters_cell_left_edge = self.letters_cell_left_edge
 
         if left_aligned:
-            new_group.align_to(old_left_edge, mn.LEFT)
-            new_group.set_y(old_y)
+            new_group.align_to(left_edge, mn.LEFT)
+            new_group.set_y(self.coordinate_y)
 
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
@@ -706,6 +792,8 @@ class String(mn.VGroup):
         Raises:
             ValueError: If idx_list has invalid length or pos is invalid.
         """
+        if not self.string:
+            return
 
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -796,6 +884,9 @@ class String(mn.VGroup):
             color: Color for highlighted pointers.
         """
 
+        if not self.string:
+            return
+
         for idx, _ in enumerate(self.letters_cell_mob):
             self.pointers_list[pos][idx][1].set_color(
                 color if self.string[idx] == val else self.bg_color
@@ -827,6 +918,9 @@ class String(mn.VGroup):
         Raises:
             ValueError: If idx_list has invalid length.
         """
+
+        if not self.string:
+            return
 
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -885,6 +979,10 @@ class String(mn.VGroup):
             val: The value to compare with string elements.
             color: Color for highlighted cells.
         """
+
+        if not self.string:
+            return
+
         for idx, mob in enumerate(self.letters_cell_mob):
             mob.set_fill(color if self.string[idx] == val else self.fill_color)
 
