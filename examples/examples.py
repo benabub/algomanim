@@ -663,6 +663,7 @@ class ExampleString(mn.Scene):
         # ============================
 
         string.update_value(self, "follow the rabbit", left_aligned=False)
+
         pause = 0.5
         top_text = RelativeText(
             "update_value()",
@@ -671,12 +672,6 @@ class ExampleString(mn.Scene):
         top_text.first_appear(self)
 
         self.wait(1)
-        string.update_value(self, "follow the rabbit")
-        self.wait(pause)
-        string.update_value(self, "follow the rabbit")
-        self.wait(pause)
-        string.update_value(self, "follow the rabbit")
-        self.wait(pause)
         string.update_value(self, "follow the rabbit")
         self.wait(pause)
         string.update_value(self, "follow the")
@@ -689,158 +684,160 @@ class ExampleString(mn.Scene):
         self.wait(pause)
         string.update_value(self, "follow")
         self.wait(1)
+
         self.remove(top_text)
 
         # ============================
 
-        # top_text = RelativeText(
-        #     "pointers()   highlight_cells()",
-        #     vector=mn.UP * 2,
-        # )
-        # top_text.first_appear(self)
-        #
-        # string.update_value(self, "follow the rabbit", left_aligned=False)
-        # self.wait(1)
-        # string.pointers([0, 3, 6])
-        # string.highlight_cells([0, 3, 6])
-        # self.wait(pause)
-        # string.pointers([1, 3, 5])
-        # string.highlight_cells([1, 3, 5])
-        # self.wait(pause)
-        # string.pointers([2, 3, 4])
-        # string.highlight_cells([2, 3, 4])
-        # self.wait(pause)
-        # string.pointers([3, 3, 3])
-        # string.highlight_cells([3, 3, 3])
-        # self.wait(pause)
-        # string.pointers([2, 3, 4])
-        # string.highlight_cells([2, 3, 4])
-        # self.wait(pause)
-        # string.pointers([2, 2, 4])
-        # string.highlight_cells([2, 2, 4])
-        # self.wait(pause)
-        # string.pointers([2, 3, 4])
-        # string.highlight_cells([2, 3, 4])
-        # self.wait(pause)
-        # string.pointers([2, 4, 4])
-        # string.highlight_cells([2, 4, 4])
-        # self.wait(pause)
-        # string.pointers([2, 4, 3])
-        # string.highlight_cells([2, 4, 3])
-        # self.wait(pause)
-        # string.pointers([2, 40, 2])
-        # string.highlight_cells([2, 40, 2])
-        # self.wait(1)
+        top_text = RelativeText(
+            "pointers()   highlight_cells()",
+            vector=mn.UP * 2,
+        )
+        top_text.first_appear(self)
+
+        string.update_value(self, "follow the rabbit", left_aligned=False)
+        self.wait(1)
+        string.pointers([0, 3, 6])
+        string.highlight_cells([0, 3, 6])
+        self.wait(pause)
+        string.pointers([1, 3, 5])
+        string.highlight_cells([1, 3, 5])
+        self.wait(pause)
+        string.pointers([2, 3, 4])
+        string.highlight_cells([2, 3, 4])
+        self.wait(pause)
+        string.pointers([3, 3, 3])
+        string.highlight_cells([3, 3, 3])
+        self.wait(pause)
+        string.pointers([2, 3, 4])
+        string.highlight_cells([2, 3, 4])
+        self.wait(pause)
+        string.pointers([2, 2, 4])
+        string.highlight_cells([2, 2, 4])
+        self.wait(pause)
+        string.pointers([2, 3, 4])
+        string.highlight_cells([2, 3, 4])
+        self.wait(pause)
+        string.pointers([2, 4, 4])
+        string.highlight_cells([2, 4, 4])
+        self.wait(pause)
+        string.pointers([2, 4, 3])
+        string.highlight_cells([2, 4, 3])
+        self.wait(pause)
+        string.pointers([2, 40, 2])
+        string.highlight_cells([2, 40, 2])
+        self.wait(1)
+        self.remove(top_text)
+
+        # ============================
+
+        top_text = RelativeText(
+            "highlight_cells_with_value()   pointers_on_value()",
+            vector=mn.UP * 2,
+        )
+        top_text.first_appear(self)
+
+        string.update_value(self, "follow the rabbit", left_aligned=False)
+        self.wait(1)
+        string.highlight_cells_with_value("f")
+        string.pointers_on_value("f")
+        self.wait(pause)
+        string.highlight_cells_with_value("t")
+        string.pointers_on_value("t")
+        self.wait(pause)
+        string.highlight_cells_with_value("a", color=mn.LIGHT_BROWN)
+        string.pointers_on_value("a", color=mn.LIGHT_BROWN)
+        self.wait(pause)
+        string.highlight_cells_with_value("b", color=mn.LIGHT_BROWN)
+        string.pointers_on_value("b", color=mn.LIGHT_BROWN)
+        self.wait(pause)
+        string.highlight_cells_with_value("l", color=mn.PURPLE)
+        string.pointers_on_value("l", color=mn.PURPLE)
+        self.wait(pause)
+        string.highlight_cells_with_value("w", color=mn.PURPLE)
+        string.pointers_on_value("w", color=mn.PURPLE)
+        self.wait(pause)
+        string.highlight_cells_with_value(" ", color=mn.PINK)
+        string.pointers_on_value(" ", color=mn.PINK)
+        self.wait(1)
+        self.remove(top_text)
+
+        # ============================
+
+        top_text = RelativeText(
+            "mix",
+            vector=mn.UP * 2,
+        )
+        top_text.first_appear(self)
+
+        string.update_value(self, "follow the rabbit", left_aligned=False)
+        self.wait(1)
+        string.highlight_cells([0, 2, 4])
+        string.pointers([0, 2, 4])
+        string.pointers_on_value("F", color=mn.PINK)
+        self.wait(pause)
+
+        string.update_value(self, "follow the")
+        string.highlight_cells([0, 2, 4])
+        string.pointers([0, 2, 4])
+        string.pointers_on_value("F", color=mn.PINK)
+        self.wait(pause)
+
+        string.update_value(self, "follow")
+        string.highlight_cells([0, 2, 4])
+        string.pointers([0, 2, 4])
+        string.highlight_cells_with_value("F", color=mn.PINK)
+        string.pointers_on_value("F", color=mn.PINK)
+        self.wait(pause)
+
+        string.update_value(self, "")
+        string.highlight_cells([0, 2, 4])
+        string.pointers([0, 2, 4])
+        string.highlight_cells_with_value("F", color=mn.PINK)
+        string.pointers_on_value("F", color=mn.PINK)
+        self.wait(1)
+
+        string.update_value(self, "rabbit", left_aligned=False)
+        string.highlight_cells([0, 2, 4])
+        string.pointers([0, 2, 4])
+        string.pointers_on_value("i", color=mn.PINK)
+        self.wait(1)
+
+        string.update_value(self, "white rabbit", left_aligned=False)
+        string.highlight_cells([0, 1, 2])
+        string.pointers([0, 1, 2])
+        string.highlight_cells_with_value("t", color=mn.PINK)
+        string.pointers_on_value("t", color=mn.PINK)
+        self.wait(pause)
+
+        string.update_value(self, "rabbit white", left_aligned=False)
+        string.highlight_cells([1, 1, 2])
+        string.pointers([1, 1, 2])
+        string.pointers_on_value("t", color=mn.PINK)
+        self.wait(pause)
+
+        string.update_value(self, "rabbit the white", left_aligned=False)
+        string.highlight_cells([0, 2, 2])
+        string.pointers([0, 2, 2])
+        string.highlight_cells_with_value("t", color=mn.PINK)
+        string.pointers_on_value("t", color=mn.PINK)
+        self.wait(pause)
+
+        string.update_value(self, "white the rabbit")
+        string.highlight_cells([3, 5, 3])
+        string.pointers([3, 5, 3])
+        string.pointers_on_value(" ", color=mn.PINK)
+        self.wait(pause)
+
+        string.update_value(self, "rab follow rab")
+        string.highlight_cells([90, 90, 90])
+        string.pointers([90, 90, 90])
+        string.highlight_cells_with_value("a", color=mn.PINK)
+        string.pointers_on_value("a", color=mn.PINK)
+        self.wait(1)
         # self.remove(top_text)
-        #
-        # # ============================
-        #
-        # top_text = RelativeText(
-        #     "highlight_cells_with_value()   pointers_on_value()",
-        #     vector=mn.UP * 2,
-        # )
-        # top_text.first_appear(self)
-        #
-        # string.update_value(self, "follow the rabbit", left_aligned=False)
-        # self.wait(1)
-        # string.highlight_cells_with_value("f")
-        # string.pointers_on_value("f")
-        # self.wait(pause)
-        # string.highlight_cells_with_value("t")
-        # string.pointers_on_value("t")
-        # self.wait(pause)
-        # string.highlight_cells_with_value("a", color=mn.LIGHT_BROWN)
-        # string.pointers_on_value("a", color=mn.LIGHT_BROWN)
-        # self.wait(pause)
-        # string.highlight_cells_with_value("b", color=mn.LIGHT_BROWN)
-        # string.pointers_on_value("b", color=mn.LIGHT_BROWN)
-        # self.wait(pause)
-        # string.highlight_cells_with_value("l", color=mn.PURPLE)
-        # string.pointers_on_value("l", color=mn.PURPLE)
-        # self.wait(pause)
-        # string.highlight_cells_with_value("w", color=mn.PURPLE)
-        # string.pointers_on_value("w", color=mn.PURPLE)
-        # self.wait(pause)
-        # string.highlight_cells_with_value(" ", color=mn.PINK)
-        # string.pointers_on_value(" ", color=mn.PINK)
-        # self.wait(1)
-        # self.remove(top_text)
-        #
-        # # ============================
-        #
-        # top_text = RelativeText(
-        #     "mix",
-        #     vector=mn.UP * 2,
-        # )
-        # top_text.first_appear(self)
-        #
-        # string.update_value(self, "follow the rabbit", left_aligned=False)
-        # self.wait(1)
-        # string.highlight_cells([0, 2, 4])
-        # string.pointers([0, 2, 4])
-        # string.pointers_on_value("F", color=mn.PINK)
-        # self.wait(pause)
-        #
-        # string.update_value(self, "follow the")
-        # string.highlight_cells([0, 2, 4])
-        # string.pointers([0, 2, 4])
-        # string.pointers_on_value("F", color=mn.PINK)
-        # self.wait(pause)
-        #
-        # string.update_value(self, "follow")
-        # string.highlight_cells([0, 2, 4])
-        # string.pointers([0, 2, 4])
-        # string.highlight_cells_with_value("F", color=mn.PINK)
-        # string.pointers_on_value("F", color=mn.PINK)
-        # self.wait(pause)
-        #
-        # string.update_value(self, "")
-        # string.highlight_cells([0, 2, 4])
-        # string.pointers([0, 2, 4])
-        # string.highlight_cells_with_value("F", color=mn.PINK)
-        # string.pointers_on_value("F", color=mn.PINK)
-        # self.wait(1)
-        #
-        # string.update_value(self, "rabbit", left_aligned=False)
-        # string.highlight_cells([0, 2, 4])
-        # string.pointers([0, 2, 4])
-        # string.pointers_on_value("i", color=mn.PINK)
-        # self.wait(1)
-        #
-        # string.update_value(self, "white rabbit", left_aligned=False)
-        # string.highlight_cells([0, 1, 2])
-        # string.pointers([0, 1, 2])
-        # string.highlight_cells_with_value("t", color=mn.PINK)
-        # string.pointers_on_value("t", color=mn.PINK)
-        # self.wait(pause)
-        #
-        # string.update_value(self, "rabbit white", left_aligned=False)
-        # string.highlight_cells([1, 1, 2])
-        # string.pointers([1, 1, 2])
-        # string.pointers_on_value("t", color=mn.PINK)
-        # self.wait(pause)
-        #
-        # string.update_value(self, "rabbit the white", left_aligned=False)
-        # string.highlight_cells([0, 2, 2])
-        # string.pointers([0, 2, 2])
-        # string.highlight_cells_with_value("t", color=mn.PINK)
-        # string.pointers_on_value("t", color=mn.PINK)
-        # self.wait(pause)
-        #
-        # string.update_value(self, "white the rabbit follow", left_aligned=False)
-        # string.highlight_cells([3, 5, 3])
-        # string.pointers([3, 5, 3])
-        # string.pointers_on_value(" ", color=mn.PINK)
-        # self.wait(pause)
-        #
-        # string.update_value(self, "rab follow the white bit", left_aligned=False)
-        # string.highlight_cells([90, 90, 90])
-        # string.pointers([90, 90, 90])
-        # string.highlight_cells_with_value("w", color=mn.PINK)
-        # string.pointers_on_value("w", color=mn.PINK)
-        # self.wait(1)
-        # # self.remove(top_text)
 
         # ========== FINISH ==============
 
         self.wait(pause)
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"

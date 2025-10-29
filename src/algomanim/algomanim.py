@@ -571,8 +571,6 @@ class String(mn.VGroup):
                 fill_color=fill_color,
             )
             utils.position(self.letters_cell_mob, mob_center, align_edge, vector)
-            # self.letters_cell_left_edge = self.letters_cell_mob.get_left()
-            # self.coordinate_y = self.get_y()
             self.text_mob.next_to(
                 self.letters_cell_mob.get_top(),
                 direction=mn.DOWN,
@@ -609,11 +607,11 @@ class String(mn.VGroup):
         quote_cell_mob[0].next_to(self.letters_cell_mob, mn.LEFT, buff=0.0)
         quote_cell_mob[1].next_to(self.letters_cell_mob, mn.RIGHT, buff=0.0)
 
-        self.quote_cell_left_edge = quote_cell_mob[0].get_left()
-
-        all_cell_mob = mn.VGroup(
+        self.all_cell_mob = mn.VGroup(
             [quote_cell_mob[0], self.letters_cell_mob, quote_cell_mob[1]],
         )
+
+        self.quote_cell_left_edge = self.all_cell_mob.get_left()
 
         # construction: text mobs quotes group
         quotes_mob = mn.VGroup(
@@ -688,7 +686,7 @@ class String(mn.VGroup):
 
         # adds local objects as instance attributes
         self.add(
-            all_cell_mob,
+            self.all_cell_mob,
             self.letters_mob,
             quotes_mob,
         )
@@ -717,6 +715,10 @@ class String(mn.VGroup):
         self.string = new_value
         self.letters_cell_mob = new_group.letters_cell_mob
         self.submobjects = new_group.submobjects.copy()
+
+        self.quote_cell_left_edge = new_group.quote_cell_left_edge
+        self.letters_cell_left_edge = new_group.letters_cell_left_edge
+
         if self.string:
             self.letters_mob = new_group.letters_mob
             self.pointers_list = new_group.pointers_list
@@ -742,11 +744,6 @@ class String(mn.VGroup):
         if not self.string and not new_value:
             return
 
-        if new_value:
-            left_edge = self.quote_cell_left_edge
-        else:
-            left_edge = self.letters_cell_left_edge
-
         new_group = String(
             new_value,
             font=self.font,
@@ -756,12 +753,22 @@ class String(mn.VGroup):
             fill_color=self.fill_color,
         )
         new_group.coordinate_y = self.coordinate_y
-        new_group.quote_cell_left_edge = self.quote_cell_left_edge
-        new_group.letters_cell_left_edge = self.letters_cell_left_edge
 
         if left_aligned:
+            new_group.quote_cell_left_edge = self.quote_cell_left_edge
+            new_group.letters_cell_left_edge = self.letters_cell_left_edge
+
+            if new_value:
+                left_edge = self.quote_cell_left_edge
+            else:
+                left_edge = self.letters_cell_left_edge
+
             new_group.align_to(left_edge, mn.LEFT)
             new_group.set_y(self.coordinate_y)
+
+        else:
+            new_group.move_to(self.mob_center)
+            new_group.shift(self.vector)
 
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
@@ -874,7 +881,7 @@ class String(mn.VGroup):
         self,
         val: str,
         pos: int = 1,
-        color: ManimColor | str = mn.WHITE,
+        color: ManimColor | str = mn.BLACK,
     ):
         """Highlight middle pointers on cells with matching value.
 
