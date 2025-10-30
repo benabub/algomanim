@@ -160,43 +160,8 @@ class Array(mn.VGroup):
                         buff=bottom_buff,
                     )
 
-        # ----- pointers -------
-
-        # create pointers as a list with top and bottom groups
-        self.pointers_list: List[List[Any]] = [[], []]  # [0] for top, [1] for bottom
-
-        # create template triangles
-        top_triangle = (
-            mn.Triangle(color=self.bg_color)
-            .stretch_to_fit_width(0.7)
-            .scale(0.1)
-            .rotate(mn.PI)
-        )
-        bottom_triangle = (
-            mn.Triangle(color=self.bg_color).stretch_to_fit_width(0.7).scale(0.1)
-        )
-
-        for cell in self.cell_mob:
-            # create top triangles (3 per cell)
-            top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
-            # arrange top triangles horizontally above the cell
-            top_triple_group.arrange(mn.RIGHT, buff=0.08)
-            top_triple_group.next_to(cell, mn.UP, buff=0.15)
-            self.pointers_list[0].append(top_triple_group)
-
-            # create bottom triangles (3 per cell)
-            bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
-            # arrange bottom triangles horizontally below the cell
-            bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
-            bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
-            self.pointers_list[1].append(bottom_triple_group)
-
-        # at this moment:
-        # self.pointers_list[0] = [
-        #     nameless_top_triple_Vgroup_0,
-        #     nameless_top_triple_Vgroup_1,
-        #     ... for each cell in self cell_mob
-        # ]
+        # pointers
+        utils.create_pointers(self, self.cell_mob)
 
         # ------- add ----------
 
@@ -250,9 +215,6 @@ class Array(mn.VGroup):
         if not self.arr and not new_value:
             return
 
-        old_left_edge = self.get_left()
-        old_y = self.get_y()
-
         new_group = Array(
             new_value,
             font=self.font,
@@ -261,13 +223,12 @@ class Array(mn.VGroup):
         )
 
         if left_aligned:
-            new_group.align_to(old_left_edge, mn.LEFT)
-            new_group.set_y(old_y)
+            new_group.align_to(self.get_left(), mn.LEFT)
+            new_group.set_y(self.get_y())
 
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
             self._update_internal_state(new_group, new_value)
-
         else:
             scene.remove(self)
             self._update_internal_state(new_group, new_value)
@@ -377,7 +338,7 @@ class Array(mn.VGroup):
         self,
         val: int,
         pos: int = 1,
-        color: ManimColor | str = mn.WHITE,
+        color: ManimColor | str = mn.BLACK,
     ):
         """Highlight middle pointers on all cells whose values
         equal the provided value.
@@ -644,43 +605,8 @@ class String(mn.VGroup):
                     buff=bottom_buff,
                 )
 
-        # ----- pointers -------
-
-        # create pointers as a list with top and bottom groups
-        self.pointers_list: List[List[Any]] = [[], []]  # [0] for top, [1] for bottom
-
-        # create template triangles
-        top_triangle = (
-            mn.Triangle(color=self.bg_color)
-            .stretch_to_fit_width(0.7)
-            .scale(0.1)
-            .rotate(mn.PI)
-        )
-        bottom_triangle = (
-            mn.Triangle(color=self.bg_color).stretch_to_fit_width(0.7).scale(0.1)
-        )
-
-        for cell in self.letters_cell_mob:
-            # create top triangles (3 per cell)
-            top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
-            # arrange top triangles horizontally above the cell
-            top_triple_group.arrange(mn.RIGHT, buff=0.08)
-            top_triple_group.next_to(cell, mn.UP, buff=0.15)
-            self.pointers_list[0].append(top_triple_group)
-
-            # create bottom triangles (3 per cell)
-            bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
-            # arrange bottom triangles horizontally below the cell
-            bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
-            bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
-            self.pointers_list[1].append(bottom_triple_group)
-
-        # at this moment:
-        # self.pointers_list[0] = [
-        #     nameless_top_triple_Vgroup_0,
-        #     nameless_top_triple_Vgroup_1,
-        #     ... for each cell in self cell_mob
-        # ]
+        # pointers
+        utils.create_pointers(self, self.letters_cell_mob)
 
         # ------- add ----------
 

@@ -105,7 +105,7 @@ class ExampleBubblesort(mn.Scene):
                 code_block.highlight_line(1)
                 array.pointers([i, j, k])
                 array.highlight_cells([i, j, k])
-                array.pointers_on_value(bubble)
+                array.pointers_on_value(bubble, color=mn.WHITE)
                 top_text.update_text(self)
                 bottom_text.update_text(self, animate=False)
                 self.wait(pause)
@@ -123,7 +123,7 @@ class ExampleBubblesort(mn.Scene):
                     arr[j], arr[k] = arr[k], arr[j]
                     code_block.highlight_line(4)
                     array.update_value(self, arr, animate=False)
-                    array.pointers_on_value(bubble)
+                    array.pointers_on_value(bubble, color=mn.WHITE)
                     array.pointers([i, j, k])
                     array.highlight_cells([i, j, k])
                     top_text.update_text(self)
@@ -138,7 +138,7 @@ class ExampleBubblesort(mn.Scene):
 class ExampleArray(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
-        pause = 1
+        pause = 0.5
 
         # ======== INPUTS ============
 
@@ -148,8 +148,6 @@ class ExampleArray(mn.Scene):
 
         array = Array(arr)
         array.first_appear(self)
-
-        pause = 0.5
 
         array_20 = Array(
             arr,
@@ -297,6 +295,8 @@ class ExampleArray(mn.Scene):
 
         array.update_value(self, [1, 12, 123, 1234, 12345, 123456], left_aligned=False)
         self.wait(1)
+        array.update_value(self, [1, 12, 123, 1234, 12345, 123456])
+        self.wait(pause)
         array.update_value(self, [123456, 12345, 1234, 123, 12, 1])
         self.wait(pause)
         array.update_value(self, [1, 11, 1, 11, 1])
@@ -374,7 +374,7 @@ class ExampleArray(mn.Scene):
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22, 0])
         array.highlight_cells_with_value(0)
-        array.pointers_on_value(0, pos=0)
+        array.pointers_on_value(0)
         self.wait(pause)
         array.update_value(self, [0, 22, 0, 22, 0, 22])
         array.highlight_cells_with_value(0, color=mn.LIGHT_BROWN)
@@ -382,7 +382,7 @@ class ExampleArray(mn.Scene):
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22, 0])
         array.highlight_cells_with_value(0, color=mn.LIGHT_BROWN)
-        array.pointers_on_value(0, color=mn.LIGHT_BROWN, pos=0)
+        array.pointers_on_value(0, color=mn.LIGHT_BROWN)
         self.wait(pause)
         array.update_value(self, [0, 22, 0, 22, 0, 22])
         array.highlight_cells_with_value(0, color=mn.PURPLE)
@@ -390,7 +390,7 @@ class ExampleArray(mn.Scene):
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22])
         array.highlight_cells_with_value(0, color=mn.PURPLE)
-        array.pointers_on_value(0, color=mn.PURPLE, pos=0)
+        array.pointers_on_value(0, color=mn.PURPLE)
         self.wait(pause)
         array.update_value(self, [0, 22, 0, 22, 0, 22])
         array.highlight_cells_with_value(0, color=mn.PINK)
@@ -398,7 +398,7 @@ class ExampleArray(mn.Scene):
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22])
         array.highlight_cells_with_value(0, color=mn.PINK)
-        array.pointers_on_value(0, color=mn.PINK, pos=0)
+        array.pointers_on_value(0, color=mn.PINK)
         self.wait(1)
         self.remove(top_text)
 
@@ -451,14 +451,14 @@ class ExampleArray(mn.Scene):
         array.pointers([0, 2, 4])
         array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
-        self.wait(1)
+        self.wait(pause)
 
         array.update_value(self, [333])
         array.highlight_cells([0, 2, 4])
         array.pointers([0, 2, 4])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
-        self.wait(1)
+        self.wait(pause)
 
         array.update_value(self, [1, 0, 22, 0, 333, 0])
         array.highlight_cells([0, 1, 2])
@@ -512,7 +512,7 @@ class ExampleArray(mn.Scene):
 class ExampleString(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
-        pause = 1
+        pause = 0.5
 
         # ======== INPUTS ============
 
@@ -522,8 +522,6 @@ class ExampleString(mn.Scene):
 
         string = String(s)
         string.first_appear(self)
-
-        pause = 0.5
 
         string_20 = String(
             s,
