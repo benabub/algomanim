@@ -18,9 +18,10 @@ def get_cell_height(
     font_size: float,
     font: str,
     inter_buff: float,
+    weight: str,
     test_sign: str = "0",
 ) -> float:
-    zero_mob = mn.Text(test_sign, font=font, font_size=font_size)
+    zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
     zero_mob_height = zero_mob.height
     return inter_buff * 2 + zero_mob_height
 

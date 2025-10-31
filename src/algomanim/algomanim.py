@@ -21,6 +21,7 @@ class Array(mn.VGroup):
         font: Font family for text elements.
         font_size: Font size for text, also scale the whole mobject.
         font_color: Color for text elements.
+        weight: Font weight (NORMAL, BOLD, etc.).
         inter_buff: Internal padding within cells.
         bg_color: Background color for cells and default pointer color.
         cell_color: Border color for cells.
@@ -35,6 +36,7 @@ class Array(mn.VGroup):
         font="",
         font_size=35,
         font_color: ManimColor | str = mn.WHITE,
+        weight: str = "NORMAL",
         inter_buff: float = 0.15,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         cell_color: ManimColor | str = mn.WHITE,
@@ -50,9 +52,10 @@ class Array(mn.VGroup):
         self.font_size = font_size
         self.font_color = font_color
         self.inter_buff = inter_buff
-        self.cell_height = utils.get_cell_height(font_size, font, inter_buff)
+        self.cell_height = utils.get_cell_height(font_size, font, inter_buff, weight)
         top_buff = 0.09
         bottom_buff = inter_buff + 0.01
+        deep_bottom_buff = 0.05
 
         self.TEXT_CONFIG = {
             "font": font,
@@ -110,7 +113,7 @@ class Array(mn.VGroup):
         )
 
         for i in range(len(arr)):
-            if not isinstance(arr[i], str):
+            if not isinstance(arr[i], str):  # center alignment
                 self.val_mob[i].move_to(self.cell_mob[i])
             else:
                 val_set = set(arr[i])
@@ -152,6 +155,21 @@ class Array(mn.VGroup):
                         direction=mn.DOWN,
                         buff=top_buff,
                     )
+
+                elif val_set.issubset(
+                    {
+                        "y",
+                        "p",
+                        "g",
+                        "j",
+                    }
+                ):  # deep bottom alignment
+                    self.val_mob[i].next_to(
+                        self.cell_mob[i].get_bottom(),
+                        direction=mn.UP,
+                        buff=deep_bottom_buff,
+                    )
+
                 else:  # bottom alignment
                     self.val_mob[i].next_to(
                         self.cell_mob[i].get_bottom(),
@@ -501,12 +519,12 @@ class String(mn.VGroup):
         string: str,
         vector: np.ndarray = mn.ORIGIN,
         font="",
-        font_size=30,
+        font_size=35,
         weight: str = "NORMAL",
         font_color: ManimColor | str = mn.WHITE,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
-        inter_buff: float = 0.15,
+        inter_buff: float = 0.10,
         cell_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
@@ -526,11 +544,12 @@ class String(mn.VGroup):
         # real_stroke_width = 0.02  # (not mn.DEFAULT_STROKE_WIDTH=4)
         top_buff = 0.09
         bottom_buff = inter_buff + 0.01
+        deep_bottom_buff = 0.05
 
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         self.SQUARE_CONFIG = {
-            "side_length": utils.get_cell_height(font_size, font, inter_buff),
+            "side_length": utils.get_cell_height(font_size, font, inter_buff, weight),
             "fill_opacity": 1,
         }
         self.TEXT_CONFIG = {
@@ -614,8 +633,14 @@ class String(mn.VGroup):
                     direction=mn.DOWN,
                     buff=top_buff,
                 )
-            elif string[i] in "-=+~:#%*[]{}()\\/|@&$":  # center alignment
+            elif string[i] in "<>-=+~:#%*[]{}()\\/|@&$":  # center alignment
                 self.letters_mob[i].move_to(self.letters_cell_mob[i])
+            elif string[i] in "ypgj":  # deep bottom alignment
+                self.letters_mob[i].next_to(
+                    self.letters_cell_mob[i].get_bottom(),
+                    direction=mn.UP,
+                    buff=deep_bottom_buff,
+                )
             else:  # bottom alignment
                 self.letters_mob[i].next_to(
                     self.letters_cell_mob[i].get_bottom(),
