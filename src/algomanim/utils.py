@@ -9,7 +9,8 @@ from typing import (
     Literal,
 )
 import numpy as np
-import manim as mn  # type: ignore
+import manim as mn
+# import algomanim as alg
 # from manim import ManimColor
 
 

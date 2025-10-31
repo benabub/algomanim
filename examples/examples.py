@@ -286,7 +286,6 @@ class ExampleArray(mn.Scene):
 
         # ============================
 
-        pause = 0.5
         top_text = RelativeText(
             "update_value()",
             vector=mn.UP * 2,
@@ -294,6 +293,8 @@ class ExampleArray(mn.Scene):
         top_text.first_appear(self)
 
         array.update_value(self, [1, 12, 123, 1234, 12345, 123456], left_aligned=False)
+        array.pointers([0, 1, 2])
+        array.highlight_cells([0, 1, 2])
         self.wait(1)
         array.update_value(self, [1, 12, 123, 1234, 12345, 123456])
         self.wait(pause)
@@ -662,12 +663,14 @@ class ExampleString(mn.Scene):
 
         string.update_value(self, "follow the rabbit", left_aligned=False)
 
-        pause = 0.5
         top_text = RelativeText(
             "update_value()",
             vector=mn.UP * 2,
         )
         top_text.first_appear(self)
+
+        string.pointers([0, 1, 2])
+        string.highlight_cells([0, 1, 2])
 
         self.wait(1)
         string.update_value(self, "follow the rabbit")

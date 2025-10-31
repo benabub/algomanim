@@ -3,12 +3,11 @@ from typing import (
     Tuple,
     Callable,
     Any,
-    Union,
     Optional,
     Literal,
 )
 import numpy as np
-import manim as mn  # type: ignore
+import manim as mn
 from manim import ManimColor
 from . import utils
 
@@ -186,12 +185,31 @@ class Array(mn.VGroup):
             new_group: New Array instance to copy state from.
             new_value: New array values.
         """
+
+        # save old attributes with highlights
+        old_cells = getattr(self, "cell_mob", None)
+        old_pointers = getattr(self, "pointers_list", None)
+
         self.arr = new_value.copy()
         self.cell_mob = new_group.cell_mob
         self.submobjects = new_group.submobjects.copy()
         if self.arr:
             self.val_mob = new_group.val_mob
             self.pointers_list = new_group.pointers_list
+
+            # restore old highlights
+            if old_cells:
+                for old, new in zip(old_cells, self.cell_mob):
+                    new.set_fill(old.get_fill_color())
+            if old_pointers:
+                for pos in (0, 1):
+                    for old_ptrs, new_ptrs in zip(
+                        old_pointers[pos], self.pointers_list[pos]
+                    ):
+                        for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                            new_tri.set_color(old_tri.get_color())
+        else:
+            self.pointers_list = [[], []]
 
     def update_value(
         self,
@@ -940,7 +958,7 @@ class RelativeTextValue(mn.VGroup):
 
     def __init__(
         self,
-        *vars: Tuple[str, Callable[[], Any], Union[str, ManimColor]],
+        *vars: Tuple[str, Callable[[], Any], str | ManimColor],
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         font="",
         font_size=35,
