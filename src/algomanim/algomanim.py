@@ -656,6 +656,10 @@ class String(mn.VGroup):
             new_value: New string value.
         """
 
+        # save old attributes with highlights
+        old_cells = getattr(self, "letters_cell_mob", None)
+        old_pointers = getattr(self, "pointers_list", None)
+
         self.string = new_value
         self.letters_cell_mob = new_group.letters_cell_mob
         self.submobjects = new_group.submobjects.copy()
@@ -666,6 +670,20 @@ class String(mn.VGroup):
         if self.string:
             self.letters_mob = new_group.letters_mob
             self.pointers_list = new_group.pointers_list
+
+            # restore old highlights
+            if old_cells:
+                for old, new in zip(old_cells, self.letters_cell_mob):
+                    new.set_fill(old.get_fill_color())
+            if old_pointers:
+                for pos in (0, 1):
+                    for old_ptrs, new_ptrs in zip(
+                        old_pointers[pos], self.pointers_list[pos]
+                    ):
+                        for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                            new_tri.set_color(old_tri.get_color())
+        else:
+            self.pointers_list = [[], []]
 
     def update_value(
         self,
