@@ -6,10 +6,18 @@ from typing import (
     Optional,
     Literal,
 )
+
 import numpy as np
 import manim as mn
 from manim import ManimColor
+
 from . import utils
+
+# from .datastructures import (
+#     Node,
+#     ListNode,
+#     TreeNode,
+# )
 
 
 class Array(mn.VGroup):
@@ -37,9 +45,9 @@ class Array(mn.VGroup):
         font_size=35,
         font_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
-        inter_buff: float = 0.15,
+        inter_buff: float = 0.10,
         bg_color: ManimColor | str = mn.DARK_GRAY,
-        cell_color: ManimColor | str = mn.WHITE,
+        cell_color: ManimColor | str = mn.LIGHT_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
