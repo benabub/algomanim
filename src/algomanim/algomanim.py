@@ -7,17 +7,17 @@ from typing import (
     Literal,
 )
 
-import numpy as np
 import manim as mn
 from manim import ManimColor
+import numpy as np
 
 from . import utils
 
-# from .datastructures import (
-#     Node,
-#     ListNode,
-#     TreeNode,
-# )
+from .datastructures import (
+    #     Node,
+    ListNode,
+    #     TreeNode,
+)
 
 
 class Array(mn.VGroup):
@@ -987,6 +987,17 @@ class String(mn.VGroup):
 
         for idx, mob in enumerate(self.letters_cell_mob):
             mob.set_fill(color if self.string[idx] == val else self.fill_color)
+
+
+class LinkedList(mn.VGroup):
+    """
+    ...
+    """
+
+    def __init__(
+        self,
+        head: ListNode,
+    ): ...
 
 
 class RelativeTextValue(mn.VGroup):

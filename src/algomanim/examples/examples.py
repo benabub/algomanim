@@ -1,5 +1,4 @@
 import manim as mn
-
 from algomanim import (
     Array,
     String,
@@ -8,6 +7,14 @@ from algomanim import (
     CodeBlock,
     TitleText,
 )
+
+# from algomanim.datastructures import (
+#     #     Node,
+#     ListNode,
+#     #     TreeNode,
+# )
+
+from . import utils
 
 
 class ExampleBubblesort(mn.Scene):
@@ -837,6 +844,35 @@ class ExampleString(mn.Scene):
         string.pointers_on_value("a", color=mn.PINK)
         self.wait(1)
         # self.remove(top_text)
+
+        # ========== FINISH ==============
+
+        self.wait(pause)
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+
+
+class ExampleLinkedlist(mn.Scene):
+    def construct(self):
+        self.camera.background_color = mn.GREY  # type: ignore
+        pause = 0.5
+
+        # ======== INPUTS ============
+
+        ll = utils.create_linked_list([1, 2, 3, 4, 5])
+
+        # ============================
+
+        # ============================
+
+        # ============================
+
+        # ============================
+
+        # ============================
+
+        # ============================
+
+        # ============================
 
         # ========== FINISH ==============
 
