@@ -45,7 +45,9 @@ class Array(mn.VGroup):
         font_size=35,
         font_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
-        inter_buff: float = 0.10,
+        inter_buff: float = 0.15,
+        top_buff: float = 0.09,
+        deep_bottom_buff: float = 0.05,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         cell_color: ManimColor | str = mn.LIGHT_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -61,9 +63,9 @@ class Array(mn.VGroup):
         self.font_color = font_color
         self.inter_buff = inter_buff
         self.cell_height = utils.get_cell_height(font_size, font, inter_buff, weight)
-        top_buff = 0.09
-        bottom_buff = inter_buff + 0.01
-        deep_bottom_buff = 0.05
+        self.top_buff = top_buff
+        self.deep_bottom_buff = deep_bottom_buff
+        self.bottom_buff = inter_buff + 0.01
 
         self.TEXT_CONFIG = {
             "font": font,
@@ -182,7 +184,7 @@ class Array(mn.VGroup):
                     self.val_mob[i].next_to(
                         self.cell_mob[i].get_bottom(),
                         direction=mn.UP,
-                        buff=bottom_buff,
+                        buff=self.bottom_buff,
                     )
 
         # pointers

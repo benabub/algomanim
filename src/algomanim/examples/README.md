@@ -2,20 +2,12 @@
 
 ## Where to find the examples folder
 
-The `examples/` folder is **not included** when you install algomanim via pip or poetry.  
-It is available only in the source repository.
+The examples/ module is included when you install algomanim via pip or poetry.
 
-To access the examples, clone the full repository from GitHub **inside the same environment** where you installed algomanim:
-
-```sh
-git clone https://github.com/benabub/algomanim.git
+After installation, you can find the examples directory at:
+```bash
+.venv/lib/python3.x/site-packages/algomanim/examples/
 ```
-
-This will create an `algomanim/` folder with the `examples/` directory inside it.  
-
-> **Note:**  
-> You do not actually need the entire repository for running examples — only the `examples/` folder is required.  
-> As long as the `examples/` folder is located somewhere within your Python environment (where algomanim is installed), the examples will work.
 
 ## How to run an example
 

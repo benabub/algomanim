@@ -24,9 +24,8 @@ poetry add algomanim
 
 ## Examples
 
-You can find example render scripts and try rendering videos yourself in the repository's `examples/` folder.  
-**Note:** The `examples/` folder is not included in PyPI or pip/poetry installations.  
-See [`examples/README.md`](examples/README.md) for details.
+The package includes example render scripts to help you get started. You can find them in the algomanim.examples module after installation.  
+See [`examples documentation`](src/algomanim/examples/README.md) for details.
 
 ## License
 

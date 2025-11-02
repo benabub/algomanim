@@ -14,7 +14,7 @@ from algomanim import (
 #     #     TreeNode,
 # )
 
-from . import utils
+from algomanim.examples import utils
 
 
 class ExampleBubblesort(mn.Scene):
