@@ -8,12 +8,6 @@ from algomanim import (
     TitleText,
 )
 
-# from algomanim.datastructures import (
-#     #     Node,
-#     ListNode,
-#     #     TreeNode,
-# )
-
 from algomanim.examples import utils
 
 

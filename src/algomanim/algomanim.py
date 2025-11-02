@@ -15,8 +15,8 @@ from . import utils
 
 from .datastructures import (
     #     Node,
-    ListNode,
     #     TreeNode,
+    ListNode,
 )
 
 
@@ -24,17 +24,29 @@ class Array(mn.VGroup):
     """Array visualization as a VGroup of cells with values and pointers.
 
     Args:
-        arr: The array of values to visualize.
+        arr: List of values to visualize.
         vector: Position offset from mob_center.
         font: Font family for text elements.
-        font_size: Font size for text, also scale the whole mobject.
+        font_size: Font size for text, scales the whole mobject.
         font_color: Color for text elements.
         weight: Font weight (NORMAL, BOLD, etc.).
-        inter_buff: Internal padding within cells.
         bg_color: Background color for cells and default pointer color.
         cell_color: Border color for cells.
         mob_center: Reference mobject for positioning.
         align_edge: Edge alignment relative to mob_center.
+        cell_params_auto: Whether to auto-calculate cell parameters.
+        cell_height: Manual cell height when auto-calculation disabled.
+        top_bottom_buff: Internal top/bottom padding within cells.
+        top_buff: Top alignment buffer for specific characters.
+        bottom_buff: Bottom alignment buffer for most characters.
+        deep_bottom_buff: Deep bottom alignment for descending characters.
+
+    Note:
+        Character alignment is automatically handled based on typography:
+        - Top: Quotes and accents (", ', ^, `)
+        - Deep bottom: Descenders (y, p, g, j)
+        - Center: Numbers, symbols, brackets
+        - Bottom: Most letters and other characters
     """
 
     def __init__(
@@ -45,13 +57,17 @@ class Array(mn.VGroup):
         font_size=35,
         font_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
-        inter_buff: float = 0.15,
-        top_buff: float = 0.09,
-        deep_bottom_buff: float = 0.05,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         cell_color: ManimColor | str = mn.LIGHT_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # ---- cell params ----
+        cell_params_auto=True,
+        cell_height=0.65625,
+        top_bottom_buff=0.15,
+        top_buff=0.09,
+        bottom_buff=0.16,
+        deep_bottom_buff=0.05,
     ):
         # call __init__ of the parent classes
         super().__init__()
@@ -61,11 +77,20 @@ class Array(mn.VGroup):
         self.font = font
         self.font_size = font_size
         self.font_color = font_color
-        self.inter_buff = inter_buff
-        self.cell_height = utils.get_cell_height(font_size, font, inter_buff, weight)
-        self.top_buff = top_buff
-        self.deep_bottom_buff = deep_bottom_buff
-        self.bottom_buff = inter_buff + 0.01
+
+        if cell_params_auto:
+            cell_params = utils.get_cell_params(font_size, font, weight)
+            self.cell_height = cell_params["cell_height"]
+            self.top_bottom_buff = cell_params["top_bottom_buff"]
+            self.top_buff = cell_params["top_buff"]
+            self.bottom_buff = cell_params["bottom_buff"]
+            self.deep_bottom_buff = cell_params["deep_bottom_buff"]
+        else:
+            self.cell_height = cell_height
+            self.top_bottom_buff = top_bottom_buff
+            self.top_buff = top_buff
+            self.bottom_buff = bottom_buff
+            self.deep_bottom_buff = deep_bottom_buff
 
         self.TEXT_CONFIG = {
             "font": font,
@@ -78,7 +103,9 @@ class Array(mn.VGroup):
             self.text_mob = mn.Text("[]", **self.TEXT_CONFIG)
             self.cell_mob = mn.Rectangle(
                 height=self.cell_height,
-                width=utils.get_cell_width(self.text_mob, inter_buff, self.cell_height),
+                width=utils.get_cell_width(
+                    self.text_mob, self.top_bottom_buff, self.cell_height
+                ),
                 color=bg_color,
                 fill_opacity=1.0,
             )
@@ -100,7 +127,9 @@ class Array(mn.VGroup):
         for text_mob in text_mobs_list:
             cell_mob = mn.Rectangle(
                 height=self.cell_height,
-                width=utils.get_cell_width(text_mob, inter_buff, self.cell_height),
+                width=utils.get_cell_width(
+                    text_mob, self.top_bottom_buff, self.cell_height
+                ),
                 color=cell_color,
                 fill_opacity=1.0,
             )
@@ -149,6 +178,16 @@ class Array(mn.VGroup):
                         "#",
                         "~",
                         "%",
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                        "9",
                     }
                 ):  # center alignment
                     self.val_mob[i].move_to(self.cell_mob[i])
@@ -163,7 +202,7 @@ class Array(mn.VGroup):
                     self.val_mob[i].next_to(
                         self.cell_mob[i].get_top(),
                         direction=mn.DOWN,
-                        buff=top_buff,
+                        buff=self.top_buff,
                     )
 
                 elif val_set.issubset(
@@ -177,7 +216,7 @@ class Array(mn.VGroup):
                     self.val_mob[i].next_to(
                         self.cell_mob[i].get_bottom(),
                         direction=mn.UP,
-                        buff=deep_bottom_buff,
+                        buff=self.deep_bottom_buff,
                     )
 
                 else:  # bottom alignment

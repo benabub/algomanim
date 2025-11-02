@@ -10,8 +10,6 @@ from typing import (
 )
 import numpy as np
 import manim as mn
-# import algomanim as alg
-# from manim import ManimColor
 
 
 def get_cell_height(
@@ -21,9 +19,62 @@ def get_cell_height(
     weight: str,
     test_sign: str = "0",
 ) -> float:
+    """Calculate cell height based on font metrics.
+
+    Args:
+        font_size: Font size for text measurement.
+        font: Font family name.
+        inter_buff: Internal padding within cells.
+        weight: Font weight (NORMAL, BOLD, etc.).
+        test_sign: Character used for measurement (default "0").
+
+    Returns:
+        Calculated cell height including padding.
+    """
     zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
     zero_mob_height = zero_mob.height
     return inter_buff * 2 + zero_mob_height
+
+
+def get_cell_params(
+    font_size: float,
+    font: str,
+    weight: str,
+    test_sign: str = "0",
+) -> dict:
+    """Calculate comprehensive cell layout parameters.
+
+    Args:
+        font_size: Font size for text measurement.
+        font: Font family name.
+        weight: Font weight (NORMAL, BOLD, etc.).
+        test_sign: Character used for measurement (default "0").
+
+    Returns:
+        Dictionary containing:
+        - top_bottom_buff: Internal top/bottom padding
+        - cell_height: Total cell height
+        - top_buff: Top alignment buffer
+        - bottom_buff: Standard bottom alignment buffer
+        - deep_bottom_buff: Deep bottom alignment buffer
+    """
+    zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
+
+    zero_mob_height = zero_mob.height  # 0.35625
+
+    top_bottom_buff = zero_mob_height / 2.375
+    cell_height = top_bottom_buff * 2 + zero_mob_height
+    top_buff = zero_mob_height / 3.958
+    bottom_buff = zero_mob_height / 35.625 + top_bottom_buff
+    deep_bottom_buff = zero_mob_height / 7.125
+
+    return {
+        "top_bottom_buff": top_bottom_buff,
+        "cell_height": cell_height,
+        "top_buff": top_buff,
+        "bottom_buff": bottom_buff,
+        "deep_bottom_buff": deep_bottom_buff,
+    }
 
 
 def get_cell_width(
@@ -31,6 +82,17 @@ def get_cell_width(
     inter_buff: float,
     cell_height: float,
 ) -> float:
+    """Calculate cell width based on text content and constraints.
+
+    Args:
+        text_mob: Text mobject to measure.
+        inter_buff: Internal padding within cells.
+        cell_height: Pre-calculated cell height.
+
+    Returns:
+        Cell width, ensuring it's at least as tall as the cell height
+        for consistent visual proportions.
+    """
     text_mob_height = text_mob.width
     res = inter_buff * 2.5 + text_mob_height
     if cell_height >= res:
