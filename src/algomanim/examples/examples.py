@@ -3,7 +3,7 @@ Example scenes demonstrating algomanim functionality and serving as visual tests
 
 This module contains Example classes that:
   - Showcase algomanim features in action
-  - Serve as visual regression tests to verify classes work correctly
+  - Serve as visual tests to verify classes work correctly
   - Help identify rendering issues on different systems
 
 Note: Uses default Manim fonts. For better visual results, consider installing

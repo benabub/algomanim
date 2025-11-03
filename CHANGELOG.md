@@ -80,3 +80,27 @@
 
 ## Removed
 - `square_scale()` function
+
+---
+
+# [0.2.3] - 2025-11-03
+
+## Added
+- `algomanim/examples/` directory with rendering scripts and usage documentation
+- `algomanim/utils.py`: `create_pointers()`, `get_cell_params()`, `get_cell_width()`
+- `algomanim/svg/` directory for vector assets
+- `algomanim/datastructures.py` with LeetCode data structure definitions
+
+## Changed
+- `Array`: dynamic cell width calculation for multi-character values
+- {`Array`, `String`}: `_update_internal_state()` now preserves highlight colors
+- {`Array`, `String`}: added support for empty arrays/strings
+- {`Array`, `String`}: automatic cell parameter calculation for precise text alignment
+- {`Array`, `String`}: character-specific vertical alignment in cells
+
+## Refactored
+- {`Array`, `String`}: `highlight_blocks()` → `highlight_cells()`
+- {`Array`, `String`}: `highlight_blocks_with_value()` → `highlight_cells_with_value()`
+
+## Fixed
+- `String`: {`update_value()`, `_update_internal_state()`}: left_aligned issues
