@@ -549,18 +549,31 @@ class String(mn.VGroup):
     """String visualization as a VGroup of character cells with quotes.
 
     Args:
-        string: The text string to visualize.
+        string: Text string to visualize.
         vector: Position offset from mob_center.
         font: Font family for text elements.
-        font_size: Font size for text, also scale the whole mobject.
+        font_size: Font size for text, scales the whole mobject.
         weight: Font weight (NORMAL, BOLD, etc.).
         font_color: Color for text elements.
-        bg_color: Background color for cells and default pointer color.
+        bg_color: Background color for quote cells and default pointer color.
         fill_color: Fill color for character cells.
-        inter_buff: Internal padding within cells.
         cell_color: Border color for cells.
         mob_center: Reference mobject for positioning.
         align_edge: Edge alignment relative to mob_center.
+        cell_params_auto: Whether to auto-calculate cell parameters.
+        cell_height: Manual cell height when auto-calculation disabled.
+        top_bottom_buff: Internal top/bottom padding within cells.
+        top_buff: Top alignment buffer for quotes and accents.
+        bottom_buff: Bottom alignment buffer for most characters.
+        deep_bottom_buff: Deep bottom alignment for descending characters.
+
+    Note:
+        Character alignment is automatically handled based on typography:
+        - Top: Quotes and accents (", ', ^, `)
+        - Center: Numbers, symbols, brackets, and operators
+        - Deep bottom: Descenders (y, p, g, j)
+        - Bottom: Most letters and other characters
+        Empty string display as quoted empty cell.
     """
 
     def __init__(
@@ -573,10 +586,16 @@ class String(mn.VGroup):
         font_color: ManimColor | str = mn.WHITE,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
-        inter_buff: float = 0.10,
         cell_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # ---- cell params ----
+        cell_params_auto=True,
+        cell_height=0.65625,
+        top_bottom_buff=0.15,
+        top_buff=0.09,
+        bottom_buff=0.16,
+        deep_bottom_buff=0.05,
     ):
         # call __init__ of the parent classes
         super().__init__()
@@ -590,15 +609,25 @@ class String(mn.VGroup):
         self.fill_color = fill_color
         self.mob_center = mob_center
         self.align_edge = align_edge
-        # real_stroke_width = 0.02  # (not mn.DEFAULT_STROKE_WIDTH=4)
-        top_buff = 0.09
-        bottom_buff = inter_buff + 0.01
-        deep_bottom_buff = 0.05
+
+        if cell_params_auto:
+            cell_params = utils.get_cell_params(font_size, font, weight)
+            self.cell_height = cell_params["cell_height"]
+            self.top_bottom_buff = cell_params["top_bottom_buff"]
+            self.top_buff = cell_params["top_buff"]
+            self.bottom_buff = cell_params["bottom_buff"]
+            self.deep_bottom_buff = cell_params["deep_bottom_buff"]
+        else:
+            self.cell_height = cell_height
+            self.top_bottom_buff = top_bottom_buff
+            self.top_buff = top_buff
+            self.bottom_buff = bottom_buff
+            self.deep_bottom_buff = deep_bottom_buff
 
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
         self.SQUARE_CONFIG = {
-            "side_length": utils.get_cell_height(font_size, font, inter_buff, weight),
+            "side_length": self.cell_height,
             "fill_opacity": 1,
         }
         self.TEXT_CONFIG = {
@@ -680,21 +709,21 @@ class String(mn.VGroup):
                 self.letters_mob[i].next_to(
                     self.letters_cell_mob[i].get_top(),
                     direction=mn.DOWN,
-                    buff=top_buff,
+                    buff=self.top_buff,
                 )
-            elif string[i] in "<>-=+~:#%*[]{}()\\/|@&$":  # center alignment
+            elif string[i] in "<>-=+~:#%*[]{}()\\/|@&$0123456789":  # center alignment
                 self.letters_mob[i].move_to(self.letters_cell_mob[i])
             elif string[i] in "ypgj":  # deep bottom alignment
                 self.letters_mob[i].next_to(
                     self.letters_cell_mob[i].get_bottom(),
                     direction=mn.UP,
-                    buff=deep_bottom_buff,
+                    buff=self.deep_bottom_buff,
                 )
             else:  # bottom alignment
                 self.letters_mob[i].next_to(
                     self.letters_cell_mob[i].get_bottom(),
                     direction=mn.UP,
-                    buff=bottom_buff,
+                    buff=self.bottom_buff,
                 )
 
         # pointers

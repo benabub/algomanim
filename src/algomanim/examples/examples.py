@@ -1,3 +1,15 @@
+"""
+Example scenes demonstrating algomanim functionality and serving as visual tests.
+
+This module contains Example classes that:
+  - Showcase algomanim features in action
+  - Serve as visual regression tests to verify classes work correctly
+  - Help identify rendering issues on different systems
+
+Note: Uses default Manim fonts. For better visual results, consider installing
+and specifying custom fonts in the scene configurations.
+"""
+
 import manim as mn
 from algomanim import (
     Array,
@@ -15,6 +27,7 @@ class ExampleBubblesort(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.DARK_GRAY  # type: ignore
         pause = 1
+        # pause = 0.3
 
         # ======== INPUTS ============
 
@@ -37,7 +50,8 @@ class ExampleBubblesort(mn.Scene):
         # Construction
         array = Array(
             arr,
-            mn.LEFT * 4.2 + mn.DOWN * 0.3,
+            mn.LEFT * 4.1 + mn.DOWN * 0.35,
+            font_size=40,
             # font=Vars.font,
         )
         # Animation
@@ -518,7 +532,7 @@ class ExampleString(mn.Scene):
 
         # ======== INPUTS ============
 
-        s = "0_-\\/*|@&.^'`~:"
+        s = "0agA-/*&.^`~"
 
         # ============================
 
@@ -529,7 +543,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string,
             vector=mn.UP * 2.8,
-            font_size=20,
+            font_size=25,
         )
         string_20.first_appear(self, time=0.1)
 
@@ -537,7 +551,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string,
             vector=mn.UP * 1.4,
-            font_size=25,
+            font_size=30,
         )
         string_25.first_appear(self, time=0.1)
 
@@ -545,7 +559,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string,
             vector=mn.DOWN * 1.5,
-            font_size=35,
+            font_size=37,
         )
         string_35.first_appear(self, time=0.1)
 
@@ -572,7 +586,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string.letters_cell_mob,
             vector=mn.UP * 2.8,
-            font_size=20,
+            font_size=25,
             align_edge="left",
         )
         string_20.first_appear(self, time=0.1)
@@ -581,7 +595,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string.letters_cell_mob,
             vector=mn.UP * 1.4,
-            font_size=25,
+            font_size=30,
             align_edge="left",
         )
         string_25.first_appear(self, time=0.1)
@@ -590,7 +604,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string.letters_cell_mob,
             vector=mn.DOWN * 1.5,
-            font_size=35,
+            font_size=37,
             align_edge="left",
         )
         string_35.first_appear(self, time=0.1)
@@ -619,7 +633,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string.letters_cell_mob,
             vector=mn.UP * 2.8,
-            font_size=20,
+            font_size=25,
             align_edge="right",
         )
         string_20.first_appear(self, time=0.1)
@@ -628,7 +642,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string.letters_cell_mob,
             vector=mn.UP * 1.4,
-            font_size=25,
+            font_size=30,
             align_edge="right",
         )
         string_25.first_appear(self, time=0.1)
@@ -637,7 +651,7 @@ class ExampleString(mn.Scene):
             s,
             mob_center=string.letters_cell_mob,
             vector=mn.DOWN * 1.5,
-            font_size=35,
+            font_size=37,
             align_edge="right",
         )
         string_35.first_appear(self, time=0.1)

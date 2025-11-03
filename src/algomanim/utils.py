@@ -12,30 +12,6 @@ import numpy as np
 import manim as mn
 
 
-def get_cell_height(
-    font_size: float,
-    font: str,
-    inter_buff: float,
-    weight: str,
-    test_sign: str = "0",
-) -> float:
-    """Calculate cell height based on font metrics.
-
-    Args:
-        font_size: Font size for text measurement.
-        font: Font family name.
-        inter_buff: Internal padding within cells.
-        weight: Font weight (NORMAL, BOLD, etc.).
-        test_sign: Character used for measurement (default "0").
-
-    Returns:
-        Calculated cell height including padding.
-    """
-    zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
-    zero_mob_height = zero_mob.height
-    return inter_buff * 2 + zero_mob_height
-
-
 def get_cell_params(
     font_size: float,
     font: str,
