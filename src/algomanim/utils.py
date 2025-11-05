@@ -11,6 +11,10 @@ from typing import (
 import numpy as np
 import manim as mn
 
+from .datastructures import (
+    ListNode,
+)
+
 
 def get_cell_params(
     font_size: float,
@@ -112,21 +116,20 @@ def position(
         mobject.move_to(mob_center.get_center() + vector)
 
 
-def create_pointers(self, cell_mob: mn.VGroup):
+def create_pointers(self, cell_mob: mn.VGroup) -> tuple[mn.VGroup, mn.VGroup]:
     """Create pointer triangles above and below each cell in the group.
 
     Args:
         cell_mob: VGroup of cells to attach pointers to.
 
-    Note:
-        Creates self.pointers_list with top and bottom pointer groups.
-        Result structure:
-        self.pointers_list[0] = [nameless_top_triple_Vgroup_0, ...]
-        self.pointers_list[1] = [nameless_bottom_triple_Vgroup_0, ...]
-    """
+    Returns:
+        Tuple of (top_pointers, bottom_pointers) VGroups where each contains
+        triple triangle groups for every cell | node.
 
-    # create pointers as a list with top and bottom groups
-    self.pointers_list = [[], []]  # [0] for top, [1] for bottom
+    Note:
+        Each cell gets 3 triangles above and 3 below, arranged horizontally.
+        Triangle groups are positioned with fixed buffering from cells.
+    """
 
     # create template triangles
     top_triangle = (
@@ -139,17 +142,76 @@ def create_pointers(self, cell_mob: mn.VGroup):
         mn.Triangle(color=self.bg_color).stretch_to_fit_width(0.7).scale(0.1)
     )
 
+    pointers_top = mn.VGroup()
+    pointers_bottom = mn.VGroup()
     for cell in cell_mob:
         # create top triangles (3 per cell)
         top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
         # arrange top triangles horizontally above the cell
         top_triple_group.arrange(mn.RIGHT, buff=0.08)
         top_triple_group.next_to(cell, mn.UP, buff=0.15)
-        self.pointers_list[0].append(top_triple_group)
+        pointers_top.add(top_triple_group)
 
         # create bottom triangles (3 per cell)
         bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
         # arrange bottom triangles horizontally below the cell
         bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
         bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
-        self.pointers_list[1].append(bottom_triple_group)
+        pointers_bottom.add(bottom_triple_group)
+
+    return pointers_top, pointers_bottom
+
+
+def create_linked_list(value: list) -> ListNode | None:
+    """Create a singly-linked list from a list.
+
+    Args:
+        value: List to convert into linked list nodes.
+
+    Returns:
+        Head node of the created linked list, or None if values is empty.
+    """
+
+    if not value:
+        return None
+    head = ListNode(value[0])
+    current = head
+    for val in value[1:]:
+        current.next = ListNode(val)
+        current = current.next
+    return head
+
+
+def linked_list_to_list(head: ListNode | None) -> list:
+    """Convert a linked list to a Python list.
+
+    Args:
+        head: Head node of the linked list.
+
+    Returns:
+        List containing all values from the linked list in order.
+        Empty list if head is None.
+    """
+    result = []
+    current = head
+    while current:
+        result.append(current.val)
+        current = current.next
+    return result
+
+
+def get_linked_list_length(head: ListNode | None) -> int:
+    """Calculate the length of a linked list.
+
+    Args:
+        head: Head node of the linked list.
+
+    Returns:
+        Number of nodes in the linked list. 0 if head is None.
+    """
+    count = 0
+    current = head
+    while current:
+        count += 1
+        current = current.next
+    return count
