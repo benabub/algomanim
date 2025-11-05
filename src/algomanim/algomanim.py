@@ -101,7 +101,7 @@ class Array(mn.VGroup):
 
         if not arr:
             self.text_mob = mn.Text("[]", **self.TEXT_CONFIG)
-            self.cell_mob = mn.Rectangle(
+            self.cells_mob = mn.Rectangle(
                 height=self.cell_height,
                 width=utils.get_cell_width(
                     self.text_mob, self.top_bottom_buff, self.cell_height
@@ -109,12 +109,12 @@ class Array(mn.VGroup):
                 color=bg_color,
                 fill_opacity=1.0,
             )
-            self.cell_mob.set_fill(bg_color)
-            utils.position(self.cell_mob, mob_center, align_edge, vector)
-            self.text_mob.move_to(self.cell_mob.get_center())
-            self.text_mob.align_to(self.cell_mob, mn.DOWN)
-            self.text_mob.align_to(self.cell_mob, mn.LEFT)
-            self.add(self.cell_mob, self.text_mob)
+            self.cells_mob.set_fill(bg_color)
+            utils.position(self.cells_mob, mob_center, align_edge, vector)
+            self.text_mob.move_to(self.cells_mob.get_center())
+            self.text_mob.align_to(self.cells_mob, mn.DOWN)
+            self.text_mob.align_to(self.cells_mob, mn.LEFT)
+            self.add(self.cells_mob, self.text_mob)
             return
 
         # -------------------------
@@ -123,7 +123,7 @@ class Array(mn.VGroup):
 
         # NB: if opacity is not specified, it will be set to None
         # and some methods will break for unknown reasons
-        rect_mobs_list = []
+        cells_mobs_list = []
         for text_mob in text_mobs_list:
             cell_mob = mn.Rectangle(
                 height=self.cell_height,
@@ -133,16 +133,16 @@ class Array(mn.VGroup):
                 color=cell_color,
                 fill_opacity=1.0,
             )
-            rect_mobs_list.append(cell_mob)
+            cells_mobs_list.append(cell_mob)
 
-        rect_mobs_list = [item.set_fill(bg_color) for item in rect_mobs_list]
-        self.cell_mob = mn.VGroup(*rect_mobs_list)
+        cells_mobs_list = [item.set_fill(bg_color) for item in cells_mobs_list]
+        self.cells_mob = mn.VGroup(*cells_mobs_list)
 
         # construction: Arrange cells in a row
-        self.cell_mob.arrange(mn.RIGHT, buff=0.1)
+        self.cells_mob.arrange(mn.RIGHT, buff=0.1)
 
         # construction: Move VGroup to the specified position
-        utils.position(self.cell_mob, mob_center, align_edge, vector)
+        utils.position(self.cells_mob, mob_center, align_edge, vector)
 
         # ------ self.val_mob ------
 
@@ -153,7 +153,7 @@ class Array(mn.VGroup):
 
         for i in range(len(arr)):
             if not isinstance(arr[i], str):  # center alignment
-                self.val_mob[i].move_to(self.cell_mob[i])
+                self.val_mob[i].move_to(self.cells_mob[i])
             else:
                 val_set = set(arr[i])
                 if not {
@@ -190,7 +190,7 @@ class Array(mn.VGroup):
                         "9",
                     }
                 ):  # center alignment
-                    self.val_mob[i].move_to(self.cell_mob[i])
+                    self.val_mob[i].move_to(self.cells_mob[i])
                 elif val_set.issubset(
                     {
                         '"',
@@ -200,7 +200,7 @@ class Array(mn.VGroup):
                     }
                 ):  # top alignment
                     self.val_mob[i].next_to(
-                        self.cell_mob[i].get_top(),
+                        self.cells_mob[i].get_top(),
                         direction=mn.DOWN,
                         buff=self.top_buff,
                     )
@@ -214,26 +214,32 @@ class Array(mn.VGroup):
                     }
                 ):  # deep bottom alignment
                     self.val_mob[i].next_to(
-                        self.cell_mob[i].get_bottom(),
+                        self.cells_mob[i].get_bottom(),
                         direction=mn.UP,
                         buff=self.deep_bottom_buff,
                     )
 
                 else:  # bottom alignment
                     self.val_mob[i].next_to(
-                        self.cell_mob[i].get_bottom(),
+                        self.cells_mob[i].get_bottom(),
                         direction=mn.UP,
                         buff=self.bottom_buff,
                     )
 
         # pointers
-        utils.create_pointers(self, self.cell_mob)
+        self.pointers_top, self.pointers_bottom = utils.create_pointers(
+            self, self.cells_mob
+        )
 
         # ------- add ----------
 
         # adds local objects as instance attributes
-        self.add(self.cell_mob, self.val_mob)
-        self.add(*[ptr for group in self.pointers_list for ptr in group])
+        self.add(
+            self.cells_mob,
+            self.val_mob,
+            self.pointers_top,
+            self.pointers_bottom,
+        )
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         """Animate the initial appearance of the array in scene.
@@ -254,29 +260,39 @@ class Array(mn.VGroup):
         """
 
         # save old attributes with highlights
-        old_cells = getattr(self, "cell_mob", None)
-        old_pointers = getattr(self, "pointers_list", None)
+        old_cells = getattr(self, "cells_mob", None)
+        old_pointers_top = getattr(self, "pointers_top", None)
+        old_pointers_bottom = getattr(self, "pointers_bottom", None)
 
         self.arr = new_value.copy()
-        self.cell_mob = new_group.cell_mob
+        self.cells_mob = new_group.cells_mob
         self.submobjects = new_group.submobjects.copy()
         if self.arr:
             self.val_mob = new_group.val_mob
-            self.pointers_list = new_group.pointers_list
+
+            self.pointers_top = new_group.pointers_top
+            self.pointers_bottom = new_group.pointers_bottom
 
             # restore old highlights
             if old_cells:
-                for old, new in zip(old_cells, self.cell_mob):
+                for old, new in zip(old_cells, self.cells_mob):
                     new.set_fill(old.get_fill_color())
-            if old_pointers:
-                for pos in (0, 1):
-                    for old_ptrs, new_ptrs in zip(
-                        old_pointers[pos], self.pointers_list[pos]
-                    ):
-                        for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                            new_tri.set_color(old_tri.get_color())
+
+            if old_pointers_top:
+                for old_ptrs, new_ptrs in zip(old_pointers_top, self.pointers_top):
+                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                        new_tri.set_color(old_tri.get_color())
+
+            if old_pointers_bottom:
+                for old_ptrs, new_ptrs in zip(
+                    old_pointers_bottom, self.pointers_bottom
+                ):
+                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                        new_tri.set_color(old_tri.get_color())
+
         else:
-            self.pointers_list = [[], []]
+            self.pointers_top = mn.VGroup()
+            self.pointers_bottom = mn.VGroup()
 
     def update_value(
         self,
@@ -350,74 +366,77 @@ class Array(mn.VGroup):
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
+        if pos == 0:
+            pointers_mob = self.pointers_top
+        elif pos == 1:
+            pointers_mob = self.pointers_bottom
+
         if len(idx_list) == 1:
             i = idx_list[0]
 
-            for idx, _ in enumerate(self.cell_mob):
-                self.pointers_list[pos][idx][1].set_color(
-                    color_1 if idx == i else self.bg_color
-                )
+            for idx, _ in enumerate(self.cells_mob):
+                pointers_mob[idx][1].set_color(color_1 if idx == i else self.bg_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
             j = idx_list[1]
 
-            for idx, _ in enumerate(self.cell_mob):
+            for idx, _ in enumerate(self.cells_mob):
                 if idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_2)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_2)
                 elif idx == i:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_1)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_1)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 elif idx == j:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_2)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_2)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 else:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(self.bg_color)
 
         elif len(idx_list) == 3:
             i = idx_list[0]
             j = idx_list[1]
             k = idx_list[2]
 
-            for idx, _ in enumerate(self.cell_mob):
+            for idx, _ in enumerate(self.cells_mob):
                 if idx == i == j == k:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(color_2)
-                    self.pointers_list[pos][idx][2].set_color(color_3)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(color_2)
+                    pointers_mob[idx][2].set_color(color_3)
                 elif idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_2)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_2)
                 elif idx == i == k:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_3)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_3)
                 elif idx == k == j:
-                    self.pointers_list[pos][idx][0].set_color(color_2)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_3)
+                    pointers_mob[idx][0].set_color(color_2)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_3)
                 elif idx == i:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_1)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_1)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 elif idx == j:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_2)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_2)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 elif idx == k:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_3)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_3)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 else:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(self.bg_color)
 
     def pointers_on_value(
         self,
@@ -437,8 +456,16 @@ class Array(mn.VGroup):
         if not self.arr:
             return
 
-        for idx, _ in enumerate(self.cell_mob):
-            self.pointers_list[pos][idx][1].set_color(
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        if pos == 0:
+            pointers_mob = self.pointers_top
+        elif pos == 1:
+            pointers_mob = self.pointers_bottom
+
+        for idx, _ in enumerate(self.cells_mob):
+            pointers_mob[idx][1].set_color(
                 color if self.arr[idx] == val else self.bg_color
             )
 
@@ -482,14 +509,14 @@ class Array(mn.VGroup):
         if len(idx_list) == 1:
             i = idx_list[0]
 
-            for idx, mob in enumerate(self.cell_mob):
+            for idx, mob in enumerate(self.cells_mob):
                 mob.set_fill(color_1 if idx == i else self.bg_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
             j = idx_list[1]
 
-            for idx, mob in enumerate(self.cell_mob):
+            for idx, mob in enumerate(self.cells_mob):
                 if idx == i == j:
                     mob.set_fill(color_12)
                 elif idx == i:
@@ -504,7 +531,7 @@ class Array(mn.VGroup):
             j = idx_list[1]
             k = idx_list[2]
 
-            for idx, mob in enumerate(self.cell_mob):
+            for idx, mob in enumerate(self.cells_mob):
                 if idx == i == j == k:
                     mob.set_fill(color_123)
                 elif idx == i == j:
@@ -541,7 +568,7 @@ class Array(mn.VGroup):
         if not self.arr:
             return
 
-        for idx, mob in enumerate(self.cell_mob):
+        for idx, mob in enumerate(self.cells_mob):
             mob.set_fill(color if self.arr[idx] == val else self.bg_color)
 
 
