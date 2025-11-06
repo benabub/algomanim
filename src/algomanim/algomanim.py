@@ -72,7 +72,7 @@ class Array(mn.VGroup):
         # call __init__ of the parent classes
         super().__init__()
         # add class attributes
-        self.arr = arr.copy()
+        self.data = arr.copy()
         self.bg_color = bg_color
         self.font = font
         self.font_size = font_size
@@ -101,7 +101,7 @@ class Array(mn.VGroup):
 
         if not arr:
             self.text_mob = mn.Text("[]", **self.TEXT_CONFIG)
-            self.cells_mob = mn.Rectangle(
+            self.containers_mob = mn.Rectangle(
                 height=self.cell_height,
                 width=utils.get_cell_width(
                     self.text_mob, self.top_bottom_buff, self.cell_height
@@ -109,12 +109,12 @@ class Array(mn.VGroup):
                 color=bg_color,
                 fill_opacity=1.0,
             )
-            self.cells_mob.set_fill(bg_color)
-            utils.position(self.cells_mob, mob_center, align_edge, vector)
-            self.text_mob.move_to(self.cells_mob.get_center())
-            self.text_mob.align_to(self.cells_mob, mn.DOWN)
-            self.text_mob.align_to(self.cells_mob, mn.LEFT)
-            self.add(self.cells_mob, self.text_mob)
+            self.containers_mob.set_fill(bg_color)
+            utils.position(self.containers_mob, mob_center, align_edge, vector)
+            self.text_mob.move_to(self.containers_mob.get_center())
+            self.text_mob.align_to(self.containers_mob, mn.DOWN)
+            self.text_mob.align_to(self.containers_mob, mn.LEFT)
+            self.add(self.containers_mob, self.text_mob)
             return
 
         # --------- cells ------------
@@ -136,24 +136,24 @@ class Array(mn.VGroup):
             cells_mobs_list.append(cell_mob)
 
         cells_mobs_list = [item.set_fill(bg_color) for item in cells_mobs_list]
-        self.cells_mob = mn.VGroup(*cells_mobs_list)
+        self.containers_mob = mn.VGroup(*cells_mobs_list)
 
         # construction: Arrange cells in a row
-        self.cells_mob.arrange(mn.RIGHT, buff=0.1)
+        self.containers_mob.arrange(mn.RIGHT, buff=0.1)
 
         # construction: Move VGroup to the specified position
-        utils.position(self.cells_mob, mob_center, align_edge, vector)
+        utils.position(self.containers_mob, mob_center, align_edge, vector)
 
         # ------ values ---------
 
         # construction: Create text mobjects and move them in squares
-        self.val_mob = mn.VGroup(
+        self.values_mob = mn.VGroup(
             *[mn.Text(str(val), **self.TEXT_CONFIG) for val in arr]
         )
 
         for i in range(len(arr)):
             if not isinstance(arr[i], str):  # center alignment
-                self.val_mob[i].move_to(self.cells_mob[i])
+                self.values_mob[i].move_to(self.containers_mob[i])
             else:
                 val_set = set(arr[i])
                 if not {
@@ -190,7 +190,7 @@ class Array(mn.VGroup):
                         "9",
                     }
                 ):  # center alignment
-                    self.val_mob[i].move_to(self.cells_mob[i])
+                    self.values_mob[i].move_to(self.containers_mob[i])
                 elif val_set.issubset(
                     {
                         '"',
@@ -199,8 +199,8 @@ class Array(mn.VGroup):
                         "`",
                     }
                 ):  # top alignment
-                    self.val_mob[i].next_to(
-                        self.cells_mob[i].get_top(),
+                    self.values_mob[i].next_to(
+                        self.containers_mob[i].get_top(),
                         direction=mn.DOWN,
                         buff=self.top_buff,
                     )
@@ -213,15 +213,15 @@ class Array(mn.VGroup):
                         "j",
                     }
                 ):  # deep bottom alignment
-                    self.val_mob[i].next_to(
-                        self.cells_mob[i].get_bottom(),
+                    self.values_mob[i].next_to(
+                        self.containers_mob[i].get_bottom(),
                         direction=mn.UP,
                         buff=self.deep_bottom_buff,
                     )
 
                 else:  # bottom alignment
-                    self.val_mob[i].next_to(
-                        self.cells_mob[i].get_bottom(),
+                    self.values_mob[i].next_to(
+                        self.containers_mob[i].get_bottom(),
                         direction=mn.UP,
                         buff=self.bottom_buff,
                     )
@@ -229,15 +229,15 @@ class Array(mn.VGroup):
         # ------- pointers ----------
 
         self.pointers_top, self.pointers_bottom = utils.create_pointers(
-            self, self.cells_mob
+            self, self.containers_mob
         )
 
         # ------- add ----------
 
         # adds local objects as instance attributes
         self.add(
-            self.cells_mob,
-            self.val_mob,
+            self.containers_mob,
+            self.values_mob,
             self.pointers_top,
             self.pointers_bottom,
         )
@@ -261,23 +261,23 @@ class Array(mn.VGroup):
         """
 
         # save old attributes with highlights
-        old_cells = getattr(self, "cells_mob", None)
+        old_cells = getattr(self, "containers_mob", None)
         old_pointers_top = getattr(self, "pointers_top", None)
         old_pointers_bottom = getattr(self, "pointers_bottom", None)
 
-        self.arr = new_value.copy()
-        self.cells_mob = new_group.cells_mob
+        self.data = new_value.copy()
+        self.containers_mob = new_group.containers_mob
         self.submobjects = new_group.submobjects.copy()
 
-        if self.arr:
-            self.val_mob = new_group.val_mob
+        if self.data:
+            self.values_mob = new_group.values_mob
 
             self.pointers_top = new_group.pointers_top
             self.pointers_bottom = new_group.pointers_bottom
 
             # restore old highlights
             if old_cells:
-                for old, new in zip(old_cells, self.cells_mob):
+                for old, new in zip(old_cells, self.containers_mob):
                     new.set_fill(old.get_fill_color())
 
             if old_pointers_top:
@@ -315,7 +315,7 @@ class Array(mn.VGroup):
             run_time: Duration of animation if animate=True.
         """
 
-        if not self.arr and not new_value:
+        if not self.data and not new_value:
             return
 
         new_group = Array(
@@ -358,7 +358,7 @@ class Array(mn.VGroup):
             ValueError: If idx_list has invalid length or pos is invalid.
         """
 
-        if not self.arr:
+        if not self.data:
             return
 
         if not 1 <= len(idx_list) <= 3:
@@ -375,14 +375,14 @@ class Array(mn.VGroup):
         if len(idx_list) == 1:
             i = idx_list[0]
 
-            for idx, _ in enumerate(self.cells_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 pointers_mob[idx][1].set_color(color_1 if idx == i else self.bg_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
             j = idx_list[1]
 
-            for idx, _ in enumerate(self.cells_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j:
                     pointers_mob[idx][0].set_color(color_1)
                     pointers_mob[idx][1].set_color(self.bg_color)
@@ -405,7 +405,7 @@ class Array(mn.VGroup):
             j = idx_list[1]
             k = idx_list[2]
 
-            for idx, _ in enumerate(self.cells_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j == k:
                     pointers_mob[idx][0].set_color(color_1)
                     pointers_mob[idx][1].set_color(color_2)
@@ -454,7 +454,7 @@ class Array(mn.VGroup):
             color: Color for the highlighted pointer.
         """
 
-        if not self.arr:
+        if not self.data:
             return
 
         if pos not in (0, 1):
@@ -465,9 +465,9 @@ class Array(mn.VGroup):
         elif pos == 1:
             pointers_mob = self.pointers_bottom
 
-        for idx, _ in enumerate(self.cells_mob):
+        for idx, _ in enumerate(self.containers_mob):
             pointers_mob[idx][1].set_color(
-                color if self.arr[idx] == val else self.bg_color
+                color if self.data[idx] == val else self.bg_color
             )
 
     def highlight_cells(
@@ -501,7 +501,7 @@ class Array(mn.VGroup):
             ValueError: If idx_list has invalid length.
         """
 
-        if not self.arr:
+        if not self.data:
             return
 
         if not 1 <= len(idx_list) <= 3:
@@ -510,14 +510,14 @@ class Array(mn.VGroup):
         if len(idx_list) == 1:
             i = idx_list[0]
 
-            for idx, mob in enumerate(self.cells_mob):
+            for idx, mob in enumerate(self.containers_mob):
                 mob.set_fill(color_1 if idx == i else self.bg_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
             j = idx_list[1]
 
-            for idx, mob in enumerate(self.cells_mob):
+            for idx, mob in enumerate(self.containers_mob):
                 if idx == i == j:
                     mob.set_fill(color_12)
                 elif idx == i:
@@ -532,7 +532,7 @@ class Array(mn.VGroup):
             j = idx_list[1]
             k = idx_list[2]
 
-            for idx, mob in enumerate(self.cells_mob):
+            for idx, mob in enumerate(self.containers_mob):
                 if idx == i == j == k:
                     mob.set_fill(color_123)
                 elif idx == i == j:
@@ -566,11 +566,11 @@ class Array(mn.VGroup):
             color: Color for the highlighted pointer.
         """
 
-        if not self.arr:
+        if not self.data:
             return
 
-        for idx, mob in enumerate(self.cells_mob):
-            mob.set_fill(color if self.arr[idx] == val else self.bg_color)
+        for idx, mob in enumerate(self.containers_mob):
+            mob.set_fill(color if self.data[idx] == val else self.bg_color)
 
 
 class String(mn.VGroup):
@@ -628,7 +628,7 @@ class String(mn.VGroup):
         # call __init__ of the parent classes
         super().__init__()
         # add class attributes
-        self.string = string
+        self.data = string
         self.vector = vector
         self.font = font
         self.weight = weight
@@ -671,24 +671,24 @@ class String(mn.VGroup):
 
         if not string:
             self.text_mob = mn.Text('""', **self.TEXT_CONFIG)
-            self.letters_cell_mob = mn.Square(
+            self.containers_mob = mn.Square(
                 **self.SQUARE_CONFIG,
                 color=cell_color,
                 fill_color=fill_color,
             )
-            utils.position(self.letters_cell_mob, mob_center, align_edge, vector)
+            utils.position(self.containers_mob, mob_center, align_edge, vector)
             self.text_mob.next_to(
-                self.letters_cell_mob.get_top(),
+                self.containers_mob.get_top(),
                 direction=mn.DOWN,
                 buff=top_buff,
             )
-            self.add(self.letters_cell_mob, self.text_mob)
+            self.add(self.containers_mob, self.text_mob)
             return
 
         # --------- cells ------------
 
         # construction: Create square mobjects for each letter
-        self.letters_cell_mob = mn.VGroup(
+        self.containers_mob = mn.VGroup(
             *[
                 mn.Square(
                     **self.SQUARE_CONFIG,
@@ -699,22 +699,22 @@ class String(mn.VGroup):
             ]
         )
         # construction: Arrange squares in a row
-        self.letters_cell_mob.arrange(mn.RIGHT, buff=0.0)
-        self.letters_cell_left_edge = self.letters_cell_mob.get_left()
+        self.containers_mob.arrange(mn.RIGHT, buff=0.0)
+        self.letters_cell_left_edge = self.containers_mob.get_left()
 
         # construction: Move VGroup to the specified position
-        utils.position(self.letters_cell_mob, mob_center, align_edge, vector)
+        utils.position(self.containers_mob, mob_center, align_edge, vector)
 
         quote_cell_mob = [
             mn.Square(**self.SQUARE_CONFIG, color=bg_color, fill_color=bg_color)
             for _ in range(2)
         ]
 
-        quote_cell_mob[0].next_to(self.letters_cell_mob, mn.LEFT, buff=0.0)
-        quote_cell_mob[1].next_to(self.letters_cell_mob, mn.RIGHT, buff=0.0)
+        quote_cell_mob[0].next_to(self.containers_mob, mn.LEFT, buff=0.0)
+        quote_cell_mob[1].next_to(self.containers_mob, mn.RIGHT, buff=0.0)
 
         self.all_cell_mob = mn.VGroup(
-            [quote_cell_mob[0], self.letters_cell_mob, quote_cell_mob[1]],
+            [quote_cell_mob[0], self.containers_mob, quote_cell_mob[1]],
         )
 
         self.quote_cell_left_edge = self.all_cell_mob.get_left()
@@ -732,28 +732,28 @@ class String(mn.VGroup):
         # ------ values ---------
 
         # construction: Create text mobjects and move them in squares
-        self.letters_mob = mn.VGroup(
+        self.values_mob = mn.VGroup(
             *[mn.Text(str(letter), **self.TEXT_CONFIG) for letter in string]
         )
 
         for i in range(len(string)):
             if string[i] in "\"'^`":  # top alignment
-                self.letters_mob[i].next_to(
-                    self.letters_cell_mob[i].get_top(),
+                self.values_mob[i].next_to(
+                    self.containers_mob[i].get_top(),
                     direction=mn.DOWN,
                     buff=self.top_buff,
                 )
             elif string[i] in "<>-=+~:#%*[]{}()\\/|@&$0123456789":  # center alignment
-                self.letters_mob[i].move_to(self.letters_cell_mob[i])
+                self.values_mob[i].move_to(self.containers_mob[i])
             elif string[i] in "ypgj":  # deep bottom alignment
-                self.letters_mob[i].next_to(
-                    self.letters_cell_mob[i].get_bottom(),
+                self.values_mob[i].next_to(
+                    self.containers_mob[i].get_bottom(),
                     direction=mn.UP,
                     buff=self.deep_bottom_buff,
                 )
             else:  # bottom alignment
-                self.letters_mob[i].next_to(
-                    self.letters_cell_mob[i].get_bottom(),
+                self.values_mob[i].next_to(
+                    self.containers_mob[i].get_bottom(),
                     direction=mn.UP,
                     buff=self.bottom_buff,
                 )
@@ -761,7 +761,7 @@ class String(mn.VGroup):
         # ------- pointers ----------
 
         self.pointers_top, self.pointers_bottom = utils.create_pointers(
-            self, self.letters_cell_mob
+            self, self.containers_mob
         )
 
         # ------- add ----------
@@ -769,7 +769,7 @@ class String(mn.VGroup):
         # adds local objects as instance attributes
         self.add(
             self.all_cell_mob,
-            self.letters_mob,
+            self.values_mob,
             self.quotes_mob,
             self.pointers_top,
             self.pointers_bottom,
@@ -796,26 +796,26 @@ class String(mn.VGroup):
         """
 
         # save old attributes with highlights
-        old_cells = getattr(self, "letters_cell_mob", None)
+        old_cells = getattr(self, "containers_mob", None)
         old_pointers_top = getattr(self, "pointers_top", None)
         old_pointers_bottom = getattr(self, "pointers_bottom", None)
 
-        self.string = new_value
-        self.letters_cell_mob = new_group.letters_cell_mob
+        self.data = new_value
+        self.containers_mob = new_group.containers_mob
         self.submobjects = new_group.submobjects.copy()
 
         self.quote_cell_left_edge = new_group.quote_cell_left_edge
         self.letters_cell_left_edge = new_group.letters_cell_left_edge
 
-        if self.string:
-            self.letters_mob = new_group.letters_mob
+        if self.data:
+            self.values_mob = new_group.values_mob
 
             self.pointers_top = new_group.pointers_top
             self.pointers_bottom = new_group.pointers_bottom
 
             # restore old highlights
             if old_cells:
-                for old, new in zip(old_cells, self.letters_cell_mob):
+                for old, new in zip(old_cells, self.containers_mob):
                     new.set_fill(old.get_fill_color())
 
             if old_pointers_top:
@@ -852,7 +852,7 @@ class String(mn.VGroup):
             run_time: Duration of animation if animate=True.
         """
 
-        if not self.string and not new_value:
+        if not self.data and not new_value:
             return
 
         new_group = String(
@@ -910,7 +910,7 @@ class String(mn.VGroup):
         Raises:
             ValueError: If idx_list has invalid length or pos is invalid.
         """
-        if not self.string:
+        if not self.data:
             return
 
         if not 1 <= len(idx_list) <= 3:
@@ -927,14 +927,14 @@ class String(mn.VGroup):
         if len(idx_list) == 1:
             i = idx_list[0]
 
-            for idx, _ in enumerate(self.letters_cell_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 pointers_mob[idx][1].set_color(color_1 if idx == i else self.bg_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
             j = idx_list[1]
 
-            for idx, _ in enumerate(self.letters_cell_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j:
                     pointers_mob[idx][0].set_color(color_1)
                     pointers_mob[idx][1].set_color(self.bg_color)
@@ -957,7 +957,7 @@ class String(mn.VGroup):
             j = idx_list[1]
             k = idx_list[2]
 
-            for idx, _ in enumerate(self.letters_cell_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j == k:
                     pointers_mob[idx][0].set_color(color_1)
                     pointers_mob[idx][1].set_color(color_2)
@@ -1005,7 +1005,7 @@ class String(mn.VGroup):
             color: Color for highlighted pointers.
         """
 
-        if not self.string:
+        if not self.data:
             return
 
         if pos not in (0, 1):
@@ -1016,9 +1016,9 @@ class String(mn.VGroup):
         elif pos == 1:
             pointers_mob = self.pointers_bottom
 
-        for idx, _ in enumerate(self.letters_cell_mob):
+        for idx, _ in enumerate(self.containers_mob):
             pointers_mob[idx][1].set_color(
-                color if self.string[idx] == val else self.bg_color
+                color if self.data[idx] == val else self.bg_color
             )
 
     def highlight_cells(
@@ -1048,7 +1048,7 @@ class String(mn.VGroup):
             ValueError: If idx_list has invalid length.
         """
 
-        if not self.string:
+        if not self.data:
             return
 
         if not 1 <= len(idx_list) <= 3:
@@ -1057,14 +1057,14 @@ class String(mn.VGroup):
         if len(idx_list) == 1:
             i = idx_list[0]
 
-            for idx, mob in enumerate(self.letters_cell_mob):
+            for idx, mob in enumerate(self.containers_mob):
                 mob.set_fill(color_1 if idx == i else self.fill_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
             j = idx_list[1]
 
-            for idx, mob in enumerate(self.letters_cell_mob):
+            for idx, mob in enumerate(self.containers_mob):
                 if idx == i == j:
                     mob.set_fill(color_12)
                 elif idx == i:
@@ -1079,7 +1079,7 @@ class String(mn.VGroup):
             j = idx_list[1]
             k = idx_list[2]
 
-            for idx, mob in enumerate(self.letters_cell_mob):
+            for idx, mob in enumerate(self.containers_mob):
                 if idx == i == j == k:
                     mob.set_fill(color_123)
                 elif idx == i == j:
@@ -1109,11 +1109,11 @@ class String(mn.VGroup):
             color: Color for highlighted cells.
         """
 
-        if not self.string:
+        if not self.data:
             return
 
-        for idx, mob in enumerate(self.letters_cell_mob):
-            mob.set_fill(color if self.string[idx] == val else self.fill_color)
+        for idx, mob in enumerate(self.containers_mob):
+            mob.set_fill(color if self.data[idx] == val else self.fill_color)
 
 
 class LinkedList(mn.VGroup):
