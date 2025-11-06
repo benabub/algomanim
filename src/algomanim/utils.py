@@ -1,14 +1,15 @@
-from typing import (
-    # cast,
-    # List,
-    # Tuple,
-    # Callable,
-    # Any,
-    # Union,
-    # Optional,
-    Literal,
-)
-import numpy as np
+# from typing import (
+#     # cast,
+#     # List,
+#     # Tuple,
+#     # Callable,
+#     # Any,
+#     # Union,
+#     # Optional,
+#     Literal,
+# )
+
+# import numpy as np
 import manim as mn
 
 from .datastructures import (
@@ -79,131 +80,6 @@ def get_cell_width(
         return cell_height
     else:
         return res
-
-
-def position(
-    mobject: mn.Mobject,
-    mob_center: mn.Mobject,
-    align_edge: Literal["up", "down", "left", "right"] | None,
-    vector: np.ndarray,
-) -> None:
-    """Position mobject relative to center with optional edge alignment.
-
-    Args:
-        mobject: The object to position
-        mob_center: Reference center object
-        align_edge: Which edge to align to (None for center)
-        vector: Additional offset vector
-    """
-    if align_edge:
-        if align_edge in ["UP", "up"]:
-            mobject.move_to(mob_center.get_center())
-            mobject.align_to(mob_center, mn.UP)
-            mobject.shift(vector)
-        elif align_edge in ["DOWN", "down"]:
-            mobject.move_to(mob_center.get_center())
-            mobject.align_to(mob_center, mn.DOWN)
-            mobject.shift(vector)
-        elif align_edge in ["RIGHT", "right"]:
-            mobject.move_to(mob_center.get_center())
-            mobject.align_to(mob_center, mn.RIGHT)
-            mobject.shift(vector)
-        elif align_edge in ["LEFT", "left"]:
-            mobject.move_to(mob_center.get_center())
-            mobject.align_to(mob_center, mn.LEFT)
-            mobject.shift(vector)
-    else:
-        mobject.move_to(mob_center.get_center() + vector)
-
-
-def create_pointers(self, cell_mob: mn.VGroup) -> tuple[mn.VGroup, mn.VGroup]:
-    """Create pointer triangles above and below each cell in the group.
-
-    Args:
-        cell_mob: VGroup of cells to attach pointers to.
-
-    Returns:
-        Tuple of (top_pointers, bottom_pointers) VGroups where each contains
-        triple triangle groups for every cell | node.
-
-    Note:
-        Each cell gets 3 triangles above and 3 below, arranged horizontally.
-        Triangle groups are positioned with fixed buffering from cells.
-    """
-
-    # create template triangles
-    top_triangle = (
-        mn.Triangle(color=self.bg_color)
-        .stretch_to_fit_width(0.7)
-        .scale(0.1)
-        .rotate(mn.PI)
-    )
-    bottom_triangle = (
-        mn.Triangle(color=self.bg_color).stretch_to_fit_width(0.7).scale(0.1)
-    )
-
-    pointers_top = mn.VGroup()
-    pointers_bottom = mn.VGroup()
-    for cell in cell_mob:
-        # create top triangles (3 per cell)
-        top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
-        # arrange top triangles horizontally above the cell
-        top_triple_group.arrange(mn.RIGHT, buff=0.08)
-        top_triple_group.next_to(cell, mn.UP, buff=0.15)
-        pointers_top.add(top_triple_group)
-
-        # create bottom triangles (3 per cell)
-        bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
-        # arrange bottom triangles horizontally below the cell
-        bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
-        bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
-        pointers_bottom.add(bottom_triple_group)
-
-    return pointers_top, pointers_bottom
-
-
-def update_visual_state(
-    self,
-    new_group,
-    data: list | str | ListNode,
-    old_cells: mn.VGroup | None,
-    old_pointers_top: mn.VGroup | None,
-    old_pointers_bottom: mn.VGroup | None,
-):
-    """Update visual components while preserving highlight states.
-
-    Args:
-        self: Target object to update.
-        new_group: Source object with new visual state.
-        data: Data to determine if structure is empty.
-        old_cells: Previous containers mobject for color preservation.
-        old_pointers_top: Previous top pointers for color preservation.
-        old_pointers_bottom: Previous bottom pointers for color preservation.
-    """
-    if data:
-        self.values_mob = new_group.values_mob
-
-        self.pointers_top = new_group.pointers_top
-        self.pointers_bottom = new_group.pointers_bottom
-
-        # restore old highlights
-        if old_cells:
-            for old, new in zip(old_cells, self.containers_mob):
-                new.set_fill(old.get_fill_color())
-
-        if old_pointers_top:
-            for old_ptrs, new_ptrs in zip(old_pointers_top, self.pointers_top):
-                for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                    new_tri.set_color(old_tri.get_color())
-
-        if old_pointers_bottom:
-            for old_ptrs, new_ptrs in zip(old_pointers_bottom, self.pointers_bottom):
-                for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                    new_tri.set_color(old_tri.get_color())
-
-    else:
-        self.pointers_top = mn.VGroup()
-        self.pointers_bottom = mn.VGroup()
 
 
 def create_linked_list(value: list) -> ListNode | None:

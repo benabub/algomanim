@@ -20,7 +20,8 @@ from algomanim import (
     TitleText,
 )
 
-from algomanim.examples import utils
+# from algomanim import utils
+# from algomanim.algomanim import LinkedList
 
 
 class ExampleBubblesort(mn.Scene):
@@ -100,7 +101,7 @@ class ExampleBubblesort(mn.Scene):
         # ========== HIGHLIGHT ============
 
         array.pointers([i, j, k])
-        array.highlight_cells([i, j, k])
+        array.highlight_containers([i, j, k])
 
         # ======== PRE-CYCLE =============
 
@@ -112,14 +113,14 @@ class ExampleBubblesort(mn.Scene):
             code_block.highlight_line(0)
             bubble -= 1
             array.pointers([i, j, k])
-            array.highlight_cells([i, j, k])
+            array.highlight_containers([i, j, k])
             top_text.update_text(self)
             self.wait(pause)
 
             for j in range(n - i - 1):
                 code_block.highlight_line(1)
                 array.pointers([i, j, k])
-                array.highlight_cells([i, j, k])
+                array.highlight_containers([i, j, k])
                 array.pointers_on_value(bubble, color=mn.WHITE)
                 top_text.update_text(self)
                 bottom_text.update_text(self, animate=False)
@@ -128,7 +129,7 @@ class ExampleBubblesort(mn.Scene):
                 k = j + 1
                 code_block.highlight_line(2)
                 array.pointers([i, j, k])
-                array.highlight_cells([i, j, k])
+                array.highlight_containers([i, j, k])
                 top_text.update_text(self)
                 self.wait(pause)
 
@@ -140,7 +141,7 @@ class ExampleBubblesort(mn.Scene):
                     array.update_value(self, arr, animate=False)
                     array.pointers_on_value(bubble, color=mn.WHITE)
                     array.pointers([i, j, k])
-                    array.highlight_cells([i, j, k])
+                    array.highlight_containers([i, j, k])
                     top_text.update_text(self)
                     self.wait(pause)
 
@@ -309,7 +310,7 @@ class ExampleArray(mn.Scene):
 
         array.update_value(self, [1, 12, 123, 1234, 12345, 123456], left_aligned=False)
         array.pointers([0, 1, 2])
-        array.highlight_cells([0, 1, 2])
+        array.highlight_containers([0, 1, 2])
         self.wait(1)
         array.update_value(self, [1, 12, 123, 1234, 12345, 123456])
         self.wait(pause)
@@ -344,34 +345,34 @@ class ExampleArray(mn.Scene):
         array.update_value(self, [10, 2, 3000, 2, 100, 1, 40], left_aligned=False)
         self.wait(1)
         array.pointers([0, 3, 6])
-        array.highlight_cells([0, 3, 6])
+        array.highlight_containers([0, 3, 6])
         self.wait(pause)
         array.pointers([1, 3, 5])
-        array.highlight_cells([1, 3, 5])
+        array.highlight_containers([1, 3, 5])
         self.wait(pause)
         array.pointers([2, 3, 4])
-        array.highlight_cells([2, 3, 4])
+        array.highlight_containers([2, 3, 4])
         self.wait(pause)
         array.pointers([3, 3, 3])
-        array.highlight_cells([3, 3, 3])
+        array.highlight_containers([3, 3, 3])
         self.wait(pause)
         array.pointers([2, 3, 4])
-        array.highlight_cells([2, 3, 4])
+        array.highlight_containers([2, 3, 4])
         self.wait(pause)
         array.pointers([2, 2, 4])
-        array.highlight_cells([2, 2, 4])
+        array.highlight_containers([2, 2, 4])
         self.wait(pause)
         array.pointers([2, 3, 4])
-        array.highlight_cells([2, 3, 4])
+        array.highlight_containers([2, 3, 4])
         self.wait(pause)
         array.pointers([2, 4, 4])
-        array.highlight_cells([2, 4, 4])
+        array.highlight_containers([2, 4, 4])
         self.wait(pause)
         array.pointers([2, 4, 3])
-        array.highlight_cells([2, 4, 3])
+        array.highlight_containers([2, 4, 3])
         self.wait(pause)
         array.pointers([2, 4, 2])
-        array.highlight_cells([2, 4, 2])
+        array.highlight_containers([2, 4, 2])
         self.wait(1)
         self.remove(top_text)
 
@@ -385,35 +386,35 @@ class ExampleArray(mn.Scene):
 
         array.update_value(self, [10, 2, 3000, 2, 100, 1, 40], left_aligned=False)
         self.wait(1)
-        array.highlight_cells_with_value(0)
+        array.highlight_containers_with_value(0)
         array.pointers_on_value(0)
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22, 0])
-        array.highlight_cells_with_value(0)
+        array.highlight_containers_with_value(0)
         array.pointers_on_value(0)
         self.wait(pause)
         array.update_value(self, [0, 22, 0, 22, 0, 22])
-        array.highlight_cells_with_value(0, color=mn.LIGHT_BROWN)
+        array.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
         array.pointers_on_value(0, color=mn.LIGHT_BROWN)
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22, 0])
-        array.highlight_cells_with_value(0, color=mn.LIGHT_BROWN)
+        array.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
         array.pointers_on_value(0, color=mn.LIGHT_BROWN)
         self.wait(pause)
         array.update_value(self, [0, 22, 0, 22, 0, 22])
-        array.highlight_cells_with_value(0, color=mn.PURPLE)
+        array.highlight_containers_with_value(0, color=mn.PURPLE)
         array.pointers_on_value(0, color=mn.PURPLE)
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22])
-        array.highlight_cells_with_value(0, color=mn.PURPLE)
+        array.highlight_containers_with_value(0, color=mn.PURPLE)
         array.pointers_on_value(0, color=mn.PURPLE)
         self.wait(pause)
         array.update_value(self, [0, 22, 0, 22, 0, 22])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
         array.update_value(self, [22, 0, 22, 0, 22])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(1)
         self.remove(top_text)
@@ -428,93 +429,93 @@ class ExampleArray(mn.Scene):
 
         array.update_value(self, [0, 1, 22, 333, 4444, 55555], left_aligned=False)
         self.wait(1)
-        array.highlight_cells([0, 2, 4])
+        array.highlight_containers([0, 2, 4])
         array.pointers([0, 2, 4])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [1, 0, 55555, 333])
-        array.highlight_cells([0, 2, 4])
+        array.highlight_containers([0, 2, 4])
         array.pointers([0, 2, 4])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [0, 333, 0])
-        array.highlight_cells([0, 2, 4])
+        array.highlight_containers([0, 2, 4])
         array.pointers([0, 2, 4])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [0, 0])
-        array.highlight_cells([0, 2, 4])
+        array.highlight_containers([0, 2, 4])
         array.pointers([0, 2, 4])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [0])
-        array.highlight_cells([0, 2, 4])
+        array.highlight_containers([0, 2, 4])
         array.pointers([0, 2, 4])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [])
-        array.highlight_cells([0, 2, 4])
+        array.highlight_containers([0, 2, 4])
         array.pointers([0, 2, 4])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [333])
-        array.highlight_cells([0, 2, 4])
+        array.highlight_containers([0, 2, 4])
         array.pointers([0, 2, 4])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [1, 0, 22, 0, 333, 0])
-        array.highlight_cells([0, 1, 2])
+        array.highlight_containers([0, 1, 2])
         array.pointers([0, 1, 2])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [0, 22, 0, 333, 0])
-        array.highlight_cells([1, 1, 2])
+        array.highlight_containers([1, 1, 2])
         array.pointers([1, 1, 2])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [1, 0, 22, 0, 333, 0, 22])
-        array.highlight_cells([0, 2, 2])
+        array.highlight_containers([0, 2, 2])
         array.pointers([0, 2, 2])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [0, 22, 0, 333, 0, 55555])
-        array.highlight_cells([3, 5, 3])
+        array.highlight_containers([3, 5, 3])
         array.pointers([3, 5, 3])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [1, 0])
-        array.highlight_cells([0, 0, 0])
+        array.highlight_containers([0, 0, 0])
         array.pointers([0, 0, 0])
         # array.highlight_cells_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(pause)
 
         array.update_value(self, [0, 0, 0, 0, 0, 0])
-        array.highlight_cells([9, 9, 9])
+        array.highlight_containers([9, 9, 9])
         array.pointers([9, 9, 9])
-        array.highlight_cells_with_value(0, color=mn.PINK)
+        array.highlight_containers_with_value(0, color=mn.PINK)
         array.pointers_on_value(0, color=mn.PINK)
         self.wait(1)
         # self.remove(top_text)
@@ -584,7 +585,7 @@ class ExampleString(mn.Scene):
 
         string_20 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.UP * 2.8,
             font_size=25,
             align_edge="left",
@@ -593,7 +594,7 @@ class ExampleString(mn.Scene):
 
         string_25 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.UP * 1.4,
             font_size=30,
             align_edge="left",
@@ -602,7 +603,7 @@ class ExampleString(mn.Scene):
 
         string_35 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.DOWN * 1.5,
             font_size=37,
             align_edge="left",
@@ -611,7 +612,7 @@ class ExampleString(mn.Scene):
 
         string_40 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.DOWN * 3.0,
             font_size=40,
             align_edge="left",
@@ -631,7 +632,7 @@ class ExampleString(mn.Scene):
 
         string_20 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.UP * 2.8,
             font_size=25,
             align_edge="right",
@@ -640,7 +641,7 @@ class ExampleString(mn.Scene):
 
         string_25 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.UP * 1.4,
             font_size=30,
             align_edge="right",
@@ -649,7 +650,7 @@ class ExampleString(mn.Scene):
 
         string_35 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.DOWN * 1.5,
             font_size=37,
             align_edge="right",
@@ -658,7 +659,7 @@ class ExampleString(mn.Scene):
 
         string_40 = String(
             s,
-            mob_center=string.letters_cell_mob,
+            mob_center=string.containers_mob,
             vector=mn.DOWN * 3.0,
             font_size=40,
             align_edge="right",
@@ -685,7 +686,7 @@ class ExampleString(mn.Scene):
         top_text.first_appear(self)
 
         string.pointers([0, 1, 2])
-        string.highlight_cells([0, 1, 2])
+        string.highlight_containers([0, 1, 2])
 
         self.wait(1)
         string.update_value(self, "follow the rabbit")
@@ -714,34 +715,34 @@ class ExampleString(mn.Scene):
         string.update_value(self, "follow the rabbit", left_aligned=False)
         self.wait(1)
         string.pointers([0, 3, 6])
-        string.highlight_cells([0, 3, 6])
+        string.highlight_containers([0, 3, 6])
         self.wait(pause)
         string.pointers([1, 3, 5])
-        string.highlight_cells([1, 3, 5])
+        string.highlight_containers([1, 3, 5])
         self.wait(pause)
         string.pointers([2, 3, 4])
-        string.highlight_cells([2, 3, 4])
+        string.highlight_containers([2, 3, 4])
         self.wait(pause)
         string.pointers([3, 3, 3])
-        string.highlight_cells([3, 3, 3])
+        string.highlight_containers([3, 3, 3])
         self.wait(pause)
         string.pointers([2, 3, 4])
-        string.highlight_cells([2, 3, 4])
+        string.highlight_containers([2, 3, 4])
         self.wait(pause)
         string.pointers([2, 2, 4])
-        string.highlight_cells([2, 2, 4])
+        string.highlight_containers([2, 2, 4])
         self.wait(pause)
         string.pointers([2, 3, 4])
-        string.highlight_cells([2, 3, 4])
+        string.highlight_containers([2, 3, 4])
         self.wait(pause)
         string.pointers([2, 4, 4])
-        string.highlight_cells([2, 4, 4])
+        string.highlight_containers([2, 4, 4])
         self.wait(pause)
         string.pointers([2, 4, 3])
-        string.highlight_cells([2, 4, 3])
+        string.highlight_containers([2, 4, 3])
         self.wait(pause)
         string.pointers([2, 40, 2])
-        string.highlight_cells([2, 40, 2])
+        string.highlight_containers([2, 40, 2])
         self.wait(1)
         self.remove(top_text)
 
@@ -755,25 +756,25 @@ class ExampleString(mn.Scene):
 
         string.update_value(self, "follow the rabbit", left_aligned=False)
         self.wait(1)
-        string.highlight_cells_with_value("f")
+        string.highlight_containers_with_value("f")
         string.pointers_on_value("f")
         self.wait(pause)
-        string.highlight_cells_with_value("t")
+        string.highlight_containers_with_value("t")
         string.pointers_on_value("t")
         self.wait(pause)
-        string.highlight_cells_with_value("a", color=mn.LIGHT_BROWN)
+        string.highlight_containers_with_value("a", color=mn.LIGHT_BROWN)
         string.pointers_on_value("a", color=mn.LIGHT_BROWN)
         self.wait(pause)
-        string.highlight_cells_with_value("b", color=mn.LIGHT_BROWN)
+        string.highlight_containers_with_value("b", color=mn.LIGHT_BROWN)
         string.pointers_on_value("b", color=mn.LIGHT_BROWN)
         self.wait(pause)
-        string.highlight_cells_with_value("l", color=mn.PURPLE)
+        string.highlight_containers_with_value("l", color=mn.PURPLE)
         string.pointers_on_value("l", color=mn.PURPLE)
         self.wait(pause)
-        string.highlight_cells_with_value("w", color=mn.PURPLE)
+        string.highlight_containers_with_value("w", color=mn.PURPLE)
         string.pointers_on_value("w", color=mn.PURPLE)
         self.wait(pause)
-        string.highlight_cells_with_value(" ", color=mn.PINK)
+        string.highlight_containers_with_value(" ", color=mn.PINK)
         string.pointers_on_value(" ", color=mn.PINK)
         self.wait(1)
         self.remove(top_text)
@@ -788,99 +789,70 @@ class ExampleString(mn.Scene):
 
         string.update_value(self, "follow the rabbit", left_aligned=False)
         self.wait(1)
-        string.highlight_cells([0, 2, 4])
+        string.highlight_containers([0, 2, 4])
         string.pointers([0, 2, 4])
         string.pointers_on_value("F", color=mn.PINK)
         self.wait(pause)
 
         string.update_value(self, "follow the")
-        string.highlight_cells([0, 2, 4])
+        string.highlight_containers([0, 2, 4])
         string.pointers([0, 2, 4])
         string.pointers_on_value("F", color=mn.PINK)
         self.wait(pause)
 
         string.update_value(self, "follow")
-        string.highlight_cells([0, 2, 4])
+        string.highlight_containers([0, 2, 4])
         string.pointers([0, 2, 4])
-        string.highlight_cells_with_value("F", color=mn.PINK)
+        string.highlight_containers_with_value("F", color=mn.PINK)
         string.pointers_on_value("F", color=mn.PINK)
         self.wait(pause)
 
         string.update_value(self, "")
-        string.highlight_cells([0, 2, 4])
+        string.highlight_containers([0, 2, 4])
         string.pointers([0, 2, 4])
-        string.highlight_cells_with_value("F", color=mn.PINK)
+        string.highlight_containers_with_value("F", color=mn.PINK)
         string.pointers_on_value("F", color=mn.PINK)
         self.wait(1)
 
         string.update_value(self, "rabbit", left_aligned=False)
-        string.highlight_cells([0, 2, 4])
+        string.highlight_containers([0, 2, 4])
         string.pointers([0, 2, 4])
         string.pointers_on_value("i", color=mn.PINK)
         self.wait(1)
 
         string.update_value(self, "white rabbit", left_aligned=False)
-        string.highlight_cells([0, 1, 2])
+        string.highlight_containers([0, 1, 2])
         string.pointers([0, 1, 2])
-        string.highlight_cells_with_value("t", color=mn.PINK)
+        string.highlight_containers_with_value("t", color=mn.PINK)
         string.pointers_on_value("t", color=mn.PINK)
         self.wait(pause)
 
         string.update_value(self, "rabbit white", left_aligned=False)
-        string.highlight_cells([1, 1, 2])
+        string.highlight_containers([1, 1, 2])
         string.pointers([1, 1, 2])
         string.pointers_on_value("t", color=mn.PINK)
         self.wait(pause)
 
         string.update_value(self, "rabbit the white", left_aligned=False)
-        string.highlight_cells([0, 2, 2])
+        string.highlight_containers([0, 2, 2])
         string.pointers([0, 2, 2])
-        string.highlight_cells_with_value("t", color=mn.PINK)
+        string.highlight_containers_with_value("t", color=mn.PINK)
         string.pointers_on_value("t", color=mn.PINK)
         self.wait(pause)
 
         string.update_value(self, "white the rabbit")
-        string.highlight_cells([3, 5, 3])
+        string.highlight_containers([3, 5, 3])
         string.pointers([3, 5, 3])
         string.pointers_on_value(" ", color=mn.PINK)
         self.wait(pause)
 
         string.update_value(self, "rab follow rab")
-        string.highlight_cells([90, 90, 90])
+        string.highlight_containers([90, 90, 90])
         string.pointers([90, 90, 90])
-        string.highlight_cells_with_value("a", color=mn.PINK)
+        string.highlight_containers_with_value("a", color=mn.PINK)
         string.pointers_on_value("a", color=mn.PINK)
         self.wait(1)
         # self.remove(top_text)
-
-        # ========== FINISH ==============
-
-        self.wait(pause)
-        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
-
-
-class ExampleLinkedlist(mn.Scene):
-    def construct(self):
-        self.camera.background_color = mn.GREY  # type: ignore
-        pause = 0.5
-
-        # ======== INPUTS ============
-
-        ll = utils.create_linked_list([1, 2, 3, 4, 5])
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
 
         # ========== FINISH ==============
 
