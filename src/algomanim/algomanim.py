@@ -269,32 +269,14 @@ class Array(mn.VGroup):
         self.containers_mob = new_group.containers_mob
         self.submobjects = new_group.submobjects.copy()
 
-        if self.data:
-            self.values_mob = new_group.values_mob
-
-            self.pointers_top = new_group.pointers_top
-            self.pointers_bottom = new_group.pointers_bottom
-
-            # restore old highlights
-            if old_cells:
-                for old, new in zip(old_cells, self.containers_mob):
-                    new.set_fill(old.get_fill_color())
-
-            if old_pointers_top:
-                for old_ptrs, new_ptrs in zip(old_pointers_top, self.pointers_top):
-                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                        new_tri.set_color(old_tri.get_color())
-
-            if old_pointers_bottom:
-                for old_ptrs, new_ptrs in zip(
-                    old_pointers_bottom, self.pointers_bottom
-                ):
-                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                        new_tri.set_color(old_tri.get_color())
-
-        else:
-            self.pointers_top = mn.VGroup()
-            self.pointers_bottom = mn.VGroup()
+        utils.update_visual_state(
+            self,
+            new_group,
+            self.data,
+            old_cells,
+            old_pointers_top,
+            old_pointers_bottom,
+        )
 
     def update_value(
         self,
@@ -807,32 +789,14 @@ class String(mn.VGroup):
         self.quote_cell_left_edge = new_group.quote_cell_left_edge
         self.letters_cell_left_edge = new_group.letters_cell_left_edge
 
-        if self.data:
-            self.values_mob = new_group.values_mob
-
-            self.pointers_top = new_group.pointers_top
-            self.pointers_bottom = new_group.pointers_bottom
-
-            # restore old highlights
-            if old_cells:
-                for old, new in zip(old_cells, self.containers_mob):
-                    new.set_fill(old.get_fill_color())
-
-            if old_pointers_top:
-                for old_ptrs, new_ptrs in zip(old_pointers_top, self.pointers_top):
-                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                        new_tri.set_color(old_tri.get_color())
-
-            if old_pointers_bottom:
-                for old_ptrs, new_ptrs in zip(
-                    old_pointers_bottom, self.pointers_bottom
-                ):
-                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                        new_tri.set_color(old_tri.get_color())
-
-        else:
-            self.pointers_top = mn.VGroup()
-            self.pointers_bottom = mn.VGroup()
+        utils.update_visual_state(
+            self,
+            new_group,
+            self.data,
+            old_cells,
+            old_pointers_top,
+            old_pointers_bottom,
+        )
 
     def update_value(
         self,

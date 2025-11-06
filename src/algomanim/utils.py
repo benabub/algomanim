@@ -162,6 +162,50 @@ def create_pointers(self, cell_mob: mn.VGroup) -> tuple[mn.VGroup, mn.VGroup]:
     return pointers_top, pointers_bottom
 
 
+def update_visual_state(
+    self,
+    new_group,
+    data: list | str | ListNode,
+    old_cells: mn.VGroup | None,
+    old_pointers_top: mn.VGroup | None,
+    old_pointers_bottom: mn.VGroup | None,
+):
+    """Update visual components while preserving highlight states.
+
+    Args:
+        self: Target object to update.
+        new_group: Source object with new visual state.
+        data: Data to determine if structure is empty.
+        old_cells: Previous containers mobject for color preservation.
+        old_pointers_top: Previous top pointers for color preservation.
+        old_pointers_bottom: Previous bottom pointers for color preservation.
+    """
+    if data:
+        self.values_mob = new_group.values_mob
+
+        self.pointers_top = new_group.pointers_top
+        self.pointers_bottom = new_group.pointers_bottom
+
+        # restore old highlights
+        if old_cells:
+            for old, new in zip(old_cells, self.containers_mob):
+                new.set_fill(old.get_fill_color())
+
+        if old_pointers_top:
+            for old_ptrs, new_ptrs in zip(old_pointers_top, self.pointers_top):
+                for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                    new_tri.set_color(old_tri.get_color())
+
+        if old_pointers_bottom:
+            for old_ptrs, new_ptrs in zip(old_pointers_bottom, self.pointers_bottom):
+                for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                    new_tri.set_color(old_tri.get_color())
+
+    else:
+        self.pointers_top = mn.VGroup()
+        self.pointers_bottom = mn.VGroup()
+
+
 def create_linked_list(value: list) -> ListNode | None:
     """Create a singly-linked list from a list.
 
