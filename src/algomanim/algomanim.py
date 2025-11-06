@@ -97,7 +97,7 @@ class Array(mn.VGroup):
             "font_size": self.font_size,
         }
 
-        # -------------------------
+        # --------- empty value ------------
 
         if not arr:
             self.text_mob = mn.Text("[]", **self.TEXT_CONFIG)
@@ -117,7 +117,7 @@ class Array(mn.VGroup):
             self.add(self.cells_mob, self.text_mob)
             return
 
-        # -------------------------
+        # --------- cells ------------
 
         text_mobs_list = [mn.Text(str(val), **self.TEXT_CONFIG) for val in arr]
 
@@ -144,7 +144,7 @@ class Array(mn.VGroup):
         # construction: Move VGroup to the specified position
         utils.position(self.cells_mob, mob_center, align_edge, vector)
 
-        # ------ self.val_mob ------
+        # ------ values ---------
 
         # construction: Create text mobjects and move them in squares
         self.val_mob = mn.VGroup(
@@ -226,7 +226,8 @@ class Array(mn.VGroup):
                         buff=self.bottom_buff,
                     )
 
-        # pointers
+        # ------- pointers ----------
+
         self.pointers_top, self.pointers_bottom = utils.create_pointers(
             self, self.cells_mob
         )
@@ -267,6 +268,7 @@ class Array(mn.VGroup):
         self.arr = new_value.copy()
         self.cells_mob = new_group.cells_mob
         self.submobjects = new_group.submobjects.copy()
+
         if self.arr:
             self.val_mob = new_group.val_mob
 
@@ -346,8 +348,7 @@ class Array(mn.VGroup):
         """Highlight pointers at one side (top | bottom) in array.
 
         Args:
-            idx_list: List of indices of the block whose pointer to
-                highlight.
+            idx_list: List of indices to highlight (1-3 elements).
             pos: 0 for top side, 1 for bottom.
             color_1: idx_list[0] highlighted pointer color.
             color_2: idx_list[1] highlighted pointer color.
@@ -637,6 +638,15 @@ class String(mn.VGroup):
         self.mob_center = mob_center
         self.align_edge = align_edge
 
+        self.TEXT_CONFIG = {
+            "font_size": font_size,
+            "font": font,
+            "color": font_color,
+            "weight": weight,
+        }
+
+        # --------- cells params ------------
+
         if cell_params_auto:
             cell_params = utils.get_cell_params(font_size, font, weight)
             self.cell_height = cell_params["cell_height"]
@@ -657,14 +667,7 @@ class String(mn.VGroup):
             "side_length": self.cell_height,
             "fill_opacity": 1,
         }
-        self.TEXT_CONFIG = {
-            "font_size": font_size,
-            "font": font,
-            "color": font_color,
-            "weight": weight,
-        }
-
-        # -------------------------
+        # --------- empty value ------------
 
         if not string:
             self.text_mob = mn.Text('""', **self.TEXT_CONFIG)
@@ -682,7 +685,7 @@ class String(mn.VGroup):
             self.add(self.letters_cell_mob, self.text_mob)
             return
 
-        # -------------------------
+        # --------- cells ------------
 
         # construction: Create square mobjects for each letter
         self.letters_cell_mob = mn.VGroup(
@@ -717,7 +720,7 @@ class String(mn.VGroup):
         self.quote_cell_left_edge = self.all_cell_mob.get_left()
 
         # construction: text mobs quotes group
-        quotes_mob = mn.VGroup(
+        self.quotes_mob = mn.VGroup(
             mn.Text('"', **self.TEXT_CONFIG)
             .move_to(quote_cell_mob[0], aligned_edge=mn.UP + mn.RIGHT)
             .shift(mn.DOWN * top_buff),
@@ -725,6 +728,8 @@ class String(mn.VGroup):
             .move_to(quote_cell_mob[1], aligned_edge=mn.UP + mn.LEFT)
             .shift(mn.DOWN * top_buff),
         )
+
+        # ------ values ---------
 
         # construction: Create text mobjects and move them in squares
         self.letters_mob = mn.VGroup(
@@ -753,8 +758,11 @@ class String(mn.VGroup):
                     buff=self.bottom_buff,
                 )
 
-        # pointers
-        utils.create_pointers(self, self.letters_cell_mob)
+        # ------- pointers ----------
+
+        self.pointers_top, self.pointers_bottom = utils.create_pointers(
+            self, self.letters_cell_mob
+        )
 
         # ------- add ----------
 
@@ -762,10 +770,11 @@ class String(mn.VGroup):
         self.add(
             self.all_cell_mob,
             self.letters_mob,
-            quotes_mob,
+            self.quotes_mob,
+            self.pointers_top,
+            self.pointers_bottom,
         )
 
-        self.add(*[ptr for group in self.pointers_list for ptr in group])
         self.coordinate_y = self.get_y()
 
     def first_appear(self, scene: mn.Scene, time=0.5):
@@ -788,7 +797,8 @@ class String(mn.VGroup):
 
         # save old attributes with highlights
         old_cells = getattr(self, "letters_cell_mob", None)
-        old_pointers = getattr(self, "pointers_list", None)
+        old_pointers_top = getattr(self, "pointers_top", None)
+        old_pointers_bottom = getattr(self, "pointers_bottom", None)
 
         self.string = new_value
         self.letters_cell_mob = new_group.letters_cell_mob
@@ -799,21 +809,30 @@ class String(mn.VGroup):
 
         if self.string:
             self.letters_mob = new_group.letters_mob
-            self.pointers_list = new_group.pointers_list
+
+            self.pointers_top = new_group.pointers_top
+            self.pointers_bottom = new_group.pointers_bottom
 
             # restore old highlights
             if old_cells:
                 for old, new in zip(old_cells, self.letters_cell_mob):
                     new.set_fill(old.get_fill_color())
-            if old_pointers:
-                for pos in (0, 1):
-                    for old_ptrs, new_ptrs in zip(
-                        old_pointers[pos], self.pointers_list[pos]
-                    ):
-                        for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                            new_tri.set_color(old_tri.get_color())
+
+            if old_pointers_top:
+                for old_ptrs, new_ptrs in zip(old_pointers_top, self.pointers_top):
+                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                        new_tri.set_color(old_tri.get_color())
+
+            if old_pointers_bottom:
+                for old_ptrs, new_ptrs in zip(
+                    old_pointers_bottom, self.pointers_bottom
+                ):
+                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
+                        new_tri.set_color(old_tri.get_color())
+
         else:
-            self.pointers_list = [[], []]
+            self.pointers_top = mn.VGroup()
+            self.pointers_bottom = mn.VGroup()
 
     def update_value(
         self,
@@ -900,13 +919,16 @@ class String(mn.VGroup):
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
+        if pos == 0:
+            pointers_mob = self.pointers_top
+        elif pos == 1:
+            pointers_mob = self.pointers_bottom
+
         if len(idx_list) == 1:
             i = idx_list[0]
 
             for idx, _ in enumerate(self.letters_cell_mob):
-                self.pointers_list[pos][idx][1].set_color(
-                    color_1 if idx == i else self.bg_color
-                )
+                pointers_mob[idx][1].set_color(color_1 if idx == i else self.bg_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
@@ -914,21 +936,21 @@ class String(mn.VGroup):
 
             for idx, _ in enumerate(self.letters_cell_mob):
                 if idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_2)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_2)
                 elif idx == i:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_1)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_1)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 elif idx == j:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_2)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_2)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 else:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(self.bg_color)
 
         elif len(idx_list) == 3:
             i = idx_list[0]
@@ -937,37 +959,37 @@ class String(mn.VGroup):
 
             for idx, _ in enumerate(self.letters_cell_mob):
                 if idx == i == j == k:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(color_2)
-                    self.pointers_list[pos][idx][2].set_color(color_3)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(color_2)
+                    pointers_mob[idx][2].set_color(color_3)
                 elif idx == i == j:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_2)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_2)
                 elif idx == i == k:
-                    self.pointers_list[pos][idx][0].set_color(color_1)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_3)
+                    pointers_mob[idx][0].set_color(color_1)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_3)
                 elif idx == k == j:
-                    self.pointers_list[pos][idx][0].set_color(color_2)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(color_3)
+                    pointers_mob[idx][0].set_color(color_2)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(color_3)
                 elif idx == i:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_1)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_1)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 elif idx == j:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_2)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_2)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 elif idx == k:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(color_3)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(color_3)
+                    pointers_mob[idx][2].set_color(self.bg_color)
                 else:
-                    self.pointers_list[pos][idx][0].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][1].set_color(self.bg_color)
-                    self.pointers_list[pos][idx][2].set_color(self.bg_color)
+                    pointers_mob[idx][0].set_color(self.bg_color)
+                    pointers_mob[idx][1].set_color(self.bg_color)
+                    pointers_mob[idx][2].set_color(self.bg_color)
 
     def pointers_on_value(
         self,
@@ -986,8 +1008,16 @@ class String(mn.VGroup):
         if not self.string:
             return
 
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        if pos == 0:
+            pointers_mob = self.pointers_top
+        elif pos == 1:
+            pointers_mob = self.pointers_bottom
+
         for idx, _ in enumerate(self.letters_cell_mob):
-            self.pointers_list[pos][idx][1].set_color(
+            pointers_mob[idx][1].set_color(
                 color if self.string[idx] == val else self.bg_color
             )
 
