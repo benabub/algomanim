@@ -15,7 +15,7 @@ from .datastructures import ListNode
 from . import utils
 
 
-class BaseClass(mn.VGroup):
+class AlgoManimBase(mn.VGroup):
     """Base class for all algomanim classes"""
 
     def first_appear(self, scene: mn.Scene, time=0.5):
@@ -71,7 +71,7 @@ class BaseClass(mn.VGroup):
             mobject.move_to(mob_center.get_center() + vector)
 
 
-class VisualDataStructure(BaseClass):
+class VisualDataStructure(AlgoManimBase):
     """Base class for visual data structures with common attributes and methods."""
 
     def __init__(self):
@@ -81,7 +81,10 @@ class VisualDataStructure(BaseClass):
         self.values_mob = mn.VGroup()
         self.pointers_top = mn.VGroup()
         self.pointers_bottom = mn.VGroup()
-        self.bg_color = mn.DARK_GRAY
+        # --- containers colors ---
+        self.container_color: ManimColor | str = mn.LIGHT_GRAY
+        self.fill_color: ManimColor | str = mn.GRAY
+        self.bg_color: ManimColor | str = mn.DARK_GRAY
 
     def update_visual_state(
         self,
@@ -101,6 +104,7 @@ class VisualDataStructure(BaseClass):
             old_pointers_top: Previous top pointers for color preservation.
             old_pointers_bottom: Previous bottom pointers for color preservation.
         """
+
         if data:
             self.values_mob = new_group.values_mob
 
@@ -347,7 +351,7 @@ class VisualDataStructure(BaseClass):
             i = idx_list[0]
 
             for idx, mob in enumerate(self.containers_mob):
-                mob.set_fill(color_1 if idx == i else self.bg_color)
+                mob.set_fill(color_1 if idx == i else self.fill_color)
 
         elif len(idx_list) == 2:
             i = idx_list[0]
@@ -361,7 +365,7 @@ class VisualDataStructure(BaseClass):
                 elif idx == j:
                     mob.set_fill(color_2)
                 else:
-                    mob.set_fill(self.bg_color)
+                    mob.set_fill(self.fill_color)
 
         elif len(idx_list) == 3:
             i = idx_list[0]
@@ -384,7 +388,7 @@ class VisualDataStructure(BaseClass):
                 elif idx == k:
                     mob.set_fill(color_3)
                 else:
-                    mob.set_fill(self.bg_color)
+                    mob.set_fill(self.fill_color)
 
     def highlight_containers_with_value(
         self,
@@ -406,7 +410,7 @@ class VisualDataStructure(BaseClass):
             return
 
         for idx, mob in enumerate(self.containers_mob):
-            mob.set_fill(color if self.data[idx] == val else self.bg_color)
+            mob.set_fill(color if self.data[idx] == val else self.fill_color)
 
 
 class Array(VisualDataStructure):
@@ -446,10 +450,12 @@ class Array(VisualDataStructure):
         font_size=35,
         font_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
-        bg_color: ManimColor | str = mn.DARK_GRAY,
-        container_color: ManimColor | str = mn.LIGHT_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # ---- cell colors ----
+        container_color: ManimColor | str = mn.LIGHT_GRAY,
+        bg_color: ManimColor | str = mn.DARK_GRAY,
+        fill_color: ManimColor | str = mn.DARK_GRAY,
         # ---- cell params ----
         cell_params_auto=True,
         cell_height=0.65625,
@@ -460,13 +466,13 @@ class Array(VisualDataStructure):
     ):
         # call __init__ of the parent classes
         super().__init__()
-        # add class attributes
         self.data = arr.copy()
-        self.bg_color = bg_color
         self.font = font
         self.font_size = font_size
         self.font_color = font_color
         self.container_color = container_color
+        self.fill_color = fill_color
+        self.bg_color = bg_color
 
         if cell_params_auto:
             cell_params = utils.get_cell_params(font_size, font, weight)
@@ -496,10 +502,10 @@ class Array(VisualDataStructure):
                 width=utils.get_cell_width(
                     self.text_mob, self.top_bottom_buff, self.cell_height
                 ),
-                color=bg_color,
+                color=self.bg_color,
+                fill_color=self.fill_color,
                 fill_opacity=1.0,
             )
-            self.containers_mob.set_fill(bg_color)
             self.position(self.containers_mob, mob_center, align_edge, vector)
             self.text_mob.move_to(self.containers_mob.get_center())
             self.text_mob.align_to(self.containers_mob, mn.DOWN)
@@ -525,7 +531,7 @@ class Array(VisualDataStructure):
             )
             cells_mobs_list.append(cell_mob)
 
-        cells_mobs_list = [item.set_fill(bg_color) for item in cells_mobs_list]
+        cells_mobs_list = [item.set_fill(self.fill_color) for item in cells_mobs_list]
         self.containers_mob = mn.VGroup(*cells_mobs_list)
 
         # construction: Arrange cells in a row
@@ -738,11 +744,12 @@ class String(VisualDataStructure):
         font_size=35,
         weight: str = "NORMAL",
         font_color: ManimColor | str = mn.WHITE,
-        bg_color: ManimColor | str = mn.DARK_GRAY,
-        fill_color: ManimColor | str = mn.GRAY,
-        cell_color: ManimColor | str = mn.DARK_GRAY,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # ---- cell colors ----
+        container_color: ManimColor | str = mn.DARK_GRAY,
+        fill_color: ManimColor | str = mn.GRAY,
+        bg_color: ManimColor | str = mn.DARK_GRAY,
         # ---- cell params ----
         cell_params_auto=True,
         cell_height=0.65625,
@@ -759,10 +766,12 @@ class String(VisualDataStructure):
         self.font = font
         self.weight = weight
         self.font_color = font_color
-        self.bg_color = bg_color
-        self.fill_color = fill_color
         self.mob_center = mob_center
         self.align_edge = align_edge
+        # ---- cell colors ----
+        self.container_color = container_color
+        self.bg_color = bg_color
+        self.fill_color = fill_color
 
         self.TEXT_CONFIG = {
             "font_size": font_size,
@@ -799,8 +808,8 @@ class String(VisualDataStructure):
             self.text_mob = mn.Text('""', **self.TEXT_CONFIG)
             self.containers_mob = mn.Square(
                 **self.SQUARE_CONFIG,
-                color=cell_color,
-                fill_color=fill_color,
+                color=self.container_color,
+                fill_color=self.fill_color,
             )
             self.position(self.containers_mob, mob_center, align_edge, vector)
             self.text_mob.next_to(
@@ -818,8 +827,8 @@ class String(VisualDataStructure):
             *[
                 mn.Square(
                     **self.SQUARE_CONFIG,
-                    color=cell_color,
-                    fill_color=fill_color,
+                    color=self.container_color,
+                    fill_color=self.fill_color,
                 )
                 for _ in string
             ]
@@ -832,7 +841,9 @@ class String(VisualDataStructure):
         self.position(self.containers_mob, mob_center, align_edge, vector)
 
         quote_cell_mob = [
-            mn.Square(**self.SQUARE_CONFIG, color=bg_color, fill_color=bg_color)
+            mn.Square(
+                **self.SQUARE_CONFIG, color=self.bg_color, fill_color=self.bg_color
+            )
             for _ in range(2)
         ]
 
@@ -911,13 +922,14 @@ class String(VisualDataStructure):
             new_value: New string value.
         """
 
-        # save old attributes with highlights
+        # save old attributes
         old_cells = getattr(self, "containers_mob", None)
         old_pointers_top = getattr(self, "pointers_top", None)
         old_pointers_bottom = getattr(self, "pointers_bottom", None)
 
         self.data = new_value
         self.containers_mob = new_group.containers_mob
+
         self.submobjects = new_group.submobjects.copy()
 
         self.quote_cell_left_edge = new_group.quote_cell_left_edge
@@ -957,8 +969,9 @@ class String(VisualDataStructure):
             font=self.font,
             weight=self.weight,
             font_color=self.font_color,
-            bg_color=self.bg_color,
+            container_color=self.container_color,
             fill_color=self.fill_color,
+            bg_color=self.bg_color,
         )
         new_group.coordinate_y = self.coordinate_y
 
@@ -988,7 +1001,7 @@ class String(VisualDataStructure):
             scene.add(self)
 
 
-class RelativeTextValue(BaseClass):
+class RelativeTextValue(AlgoManimBase):
     """Text group showing scope variables positioned relative to mobject.
 
     Args:
@@ -1080,7 +1093,7 @@ class RelativeTextValue(BaseClass):
             scene.add(self)
 
 
-class RelativeText(BaseClass):
+class RelativeText(AlgoManimBase):
     """Text group positioned relative to another mobject.
 
     Args:
@@ -1125,7 +1138,7 @@ class RelativeText(BaseClass):
         self.add(text_mob)
 
 
-class CodeBlock(BaseClass):
+class CodeBlock(AlgoManimBase):
     """Code block visualization with syntax highlighting capabilities.
 
     Args:
@@ -1239,7 +1252,7 @@ class CodeBlock(BaseClass):
                     self.bg_rects[k] = None
 
 
-class TitleText(BaseClass):
+class TitleText(AlgoManimBase):
     """Title group with optional decorative flourish and undercaption.
 
     Args:
@@ -1416,7 +1429,7 @@ class TitleText(BaseClass):
         return flourish_path
 
 
-class TitleLogo(BaseClass):
+class TitleLogo(AlgoManimBase):
     """Group for displaying SVG logo with optional text.
 
     Args:

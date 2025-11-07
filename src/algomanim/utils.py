@@ -1,15 +1,3 @@
-# from typing import (
-#     # cast,
-#     # List,
-#     # Tuple,
-#     # Callable,
-#     # Any,
-#     # Union,
-#     # Optional,
-#     Literal,
-# )
-
-# import numpy as np
 import manim as mn
 
 from .datastructures import (
