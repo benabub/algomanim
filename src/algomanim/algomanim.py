@@ -11,7 +11,6 @@ import manim as mn
 from manim import ManimColor
 import numpy as np
 
-from .datastructures import ListNode
 from . import utils
 
 
@@ -86,30 +85,47 @@ class VisualDataStructure(AlgoManimBase):
         self.fill_color: ManimColor | str = mn.GRAY
         self.bg_color: ManimColor | str = mn.DARK_GRAY
 
-    def update_visual_state(
+    def _get_visual_state(self) -> dict:
+        """Return dictionary with all visual components for state transfer."""
+        return {
+            "containers_mob": getattr(self, "containers_mob", None),
+            "values_mob": getattr(self, "values_mob", None),
+            "pointers_top": getattr(self, "pointers_top", None),
+            "pointers_bottom": getattr(self, "pointers_bottom", None),
+            "submobjects": getattr(self, "submobjects", None),
+            "data": getattr(self, "data", None),
+        }
+
+    def _synchronize_state(
         self,
         new_group,
-        data: list | str | ListNode,
-        old_cells: mn.VGroup | None,
-        old_pointers_top: mn.VGroup | None,
-        old_pointers_bottom: mn.VGroup | None,
+        new_value,
     ):
-        """Update visual components while preserving highlight states.
+        """Update internal state for new made class instance.
 
         Args:
-            self: Target object to update.
-            new_group: Source object with new visual state.
-            data: Data to determine if structure is empty.
-            old_cells: Previous containers mobject for color preservation.
-            old_pointers_top: Previous top pointers for color preservation.
-            old_pointers_bottom: Previous bottom pointers for color preservation.
+            new_group: New String instance to copy state from.
+            new_value: New string value.
         """
 
-        if data:
-            self.values_mob = new_group.values_mob
+        # Save old attributes through getter
+        old_state = self._get_visual_state()
+        old_cells = old_state["containers_mob"]
+        old_pointers_top = old_state["pointers_top"]
+        old_pointers_bottom = old_state["pointers_bottom"]
 
-            self.pointers_top = new_group.pointers_top
-            self.pointers_bottom = new_group.pointers_bottom
+        # Get new state through getter
+        new_state = new_group._get_visual_state()
+
+        self.data = new_value
+
+        self.containers_mob = new_state["containers_mob"]
+        self.submobjects = new_state["submobjects"]
+
+        if new_value:
+            self.values_mob = new_state["values_mob"]
+            self.pointers_top = new_state["pointers_top"]
+            self.pointers_bottom = new_state["pointers_bottom"]
 
             # restore old highlights
             if old_cells:
@@ -638,31 +654,6 @@ class Array(VisualDataStructure):
             self.pointers_bottom,
         )
 
-    def _update_internal_state(self, new_group: "Array", new_value: List[int]):
-        """Update internal state for new made class instance.
-
-        Args:
-            new_group: New Array instance to copy state from.
-            new_value: New array values.
-        """
-
-        # save old attributes with highlights
-        old_cells = getattr(self, "containers_mob", None)
-        old_pointers_top = getattr(self, "pointers_top", None)
-        old_pointers_bottom = getattr(self, "pointers_bottom", None)
-
-        self.data = new_value.copy()
-        self.containers_mob = new_group.containers_mob
-        self.submobjects = new_group.submobjects.copy()
-
-        self.update_visual_state(
-            new_group,
-            self.data,
-            old_cells,
-            old_pointers_top,
-            old_pointers_bottom,
-        )
-
     def update_value(
         self,
         scene: mn.Scene,
@@ -698,10 +689,10 @@ class Array(VisualDataStructure):
 
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(new_group, new_value)
+            self._synchronize_state(new_group, new_value)
         else:
             scene.remove(self)
-            self._update_internal_state(new_group, new_value)
+            self._synchronize_state(new_group, new_value)
             scene.add(self)
 
 
@@ -914,35 +905,6 @@ class String(VisualDataStructure):
 
         self.coordinate_y = self.get_y()
 
-    def _update_internal_state(self, new_group: "String", new_value: str):
-        """Update internal state for new made class instance.
-
-        Args:
-            new_group: New String instance to copy state from.
-            new_value: New string value.
-        """
-
-        # save old attributes
-        old_cells = getattr(self, "containers_mob", None)
-        old_pointers_top = getattr(self, "pointers_top", None)
-        old_pointers_bottom = getattr(self, "pointers_bottom", None)
-
-        self.data = new_value
-        self.containers_mob = new_group.containers_mob
-
-        self.submobjects = new_group.submobjects.copy()
-
-        self.quote_cell_left_edge = new_group.quote_cell_left_edge
-        self.letters_cell_left_edge = new_group.letters_cell_left_edge
-
-        self.update_visual_state(
-            new_group,
-            self.data,
-            old_cells,
-            old_pointers_top,
-            old_pointers_bottom,
-        )
-
     def update_value(
         self,
         scene: mn.Scene,
@@ -991,13 +953,16 @@ class String(VisualDataStructure):
             new_group.move_to(self.mob_center)
             new_group.shift(self.vector)
 
+        self.quote_cell_left_edge = new_group.quote_cell_left_edge
+        self.letters_cell_left_edge = new_group.letters_cell_left_edge
+
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(new_group, new_value)
+            self._synchronize_state(new_group, new_value)
 
         else:
             scene.remove(self)
-            self._update_internal_state(new_group, new_value)
+            self._synchronize_state(new_group, new_value)
             scene.add(self)
 
 
