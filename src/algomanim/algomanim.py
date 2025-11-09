@@ -84,69 +84,127 @@ class VisualDataStructure(AlgoManimBase):
         self.container_color: ManimColor | str = mn.LIGHT_GRAY
         self.fill_color: ManimColor | str = mn.GRAY
         self.bg_color: ManimColor | str = mn.DARK_GRAY
+        # --- colors state management ---
+        self._containers_colors: dict[int, ManimColor | str] = {}
+        self._top_pointers_colors: dict[int, list[ManimColor | str]] = {}
+        self._bottom_pointers_colors: dict[int, list[ManimColor | str]] = {}
 
-    def _get_visual_state(self) -> dict:
-        """Return dictionary with all visual components for state transfer."""
-        return {
-            "containers_mob": getattr(self, "containers_mob", None),
-            "values_mob": getattr(self, "values_mob", None),
-            "pointers_top": getattr(self, "pointers_top", None),
-            "pointers_bottom": getattr(self, "pointers_bottom", None),
-            "submobjects": getattr(self, "submobjects", None),
-            "data": getattr(self, "data", None),
-        }
-
-    def _synchronize_state(
-        self,
-        new_group,
-        new_value,
-    ):
-        """Update internal state for new made class instance.
+    def clear_pointers_highlights(self, pos: int):
+        """Clear the highlights for pointers at the specified position.
 
         Args:
-            new_group: New String instance to copy state from.
-            new_value: New string value.
+            pos: Position to clear highlights for (0 for top, 1 for bottom).
         """
 
-        # Save old attributes through getter
-        old_state = self._get_visual_state()
-        old_cells = old_state["containers_mob"]
-        old_pointers_top = old_state["pointers_top"]
-        old_pointers_bottom = old_state["pointers_bottom"]
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
-        # Get new state through getter
-        new_state = new_group._get_visual_state()
+        if pos == 0:
+            self._top_pointers_colors = {}
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
 
+        self._apply_pointers_colors(pos)
+
+    def clear_containers_highlights(self):
+        """Clear the highlights for all containers."""
+        self._containers_colors = {}
+        self._apply_containers_colors()
+
+    def _apply_containers_colors(self):
+        """Apply stored color highlights to container objects."""
+
+        for i, mob in enumerate(self.containers_mob):
+            if i in self._containers_colors:
+                if self.data:
+                    mob.set_fill(self._containers_colors[i])
+                else:
+                    mob.set_fill(self.fill_color)
+            else:
+                mob.set_fill(self.fill_color)
+
+    def _apply_pointers_colors(self, pos: int):
+        """Apply stored color highlights to pointer objects at the specified position.
+
+        Args:
+            pos: Position to apply colors for (0 for top, 1 for bottom).
+        """
+
+        # ------- checks --------
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        # ------- asserts --------
+        if pos == 0:
+            pointers = self.pointers_top
+            colors_dict = self._top_pointers_colors
+
+        elif pos == 1:
+            pointers = self.pointers_bottom
+            colors_dict = self._bottom_pointers_colors
+
+        # ------- set colors --------
+        for i, pointers_group in enumerate(pointers):
+            if i in colors_dict:
+                stored_group = colors_dict[i]
+                if self.data:
+                    for j in range(3):
+                        pointers_group[j].set_color(stored_group[j])
+                else:
+                    for j in range(3):
+                        pointers_group[j].set_color(self.bg_color)
+            else:
+                for j in range(3):
+                    pointers_group[j].set_color(self.bg_color)
+
+    def _update_internal_state(
+        self,
+        new_value,
+        new_group: "VisualDataStructure",
+    ):
+        """Update internal state with data from a new group.
+
+        Args:
+            new_value: New data value to store.
+            new_group: New group to copy state from.
+        """
         self.data = new_value
+        self.containers_mob = new_group.containers_mob
+        self.values_mob = new_group.values_mob
+        self.pointers_top = new_group.pointers_top
+        self.pointers_bottom = new_group.pointers_bottom
+        self.submobjects = new_group.submobjects
 
-        self.containers_mob = new_state["containers_mob"]
-        self.submobjects = new_state["submobjects"]
+    def _save_highlights_states(self):
+        """Save current highlight states for containers and pointers.
 
-        if new_value:
-            self.values_mob = new_state["values_mob"]
-            self.pointers_top = new_state["pointers_top"]
-            self.pointers_bottom = new_state["pointers_bottom"]
+        Returns:
+            Dictionary containing current highlight states.
+        """
+        return {
+            "_containers_colors": self._containers_colors,
+            "_top_pointers_colors": self._top_pointers_colors,
+            "_bottom_pointers_colors": self._bottom_pointers_colors,
+        }
 
-            # restore old highlights
-            if old_cells:
-                for old, new in zip(old_cells, self.containers_mob):
-                    new.set_fill(old.get_fill_color())
+    @staticmethod
+    def _preserve_highlights_states(
+        new_group: "VisualDataStructure",
+        status: dict,
+    ):
+        """Apply saved highlight states to a new group.
 
-            if old_pointers_top:
-                for old_ptrs, new_ptrs in zip(old_pointers_top, self.pointers_top):
-                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                        new_tri.set_color(old_tri.get_color())
+        Args:
+            new_group: Group to apply the saved states to.
+            status: Dictionary containing the saved highlight states.
+        """
+        new_group._containers_colors = status["_containers_colors"]
+        new_group._top_pointers_colors = status["_top_pointers_colors"]
+        new_group._bottom_pointers_colors = status["_bottom_pointers_colors"]
 
-            if old_pointers_bottom:
-                for old_ptrs, new_ptrs in zip(
-                    old_pointers_bottom, self.pointers_bottom
-                ):
-                    for old_tri, new_tri in zip(old_ptrs, new_ptrs):
-                        new_tri.set_color(old_tri.get_color())
-
-        else:
-            self.pointers_top = mn.VGroup()
-            self.pointers_bottom = mn.VGroup()
+        new_group._apply_containers_colors()
+        new_group._apply_pointers_colors(0)
+        new_group._apply_pointers_colors(1)
 
     def create_pointers(self, cell_mob: mn.VGroup) -> tuple[mn.VGroup, mn.VGroup]:
         """Create pointer triangles above and below each cell in the group.
@@ -179,6 +237,7 @@ class VisualDataStructure(AlgoManimBase):
         for cell in cell_mob:
             # create top triangles (3 per cell)
             top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
+
             # arrange top triangles horizontally above the cell
             top_triple_group.arrange(mn.RIGHT, buff=0.08)
             top_triple_group.next_to(cell, mn.UP, buff=0.15)
@@ -186,6 +245,7 @@ class VisualDataStructure(AlgoManimBase):
 
             # create bottom triangles (3 per cell)
             bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
+
             # arrange bottom triangles horizontally below the cell
             bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
             bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
@@ -203,6 +263,10 @@ class VisualDataStructure(AlgoManimBase):
     ):
         """Highlight pointers at one side (top | bottom) in array.
 
+        First, this function clears the existing pointer highlight state for the specified position,
+        then sets the new highlight state based on the provided indices and colors,
+        and finally applies the new state to the visual objects if data exists.
+
         Args:
             idx_list: List of indices to highlight (1-3 elements).
             pos: 0 for top side, 1 for bottom.
@@ -214,8 +278,7 @@ class VisualDataStructure(AlgoManimBase):
             ValueError: If idx_list has invalid length or pos is invalid.
         """
 
-        if not self.data:
-            return
+        # ------- checks --------
 
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
@@ -223,16 +286,20 @@ class VisualDataStructure(AlgoManimBase):
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
+        # ------- asserts --------
+
         if pos == 0:
-            pointers_mob = self.pointers_top
+            self._top_pointers_colors = {}
+            colors_dict = self._top_pointers_colors
         elif pos == 1:
-            pointers_mob = self.pointers_bottom
+            self._bottom_pointers_colors = {}
+            colors_dict = self._bottom_pointers_colors
+
+        # ------- fill store --------
 
         if len(idx_list) == 1:
             i = idx_list[0]
-
-            for idx, _ in enumerate(self.containers_mob):
-                pointers_mob[idx][1].set_color(color_1 if idx == i else self.bg_color)
+            colors_dict[i] = [self.bg_color, color_1, self.bg_color]
 
         elif len(idx_list) == 2:
             i = idx_list[0]
@@ -240,21 +307,11 @@ class VisualDataStructure(AlgoManimBase):
 
             for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j:
-                    pointers_mob[idx][0].set_color(color_1)
-                    pointers_mob[idx][1].set_color(self.bg_color)
-                    pointers_mob[idx][2].set_color(color_2)
+                    colors_dict[idx] = [color_1, self.bg_color, color_2]
                 elif idx == i:
-                    pointers_mob[idx][0].set_color(self.bg_color)
-                    pointers_mob[idx][1].set_color(color_1)
-                    pointers_mob[idx][2].set_color(self.bg_color)
+                    colors_dict[idx] = [self.bg_color, color_1, self.bg_color]
                 elif idx == j:
-                    pointers_mob[idx][0].set_color(self.bg_color)
-                    pointers_mob[idx][1].set_color(color_2)
-                    pointers_mob[idx][2].set_color(self.bg_color)
-                else:
-                    pointers_mob[idx][0].set_color(self.bg_color)
-                    pointers_mob[idx][1].set_color(self.bg_color)
-                    pointers_mob[idx][2].set_color(self.bg_color)
+                    colors_dict[idx] = [self.bg_color, color_2, self.bg_color]
 
         elif len(idx_list) == 3:
             i = idx_list[0]
@@ -263,37 +320,26 @@ class VisualDataStructure(AlgoManimBase):
 
             for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j == k:
-                    pointers_mob[idx][0].set_color(color_1)
-                    pointers_mob[idx][1].set_color(color_2)
-                    pointers_mob[idx][2].set_color(color_3)
+                    colors_dict[idx] = [color_1, color_2, color_3]
                 elif idx == i == j:
-                    pointers_mob[idx][0].set_color(color_1)
-                    pointers_mob[idx][1].set_color(self.bg_color)
-                    pointers_mob[idx][2].set_color(color_2)
+                    colors_dict[idx] = [color_1, self.bg_color, color_2]
                 elif idx == i == k:
-                    pointers_mob[idx][0].set_color(color_1)
-                    pointers_mob[idx][1].set_color(self.bg_color)
-                    pointers_mob[idx][2].set_color(color_3)
+                    colors_dict[idx] = [color_1, self.bg_color, color_3]
                 elif idx == k == j:
-                    pointers_mob[idx][0].set_color(color_2)
-                    pointers_mob[idx][1].set_color(self.bg_color)
-                    pointers_mob[idx][2].set_color(color_3)
+                    colors_dict[idx] = [color_2, self.bg_color, color_3]
                 elif idx == i:
-                    pointers_mob[idx][0].set_color(self.bg_color)
-                    pointers_mob[idx][1].set_color(color_1)
-                    pointers_mob[idx][2].set_color(self.bg_color)
+                    colors_dict[idx] = [self.bg_color, color_1, self.bg_color]
                 elif idx == j:
-                    pointers_mob[idx][0].set_color(self.bg_color)
-                    pointers_mob[idx][1].set_color(color_2)
-                    pointers_mob[idx][2].set_color(self.bg_color)
+                    colors_dict[idx] = [self.bg_color, color_2, self.bg_color]
                 elif idx == k:
-                    pointers_mob[idx][0].set_color(self.bg_color)
-                    pointers_mob[idx][1].set_color(color_3)
-                    pointers_mob[idx][2].set_color(self.bg_color)
-                else:
-                    pointers_mob[idx][0].set_color(self.bg_color)
-                    pointers_mob[idx][1].set_color(self.bg_color)
-                    pointers_mob[idx][2].set_color(self.bg_color)
+                    colors_dict[idx] = [self.bg_color, color_3, self.bg_color]
+
+        # ------- apply --------
+
+        if not self.data:
+            return
+
+        self._apply_pointers_colors(pos)
 
     def pointers_on_value(
         self,
@@ -304,27 +350,40 @@ class VisualDataStructure(AlgoManimBase):
         """Highlight middle pointers on all cells whose values
         equal the provided value.
 
+        First, this function clears the existing pointer highlight state for the specified position,
+        then sets the new highlight state based on the provided value and color,
+        and finally applies the new state to the visual objects if data exists.
+
         Args:
             val: The value to compare with array elements.
             pos: 0 for top pointers, 1 for bottom pointers.
             color: Color for the highlighted pointer.
         """
 
-        if not self.data:
-            return
-
+        # ------- checks --------
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
+        # ------- asserts --------
         if pos == 0:
-            pointers_mob = self.pointers_top
-        elif pos == 1:
-            pointers_mob = self.pointers_bottom
+            self._top_pointers_colors = {}
+            colors_store = self._top_pointers_colors
 
-        for idx, _ in enumerate(self.containers_mob):
-            pointers_mob[idx][1].set_color(
-                color if self.data[idx] == val else self.bg_color
-            )
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_store = self._bottom_pointers_colors
+
+        # ------- checks --------
+        if not self.data:
+            return
+
+        # ------- fill store --------
+        for idx in range(len(self.data)):
+            if self.data[idx] == val:
+                colors_store[idx] = [self.bg_color, color, self.bg_color]
+
+        # ------- apply --------
+        self._apply_pointers_colors(pos)
 
     def highlight_containers(
         self,
@@ -338,6 +397,10 @@ class VisualDataStructure(AlgoManimBase):
         color_23: ManimColor | str = mn.TEAL,
     ):
         """Highlight cells in the array visualization.
+
+        First, this function clears the existing container highlight state,
+        then sets the new highlight state based on the provided indices and colors,
+        and finally applies the new state to the visual objects if data exists.
 
         Note:
             Cell coloring methods are mutually exclusive - the last called
@@ -357,54 +420,57 @@ class VisualDataStructure(AlgoManimBase):
             ValueError: If idx_list has invalid length.
         """
 
-        if not self.data:
-            return
+        # ------- checks --------
 
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
 
+        # ------- asserts --------
+        self._containers_colors = {}
+
+        # ------- fill self._containers_colors --------
+
         if len(idx_list) == 1:
             i = idx_list[0]
-
-            for idx, mob in enumerate(self.containers_mob):
-                mob.set_fill(color_1 if idx == i else self.fill_color)
+            self._containers_colors[i] = color_1
 
         elif len(idx_list) == 2:
             i = idx_list[0]
             j = idx_list[1]
 
-            for idx, mob in enumerate(self.containers_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j:
-                    mob.set_fill(color_12)
+                    self._containers_colors[idx] = color_12
                 elif idx == i:
-                    mob.set_fill(color_1)
+                    self._containers_colors[idx] = color_1
                 elif idx == j:
-                    mob.set_fill(color_2)
-                else:
-                    mob.set_fill(self.fill_color)
+                    self._containers_colors[idx] = color_2
 
         elif len(idx_list) == 3:
             i = idx_list[0]
             j = idx_list[1]
             k = idx_list[2]
 
-            for idx, mob in enumerate(self.containers_mob):
+            for idx, _ in enumerate(self.containers_mob):
                 if idx == i == j == k:
-                    mob.set_fill(color_123)
+                    self._containers_colors[idx] = color_123
                 elif idx == i == j:
-                    mob.set_fill(color_12)
+                    self._containers_colors[idx] = color_12
                 elif idx == i == k:
-                    mob.set_fill(color_13)
+                    self._containers_colors[idx] = color_13
                 elif idx == k == j:
-                    mob.set_fill(color_23)
+                    self._containers_colors[idx] = color_23
                 elif idx == i:
-                    mob.set_fill(color_1)
+                    self._containers_colors[idx] = color_1
                 elif idx == j:
-                    mob.set_fill(color_2)
+                    self._containers_colors[idx] = color_2
                 elif idx == k:
-                    mob.set_fill(color_3)
-                else:
-                    mob.set_fill(self.fill_color)
+                    self._containers_colors[idx] = color_3
+
+        if not self.data:
+            return
+
+        self._apply_containers_colors()
 
     def highlight_containers_with_value(
         self,
@@ -412,6 +478,10 @@ class VisualDataStructure(AlgoManimBase):
         color: ManimColor | str = mn.BLACK,
     ):
         """Highlight all cells whose values equal the provided value.
+
+        First, this function clears the existing container highlight state,
+        then sets the new highlight state based on the provided value and color,
+        and finally applies the new state to the visual objects if data exists.
 
         Note:
             Cell coloring methods are mutually exclusive - the last called
@@ -422,11 +492,20 @@ class VisualDataStructure(AlgoManimBase):
             color: Color for the highlighted pointer.
         """
 
+        # ------- asserts --------
+        self._containers_colors = {}
+
+        # ------- checks --------
         if not self.data:
             return
 
-        for idx, mob in enumerate(self.containers_mob):
-            mob.set_fill(color if self.data[idx] == val else self.fill_color)
+        # ------- fill store --------
+        for idx in range(len(self.data)):
+            if self.data[idx] == val:
+                self._containers_colors[idx] = color
+
+        # ------- apply --------
+        self._apply_containers_colors()
 
 
 class Array(VisualDataStructure):
@@ -439,10 +518,11 @@ class Array(VisualDataStructure):
         font_size: Font size for text, scales the whole mobject.
         font_color: Color for text elements.
         weight: Font weight (NORMAL, BOLD, etc.).
-        bg_color: Background color for cells and default pointer color.
-        cell_color: Border color for cells.
         mob_center: Reference mobject for positioning.
         align_edge: Edge alignment relative to mob_center.
+        container_color: Border color for cells.
+        bg_color: Background color for cells and default pointer color.
+        fill_color: Fill color for cells.
         cell_params_auto: Whether to auto-calculate cell parameters.
         cell_height: Manual cell height when auto-calculation disabled.
         top_bottom_buff: Internal top/bottom padding within cells.
@@ -662,37 +742,53 @@ class Array(VisualDataStructure):
         left_aligned=True,
         run_time: float = 0.2,
     ) -> None:
-        """Replace mobject with new one, based on new_value.
+        """Replace the array visualization with a new set of values.
+
+        This method creates a new `Array` instance with `new_value` and either
+        animates a smooth transformation from the old to the new state, or performs
+        an instantaneous update. Highlight states (container and pointer colors)
+        are preserved across the update.
 
         Args:
-            scene: The scene to play animations in.
-            new_value: New array to display.
-            animate: Whether to animate the changes (True) or update
-                instantly (False).
-            left_aligned: Whether to maintain left edge alignment.
-            run_time: Duration of animation if animate=True.
+            scene: The Manim scene in which the animation or update will be played.
+            new_value: The new list of integer values to display in the array.
+            animate: If True, animates the transition using a Transform.
+                     If False, updates the object instantly.
+            left_aligned: If True, aligns the left edge of the new array with the
+                         left edge of the current array, maintaining horizontal position.
+                         If False, the new array is centered on the original mob_center.
+            run_time: Duration (in seconds) of the animation if `animate=True`.
+                     Has no effect if `animate=False`.
         """
 
+        # checks
         if not self.data and not new_value:
             return
 
+        # save old group status
+        highlight_status = self._save_highlights_states()
+
+        # new group
         new_group = Array(
             new_value,
             font=self.font,
             bg_color=self.bg_color,
             font_size=self.font_size,
         )
-
         if left_aligned:
             new_group.align_to(self.get_left(), mn.LEFT)
             new_group.set_y(self.get_y())
 
+        # restore colors
+        self._preserve_highlights_states(new_group, highlight_status)
+
+        # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._synchronize_state(new_group, new_value)
+            self._update_internal_state(new_value, new_group)
         else:
             scene.remove(self)
-            self._synchronize_state(new_group, new_value)
+            self._update_internal_state(new_value, new_group)
             scene.add(self)
 
 
@@ -706,11 +802,11 @@ class String(VisualDataStructure):
         font_size: Font size for text, scales the whole mobject.
         weight: Font weight (NORMAL, BOLD, etc.).
         font_color: Color for text elements.
-        bg_color: Background color for quote cells and default pointer color.
-        fill_color: Fill color for character cells.
-        cell_color: Border color for cells.
         mob_center: Reference mobject for positioning.
         align_edge: Edge alignment relative to mob_center.
+        container_color: Border color for cells.
+        fill_color: Fill color for character cells.
+        bg_color: Background color for quote cells and default pointer color.
         cell_params_auto: Whether to auto-calculate cell parameters.
         cell_height: Manual cell height when auto-calculation disabled.
         top_bottom_buff: Internal top/bottom padding within cells.
@@ -913,19 +1009,35 @@ class String(VisualDataStructure):
         left_aligned=True,
         run_time: float = 0.2,
     ) -> None:
-        """Replace mobject with new one based on new_value.
+        """Replace the string visualization with a new string value.
+
+        This method creates a new `String` instance with `new_value` and either
+        animates a smooth transformation from the old to the new state, or performs
+        an instantaneous update. Highlight states (container and pointer colors)
+        are preserved across the update. The left edge alignment of quotes and
+        character cells is maintained if `left_aligned=True`.
 
         Args:
-            scene: The scene to play animations in.
-            new_value: New string value to display.
-            animate: Whether to animate the changes.
-            left_aligned: Whether to maintain left edge alignment.
-            run_time: Duration of animation if animate=True.
+            scene: The Manim scene in which the animation or update will be played.
+            new_value: The new string value to display.
+            animate: If True, animates the transition using a Transform.
+                     If False, updates the object instantly.
+            left_aligned: If True, aligns the left edge of the new string's quote cells
+                         and character cells with the corresponding left edges of the
+                         current string, maintaining horizontal position. If False,
+                         the new string is centered on the original mob_center.
+            run_time: Duration (in seconds) of the animation if `animate=True`.
+                     Has no effect if `animate=False`.
         """
 
+        # checks
         if not self.data and not new_value:
             return
 
+        # save old group status
+        highlight_status = self._save_highlights_states()
+
+        # ------ new group ---------
         new_group = String(
             new_value,
             font=self.font,
@@ -955,14 +1067,18 @@ class String(VisualDataStructure):
 
         self.quote_cell_left_edge = new_group.quote_cell_left_edge
         self.letters_cell_left_edge = new_group.letters_cell_left_edge
+        # --------------------------
 
+        # restore colors
+        self._preserve_highlights_states(new_group, highlight_status)
+
+        # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._synchronize_state(new_group, new_value)
-
+            self._update_internal_state(new_value, new_group)
         else:
             scene.remove(self)
-            self._synchronize_state(new_group, new_value)
+            self._update_internal_state(new_value, new_group)
             scene.add(self)
 
 
