@@ -104,3 +104,58 @@
 
 ## Fixed
 - `String`: {`update_value()`, `_update_internal_state()`}: left_aligned issues
+
+---
+
+# [0.2.4] - 2025-11-09
+
+## Added
+- Base classes: `VisualDataStructure`, `AlgoManimBase`
+- `VisualDataStructure`:
+  - Attributes: 
+    - `self._containers_colors`
+    - `self._top_pointers_colors` 
+    - `self._bottom_pointers_colors`
+  - Methods:
+    - `clear_pointers_highlights()`
+    - `clear_containers_highlights()`
+    - `_apply_containers_colors()`
+    - `_apply_pointers_colors()`
+    - `_update_internal_state()`
+    - `_save_highlights_states()`
+    - `_preserve_highlights_states()`
+- SVG assets: `algomanim/svg/arrows/*`
+- `algomanim/utils.py`:
+  - Functions:
+    - `create_linked_list()`
+    - `linked_list_to_list()`
+    - `get_linked_list_length()`
+
+## Changed
+- `VisualDataStructure`: `pointers_list` -> {`pointers_top`, `pointers_bottom`}
+- `algomanim/examples/examples.py`:
+  - `ExampleArray`: Added animated version of `update_value()`
+  - `ExampleString`: Added animated version of `update_value()`
+
+## Refactored
+- Migrated several methods from `algomanim/utils.py` to the new base classes
+- {`Array`, `String`}: Standardized instance attributes to common names:
+  - `data`
+  - `containers_mob`
+  - `values_mob`
+  - `container_color`
+  - `fill_color`
+- `VisualDataStructure`:
+  - `create_pointers()`
+  - `pointers()`
+  - `pointers_on_value()`
+  - `highlight_containers()`
+  - `highlight_containers_with_value()`
+- `Array`: Refactored `update_value()` method
+- `String`: Refactored `update_value()` method
+
+## Removed
+- `algomanim/examples/utils.py`: Contents were moved to `algomanim/utils.py`
+
+## Fixed
+- `VisualDataStructure`: All highlight containers methods: `self.bg_color` → `self.fill_color`
