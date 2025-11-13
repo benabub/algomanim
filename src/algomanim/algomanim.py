@@ -11,7 +11,7 @@ import manim as mn
 from manim import ManimColor
 import numpy as np
 
-from . import utils
+# from . import utils
 
 
 class AlgoManimBase(mn.VGroup):
@@ -75,21 +75,48 @@ class VisualDataStructure(AlgoManimBase):
 
     def __init__(self):
         super().__init__()
+
         self._data = None
+
+        # --- mobjects ---
         self._containers_mob = mn.VGroup()
         self._values_mob = mn.VGroup()
         self._pointers_top = mn.VGroup()
         self._pointers_bottom = mn.VGroup()
+
         # --- containers colors ---
         self._container_color: ManimColor | str = mn.LIGHT_GRAY
         self._fill_color: ManimColor | str = mn.GRAY
         self._bg_color: ManimColor | str = mn.DARK_GRAY
+
         # --- colors state management ---
         self._containers_colors: dict[int, ManimColor | str] = {}
         self._top_pointers_colors: dict[int, list[ManimColor | str]] = {}
         self._bottom_pointers_colors: dict[int, list[ManimColor | str]] = {}
-        # --- alignment ---
+
+        # ---- position ----
+        self._vector: np.ndarray = mn.ORIGIN
+        self._mob_center: mn.Mobject = mn.Dot(mn.ORIGIN)
         self._align_edge: Literal["up", "down", "left", "right"] | None = None
+
+        # ---- font ----
+        self._font = ("",)
+        self._font_size = (35,)
+        self._font_color: ManimColor | str = mn.WHITE
+        self._weight: str = "NORMAL"
+
+        # ---- container colors ----
+        self._container_color: ManimColor | str = mn.DARK_GRAY
+        self._fill_color: ManimColor | str = mn.GRAY
+        self._bg_color: ManimColor | str = mn.DARK_GRAY
+
+    def _text_config(self):
+        return {
+            "font": self._font,
+            "font_size": self._font_size,
+            "weight": self._weight,
+            "color": self._font_color,
+        }
 
     def clear_pointers_highlights(self, pos: int):
         """Clear the highlights for pointers at the specified position.
@@ -159,23 +186,23 @@ class VisualDataStructure(AlgoManimBase):
                 for j in range(3):
                     pointers_group[j].set_color(self._bg_color)
 
-    # def _update_internal_state(
-    #     self,
-    #     new_value,
-    #     new_group: "VisualDataStructure",
-    # ):
-    #     """Update internal state with data from a new group.
-    #
-    #     Args:
-    #         new_value: New data value to store.
-    #         new_group: New group to copy state from.
-    #     """
-    #     self._data = new_value
-    #     self._containers_mob = new_group._containers_mob
-    #     self._values_mob = new_group._values_mob
-    #     self._pointers_top = new_group._pointers_top
-    #     self._pointers_bottom = new_group._pointers_bottom
-    #     self.submobjects = new_group.submobjects
+    def _update_internal_state(
+        self,
+        new_value,
+        new_group: "VisualDataStructure",
+    ):
+        """Update internal state with data from a new group.
+
+        Args:
+            new_value: New data value to store.
+            new_group: New group to copy state from.
+        """
+        self._data = new_value
+        self._containers_mob = new_group._containers_mob
+        self._values_mob = new_group._values_mob
+        self._pointers_top = new_group._pointers_top
+        self._pointers_bottom = new_group._pointers_bottom
+        self.submobjects = new_group.submobjects
 
     def _save_highlights_states(self):
         """Save current highlight states for containers and pointers.
@@ -510,7 +537,113 @@ class VisualDataStructure(AlgoManimBase):
         self._apply_containers_colors()
 
 
-class Array(VisualDataStructure):
+class RectangleCellsDataStructure(VisualDataStructure):
+    """
+    ...
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._cell_params_auto = True
+        self._cell_height = 0.65625
+        self._top_bottom_buff = 0.15
+        self._top_buff = 0.09
+        self._bottom_buff = 0.16
+        self._deep_bottom_buff = 0.05
+
+    def _get_cell_params(
+        self,
+        font_size: float,
+        font: str,
+        weight: str,
+        test_sign: str = "0",
+    ) -> dict:
+        """Calculate comprehensive cell layout parameters.
+
+        Args:
+            font_size: Font size for text measurement.
+            font: Font family name.
+            weight: Font weight (NORMAL, BOLD, etc.).
+            test_sign: Character used for measurement (default "0").
+
+        Returns:
+            Dictionary containing:
+            - top_bottom_buff: Internal top/bottom padding
+            - cell_height: Total cell height
+            - top_buff: Top alignment buffer
+            - bottom_buff: Standard bottom alignment buffer
+            - deep_bottom_buff: Deep bottom alignment buffer
+        """
+        zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
+
+        zero_mob_height = zero_mob.height  # 0.35625
+
+        top_bottom_buff = zero_mob_height / 2.375
+        cell_height = top_bottom_buff * 2 + zero_mob_height
+        top_buff = zero_mob_height / 3.958
+        bottom_buff = zero_mob_height / 35.625 + top_bottom_buff
+        deep_bottom_buff = zero_mob_height / 7.125
+
+        return {
+            "top_bottom_buff": top_bottom_buff,
+            "cell_height": cell_height,
+            "top_buff": top_buff,
+            "bottom_buff": bottom_buff,
+            "deep_bottom_buff": deep_bottom_buff,
+        }
+
+    def _get_cell_width(
+        self,
+        text_mob: mn.Mobject,
+        inter_buff: float,
+        cell_height: float,
+    ) -> float:
+        """Calculate cell width based on text content and constraints.
+
+        Args:
+            text_mob: Text mobject to measure.
+            inter_buff: Internal padding within cells.
+            cell_height: Pre-calculated cell height.
+
+        Returns:
+            Cell width, ensuring it's at least as tall as the cell height
+            for consistent visual proportions.
+        """
+        text_mob_height = text_mob.width
+        res = inter_buff * 2.5 + text_mob_height
+        if cell_height >= res:
+            return cell_height
+        else:
+            return res
+
+    def _cell_params(
+        self,
+        cell_params_auto,
+        font_size,
+        font,
+        weight,
+        cell_height,
+        top_bottom_buff,
+        top_buff,
+        bottom_buff,
+        deep_bottom_buff,
+    ):
+        if cell_params_auto:
+            cell_params = self._get_cell_params(font_size, font, weight)
+            self._cell_height = cell_params["cell_height"]
+            self._top_bottom_buff = cell_params["top_bottom_buff"]
+            self._top_buff = cell_params["top_buff"]
+            self._bottom_buff = cell_params["bottom_buff"]
+            self._deep_bottom_buff = cell_params["deep_bottom_buff"]
+        else:
+            self._cell_height = cell_height
+            self._top_bottom_buff = top_bottom_buff
+            self._top_buff = top_buff
+            self._bottom_buff = bottom_buff
+            self._deep_bottom_buff = deep_bottom_buff
+
+
+class Array(RectangleCellsDataStructure):
     """Array visualization as a VGroup of cells with values and pointers.
 
     Args:
@@ -543,13 +676,15 @@ class Array(VisualDataStructure):
     def __init__(
         self,
         arr: List,
+        # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # ---- font ----
         font="",
         font_size=35,
         font_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
         # ---- cell colors ----
         container_color: ManimColor | str = mn.LIGHT_GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
@@ -597,9 +732,7 @@ class Array(VisualDataStructure):
 
         # empty value
         if not self._data:
-            self._containers_mob, self._empty_value_mob = self._create_empty_array(
-                self._mob_center, self._align_edge, self._vector
-            )
+            self._containers_mob, self._empty_value_mob = self._create_empty_array()
             self.add(self._containers_mob, self._empty_value_mob)
             return
 
@@ -633,63 +766,23 @@ class Array(VisualDataStructure):
             self._pointers_bottom,
         )
 
-    def _cell_params(
-        self,
-        cell_params_auto,
-        font_size,
-        font,
-        weight,
-        cell_height,
-        top_bottom_buff,
-        top_buff,
-        bottom_buff,
-        deep_bottom_buff,
-    ):
-        if cell_params_auto:
-            cell_params = utils.get_cell_params(font_size, font, weight)
-            self._cell_height = cell_params["cell_height"]
-            self._top_bottom_buff = cell_params["top_bottom_buff"]
-            self._top_buff = cell_params["top_buff"]
-            self._bottom_buff = cell_params["bottom_buff"]
-            self._deep_bottom_buff = cell_params["deep_bottom_buff"]
-        else:
-            self._cell_height = cell_height
-            self._top_bottom_buff = top_bottom_buff
-            self._top_buff = top_buff
-            self._bottom_buff = bottom_buff
-            self._deep_bottom_buff = deep_bottom_buff
-
-    def _text_config(self):
-        return {
-            "font": self._font,
-            "font_size": self._font_size,
-            "weight": self._weight,
-            "color": self._font_color,
-        }
-
-    def _create_empty_array(
-        self,
-        mob_center,
-        align_edge,
-        vector,
-    ):
+    def _create_empty_array(self):
         # clear old fields
         self._values_mob = mn.VGroup()
-
         self._pointers_top = mn.VGroup()
         self._pointers_bottom = mn.VGroup()
 
         empty_value_mob = mn.Text("[]", **self._text_config())
         containers_mob = mn.Rectangle(
             height=self._cell_height,
-            width=utils.get_cell_width(
+            width=self._get_cell_width(
                 empty_value_mob, self._top_bottom_buff, self._cell_height
             ),
             color=self._bg_color,
             fill_color=self._fill_color,
             fill_opacity=1.0,
         )
-        self.position(containers_mob, mob_center, align_edge, vector)
+        self.position(containers_mob, self._mob_center, self._align_edge, self._vector)
         empty_value_mob.move_to(containers_mob.get_center())
         empty_value_mob.align_to(containers_mob, mn.DOWN)
         empty_value_mob.align_to(containers_mob, mn.LEFT)
@@ -707,7 +800,7 @@ class Array(VisualDataStructure):
         for text_mob in self._values_mob:
             cell_mob = mn.Rectangle(
                 height=self._cell_height,
-                width=utils.get_cell_width(
+                width=self._get_cell_width(
                     text_mob, self._top_bottom_buff, self._cell_height
                 ),
                 color=self._container_color,
@@ -811,71 +904,71 @@ class Array(VisualDataStructure):
     #         "_pointers_bottom": self._pointers_bottom,
     #     }
 
-    def _update_internal_state(
-        self,
-        new_value,
-        new_group: "VisualDataStructure",
-    ):
-        """Update internal state with data from a new group.
+    # def _update_internal_state(
+    #     self,
+    #     new_value,
+    #     new_group: "VisualDataStructure",
+    # ):
+    #     """Update internal state with data from a new group.
+    #
+    #     Args:
+    #         new_value: New data value to store.
+    #         new_group: New group to copy state from.
+    #     """
+    #
+    #     self._data = new_value
+    #     self._containers_mob = new_group._containers_mob
+    #     self._values_mob = new_group._values_mob
+    #     self._pointers_top = new_group._pointers_top
+    #     self._pointers_bottom = new_group._pointers_bottom
+    #     self.submobjects = new_group.submobjects
 
-        Args:
-            new_value: New data value to store.
-            new_group: New group to copy state from.
-        """
+    # self._data = new_value
+    # new_group_internal_state = new_group.get_internal_state()
+    # self._containers_mob = new_group_internal_state["_containers_mob"]
+    # self._values_mob = new_group_internal_state["_values_mob"]
+    # self._pointers_top = new_group_internal_state["_pointers_top"]
+    # self._pointers_bottom = new_group_internal_state["_pointers_bottom"]
+    # self.submobjects = new_group.submobjects
 
-        self._data = new_value
-        self._containers_mob = new_group._containers_mob
-        self._values_mob = new_group._values_mob
-        self._pointers_top = new_group._pointers_top
-        self._pointers_bottom = new_group._pointers_bottom
-        self.submobjects = new_group.submobjects
-
-        # self._data = new_value
-        # new_group_internal_state = new_group.get_internal_state()
-        # self._containers_mob = new_group_internal_state["_containers_mob"]
-        # self._values_mob = new_group_internal_state["_values_mob"]
-        # self._pointers_top = new_group_internal_state["_pointers_top"]
-        # self._pointers_bottom = new_group_internal_state["_pointers_bottom"]
-        # self.submobjects = new_group.submobjects
-
-        # self._data = new_value
-        #
-        # if not self._data:
-        #     self._containers_mob, self._empty_value_mob = self._create_empty_array(
-        #         self._mob_center, self._align_edge, self._vector
-        #     )
-        #     self.add(self._containers_mob, self._empty_value_mob)
-        #     return
-        #
-        # self._values_mob = self._create_values_mob()
-        # self._containers_mob = self._create_containers_mob()
-        #
-        # # arrange cells in a row
-        # self._containers_mob.arrange(mn.RIGHT, buff=0.1)
-        #
-        # # move VGroup to the specified position
-        # self.position(
-        #     self._containers_mob,
-        #     self._mob_center,
-        #     self._align_edge,
-        #     self._vector,
-        # )
-        #
-        # # move text mobjects in containers
-        # self._position_values_in_containers()
-        #
-        # # pointers
-        # self._pointers_top, self._pointers_bottom = self.create_pointers(
-        #     self._containers_mob
-        # )
-        #
-        # # adds local objects as instance attributes
-        # self.add(
-        #     self._containers_mob,
-        #     self._values_mob,
-        #     self._pointers_top,
-        #     self._pointers_bottom,
-        # )
+    # self._data = new_value
+    #
+    # if not self._data:
+    #     self._containers_mob, self._empty_value_mob = self._create_empty_array(
+    #         self._mob_center, self._align_edge, self._vector
+    #     )
+    #     self.add(self._containers_mob, self._empty_value_mob)
+    #     return
+    #
+    # self._values_mob = self._create_values_mob()
+    # self._containers_mob = self._create_containers_mob()
+    #
+    # # arrange cells in a row
+    # self._containers_mob.arrange(mn.RIGHT, buff=0.1)
+    #
+    # # move VGroup to the specified position
+    # self.position(
+    #     self._containers_mob,
+    #     self._mob_center,
+    #     self._align_edge,
+    #     self._vector,
+    # )
+    #
+    # # move text mobjects in containers
+    # self._position_values_in_containers()
+    #
+    # # pointers
+    # self._pointers_top, self._pointers_bottom = self.create_pointers(
+    #     self._containers_mob
+    # )
+    #
+    # # adds local objects as instance attributes
+    # self.add(
+    #     self._containers_mob,
+    #     self._values_mob,
+    #     self._pointers_top,
+    #     self._pointers_bottom,
+    # )
 
     def update_value(
         self,
@@ -935,7 +1028,7 @@ class Array(VisualDataStructure):
             scene.add(self)
 
 
-class String(VisualDataStructure):
+class String(RectangleCellsDataStructure):
     """String visualization as a VGroup of character cells with quotes.
 
     Args:
@@ -969,13 +1062,15 @@ class String(VisualDataStructure):
     def __init__(
         self,
         string: str,
+        # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
-        font="",
-        font_size=35,
-        weight: str = "NORMAL",
-        font_color: ManimColor | str = mn.WHITE,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # ---- font ----
+        font="",
+        font_size=35,
+        font_color: ManimColor | str = mn.WHITE,
+        weight: str = "NORMAL",
         # ---- cell colors ----
         container_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
@@ -990,159 +1085,188 @@ class String(VisualDataStructure):
     ):
         # call __init__ of the parent classes
         super().__init__()
-        # add class attributes
-        self.data = string
-        self.vector = vector
-        self.font = font
-        self.weight = weight
-        self.font_color = font_color
-        self.mob_center = mob_center
-        self.align_edge = align_edge
-        # ---- cell colors ----
+        # create class instance fields
+        self._data = string
+        self._vector = vector
+        self._mob_center = mob_center
+        self._align_edge = align_edge
+        self._font = font
+        self._font_size = font_size
+        self._font_color = font_color
+        self._weight = weight
         self._container_color = container_color
-        self._bg_color = bg_color
         self._fill_color = fill_color
+        self._bg_color = bg_color
+        self._cell_params_auto = cell_params_auto
+        self._cell_height = cell_height
+        self._top_bottom_buff = top_bottom_buff
+        self._top_buff = top_buff
+        self._bottom_buff = bottom_buff
+        self._deep_bottom_buff = deep_bottom_buff
 
-        self.TEXT_CONFIG = {
-            "font_size": font_size,
-            "font": font,
-            "color": font_color,
-            "weight": weight,
-        }
+        # cells params
+        self._cell_params(
+            self._cell_params_auto,
+            self._font_size,
+            self._font,
+            self._weight,
+            self._cell_height,
+            self._top_bottom_buff,
+            self._top_buff,
+            self._bottom_buff,
+            self._deep_bottom_buff,
+        )
 
-        # --------- cells params ------------
-
-        if cell_params_auto:
-            cell_params = utils.get_cell_params(font_size, font, weight)
-            self.cell_height = cell_params["cell_height"]
-            self.top_bottom_buff = cell_params["top_bottom_buff"]
-            self.top_buff = cell_params["top_buff"]
-            self.bottom_buff = cell_params["bottom_buff"]
-            self.deep_bottom_buff = cell_params["deep_bottom_buff"]
-        else:
-            self.cell_height = cell_height
-            self.top_bottom_buff = top_bottom_buff
-            self.top_buff = top_buff
-            self.bottom_buff = bottom_buff
-            self.deep_bottom_buff = deep_bottom_buff
-
-        # NB: if opacity is not specified, it will be set to None
-        # and some methods will break for unknown reasons
-        self.SQUARE_CONFIG = {
-            "side_length": self.cell_height,
-            "fill_opacity": 1,
-        }
-        # --------- empty value ------------
-
+        # empty value
         if not string:
-            self.text_mob = mn.Text('""', **self.TEXT_CONFIG)
-            self.containers_mob = mn.Square(
-                **self.SQUARE_CONFIG,
-                color=self._container_color,
-                fill_color=self._fill_color,
-            )
-            self.position(self.containers_mob, mob_center, align_edge, vector)
-            self.text_mob.next_to(
-                self.containers_mob.get_top(),
-                direction=mn.DOWN,
-                buff=top_buff,
-            )
-            self.add(self.containers_mob, self.text_mob)
+            self._containers_mob, self._empty_value_mob = self._create_empty_string()
+            self.add(self._containers_mob, self._empty_value_mob)
             return
 
-        # --------- cells ------------
+        # letters cells
+        self._containers_mob = self._create_containers_mob()
 
-        # construction: Create square mobjects for each letter
-        self.containers_mob = mn.VGroup(
-            *[
-                mn.Square(
-                    **self.SQUARE_CONFIG,
-                    color=self._container_color,
-                    fill_color=self._fill_color,
-                )
-                for _ in string
-            ]
-        )
-        # construction: Arrange squares in a row
-        self.containers_mob.arrange(mn.RIGHT, buff=0.0)
-        self.letters_cell_left_edge = self.containers_mob.get_left()
+        # arrange cells in a row
+        self._containers_mob.arrange(mn.RIGHT, buff=0.0)
+        self._letters_cells_left_edge = self._containers_mob.get_left()
 
-        # construction: Move VGroup to the specified position
-        self.position(self.containers_mob, mob_center, align_edge, vector)
-
-        quote_cell_mob = [
-            mn.Square(
-                **self.SQUARE_CONFIG, color=self._bg_color, fill_color=self._bg_color
-            )
-            for _ in range(2)
-        ]
-
-        quote_cell_mob[0].next_to(self.containers_mob, mn.LEFT, buff=0.0)
-        quote_cell_mob[1].next_to(self.containers_mob, mn.RIGHT, buff=0.0)
-
-        self.all_cell_mob = mn.VGroup(
-            [quote_cell_mob[0], self.containers_mob, quote_cell_mob[1]],
+        # move letters cells to the specified position
+        self.position(
+            self._containers_mob,
+            self._mob_center,
+            self._align_edge,
+            self._vector,
         )
 
-        self.quote_cell_left_edge = self.all_cell_mob.get_left()
-
-        # construction: text mobs quotes group
-        self.quotes_mob = mn.VGroup(
-            mn.Text('"', **self.TEXT_CONFIG)
-            .move_to(quote_cell_mob[0], aligned_edge=mn.UP + mn.RIGHT)
-            .shift(mn.DOWN * top_buff),
-            mn.Text('"', **self.TEXT_CONFIG)
-            .move_to(quote_cell_mob[1], aligned_edge=mn.UP + mn.LEFT)
-            .shift(mn.DOWN * top_buff),
+        self._left_quote_cell_mob, self._right_quote_cell_mob = (
+            self._create_and_pos_quote_cell_mobs()
         )
 
-        # ------ values ---------
-
-        # construction: Create text mobjects and move them in squares
-        self.values_mob = mn.VGroup(
-            *[mn.Text(str(letter), **self.TEXT_CONFIG) for letter in string]
+        self._all_cell_mob = mn.VGroup(
+            [
+                self._left_quote_cell_mob,
+                self._containers_mob,
+                self._right_quote_cell_mob,
+            ],
         )
 
-        for i in range(len(string)):
-            if string[i] in "\"'^`":  # top alignment
-                self.values_mob[i].next_to(
-                    self.containers_mob[i].get_top(),
-                    direction=mn.DOWN,
-                    buff=self.top_buff,
-                )
-            elif string[i] in "<>-=+~:#%*[]{}()\\/|@&$0123456789":  # center alignment
-                self.values_mob[i].move_to(self.containers_mob[i])
-            elif string[i] in "ypgj":  # deep bottom alignment
-                self.values_mob[i].next_to(
-                    self.containers_mob[i].get_bottom(),
-                    direction=mn.UP,
-                    buff=self.deep_bottom_buff,
-                )
-            else:  # bottom alignment
-                self.values_mob[i].next_to(
-                    self.containers_mob[i].get_bottom(),
-                    direction=mn.UP,
-                    buff=self.bottom_buff,
-                )
+        self._quote_cell_left_edge = self._all_cell_mob.get_left()
 
-        # ------- pointers ----------
+        # text mobs quotes group
+        self._quotes_mob = self._create_and_pos_quotes_mob()
 
-        self.pointers_top, self.pointers_bottom = self.create_pointers(
-            self.containers_mob
+        # create text mobjects
+        self._values_mob = self._create_values_mob()
+
+        # move text mobjects in containers
+        self._position_values_in_containers()
+
+        # pointers
+        self._pointers_top, self._pointers_bottom = self.create_pointers(
+            self._containers_mob
         )
-
-        # ------- add ----------
 
         # adds local objects as instance attributes
         self.add(
-            self.all_cell_mob,
-            self.values_mob,
-            self.quotes_mob,
-            self.pointers_top,
-            self.pointers_bottom,
+            self._all_cell_mob,
+            self._values_mob,
+            self._quotes_mob,
+            self._pointers_top,
+            self._pointers_bottom,
         )
 
-        self.coordinate_y = self.get_y()
+        self._coordinate_y = self.get_y()
+
+    def _containers_cell_config(self):
+        # NB: if opacity is not specified, it will be set to None
+        # and some methods will break for unknown reasons
+        return {
+            "color": self._container_color,
+            "fill_color": self._fill_color,
+            "side_length": self._cell_height,
+            "fill_opacity": 1,
+        }
+
+    def _quotes_cell_config(self):
+        # NB: if opacity is not specified, it will be set to None
+        # and some methods will break for unknown reasons
+        return {
+            "color": self._bg_color,
+            "fill_color": self._bg_color,
+            "side_length": self._cell_height,
+            "fill_opacity": 1,
+        }
+
+    def _create_empty_string(self):
+        # clear old fields
+        self._values_mob = mn.VGroup()
+        self._pointers_top = mn.VGroup()
+        self._pointers_bottom = mn.VGroup()
+
+        empty_value_mob = mn.Text('""', **self._text_config())
+        containers_mob = mn.Square(**self._containers_cell_config())
+        self.position(containers_mob, self._mob_center, self._align_edge, self._vector)
+        empty_value_mob.next_to(
+            containers_mob.get_top(),
+            direction=mn.DOWN,
+            buff=self._top_buff,
+        )
+        return containers_mob, empty_value_mob
+
+    def _create_containers_mob(self):
+        # create square mobjects for each letter
+        return mn.VGroup(
+            *[mn.Square(**self._containers_cell_config()) for _ in self._data]
+        )
+
+    def _create_and_pos_quote_cell_mobs(self):
+        left_quote_cell = mn.Square(**self._quotes_cell_config())
+        right_quote_cell = mn.Square(**self._quotes_cell_config())
+        left_quote_cell.next_to(self._containers_mob, mn.LEFT, buff=0.0)
+        right_quote_cell.next_to(self._containers_mob, mn.RIGHT, buff=0.0)
+        return left_quote_cell, right_quote_cell
+
+    def _create_and_pos_quotes_mob(self):
+        return mn.VGroup(
+            mn.Text('"', **self._text_config())
+            .move_to(self._left_quote_cell_mob, aligned_edge=mn.UP + mn.RIGHT)
+            .shift(mn.DOWN * self._top_buff),
+            mn.Text('"', **self._text_config())
+            .move_to(self._right_quote_cell_mob, aligned_edge=mn.UP + mn.LEFT)
+            .shift(mn.DOWN * self._top_buff),
+        )
+
+    def _create_values_mob(self):
+        return mn.VGroup(
+            *[mn.Text(str(letter), **self._text_config()) for letter in self._data]
+        )
+
+    def _position_values_in_containers(
+        self,
+    ):
+        for i in range(len(self._data)):
+            if self._data[i] in "\"'^`":  # top alignment
+                self._values_mob[i].next_to(
+                    self._containers_mob[i].get_top(),
+                    direction=mn.DOWN,
+                    buff=self._top_buff,
+                )
+            elif (
+                self._data[i] in "<>-=+~:#%*[]{}()\\/|@&$0123456789"
+            ):  # center alignment
+                self._values_mob[i].move_to(self._containers_mob[i])
+            elif self._data[i] in "ypgj":  # deep bottom alignment
+                self._values_mob[i].next_to(
+                    self._containers_mob[i].get_bottom(),
+                    direction=mn.UP,
+                    buff=self._deep_bottom_buff,
+                )
+            else:  # bottom alignment
+                self._values_mob[i].next_to(
+                    self._containers_mob[i].get_bottom(),
+                    direction=mn.UP,
+                    buff=self._bottom_buff,
+                )
 
     def update_value(
         self,
@@ -1174,7 +1298,7 @@ class String(VisualDataStructure):
         """
 
         # checks
-        if not self.data and not new_value:
+        if not self._data and not new_value:
             return
 
         # save old group status
@@ -1183,33 +1307,33 @@ class String(VisualDataStructure):
         # ------ new group ---------
         new_group = String(
             new_value,
-            font=self.font,
-            weight=self.weight,
-            font_color=self.font_color,
+            font=self._font,
+            weight=self._weight,
+            font_color=self._font_color,
             container_color=self._container_color,
             fill_color=self._fill_color,
             bg_color=self._bg_color,
         )
-        new_group.coordinate_y = self.coordinate_y
+        new_group._coordinate_y = self._coordinate_y
 
         if left_aligned:
-            new_group.quote_cell_left_edge = self.quote_cell_left_edge
-            new_group.letters_cell_left_edge = self.letters_cell_left_edge
+            new_group._quote_cell_left_edge = self._quote_cell_left_edge
+            new_group._letters_cells_left_edge = self._letters_cells_left_edge
 
             if new_value:
-                left_edge = self.quote_cell_left_edge
+                left_edge = self._quote_cell_left_edge
             else:
-                left_edge = self.letters_cell_left_edge
+                left_edge = self._letters_cells_left_edge
 
             new_group.align_to(left_edge, mn.LEFT)
-            new_group.set_y(self.coordinate_y)
+            new_group.set_y(self._coordinate_y)
 
         else:
-            new_group.move_to(self.mob_center)
-            new_group.shift(self.vector)
+            new_group.move_to(self._mob_center)
+            new_group.shift(self._vector)
 
-        self.quote_cell_left_edge = new_group.quote_cell_left_edge
-        self.letters_cell_left_edge = new_group.letters_cell_left_edge
+        self._quote_cell_left_edge = new_group._quote_cell_left_edge
+        self._letters_cells_left_edge = new_group._letters_cells_left_edge
         # --------------------------
 
         # restore colors
