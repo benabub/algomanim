@@ -1268,6 +1268,26 @@ class String(RectangleCellsDataStructure):
                     buff=self._bottom_buff,
                 )
 
+    def get_containers_mob(self):
+        return self._containers_mob
+
+    def position(
+        self,
+        mobject: mn.Mobject,
+        mob_center: mn.Mobject,
+        align_edge: Literal["up", "down", "left", "right"] | None,
+        vector: np.ndarray,
+    ) -> None:
+        """
+        ...
+        """
+        if isinstance(mob_center, String):
+            AlgoManimBase.position(
+                self, mobject, mob_center.get_containers_mob(), align_edge, vector
+            )
+        else:
+            AlgoManimBase.position(self, mobject, mob_center, align_edge, vector)
+
     def update_value(
         self,
         scene: mn.Scene,

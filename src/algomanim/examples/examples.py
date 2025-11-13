@@ -615,7 +615,7 @@ class ExampleString(mn.Scene):
 
         string_20 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.UP * 2.8,
             font_size=25,
             align_edge="left",
@@ -624,7 +624,7 @@ class ExampleString(mn.Scene):
 
         string_25 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.UP * 1.4,
             font_size=30,
             align_edge="left",
@@ -633,7 +633,7 @@ class ExampleString(mn.Scene):
 
         string_35 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.DOWN * 1.5,
             font_size=37,
             align_edge="left",
@@ -642,7 +642,7 @@ class ExampleString(mn.Scene):
 
         string_40 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.DOWN * 3.0,
             font_size=40,
             align_edge="left",
@@ -662,7 +662,7 @@ class ExampleString(mn.Scene):
 
         string_20 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.UP * 2.8,
             font_size=25,
             align_edge="right",
@@ -671,7 +671,7 @@ class ExampleString(mn.Scene):
 
         string_25 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.UP * 1.4,
             font_size=30,
             align_edge="right",
@@ -680,7 +680,7 @@ class ExampleString(mn.Scene):
 
         string_35 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.DOWN * 1.5,
             font_size=37,
             align_edge="right",
@@ -689,7 +689,7 @@ class ExampleString(mn.Scene):
 
         string_40 = String(
             s,
-            mob_center=string._containers_mob,
+            mob_center=string,
             vector=mn.DOWN * 3.0,
             font_size=40,
             align_edge="right",
