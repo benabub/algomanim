@@ -1,3 +1,10 @@
+"""
+Manim use notes:
+
+  - mobject.arrange() resets previous position
+  - fill_color requires fill_opacity=1 to be visible
+"""
+
 from typing import (
     List,
     Tuple,
@@ -57,28 +64,35 @@ class AlgoManimBase(mn.VGroup):
         Args:
             mobject: The object to position
             mob_center: Reference center object
-            align_edge: Which edge to align to (None for center)
-            vector: Additional offset vector
         """
-        if self._align_edge:
-            if self._align_edge in ["UP", "up"]:
-                mobject.move_to(mob_center.get_center())
-                mobject.align_to(mob_center, mn.UP)
-                mobject.shift(self._vector)
-            elif self._align_edge in ["DOWN", "down"]:
-                mobject.move_to(mob_center.get_center())
-                mobject.align_to(mob_center, mn.DOWN)
-                mobject.shift(self._vector)
-            elif self._align_edge in ["RIGHT", "right"]:
-                mobject.move_to(mob_center.get_center())
-                mobject.align_to(mob_center, mn.RIGHT)
-                mobject.shift(self._vector)
-            elif self._align_edge in ["LEFT", "left"]:
-                mobject.move_to(mob_center.get_center())
-                mobject.align_to(mob_center, mn.LEFT)
-                mobject.shift(self._vector)
-        else:
-            mobject.move_to(mob_center.get_center() + self._vector)
+
+        align_edge = self._align_edge.lower() if self._align_edge else None
+
+        if isinstance(mob_center, String):
+            mob_center = mob_center.get_containers_mob()
+
+        mobject_point = mobject.get_center()
+        target_point = mob_center.get_center() + self._vector
+
+        if align_edge:
+            if align_edge == "left":
+                mobject_point = mobject.get_left()
+                target_point = mob_center.get_left() + self._vector
+
+            elif align_edge == "right":
+                mobject_point = mobject.get_right()
+                target_point = mob_center.get_right() + self._vector
+
+            elif align_edge == "up":
+                mobject_point = mobject.get_top()
+                target_point = mob_center.get_top() + self._vector
+
+            elif align_edge == "down":
+                mobject_point = mobject.get_bottom()
+                target_point = mob_center.get_bottom() + self._vector
+
+        shift_vector = target_point - mobject_point
+        mobject.shift(shift_vector)
 
 
 class VisualDataStructure(AlgoManimBase):
@@ -1282,19 +1296,6 @@ class String(RectangleCellsDataStructure):
     def get_containers_mob(self):
         return self._containers_mob
 
-    def _position(
-        self,
-        mobject: mn.Mobject,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-    ) -> None:
-        """
-        ...
-        """
-        if isinstance(mob_center, String):
-            AlgoManimBase._position(self, mobject, mob_center.get_containers_mob())
-        else:
-            AlgoManimBase._position(self, mobject, mob_center)
-
     def update_value(
         self,
         scene: mn.Scene,
@@ -1516,32 +1517,39 @@ class LinkedList(NodeDataStructure):
         mobject: mn.Mobject,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
     ) -> None:
+        """Position mobject relative to center with optional edge alignment.
+
+        Args:
+            mobject: The object to position
+            mob_center: Reference center object
         """
-        ...
-        """
-        first_node_center = self._containers_mob[0].get_center()
 
-        target_point = self._mob_center.get_center() + self._vector
+        align_edge = self._align_edge.lower() if self._align_edge else None
 
-        if self._align_edge:
-            if self._align_edge in ["LEFT", "left"]:
-                target_point = (
-                    mob_center.get_left() + self._vector + mn.RIGHT * self._radius
-                )
-            elif self._align_edge in ["RIGHT", "right"]:
-                target_point = (
-                    mob_center.get_right() + self._vector + mn.LEFT * self._radius
-                )
-            elif self._align_edge in ["UP", "up"]:
-                target_point = (
-                    mob_center.get_top() + self._vector + mn.DOWN * self._radius
-                )
-            elif self._align_edge in ["DOWN", "down"]:
-                target_point = (
-                    mob_center.get_bottom() + self._vector + mn.UP * self._radius
-                )
+        if isinstance(mob_center, String):
+            mob_center = mob_center.get_containers_mob()
 
-        shift_vector = target_point - first_node_center
+        mobject_point = self._containers_mob[0].get_center()
+        target_point = mob_center.get_center() + self._vector
+
+        if align_edge:
+            if align_edge == "left":
+                mobject_point = self._containers_mob[0].get_left()
+                target_point = mob_center.get_left() + self._vector
+
+            elif align_edge == "right":
+                mobject_point = self._containers_mob[0].get_right()
+                target_point = mob_center.get_right() + self._vector
+
+            elif align_edge == "up":
+                mobject_point = self._containers_mob[0].get_top()
+                target_point = mob_center.get_top() + self._vector
+
+            elif align_edge == "down":
+                mobject_point = self._containers_mob[0].get_bottom()
+                target_point = mob_center.get_bottom() + self._vector
+
+        shift_vector = target_point - mobject_point
         mobject.shift(shift_vector)
 
     def _create_and_pos_arrows_mob(self):
