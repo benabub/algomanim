@@ -3,6 +3,8 @@ Manim use notes:
 
   - mobject.arrange() resets previous position
   - fill_color requires fill_opacity=1 to be visible
+  - Simply assigning  causes an unexpected shift in position:
+    example: var = mobject
 """
 
 from typing import (
@@ -1727,42 +1729,48 @@ class RelativeTextValue(AlgoManimBase):
     def __init__(
         self,
         *vars: Tuple[str, Callable[[], Any], str | ManimColor],
+        # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        font="",
-        font_size=35,
-        buff=0.5,
-        equal_sign: bool = True,
         vector: np.ndarray = mn.UP * 1.2,
         align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # --- font ---
+        font="",
+        font_size=35,
+        weight: str = "NORMAL",
+        # --- other ---
+        buff=0.5,
+        equal_sign: bool = True,
     ):
         super().__init__()
-        self.vars = vars
-        self.mob_center = mob_center
-        self.font = font
-        self.font_size = font_size
-        self.buff = buff
-        self.vector = vector
-        self.align_edge = align_edge
-        self.equal_sign = equal_sign
+        self._vars = vars
+        self._mob_center = mob_center
+        self._vector = vector
+        self._align_edge = align_edge
+        self._font = font
+        self._font_size = font_size
+        self._weight = weight
+        self._buff = buff
+        self._equal_sign = equal_sign
 
         self.submobjects: List = []
         parts = [
             mn.Text(
                 f"{name} = {value()}" if equal_sign else f"{name} {value()}",
-                font=self.font,
-                font_size=self.font_size,
+                font=self._font,
+                font_size=self._font_size,
+                weight=self._weight,
                 color=color,
             )
-            for name, value, color in self.vars
+            for name, value, color in self._vars
         ]
-        text_mob = mn.VGroup(*parts).arrange(
-            mn.RIGHT, buff=self.buff, aligned_edge=mn.UP
+        self._text_mob = mn.VGroup(*parts).arrange(
+            mn.RIGHT, buff=self._buff, aligned_edge=mn.UP
         )
 
-        # construction: Move VGroup to the specified position
-        self._position(text_mob, mob_center)
+        # move to the specified position
+        self._position(self._text_mob, self._mob_center)
 
-        self.add(*text_mob)
+        self.add(*self._text_mob)
 
     def update_text(self, scene: mn.Scene, time=0.1, animate: bool = False):
         """Update text values with current variable values.
@@ -1779,11 +1787,11 @@ class RelativeTextValue(AlgoManimBase):
 
         # create a new object with the same parameters
         new_group = RelativeTextValue(
-            *self.vars,
-            font_size=self.font_size,
-            buff=self.buff,
-            font=self.font,
-            equal_sign=self.equal_sign,
+            *self._vars,
+            font_size=self._font_size,
+            buff=self._buff,
+            font=self._font,
+            equal_sign=self._equal_sign,
         )
 
         # move to position
@@ -1819,31 +1827,39 @@ class RelativeText(AlgoManimBase):
     def __init__(
         self,
         text: str,
+        # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.ORIGIN,
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # --- font ---
         font="",
         font_size=35,
         font_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
     ):
         super().__init__()
 
+        self._text = text
+        self._mob_center = mob_center
         self._vector = vector
         self._align_edge = align_edge
+        self._font = font
+        self._font_size = font_size
+        self._font_color = font_color
+        self._weight = weight
 
-        text_mob = mn.Text(
-            text,
-            font=font,
-            color=font_color,
-            font_size=font_size,
-            weight=weight,
+        self._text_mob = mn.Text(
+            self._text,
+            font=self._font,
+            color=self._font_color,
+            font_size=self._font_size,
+            weight=self._weight,
         )
 
         # construction: Move VGroup to the specified position
-        self._position(text_mob, mob_center)
+        self._position(self._text_mob, self._mob_center)
 
-        self.add(text_mob)
+        self.add(self._text_mob)
 
 
 class CodeBlock(AlgoManimBase):
@@ -1869,64 +1885,86 @@ class CodeBlock(AlgoManimBase):
     def __init__(
         self,
         code_lines: List[str],
-        vector: np.ndarray,
         pre_code_lines: List[str] = [],
+        # --- position ---
+        vector: np.ndarray = mn.ORIGIN,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # --- font ---
         font_size=20,
         font="",
         font_color_regular: ManimColor | str = "WHITE",
         font_color_highlight: ManimColor | str = "YELLOW",
-        bg_highlight_color: ManimColor | str = "BLUE",
+        # --- buffs ---
         inter_block_buff=0.5,
         pre_code_buff=0.15,
         code_buff=0.05,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # --- other ---
+        bg_highlight_color: ManimColor | str = "BLUE",
     ):
         super().__init__()
-        self.font_color_regular = font_color_regular
-        self.font_color_highlight = font_color_highlight
-        self.bg_highlight_color = bg_highlight_color
+        self._code_lines = code_lines
+        self._pre_code_lines = pre_code_lines
         self._vector = vector
+        self._mob_center = mob_center
         self._align_edge = align_edge
+        self._font_size = font_size
+        self._font = font
+        self._font_color_regular = font_color_regular
+        self._font_color_highlight = font_color_highlight
+        self._inter_block_buff = inter_block_buff
+        self._pre_code_buff = pre_code_buff
+        self._code_buff = code_buff
+        self._bg_highlight_color = bg_highlight_color
 
-        self.code_mobs = [
-            mn.Text(line, font=font, font_size=font_size, color=self.font_color_regular)
-            for line in code_lines
+        self._code_mobs = [
+            mn.Text(
+                line,
+                font=self._font,
+                font_size=self._font_size,
+                color=self._font_color_regular,
+            )
+            for line in self._code_lines
         ]
-        self.bg_rects: List[Optional[mn.Rectangle]] = [None] * len(
-            code_lines
+        self._bg_rects: List[Optional[mn.Rectangle]] = [None] * len(
+            self._code_lines
         )  # list to save links on all possible rectangles and to manage=delete them
 
-        code_vgroup = mn.VGroup(*self.code_mobs).arrange(
+        code_vgroup = mn.VGroup(*self._code_mobs).arrange(
             mn.DOWN,
             aligned_edge=mn.LEFT,
-            buff=code_buff,
+            buff=self._code_buff,
         )
 
-        if pre_code_lines:
-            self.pre_code_mobs = [
+        if self._pre_code_lines:
+            self._pre_code_mobs = [
                 mn.Text(
-                    line, font=font, font_size=font_size, color=self.font_color_regular
+                    line,
+                    font=self._font,
+                    font_size=self._font_size,
+                    color=self._font_color_regular,
                 )
-                for line in pre_code_lines
+                for line in self._pre_code_lines
             ]
-            pre_code_vgroup = mn.VGroup(*self.pre_code_mobs).arrange(
+            self._pre_code_vgroup = mn.VGroup(*self._pre_code_mobs).arrange(
                 mn.DOWN,
                 aligned_edge=mn.LEFT,
-                buff=pre_code_buff,
+                buff=self._pre_code_buff,
             )
-            block_vgroup = mn.VGroup(pre_code_vgroup, code_vgroup).arrange(
+            self._code_block_vgroup = mn.VGroup(
+                self._pre_code_vgroup, code_vgroup
+            ).arrange(
                 mn.DOWN,
                 aligned_edge=mn.LEFT,
                 buff=inter_block_buff,
             )
         else:
-            block_vgroup = code_vgroup
+            self._code_block_vgroup = code_vgroup
 
         # construction: Move VGroup to the specified position
-        self._position(block_vgroup, mob_center)
+        self._position(self._code_block_vgroup, self._mob_center)
 
-        self.add(block_vgroup)
+        self.add(self._code_block_vgroup)
 
     def highlight_line(self, i: int):
         """Highlights a single line of code with background and text color.
@@ -1935,31 +1973,31 @@ class CodeBlock(AlgoManimBase):
             i: Index of the line to highlight.
         """
 
-        for k, mob in enumerate(self.code_mobs):
+        for k, mob in enumerate(self._code_mobs):
             if k == i:
                 # change font color
-                mob.set_color(self.font_color_highlight)
+                mob.set_color(self._font_color_highlight)
                 # create bg rectangle
-                if self.bg_rects[k] is None:
+                if self._bg_rects[k] is None:
                     bg_rect = mn.Rectangle(
                         width=mob.width + 0.2,
                         height=mob.height + 0.1,
-                        fill_color=self.bg_highlight_color,
+                        fill_color=self._bg_highlight_color,
                         fill_opacity=0.3,
                         stroke_width=0,
                     )
                     bg_rect.move_to(mob.get_center())
                     self.add(bg_rect)
                     bg_rect.z_index = -1  # send background to back
-                    self.bg_rects[k] = bg_rect
+                    self._bg_rects[k] = bg_rect
             else:
                 # normal line: regular font color
-                mob.set_color(self.font_color_regular)
+                mob.set_color(self._font_color_regular)
                 # remove rect
-                bg_rect = self.bg_rects[k]
+                bg_rect = self._bg_rects[k]
                 if bg_rect:
                     self.remove(bg_rect)
-                    self.bg_rects[k] = None
+                    self._bg_rects[k] = None
 
 
 class TitleText(AlgoManimBase):
@@ -1992,15 +2030,16 @@ class TitleText(AlgoManimBase):
 
     def __init__(
         self,
-        # --------- text --------------
         text: str,
+        # --- position ---
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.UP * 2.7,
-        text_color: ManimColor | str = "WHITE",
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # --- font ---
         font: str = "",
         font_size: float = 50,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
-        # ------- flourish ------------
+        text_color: ManimColor | str = "WHITE",
+        # --- flourish ---
         flourish: bool = False,
         flourish_color: ManimColor | str = "WHITE",
         flourish_stroke_width: float = 4,
@@ -2009,39 +2048,36 @@ class TitleText(AlgoManimBase):
         spiral_offset: float = 0.3,
         spiral_radius: float = 0.15,
         spiral_turns: float = 1.0,
-        # ------- undercaption ------------
+        # --- undercaption ---
         undercaption: str = "",
         undercaption_color: ManimColor | str = "WHITE",
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
         undercaption_buff: float = 0.23,
-        # ----------- kwargs ------------
-        **kwargs,
     ):
         super().__init__()
+        self._mob_center = mob_center
         self._vector = vector
         self._align_edge = align_edge
+        self._flourish = flourish
+        self._undercaption = undercaption
 
         # create the text mobject
-        text_mobject = mn.Text(
+        self._text_mobject = mn.Text(
             text,
             font=font,
             font_size=font_size,
             color=text_color,
-            **kwargs,
         )
 
-        self._position(text_mobject, mob_center)
+        self._position(self._text_mobject, self._mob_center)
 
-        self.add(text_mobject)
+        self.add(self._text_mobject)
 
         # optionally create the flourish under the text
-        if flourish:
-            flourish_width = (
-                # self.text_mobject.width * flourish_width_ratio + flourish_padding
-                text_mobject.width + flourish_padding
-            )
-            self.flourish = self._create_flourish(
+        if self._flourish:
+            flourish_width = self._text_mobject.width + flourish_padding
+            self._flourish = self._create_flourish(
                 width=flourish_width,
                 color=flourish_color,
                 stroke_width=flourish_stroke_width,
@@ -2050,21 +2086,22 @@ class TitleText(AlgoManimBase):
                 spiral_offset=spiral_offset,
             )
             # position the flourish below the text
-            self.flourish.next_to(text_mobject, mn.DOWN, flourish_buff)
-            self.add(self.flourish)
+            self._flourish.next_to(self._text_mobject, mn.DOWN, flourish_buff)
+            self.add(self._flourish)
 
         # optionally create the undercaption under the text
-        if undercaption:
+        if self._undercaption:
             # create the text mobject
-            self.undercaption = mn.Text(
-                undercaption,
+            self._undercaption_mob = mn.Text(
+                self._undercaption,
                 font=undercaption_font,
                 font_size=undercaption_font_size,
                 color=undercaption_color,
-                **kwargs,
             )
-            self.undercaption.next_to(text_mobject, mn.DOWN, undercaption_buff)
-            self.add(self.undercaption)
+            self._undercaption_mob.next_to(
+                self._text_mobject, mn.DOWN, undercaption_buff
+            )
+            self.add(self._undercaption_mob)
 
     def _create_flourish(
         self,
@@ -2162,35 +2199,33 @@ class TitleLogo(AlgoManimBase):
     def __init__(
         self,
         svg: str,
-        # ----------- svg -------------
+        # --- svg ---
         svg_height: float = 2.0,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_edge: Literal["up", "down", "left", "right"] | None = None,
         vector: np.ndarray = mn.ORIGIN,
-        # --------- text --------------
+        # --- text ---
         text: str | None = None,
-        text_color: ManimColor | str = "WHITE",
+        font_color: ManimColor | str = "WHITE",
         font: str = "",
         font_size: float = 31,
         text_vector: np.ndarray = mn.ORIGIN,
-        # --------- kwargs -------------
-        **kwargs,
     ):
         super().__init__()
+        self._mob_center = mob_center
         self._vector = vector
         self._align_edge = align_edge
 
         # create the svg mobject
-        self.svg = mn.SVGMobject(
+        self._svg = mn.SVGMobject(
             svg,
             height=svg_height,
-            **kwargs,
         )
 
         # position the entire group relative to the reference mobject and offset vector
-        self._position(self.svg, mob_center)
+        self._position(self._svg, self._mob_center)
 
-        self.add(self.svg)
+        self.add(self._svg)
 
         # create the text mobject
         if text:
@@ -2198,8 +2233,7 @@ class TitleLogo(AlgoManimBase):
                 text,
                 font=font,
                 font_size=font_size,
-                color=text_color,
-                **kwargs,
+                color=font_color,
             )
-            self.text_mobject.move_to(self.svg.get_center() + text_vector)
+            self.text_mobject.move_to(self._svg.get_center() + text_vector)
             self.add(self.text_mobject)
