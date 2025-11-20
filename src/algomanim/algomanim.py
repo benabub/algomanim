@@ -1308,7 +1308,6 @@ class LinkedList(NodeDataStructure):
     def __init__(
         self,
         head: ListNode | None,
-        # head: list,
         radius: float = 0.4,
         direction: np.ndarray = mn.RIGHT,
         # --- containers colors ---
@@ -1325,7 +1324,6 @@ class LinkedList(NodeDataStructure):
         weight: str = "NORMAL",
     ):
         super().__init__()
-        # self._data = head
         self._data = self.linked_list_to_list(head)  # save head as list
         self._radius = radius
         self._direction = direction
@@ -1338,6 +1336,11 @@ class LinkedList(NodeDataStructure):
         self._font = font
         self._font_color = font_color
         self._weight = weight
+
+        # empty value
+        if not self._data:
+            self._empty_linked_list()
+            return
 
         # nodes
         self._containers_mob = self._create_containers_mob()
@@ -1363,6 +1366,16 @@ class LinkedList(NodeDataStructure):
 
         # ---- add ------
         self.add(self._frame_mob, self._values_mob)
+
+    def _empty_linked_list(self):
+        """ """
+        # clear old fields
+        self._containers_mob = mn.VGroup()
+        self._arrows_mob = mn.VGroup()
+        self._pointers_top = mn.VGroup()
+        self._pointers_bottom = mn.VGroup()
+        self._frame_mob = mn.VGroup()
+        self._values_mob = mn.VGroup()
 
     @staticmethod
     def create_linked_list(value: list) -> ListNode | None:

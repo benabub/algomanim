@@ -12,7 +12,7 @@ and specifying custom fonts in the scene configurations.
 
 import manim as mn
 
-# import numpy as np
+import numpy as np
 from algomanim import (
     Array,
     String,
@@ -359,7 +359,7 @@ class ExampleArray(mn.Scene):
         # ============================
 
         top_text = RelativeText(
-            "pointers()   highlight_cells()",
+            "pointers()   highlight_containers()",
             vector=mn.UP * 2,
         )
         top_text.first_appear(self)
@@ -759,7 +759,7 @@ class ExampleString(mn.Scene):
         # ============================
 
         top_text = RelativeText(
-            "pointers()   highlight_cells()",
+            "pointers()   highlight_containers()",
             vector=mn.UP * 2,
         )
         top_text.first_appear(self)
@@ -931,14 +931,15 @@ class ExampleLinkedlist(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
         pause = 0.3
+        cll = LinkedList.create_linked_list
 
-        arr = Array([letter for letter in "mob_center"], vector=mn.UP * 3)
-        arr.first_appear(self)
+        # arr = Array([letter for letter in "mob_center"], vector=mn.UP * 3)
+        # arr.first_appear(self)
 
         # ======== rotation ============
 
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         # )
@@ -947,7 +948,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         #     direction=np.array([10, -10, 0]),
@@ -957,7 +958,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         #     direction=np.array([0, -10, 0]),
@@ -967,7 +968,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         #     direction=np.array([-10, -10, 0]),
@@ -977,7 +978,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         #     direction=np.array([-10, 0, 0]),
@@ -987,7 +988,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         #     direction=np.array([-10, 10, 0]),
@@ -997,7 +998,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         #     direction=np.array([0, 10, 0]),
@@ -1007,7 +1008,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         #     direction=np.array([10, 10, 0]),
@@ -1017,7 +1018,7 @@ class ExampleLinkedlist(mn.Scene):
         #
         # self.remove(ll)
         # ll = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
         # )
@@ -1027,90 +1028,184 @@ class ExampleLinkedlist(mn.Scene):
 
         # ======== left | right alignment ============
 
-        ll1 = LinkedList(
-            LinkedList.create_linked_list([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 2,
-            align_edge="right",
-        )
-        ll2 = LinkedList(
-            LinkedList.create_linked_list([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 2,
-            align_edge="left",
-        )
-
-        rt1 = RelativeText(
-            "align_edge=right",
-            mob_center=ll1,
-            vector=mn.DOWN * 2,
-        )
-        rt2 = RelativeText(
-            "align_edge=left",
-            mob_center=ll2,
-            vector=mn.DOWN * 2,
-        )
-
-        self.play(
-            mn.FadeIn(ll1),
-            mn.FadeIn(ll2),
-            mn.FadeIn(rt1),
-            mn.FadeIn(rt2),
-            run_time=0.5,
-        )
-
-        self.pause(1)
-        self.remove(ll1, ll2, rt1, rt2)
-
-        # ======== up | down alignment ============
-
-        self.play(arr.animate.move_to(mn.ORIGIN))
-
-        ll1 = LinkedList(
-            LinkedList.create_linked_list([0, 1]),
-            radius=0.8,
-            mob_center=arr,
-            vector=mn.LEFT * 5.3,
-            align_edge="up",
-            direction=mn.UP,
-        )
-        ll2 = LinkedList(
-            LinkedList.create_linked_list([0, 1]),
-            radius=0.8,
-            mob_center=arr,
-            vector=mn.RIGHT * 5.3,
-            align_edge="down",
-            direction=mn.UP,
-        )
-
-        rt1 = RelativeText(
-            "align_edge=up",
-            mob_center=ll1,
-            vector=mn.DOWN * 3,
-            align_edge="left",
-        )
-        rt2 = RelativeText(
-            "align_edge=down",
-            mob_center=ll2,
-            vector=mn.DOWN * 3.9,
-            align_edge="right",
-        )
-
-        self.play(
-            mn.FadeIn(ll1),
-            mn.FadeIn(ll2),
-            mn.FadeIn(rt1),
-            mn.FadeIn(rt2),
-            run_time=0.5,
-        )
-
-        self.pause(1)
-        self.clear()
+        # ll1 = LinkedList(
+        #     cll([0, 1, 2]),
+        #     mob_center=arr,
+        #     vector=mn.DOWN * 2,
+        #     align_edge="right",
+        # )
+        # ll2 = LinkedList(
+        #     cll([0, 1, 2]),
+        #     mob_center=arr,
+        #     vector=mn.DOWN * 2,
+        #     align_edge="left",
+        # )
+        #
+        # rt1 = RelativeText(
+        #     "align_edge=right",
+        #     mob_center=ll1,
+        #     vector=mn.DOWN * 2,
+        # )
+        # rt2 = RelativeText(
+        #     "align_edge=left",
+        #     mob_center=ll2,
+        #     vector=mn.DOWN * 2,
+        # )
+        #
+        # self.play(
+        #     mn.FadeIn(ll1),
+        #     mn.FadeIn(ll2),
+        #     mn.FadeIn(rt1),
+        #     mn.FadeIn(rt2),
+        #     run_time=0.5,
+        # )
+        #
+        # self.pause(1)
+        # self.remove(ll1, ll2, rt1, rt2)
 
         # ======== up | down alignment ============
+
+        # self.play(arr.animate.move_to(mn.ORIGIN))
+        #
+        # ll1 = LinkedList(
+        #     cll([0, 1]),
+        #     radius=0.8,
+        #     mob_center=arr,
+        #     vector=mn.LEFT * 5.3,
+        #     align_edge="up",
+        #     direction=mn.UP,
+        # )
+        # ll2 = LinkedList(
+        #     cll([0, 1]),
+        #     radius=0.8,
+        #     mob_center=arr,
+        #     vector=mn.RIGHT * 5.3,
+        #     align_edge="down",
+        #     direction=mn.UP,
+        # )
+        #
+        # rt1 = RelativeText(
+        #     "align_edge=up",
+        #     mob_center=ll1,
+        #     vector=mn.DOWN * 3,
+        #     align_edge="left",
+        # )
+        # rt2 = RelativeText(
+        #     "align_edge=down",
+        #     mob_center=ll2,
+        #     vector=mn.DOWN * 3.9,
+        #     align_edge="right",
+        # )
+        #
+        # self.play(
+        #     mn.FadeIn(ll1),
+        #     mn.FadeIn(ll2),
+        #     mn.FadeIn(rt1),
+        #     mn.FadeIn(rt2),
+        #     run_time=0.5,
+        # )
+        #
+        # self.pause(1)
+        # self.clear()
+
+        # ======== update value ============
+
+        pause = 0.5
+
+        ll = LinkedList(
+            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
+            direction=np.array([10, 2, 0]),
+            vector=mn.LEFT * 5.85 + mn.DOWN * 2,
+        )
+
+        ll.highlight_containers([0, 2, 4])
+        ll.pointers([0, 2, 4])
+
+        rt = RelativeText(
+            "update_value()",
+            mob_center=ll,
+            vector=mn.UP * 3,
+        )
+
+        self.play(mn.FadeIn(ll), mn.FadeIn(rt))
+        self.pause(pause)
+
+        ll.update_value(
+            self,
+            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]),
+        )
+        self.pause(pause)
+        ll.update_value(
+            self,
+            cll([0, 12, 12345, "'", '^"']),
+        )
+        self.pause(pause)
+        ll.update_value(
+            self,
+            cll([0, 12]),
+        )
+        self.pause(pause)
+        ll.update_value(self, cll([0]))
+        self.pause(pause)
+        ll.update_value(self, cll([]))
+        self.pause(pause)
+        ll.update_value(
+            self,
+            cll([0]),
+            animate=True,
+        )
+        self.pause(pause)
+        ll.update_value(
+            self,
+            cll([0, 12]),
+            animate=True,
+        )
+        self.pause(pause)
+        ll.update_value(
+            self,
+            cll([0, 12, 12345, "'", '^"']),
+            animate=True,
+        )
+        self.pause(pause)
+        ll.update_value(
+            self,
+            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]),
+            animate=True,
+        )
+        self.pause(pause)
+        ll.update_value(
+            self,
+            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
+            animate=True,
+        )
+        self.pause(1)
+        self.remove(rt)
+
+        # ======== highlight on index ============
+
+        lln = LinkedList(
+            cll([1, 0, 2, 0, 3, 0, 4, 0, 5]),
+            vector=mn.LEFT * 4.8,
+        )
+        self.play(mn.ReplacementTransform(ll, lln, time=0.5))
+
+        rt = RelativeText(
+            "pointers()   highlight_containers()",
+            mob_center=ll,
+            vector=mn.UP * 2,
+        )
+        rt.first_appear(self)
+
+        lln.pointers([2, 4, 6])
+        lln.highlight_containers([2, 4, 6])
+        self.pause(pause)
+
+        # ======== highlight on value ============
+
+        # ======== mix ============
 
         # ll_2 = LinkedList(
-        #     LinkedList.create_linked_list([0, 1, 2]),
+        #     cll([0, 1, 2]),
         #     direction=np.array([-1, 0, 0]),
         #     mob_center=arr,
         #     vector=mn.DOWN * 3.5,
@@ -1119,7 +1214,7 @@ class ExampleLinkedlist(mn.Scene):
 
         # self.play(mn.FadeIn(ll_1), mn.FadeIn(ll_2), run_time=0.5)
 
-        # linked_list = LinkedList.create_linked_list(
+        # linked_list = cll(
         #     [0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]
         # )
 
@@ -1138,20 +1233,6 @@ class ExampleLinkedlist(mn.Scene):
         # ll.update_value(self, [12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
         # self.pause(pause)
         # ll.update_value(self, [".", "_.,", "Aa", "acv", "gjy", "gyp"])
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
-
-        # ============================
 
         # ========== FINISH ==============
 
