@@ -58,8 +58,8 @@ class AlgoManimBase(mn.VGroup):
 
     def _position(
         self,
-        mobject: mn.Mobject,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mobject_to_move: mn.Mobject,
+        align_point: mn.Mobject,
     ) -> None:
         """Position mobject relative to center with optional edge alignment.
 
@@ -70,31 +70,33 @@ class AlgoManimBase(mn.VGroup):
 
         align_edge = self._align_edge.lower() if self._align_edge else None
 
-        if isinstance(mob_center, String):
-            mob_center = mob_center.get_containers_mob()
+        if isinstance(self._mob_center, VisualDataStructure):
+            mob_center = self._mob_center.get_containers_mob()
+        else:
+            mob_center = self._mob_center
 
-        mobject_point = mobject.get_center()
+        mobject_point = align_point.get_center()
         target_point = mob_center.get_center() + self._vector
 
         if align_edge:
             if align_edge == "left":
-                mobject_point = mobject.get_left()
+                mobject_point = align_point.get_left()
                 target_point = mob_center.get_left() + self._vector
 
             elif align_edge == "right":
-                mobject_point = mobject.get_right()
+                mobject_point = align_point.get_right()
                 target_point = mob_center.get_right() + self._vector
 
             elif align_edge == "up":
-                mobject_point = mobject.get_top()
+                mobject_point = align_point.get_top()
                 target_point = mob_center.get_top() + self._vector
 
             elif align_edge == "down":
-                mobject_point = mobject.get_bottom()
+                mobject_point = align_point.get_bottom()
                 target_point = mob_center.get_bottom() + self._vector
 
         shift_vector = target_point - mobject_point
-        mobject.shift(shift_vector)
+        mobject_to_move.shift(shift_vector)
 
 
 class VisualDataStructure(AlgoManimBase):
@@ -136,6 +138,9 @@ class VisualDataStructure(AlgoManimBase):
         self._container_color: ManimColor | str = mn.DARK_GRAY
         self._fill_color: ManimColor | str = mn.GRAY
         self._bg_color: ManimColor | str = mn.DARK_GRAY
+
+    def get_containers_mob(self):
+        return self._containers_mob
 
     def _text_config(self):
         return {
@@ -780,7 +785,7 @@ class Array(RectangleCellsDataStructure):
         self._containers_mob.arrange(mn.RIGHT, buff=0.1)
 
         # move VGroup to the specified position
-        self._position(self._containers_mob, self._mob_center)
+        self._position(self._containers_mob, self._containers_mob)
 
         # move text mobjects in containers
         self._position_values_in_containers()
@@ -814,7 +819,7 @@ class Array(RectangleCellsDataStructure):
             fill_color=self._fill_color,
             fill_opacity=1.0,
         )
-        self._position(containers_mob, self._mob_center)
+        self._position(containers_mob, containers_mob)
         empty_value_mob.move_to(containers_mob.get_center())
         empty_value_mob.align_to(containers_mob, mn.DOWN)
         empty_value_mob.align_to(containers_mob, mn.LEFT)
@@ -920,87 +925,6 @@ class Array(RectangleCellsDataStructure):
                         direction=mn.UP,
                         buff=self._bottom_buff,
                     )
-
-    # def get_internal_state(self):
-    #     # return {
-    #     #     "_containers_mob": self._containers_mob.copy(),
-    #     #     "_values_mob": self._values_mob.copy(),
-    #     #     "_pointers_top": self._pointers_top.copy(),
-    #     #     "_pointers_bottom": self._pointers_bottom.copy(),
-    #     # }
-    #
-    #     return {
-    #         "_containers_mob": self._containers_mob,
-    #         "_values_mob": self._values_mob,
-    #         "_pointers_top": self._pointers_top,
-    #         "_pointers_bottom": self._pointers_bottom,
-    #     }
-
-    # def _update_internal_state(
-    #     self,
-    #     new_value,
-    #     new_group: "VisualDataStructure",
-    # ):
-    #     """Update internal state with data from a new group.
-    #
-    #     Args:
-    #         new_value: New data value to store.
-    #         new_group: New group to copy state from.
-    #     """
-    #
-    #     self._data = new_value
-    #     self._containers_mob = new_group._containers_mob
-    #     self._values_mob = new_group._values_mob
-    #     self._pointers_top = new_group._pointers_top
-    #     self._pointers_bottom = new_group._pointers_bottom
-    #     self.submobjects = new_group.submobjects
-
-    # self._data = new_value
-    # new_group_internal_state = new_group.get_internal_state()
-    # self._containers_mob = new_group_internal_state["_containers_mob"]
-    # self._values_mob = new_group_internal_state["_values_mob"]
-    # self._pointers_top = new_group_internal_state["_pointers_top"]
-    # self._pointers_bottom = new_group_internal_state["_pointers_bottom"]
-    # self.submobjects = new_group.submobjects
-
-    # self._data = new_value
-    #
-    # if not self._data:
-    #     self._containers_mob, self._empty_value_mob = self._create_empty_array(
-    #         self._mob_center, self._align_edge, self._vector
-    #     )
-    #     self.add(self._containers_mob, self._empty_value_mob)
-    #     return
-    #
-    # self._values_mob = self._create_values_mob()
-    # self._containers_mob = self._create_containers_mob()
-    #
-    # # arrange cells in a row
-    # self._containers_mob.arrange(mn.RIGHT, buff=0.1)
-    #
-    # # move VGroup to the specified position
-    # self.position(
-    #     self._containers_mob,
-    #     self._mob_center,
-    #     self._align_edge,
-    #     self._vector,
-    # )
-    #
-    # # move text mobjects in containers
-    # self._position_values_in_containers()
-    #
-    # # pointers
-    # self._pointers_top, self._pointers_bottom = self.create_pointers(
-    #     self._containers_mob
-    # )
-    #
-    # # adds local objects as instance attributes
-    # self.add(
-    #     self._containers_mob,
-    #     self._values_mob,
-    #     self._pointers_top,
-    #     self._pointers_bottom,
-    # )
 
     def update_value(
         self,
@@ -1163,7 +1087,7 @@ class String(RectangleCellsDataStructure):
         self._letters_cells_left_edge = self._containers_mob.get_left()
 
         # move letters cells to the specified position
-        self._position(self._containers_mob, self._mob_center)
+        self._position(self._containers_mob, self._containers_mob)
 
         self._left_quote_cell_mob, self._right_quote_cell_mob = (
             self._create_and_pos_quote_cell_mobs()
@@ -1232,7 +1156,7 @@ class String(RectangleCellsDataStructure):
 
         empty_value_mob = mn.Text('""', **self._text_config())
         containers_mob = mn.Square(**self._containers_cell_config())
-        self._position(containers_mob, self._mob_center)
+        self._position(containers_mob, containers_mob)
         empty_value_mob.next_to(
             containers_mob.get_top(),
             direction=mn.DOWN,
@@ -1294,9 +1218,6 @@ class String(RectangleCellsDataStructure):
                     direction=mn.UP,
                     buff=self._bottom_buff,
                 )
-
-    def get_containers_mob(self):
-        return self._containers_mob
 
     def update_value(
         self,
@@ -1435,7 +1356,7 @@ class LinkedList(NodeDataStructure):
         # rotate frame
         self._rotate_frame()
 
-        self._position(self._frame_mob, self._mob_center)
+        self._position(self._frame_mob, self._containers_mob[0])
 
         # values
         self._values_mob = self._create_and_pos_values_mob()
@@ -1513,46 +1434,6 @@ class LinkedList(NodeDataStructure):
         containers_mob.arrange(buff=self._radius)
 
         return containers_mob
-
-    def _position(
-        self,
-        mobject: mn.Mobject,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-    ) -> None:
-        """Position mobject relative to center with optional edge alignment.
-
-        Args:
-            mobject: The object to position
-            mob_center: Reference center object
-        """
-
-        align_edge = self._align_edge.lower() if self._align_edge else None
-
-        if isinstance(mob_center, String):
-            mob_center = mob_center.get_containers_mob()
-
-        mobject_point = self._containers_mob[0].get_center()
-        target_point = mob_center.get_center() + self._vector
-
-        if align_edge:
-            if align_edge == "left":
-                mobject_point = self._containers_mob[0].get_left()
-                target_point = mob_center.get_left() + self._vector
-
-            elif align_edge == "right":
-                mobject_point = self._containers_mob[0].get_right()
-                target_point = mob_center.get_right() + self._vector
-
-            elif align_edge == "up":
-                mobject_point = self._containers_mob[0].get_top()
-                target_point = mob_center.get_top() + self._vector
-
-            elif align_edge == "down":
-                mobject_point = self._containers_mob[0].get_bottom()
-                target_point = mob_center.get_bottom() + self._vector
-
-        shift_vector = target_point - mobject_point
-        mobject.shift(shift_vector)
 
     def _create_and_pos_arrows_mob(self):
         """
@@ -1768,7 +1649,7 @@ class RelativeTextValue(AlgoManimBase):
         )
 
         # move to the specified position
-        self._position(self._text_mob, self._mob_center)
+        self._position(self._text_mob, self._text_mob)
 
         self.add(*self._text_mob)
 
@@ -1857,7 +1738,7 @@ class RelativeText(AlgoManimBase):
         )
 
         # construction: Move VGroup to the specified position
-        self._position(self._text_mob, self._mob_center)
+        self._position(self._text_mob, self._text_mob)
 
         self.add(self._text_mob)
 
@@ -1962,7 +1843,7 @@ class CodeBlock(AlgoManimBase):
             self._code_block_vgroup = code_vgroup
 
         # construction: Move VGroup to the specified position
-        self._position(self._code_block_vgroup, self._mob_center)
+        self._position(self._code_block_vgroup, self._code_block_vgroup)
 
         self.add(self._code_block_vgroup)
 
@@ -2070,7 +1951,7 @@ class TitleText(AlgoManimBase):
             color=text_color,
         )
 
-        self._position(self._text_mobject, self._mob_center)
+        self._position(self._text_mobject, self._text_mobject)
 
         self.add(self._text_mobject)
 
@@ -2223,7 +2104,7 @@ class TitleLogo(AlgoManimBase):
         )
 
         # position the entire group relative to the reference mobject and offset vector
-        self._position(self._svg, self._mob_center)
+        self._position(self._svg, self._svg)
 
         self.add(self._svg)
 
