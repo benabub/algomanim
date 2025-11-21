@@ -139,6 +139,15 @@ class VisualDataStructure(AlgoManimBase):
         self._fill_color: ManimColor | str = mn.GRAY
         self._bg_color: ManimColor | str = mn.DARK_GRAY
 
+        # ---- highlight containers colors ----
+        self._color_1: ManimColor | str = mn.RED
+        self._color_2: ManimColor | str = mn.BLUE
+        self._color_3: ManimColor | str = mn.GREEN
+        self._color_123: ManimColor | str = mn.BLACK
+        self._color_12: ManimColor | str = mn.PURPLE
+        self._color_13: ManimColor | str = mn.YELLOW_E
+        self._color_23: ManimColor | str = mn.TEAL
+
     def get_containers_mob(self):
         return self._containers_mob
 
@@ -449,13 +458,13 @@ class VisualDataStructure(AlgoManimBase):
     def highlight_containers(
         self,
         idx_list: list[int],
-        color_1: ManimColor | str = mn.RED,
-        color_2: ManimColor | str = mn.BLUE,
-        color_3: ManimColor | str = mn.GREEN,
-        color_123: ManimColor | str = mn.BLACK,
-        color_12: ManimColor | str = mn.PURPLE,
-        color_13: ManimColor | str = mn.YELLOW_E,
-        color_23: ManimColor | str = mn.TEAL,
+        color_1: ManimColor | str | None = None,
+        color_2: ManimColor | str | None = None,
+        color_3: ManimColor | str | None = None,
+        color_123: ManimColor | str | None = None,
+        color_12: ManimColor | str | None = None,
+        color_13: ManimColor | str | None = None,
+        color_23: ManimColor | str | None = None,
     ):
         """Highlight cells in the array visualization.
 
@@ -482,11 +491,25 @@ class VisualDataStructure(AlgoManimBase):
         """
 
         # ------- checks --------
-
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
 
         # ------- asserts --------
+        if not color_1:
+            color_1 = self._color_1
+        if not color_2:
+            color_2 = self._color_2
+        if not color_3:
+            color_3 = self._color_3
+        if not color_123:
+            color_123 = self._color_123
+        if not color_12:
+            color_12 = self._color_12
+        if not color_13:
+            color_13 = self._color_13
+        if not color_23:
+            color_23 = self._color_23
+
         self._containers_colors = {}
 
         # ------- fill self._containers_colors --------
@@ -1336,6 +1359,7 @@ class LinkedList(NodeDataStructure):
         self._font = font
         self._font_color = font_color
         self._weight = weight
+        self._color_123 = mn.WHITE
 
         # empty value
         if not self._data:
