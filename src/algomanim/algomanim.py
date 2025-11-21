@@ -147,6 +147,7 @@ class LinearContainerStructure(AlgoManimBase):
         self._color_12: ManimColor | str = mn.PURPLE
         self._color_13: ManimColor | str = mn.YELLOW_E
         self._color_23: ManimColor | str = mn.TEAL
+        self._color_containers_with_value: ManimColor | str = mn.BLACK
 
     def get_containers_mob(self):
         return self._containers_mob
@@ -415,7 +416,7 @@ class LinearContainerStructure(AlgoManimBase):
         self,
         val: int | str,
         pos: int = 1,
-        color: ManimColor | str = mn.BLACK,
+        color: ManimColor | str | None = None,
     ):
         """Highlight middle pointers on all cells whose values
         equal the provided value.
@@ -435,6 +436,9 @@ class LinearContainerStructure(AlgoManimBase):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
         # ------- asserts --------
+        if not color:
+            color = self._color_containers_with_value
+
         if pos == 0:
             self._top_pointers_colors = {}
             colors_store = self._top_pointers_colors
@@ -559,7 +563,7 @@ class LinearContainerStructure(AlgoManimBase):
     def highlight_containers_with_value(
         self,
         val: int | str,
-        color: ManimColor | str = mn.BLACK,
+        color: ManimColor | str | None = None,
     ):
         """Highlight all cells whose values equal the provided value.
 
@@ -577,6 +581,10 @@ class LinearContainerStructure(AlgoManimBase):
         """
 
         # ------- asserts --------
+
+        if not color:
+            color = self._color_containers_with_value
+
         self._containers_colors = {}
 
         # ------- checks --------
@@ -1360,6 +1368,7 @@ class LinkedList(LinearContainerStructure):
         self._font_color = font_color
         self._weight = weight
         self._color_123 = mn.WHITE
+        self._color_containers_with_value = mn.WHITE
 
         # empty value
         if not self._data:
@@ -1619,10 +1628,10 @@ class LinkedList(LinearContainerStructure):
         # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(new_value, new_group)
+            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
         else:
             scene.remove(self)
-            self._update_internal_state(new_value, new_group)
+            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
             scene.add(self)
 
 
