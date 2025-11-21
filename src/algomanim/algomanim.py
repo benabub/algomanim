@@ -70,7 +70,7 @@ class AlgoManimBase(mn.VGroup):
 
         align_edge = self._align_edge.lower() if self._align_edge else None
 
-        if isinstance(self._mob_center, VisualDataStructure):
+        if isinstance(self._mob_center, LinearContainerStructure):
             mob_center = self._mob_center.get_containers_mob()
         else:
             mob_center = self._mob_center
@@ -99,7 +99,7 @@ class AlgoManimBase(mn.VGroup):
         mobject_to_move.shift(shift_vector)
 
 
-class VisualDataStructure(AlgoManimBase):
+class LinearContainerStructure(AlgoManimBase):
     """Base class for visual data structures with common attributes and methods."""
 
     def __init__(self):
@@ -230,7 +230,7 @@ class VisualDataStructure(AlgoManimBase):
     def _update_internal_state(
         self,
         new_value,
-        new_group: "VisualDataStructure",
+        new_group: "LinearContainerStructure",
     ):
         """Update internal state with data from a new group.
 
@@ -259,7 +259,7 @@ class VisualDataStructure(AlgoManimBase):
 
     @staticmethod
     def _preserve_highlights_states(
-        new_group: "VisualDataStructure",
+        new_group: "LinearContainerStructure",
         status: dict,
     ):
         """Apply saved highlight states to a new group.
@@ -592,7 +592,7 @@ class VisualDataStructure(AlgoManimBase):
         self._apply_containers_colors()
 
 
-class RectangleCellsDataStructure(VisualDataStructure):
+class RectangleCellsStructure(LinearContainerStructure):
     """
     ...
     """
@@ -698,7 +698,7 @@ class RectangleCellsDataStructure(VisualDataStructure):
             self._deep_bottom_buff = deep_bottom_buff
 
 
-class NodeDataStructure(VisualDataStructure):
+class NodeDataStructure(AlgoManimBase):
     """
     ...
     """
@@ -708,7 +708,7 @@ class NodeDataStructure(VisualDataStructure):
         self._radius: float = 0.4
 
 
-class Array(RectangleCellsDataStructure):
+class Array(RectangleCellsStructure):
     """Array visualization as a VGroup of cells with values and pointers.
 
     Args:
@@ -1007,7 +1007,7 @@ class Array(RectangleCellsDataStructure):
             scene.add(self)
 
 
-class String(RectangleCellsDataStructure):
+class String(RectangleCellsStructure):
     """String visualization as a VGroup of character cells with quotes.
 
     Args:
@@ -1323,7 +1323,7 @@ class String(RectangleCellsDataStructure):
             scene.add(self)
 
 
-class LinkedList(NodeDataStructure):
+class LinkedList(LinearContainerStructure):
     """
     ...
     """
