@@ -24,6 +24,12 @@ build-backend = "poetry.core.masonry.api"
 packages = [
     { include = "algomanim", from = "src" }
 ]
+include = [
+    "algomanim/assets/svg/*.svg",
+    "algomanim/examples/*.py",
+    "algomanim/examples/*.md",
+    "algomanim/examples/*.sh",
+]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"

@@ -10,9 +10,9 @@ Note: Uses default Manim fonts. For better visual results, consider installing
 and specifying custom fonts in the scene configurations.
 """
 
+import numpy as np
 import manim as mn
 
-import numpy as np
 from algomanim import (
     Array,
     String,
@@ -20,10 +20,8 @@ from algomanim import (
     RelativeText,
     CodeBlock,
     TitleText,
+    LinkedList,
 )
-
-# from algomanim import utils
-from algomanim.algomanim import LinkedList
 
 
 class ExampleBubblesort(mn.Scene):
