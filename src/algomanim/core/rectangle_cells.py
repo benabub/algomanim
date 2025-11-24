@@ -1,9 +1,11 @@
+from abc import ABC
+
 import manim as mn
 
 from .linear_container import LinearContainerStructure
 
 
-class RectangleCellsStructure(LinearContainerStructure):
+class RectangleCellsStructure(LinearContainerStructure, ABC):
     """
     ...
     """

@@ -272,6 +272,24 @@ class LinkedList(LinearContainerStructure):
 
         return values_mob
 
+    def __update_internal_state(
+        self,
+        new_value,
+        new_group: "LinkedList",
+    ):
+        """Update internal state with data from a new group.
+
+        Args:
+            new_value: New data value to store.
+            new_group: New group to copy state from.
+        """
+        self._data = new_value
+        self._containers_mob = new_group._containers_mob
+        self._values_mob = new_group._values_mob
+        self._pointers_top = new_group._pointers_top
+        self._pointers_bottom = new_group._pointers_bottom
+        self.submobjects = new_group.submobjects
+
     def update_value(
         self,
         scene: mn.Scene,
@@ -306,8 +324,8 @@ class LinkedList(LinearContainerStructure):
         # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
+            self.__update_internal_state(self.linked_list_to_list(new_value), new_group)
         else:
             scene.remove(self)
-            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
+            self.__update_internal_state(self.linked_list_to_list(new_value), new_group)
             scene.add(self)

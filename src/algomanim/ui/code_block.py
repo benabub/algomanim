@@ -1,6 +1,5 @@
 from typing import (
     List,
-    Optional,
     Literal,
 )
 
@@ -75,7 +74,7 @@ class CodeBlock(AlgoManimBase):
             )
             for line in self._code_lines
         ]
-        self._bg_rects: List[Optional[mn.Rectangle]] = [None] * len(
+        self._bg_rects: List[mn.Rectangle | None] = [None] * len(
             self._code_lines
         )  # list to save links on all possible rectangles and to manage=delete them
 

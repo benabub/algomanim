@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Literal
 
 import numpy as np
@@ -7,10 +8,12 @@ from manim import ManimColor
 from .base import AlgoManimBase
 
 
-class LinearContainerStructure(AlgoManimBase):
+class LinearContainerStructure(AlgoManimBase, ABC):
     """Base class for visual data structures with common attributes and methods."""
 
-    def __init__(self):
+    def __init__(
+        self,
+    ):
         super().__init__()
 
         self._data = None
@@ -20,11 +23,6 @@ class LinearContainerStructure(AlgoManimBase):
         self._values_mob = mn.VGroup()
         self._pointers_top = mn.VGroup()
         self._pointers_bottom = mn.VGroup()
-
-        # --- containers colors ---
-        self._container_color: ManimColor | str = mn.LIGHT_GRAY
-        self._fill_color: ManimColor | str = mn.GRAY
-        self._bg_color: ManimColor | str = mn.DARK_GRAY
 
         # --- colors state management ---
         self._containers_colors: dict[int, ManimColor | str] = {}
@@ -135,24 +133,6 @@ class LinearContainerStructure(AlgoManimBase):
             else:
                 for j in range(3):
                     pointers_group[j].set_color(self._bg_color)
-
-    def _update_internal_state(
-        self,
-        new_value,
-        new_group: "LinearContainerStructure",
-    ):
-        """Update internal state with data from a new group.
-
-        Args:
-            new_value: New data value to store.
-            new_group: New group to copy state from.
-        """
-        self._data = new_value
-        self._containers_mob = new_group._containers_mob
-        self._values_mob = new_group._values_mob
-        self._pointers_top = new_group._pointers_top
-        self._pointers_bottom = new_group._pointers_bottom
-        self.submobjects = new_group.submobjects
 
     def _save_highlights_states(self):
         """Save current highlight states for containers and pointers.

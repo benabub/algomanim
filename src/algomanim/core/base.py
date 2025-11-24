@@ -8,18 +8,20 @@ Manim use notes:
   - hasattr(mobject, "method_name") -> True (always), so it's bad idea to use it
 """
 
+from abc import ABC
 from typing import Literal
 
 import numpy as np
 import manim as mn
 
 
-class AlgoManimBase(mn.VGroup):
+class AlgoManimBase(mn.VGroup, ABC):
     """Base class for all algomanim classes"""
 
-    def __init__(self):
+    def __init__(
+        self,
+    ):
         super().__init__()
-        # ---- position ----
         self._vector: np.ndarray = mn.ORIGIN
         self._mob_center: mn.Mobject = mn.Dot(mn.ORIGIN)
         self._align_edge: Literal["up", "down", "left", "right"] | None = None
