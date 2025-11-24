@@ -25,10 +25,16 @@ packages = [
     { include = "algomanim", from = "src" }
 ]
 include = [
+    # svg
     "algomanim/assets/svg/*.svg",
+    "algomanim/assets/svg/arrows/*.svg",
+    # examples
     "algomanim/examples/*.py",
     "algomanim/examples/*.md",
     "algomanim/examples/*.sh",
+    # docs
+    "LICENSE",
+    "README.md",
 ]
 
 [tool.poetry.group.dev.dependencies]
