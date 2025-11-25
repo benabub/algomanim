@@ -134,6 +134,12 @@ class Array(RectangleCellsStructure):
         )
 
     def _create_empty_array(self):
+        """Create visualization for empty array.
+
+        Returns:
+            tuple: Tuple containing (containers_mob, empty_value_mob).
+        """
+
         # clear old fields
         self._values_mob = mn.VGroup()
         self._pointers_top = mn.VGroup()
@@ -156,11 +162,23 @@ class Array(RectangleCellsStructure):
         return containers_mob, empty_value_mob
 
     def _create_values_mob(self):
+        """Create text mobjects for array values.
+
+        Returns:
+            mn.VGroup: Group of value text mobjects.
+        """
+
         return mn.VGroup(
             *[mn.Text(str(val), **self._text_config()) for val in self._data]
         )
 
     def _create_containers_mob(self):
+        """Create rectangle mobjects for array cells.
+
+        Returns:
+            mn.VGroup: Group of cell rectangle mobjects.
+        """
+
         cells_mobs_list = []
         for text_mob in self._values_mob:
             cell_mob = mn.Rectangle(
@@ -179,6 +197,8 @@ class Array(RectangleCellsStructure):
     def _position_values_in_containers(
         self,
     ):
+        """Position value text mobjects within their respective cells with proper alignment."""
+
         for i in range(len(self._data)):
             if not isinstance(self._data[i], str):  # center alignment
                 self._values_mob[i].move_to(self._containers_mob[i])
@@ -254,24 +274,6 @@ class Array(RectangleCellsStructure):
                         buff=self._bottom_buff,
                     )
 
-    def __update_internal_state(
-        self,
-        new_value,
-        new_group: "Array",
-    ):
-        """Update internal state with data from a new group.
-
-        Args:
-            new_value: New data value to store.
-            new_group: New group to copy state from.
-        """
-        self._data = new_value
-        self._containers_mob = new_group._containers_mob
-        self._values_mob = new_group._values_mob
-        self._pointers_top = new_group._pointers_top
-        self._pointers_bottom = new_group._pointers_bottom
-        self.submobjects = new_group.submobjects
-
     def update_value(
         self,
         scene: mn.Scene,
@@ -323,8 +325,8 @@ class Array(RectangleCellsStructure):
         # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self.__update_internal_state(new_value, new_group)
+            self._update_internal_state(new_value, new_group)
         else:
             scene.remove(self)
-            self.__update_internal_state(new_value, new_group)
+            self._update_internal_state(new_value, new_group)
             scene.add(self)

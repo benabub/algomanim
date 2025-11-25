@@ -127,15 +127,15 @@ class TitleText(AlgoManimBase):
         """Create decorative flourish with horizontal line and spiral ends.
 
         Args:
-            width: Total width of the flourish.
-            color: Color of the flourish.
-            stroke_width: Stroke width of the flourish.
-            spiral_radius: Radius of the spiral ends.
-            spiral_turns: Number of turns in each spiral.
-            spiral_offset: Vertical offset of the spirals.
+            width (float): Total width of the flourish.
+            color (ManimColor | str): Color of the flourish.
+            stroke_width (float): Stroke width of the flourish.
+            spiral_radius (float): Radius of the spiral ends.
+            spiral_turns (float): Number of turns in each spiral.
+            spiral_offset (float): Vertical offset of the spirals.
 
         Returns:
-            Group containing the flourish components.
+            mn.VGroup: Group containing the flourish components.
         """
 
         # left spiral (from outer to inner)
@@ -222,11 +222,14 @@ class TitleLogo(AlgoManimBase):
         font: str = "",
         font_size: float = 31,
         text_vector: np.ndarray = mn.ORIGIN,
+        **kwargs,
     ):
-        super().__init__()
-        self._mob_center = mob_center
-        self._vector = vector
-        self._align_edge = align_edge
+        super().__init__(
+            vector=vector,
+            mob_center=mob_center,
+            align_edge=align_edge,
+            **kwargs,
+        )
 
         # create the svg mobject
         self._svg = mn.SVGMobject(

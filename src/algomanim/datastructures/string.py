@@ -157,6 +157,12 @@ class String(RectangleCellsStructure):
         self._coordinate_y = self.get_y()
 
     def _containers_cell_config(self):
+        """Get configuration for character cell containers.
+
+        Returns:
+            dict: Dictionary with container configuration parameters.
+        """
+
         return {
             "color": self._container_color,
             "fill_color": self._fill_color,
@@ -165,6 +171,12 @@ class String(RectangleCellsStructure):
         }
 
     def _quotes_cell_config(self):
+        """Get configuration for quote cell containers.
+
+        Returns:
+            dict: Dictionary with quote cell configuration parameters.
+        """
+
         return {
             "color": self._bg_color,
             "fill_color": self._bg_color,
@@ -173,6 +185,12 @@ class String(RectangleCellsStructure):
         }
 
     def _create_empty_string(self):
+        """Create visualization for empty string.
+
+        Returns:
+            tuple: Tuple containing (containers_mob, empty_value_mob).
+        """
+
         # clear old fields
         self._values_mob = mn.VGroup()
         self._pointers_top = mn.VGroup()
@@ -189,12 +207,24 @@ class String(RectangleCellsStructure):
         return containers_mob, empty_value_mob
 
     def _create_containers_mob(self):
+        """Create square mobjects for character cells.
+
+        Returns:
+            mn.VGroup: Group of character cell square mobjects.
+        """
+
         # create square mobjects for each letter
         return mn.VGroup(
             *[mn.Square(**self._containers_cell_config()) for _ in self._data]
         )
 
     def _create_and_pos_quote_cell_mobs(self):
+        """Create and position quote cell mobjects.
+
+        Returns:
+            tuple: Tuple containing (left_quote_cell, right_quote_cell).
+        """
+
         left_quote_cell = mn.Square(**self._quotes_cell_config())
         right_quote_cell = mn.Square(**self._quotes_cell_config())
         left_quote_cell.next_to(self._containers_mob, mn.LEFT, buff=0.0)
@@ -202,6 +232,12 @@ class String(RectangleCellsStructure):
         return left_quote_cell, right_quote_cell
 
     def _create_and_pos_quotes_mob(self):
+        """Create and position quote text mobjects.
+
+        Returns:
+            mn.VGroup: Group of quote text mobjects.
+        """
+
         return mn.VGroup(
             mn.Text('"', **self._text_config())
             .move_to(self._left_quote_cell_mob, aligned_edge=mn.UP + mn.RIGHT)
@@ -212,6 +248,12 @@ class String(RectangleCellsStructure):
         )
 
     def _create_values_mob(self):
+        """Create text mobjects for string characters.
+
+        Returns:
+            mn.VGroup: Group of character text mobjects.
+        """
+
         return mn.VGroup(
             *[mn.Text(str(letter), **self._text_config()) for letter in self._data]
         )
@@ -219,6 +261,8 @@ class String(RectangleCellsStructure):
     def _position_values_in_containers(
         self,
     ):
+        """Position character text mobjects within their respective cells with proper alignment."""
+
         for i in range(len(self._data)):
             if self._data[i] in "\"'^`":  # top alignment
                 self._values_mob[i].next_to(
@@ -242,24 +286,6 @@ class String(RectangleCellsStructure):
                     direction=mn.UP,
                     buff=self._bottom_buff,
                 )
-
-    def __update_internal_state(
-        self,
-        new_value,
-        new_group: "String",
-    ):
-        """Update internal state with data from a new group.
-
-        Args:
-            new_value: New data value to store.
-            new_group: New group to copy state from.
-        """
-        self._data = new_value
-        self._containers_mob = new_group._containers_mob
-        self._values_mob = new_group._values_mob
-        self._pointers_top = new_group._pointers_top
-        self._pointers_bottom = new_group._pointers_bottom
-        self.submobjects = new_group.submobjects
 
     def update_value(
         self,
@@ -335,8 +361,8 @@ class String(RectangleCellsStructure):
         # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self.__update_internal_state(new_value, new_group)
+            self._update_internal_state(new_value, new_group)
         else:
             scene.remove(self)
-            self.__update_internal_state(new_value, new_group)
+            self._update_internal_state(new_value, new_group)
             scene.add(self)

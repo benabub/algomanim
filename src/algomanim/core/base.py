@@ -16,7 +16,14 @@ import manim as mn
 
 
 class AlgoManimBase(mn.VGroup, ABC):
-    """Base class for all algomanim classes"""
+    """Base class for all algomanim classes.
+
+    Args:
+        vector (np.ndarray): Position offset from mob_center.
+        mob_center (mn.Mobject): Reference mobject for positioning.
+        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        **kwargs: Additional keyword arguments passed to VGroup.
+    """
 
     def __init__(
         self,
@@ -55,8 +62,8 @@ class AlgoManimBase(mn.VGroup, ABC):
         """Position mobject relative to center with optional edge alignment.
 
         Args:
-            mobject: The object to position
-            mob_center: Reference center object
+            mobject_to_move (mn.Mobject): The object to position.
+            align_point (mn.Mobject): Reference point object for alignment.
         """
         from algomanim.core.linear_container import LinearContainerStructure
 

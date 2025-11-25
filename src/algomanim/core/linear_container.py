@@ -7,7 +7,26 @@ from .base import AlgoManimBase
 
 
 class LinearContainerStructure(AlgoManimBase, ABC):
-    """Base class for visual data structures with common attributes and methods."""
+    """Base class for visual data structures with common attributes and methods.
+
+    Args:
+        font (str): Font family for text elements.
+        font_size (float): Font size for text elements.
+        font_color (ManimColor | str): Color for text elements.
+        weight (str): Font weight (NORMAL, BOLD, etc.).
+        container_color (ManimColor | str): Border color for containers.
+        fill_color (ManimColor | str): Fill color for containers.
+        bg_color (ManimColor | str): Background color for pointers.
+        color_1 (ManimColor | str): Highlight color for first index.
+        color_2 (ManimColor | str): Highlight color for second index.
+        color_3 (ManimColor | str): Highlight color for third index.
+        color_123 (ManimColor | str): Highlight color when all three indices match.
+        color_12 (ManimColor | str): Highlight color when first two indices match.
+        color_13 (ManimColor | str): Highlight color when first and third indices match.
+        color_23 (ManimColor | str): Highlight color when second and third indices match.
+        color_containers_with_value (ManimColor | str): Color for containers with specific value.
+        **kwargs: Additional keyword arguments passed to VGroup.
+    """
 
     def __init__(
         self,
@@ -69,9 +88,37 @@ class LinearContainerStructure(AlgoManimBase, ABC):
         self._color_containers_with_value = color_containers_with_value
 
     def get_containers_mob(self):
+        """Get the containers mobject group.
+
+        Returns:
+            mn.VGroup: Group of container mobjects.
+        """
         return self._containers_mob
 
+    def _update_internal_state(
+        self,
+        new_value,
+        new_group: "LinearContainerStructure",
+    ):
+        """Update internal state with data from a new group.
+
+        Args:
+            new_value: New data value to store.
+            new_group (LinearContainerStructure): New group to copy state from.
+        """
+        self._data = new_value
+        self._containers_mob = new_group._containers_mob
+        self._values_mob = new_group._values_mob
+        self._pointers_top = new_group._pointers_top
+        self._pointers_bottom = new_group._pointers_bottom
+        self.submobjects = new_group.submobjects
+
     def _text_config(self):
+        """Get text configuration dictionary.
+
+        Returns:
+            dict: Dictionary with font configuration parameters.
+        """
         return {
             "font": self._font,
             "font_size": self._font_size,
@@ -117,7 +164,10 @@ class LinearContainerStructure(AlgoManimBase, ABC):
         """Apply stored color highlights to pointer objects at the specified position.
 
         Args:
-            pos: Position to apply colors for (0 for top, 1 for bottom).
+            pos (int): Position to apply colors for (0 for top, 1 for bottom).
+
+        Raises:
+            ValueError: If pos is not 0 or 1.
         """
 
         # ------- checks --------
@@ -151,7 +201,7 @@ class LinearContainerStructure(AlgoManimBase, ABC):
         """Save current highlight states for containers and pointers.
 
         Returns:
-            Dictionary containing current highlight states.
+            dict: Dictionary containing current highlight states.
         """
         return {
             "_containers_colors": self._containers_colors,
@@ -167,8 +217,8 @@ class LinearContainerStructure(AlgoManimBase, ABC):
         """Apply saved highlight states to a new group.
 
         Args:
-            new_group: Group to apply the saved states to.
-            status: Dictionary containing the saved highlight states.
+            new_group (LinearContainerStructure): Group to apply the saved states to.
+            status (dict): Dictionary containing the saved highlight states.
         """
         new_group._containers_colors = status["_containers_colors"]
         new_group._top_pointers_colors = status["_top_pointers_colors"]

@@ -10,8 +10,22 @@ from algomanim.assets.svg import SVG_DIR
 
 
 class LinkedList(LinearContainerStructure):
-    """
-    ...
+    """Linked list visualization as a VGroup of nodes with values and pointers.
+
+    Args:
+        head (ListNode | None): Head node of the linked list.
+        radius (float): Radius of the circular nodes.
+        direction (np.ndarray): Direction vector for list orientation.
+        node_color (ManimColor | str): Border color for nodes.
+        fill_color (ManimColor | str): Fill color for nodes.
+        bg_color (ManimColor | str): Background color for arrows and default pointer color.
+        vector (np.ndarray): Position offset from mob_center.
+        mob_center (mn.Mobject): Reference mobject for positioning.
+        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        font (str): Font family for text elements.
+        font_color (ManimColor | str): Color for text elements.
+        weight (str): Font weight (NORMAL, BOLD, etc.).
+        **kwargs: Additional keyword arguments passed to parent class.
     """
 
     def __init__(
@@ -84,7 +98,8 @@ class LinkedList(LinearContainerStructure):
         self.add(self._frame_mob, self._values_mob)
 
     def _empty_linked_list(self):
-        """ """
+        """Initialize empty linked list visualization."""
+
         # clear old fields
         self._containers_mob = mn.VGroup()
         self._arrows_mob = mn.VGroup()
@@ -149,9 +164,12 @@ class LinkedList(LinearContainerStructure):
         return result
 
     def _create_containers_mob(self):
+        """Create circular node mobjects for the linked list.
+
+        Returns:
+            mn.VGroup: Group of circular node mobjects.
         """
-        ...
-        """
+
         node = mn.Circle(
             radius=self._radius,
             color=self._container_color,
@@ -165,8 +183,10 @@ class LinkedList(LinearContainerStructure):
         return containers_mob
 
     def _create_and_pos_arrows_mob(self):
-        """
-        ...
+        """Create and position arrow mobjects between nodes.
+
+        Returns:
+            mn.VGroup: Group of arrow mobjects connecting the nodes.
         """
 
         arrow_path = str(SVG_DIR / "arrows/radius_x10.svg")
@@ -182,6 +202,12 @@ class LinkedList(LinearContainerStructure):
         return arrows_mob
 
     def _create_frame_mob(self):
+        """Create frame mobject containing all linked list elements.
+
+        Returns:
+            mn.VGroup: Group containing containers, arrows, and pointers.
+        """
+
         return mn.VGroup(
             self._containers_mob,
             self._arrows_mob,
@@ -190,9 +216,7 @@ class LinkedList(LinearContainerStructure):
         )
 
     def _rotate_frame(self) -> None:
-        """
-        ...
-        """
+        """Rotate the entire linked list frame to match the specified direction."""
 
         if not np.allclose(self._direction, mn.RIGHT):
             angle = mn.angle_of_vector(self._direction)
@@ -209,8 +233,10 @@ class LinkedList(LinearContainerStructure):
         }
 
     def _create_and_pos_values_mob(self):
-        """
-        ...
+        """Create and position value text mobjects inside nodes.
+
+        Returns:
+            mn.VGroup: Group of value text mobjects positioned within nodes.
         """
 
         top_bottom_buff = self._radius / 2
@@ -277,24 +303,6 @@ class LinkedList(LinearContainerStructure):
 
         return values_mob
 
-    def __update_internal_state(
-        self,
-        new_value,
-        new_group: "LinkedList",
-    ):
-        """Update internal state with data from a new group.
-
-        Args:
-            new_value: New data value to store.
-            new_group: New group to copy state from.
-        """
-        self._data = new_value
-        self._containers_mob = new_group._containers_mob
-        self._values_mob = new_group._values_mob
-        self._pointers_top = new_group._pointers_top
-        self._pointers_bottom = new_group._pointers_bottom
-        self.submobjects = new_group.submobjects
-
     def update_value(
         self,
         scene: mn.Scene,
@@ -302,8 +310,13 @@ class LinkedList(LinearContainerStructure):
         animate: bool = False,
         run_time: float = 0.2,
     ) -> None:
-        """
-        ...
+        """Replace the linked list visualization with new nodes.
+
+        Args:
+            scene (mn.Scene): The Manim scene to play animations in.
+            new_value: New linked list head node.
+            animate (bool): If True, animates the transition using Transform.
+            run_time (float): Duration of animation if animate=True.
         """
 
         # checks
@@ -329,8 +342,8 @@ class LinkedList(LinearContainerStructure):
         # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self.__update_internal_state(self.linked_list_to_list(new_value), new_group)
+            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
         else:
             scene.remove(self)
-            self.__update_internal_state(self.linked_list_to_list(new_value), new_group)
+            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
             scene.add(self)

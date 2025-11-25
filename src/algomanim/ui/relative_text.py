@@ -17,18 +17,17 @@ class RelativeTextValue(AlgoManimBase):
     """Text group showing scope variables positioned relative to mobject.
 
     Args:
-        *vars: Tuples of (name, value_getter, color) for each text.
-        mob_center: Reference mobject for positioning.
-        font: Text font family.
-        font_size: Text font size.
-        buff: Spacing between text elements.
-        equal_sign: Whether to use equals sign between name and value.
-        vector: Offset vector from reference mobject center.
-        align_edge: Edge to align with reference mobject. If None,
-            centers at mobject center.
-
-    Raises:
-        ValueError: If align_edge is not valid direction.
+        *vars (Tuple[str, Callable[[], Any], str | ManimColor]):
+            Tuples of (name, value_getter, color).
+        mob_center (mn.Mobject): Reference mobject for positioning.
+        vector (np.ndarray): Offset vector from reference mobject center.
+        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        font (str): Text font family.
+        font_size (float): Text font size.
+        weight (str): Font weight (NORMAL, BOLD, etc.).
+        buff (float): Spacing between text elements.
+        equal_sign (bool): Whether to use equals sign between name and value.
+        **kwargs: Additional keyword arguments passed to parent class.
     """
 
     def __init__(
@@ -119,18 +118,15 @@ class RelativeText(AlgoManimBase):
     """Text group positioned relative to another mobject.
 
     Args:
-        text: The text string to visualize.
-        mob_center: Reference mobject for positioning.
-        vector: Offset vector from reference mobject center.
-        font: Text font family.
-        font_size: Text font size.
-        font_color: Text color.
-        weight: Text weight (NORMAL, BOLD, etc.).
-        align_edge: Edge to align with reference mobject. If None,
-            centers at mobject center.
-
-    Raises:
-        ValueError: If align_edge is not valid direction.
+        text (str): The text string to visualize.
+        mob_center (mn.Mobject): Reference mobject for positioning.
+        vector (np.ndarray): Offset vector from reference mobject center.
+        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        font (str): Text font family.
+        font_size (float): Text font size.
+        font_color (str | ManimColor): Text color.
+        weight (str): Text weight (NORMAL, BOLD, etc.).
+        **kwargs: Additional keyword arguments passed to parent class.
     """
 
     def __init__(
@@ -145,13 +141,16 @@ class RelativeText(AlgoManimBase):
         font_size=35,
         font_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(
+            vector=vector,
+            mob_center=mob_center,
+            align_edge=align_edge,
+            **kwargs,
+        )
 
         self._text = text
-        self._mob_center = mob_center
-        self._vector = vector
-        self._align_edge = align_edge
         self._font = font
         self._font_size = font_size
         self._font_color = font_color
