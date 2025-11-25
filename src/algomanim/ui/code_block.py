@@ -49,13 +49,17 @@ class CodeBlock(AlgoManimBase):
         code_buff=0.05,
         # --- other ---
         bg_highlight_color: ManimColor | str = "BLUE",
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(
+            vector=vector,
+            mob_center=mob_center,
+            align_edge=align_edge,
+            **kwargs,
+        )
+
         self._code_lines = code_lines
         self._pre_code_lines = pre_code_lines
-        self._vector = vector
-        self._mob_center = mob_center
-        self._align_edge = align_edge
         self._font_size = font_size
         self._font = font
         self._font_color_regular = font_color_regular

@@ -45,12 +45,16 @@ class RelativeTextValue(AlgoManimBase):
         # --- other ---
         buff=0.5,
         equal_sign: bool = True,
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(
+            vector=vector,
+            mob_center=mob_center,
+            align_edge=align_edge,
+            **kwargs,
+        )
+
         self._vars = vars
-        self._mob_center = mob_center
-        self._vector = vector
-        self._align_edge = align_edge
         self._font = font
         self._font_size = font_size
         self._weight = weight

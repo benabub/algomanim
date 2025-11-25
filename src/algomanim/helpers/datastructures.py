@@ -1,6 +1,6 @@
 class ListNode:
     """
-    Definition for singly-linked list.
+    Leetcode definition for singly-linked list.
     """
 
     def __init__(self, val=0, next=None):
@@ -10,7 +10,7 @@ class ListNode:
 
 class TreeNode:
     """
-    Definition for a binary tree node.
+    Leetcode definition for a binary tree node.
     """
 
     def __init__(self, val=0, left=None, right=None):
@@ -21,7 +21,7 @@ class TreeNode:
 
 class Node:
     """
-    Definition for a Node.
+    Leetcode definition for a Node.
     """
 
     def __init__(self, val, prev, next, child):

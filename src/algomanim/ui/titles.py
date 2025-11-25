@@ -61,11 +61,16 @@ class TitleText(AlgoManimBase):
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
         undercaption_buff: float = 0.23,
+        # --- kwargs ---
+        **kwargs,
     ):
-        super().__init__()
-        self._mob_center = mob_center
-        self._vector = vector
-        self._align_edge = align_edge
+        super().__init__(
+            vector=vector,
+            mob_center=mob_center,
+            align_edge=align_edge,
+            **kwargs,
+        )
+
         self._flourish = flourish
         self._undercaption = undercaption
 

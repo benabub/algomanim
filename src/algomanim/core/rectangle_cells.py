@@ -10,14 +10,36 @@ class RectangleCellsStructure(LinearContainerStructure, ABC):
     ...
     """
 
-    def __init__(self):
-        super().__init__()
-        self._cell_params_auto = True
-        self._cell_height = 0.65625
-        self._top_bottom_buff = 0.15
-        self._top_buff = 0.09
-        self._bottom_buff = 0.16
-        self._deep_bottom_buff = 0.05
+    DEFAULT_CELL_HEIGHT = 0.65625
+    DEFAULT_TOP_BOTTOM_BUFF = 0.15
+    DEFAULT_TOP_BUFF = 0.09
+    DEFAULT_BOTTOM_BUFF = 0.16
+    DEFAULT_DEEP_BOTTOM_BUFF = 0.05
+
+    TOP_BOTTOM_BUFF_DIV = 2.375
+    TOP_BUFF_DIV = 3.958
+    BOTTOM_BUFF_DIV = 35.625
+    DEEP_BOTTOM_BUFF_DIV = 7.125
+
+    INTER_BUFF_FACTOR = 2.5
+
+    def __init__(
+        self,
+        cell_params_auto=True,
+        cell_height=DEFAULT_CELL_HEIGHT,
+        top_bottom_buff=DEFAULT_TOP_BOTTOM_BUFF,
+        top_buff=DEFAULT_TOP_BUFF,
+        bottom_buff=DEFAULT_BOTTOM_BUFF,
+        deep_bottom_buff=DEFAULT_DEEP_BOTTOM_BUFF,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self._cell_params_auto = cell_params_auto
+        self._cell_height = cell_height
+        self._top_bottom_buff = top_bottom_buff
+        self._top_buff = top_buff
+        self._bottom_buff = bottom_buff
+        self._deep_bottom_buff = deep_bottom_buff
 
     def _get_cell_params(
         self,
@@ -44,13 +66,13 @@ class RectangleCellsStructure(LinearContainerStructure, ABC):
         """
         zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
 
-        zero_mob_height = zero_mob.height  # 0.35625
+        zero_mob_height = zero_mob.height
 
-        top_bottom_buff = zero_mob_height / 2.375
+        top_bottom_buff = zero_mob_height / self.TOP_BOTTOM_BUFF_DIV
         cell_height = top_bottom_buff * 2 + zero_mob_height
-        top_buff = zero_mob_height / 3.958
-        bottom_buff = zero_mob_height / 35.625 + top_bottom_buff
-        deep_bottom_buff = zero_mob_height / 7.125
+        top_buff = zero_mob_height / self.TOP_BUFF_DIV
+        bottom_buff = zero_mob_height / self.BOTTOM_BUFF_DIV + top_bottom_buff
+        deep_bottom_buff = zero_mob_height / self.DEEP_BOTTOM_BUFF_DIV
 
         return {
             "top_bottom_buff": top_bottom_buff,
@@ -78,7 +100,7 @@ class RectangleCellsStructure(LinearContainerStructure, ABC):
             for consistent visual proportions.
         """
         text_mob_height = text_mob.width
-        res = inter_buff * 2.5 + text_mob_height
+        res = inter_buff * self.INTER_BUFF_FACTOR + text_mob_height
         if cell_height >= res:
             return cell_height
         else:

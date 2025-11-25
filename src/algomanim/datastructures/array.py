@@ -63,27 +63,32 @@ class Array(RectangleCellsStructure):
         top_buff=0.09,
         bottom_buff=0.16,
         deep_bottom_buff=0.05,
+        # ---- kwargs ----
+        **kwargs,
     ):
         # call __init__ of the parent classes
-        super().__init__()
+        super().__init__(
+            vector=vector,
+            mob_center=mob_center,
+            align_edge=align_edge,
+            font=font,
+            font_size=font_size,
+            font_color=font_color,
+            weight=weight,
+            container_color=container_color,
+            bg_color=bg_color,
+            fill_color=fill_color,
+            cell_params_auto=cell_params_auto,
+            cell_height=cell_height,
+            top_bottom_buff=top_bottom_buff,
+            top_buff=top_buff,
+            bottom_buff=bottom_buff,
+            deep_bottom_buff=deep_bottom_buff,
+            **kwargs,
+        )
+
         # create class instance fields
         self._data = arr.copy()
-        self._vector = vector
-        self._font = font
-        self._font_size = font_size
-        self._font_color = font_color
-        self._weight = weight
-        self._mob_center = mob_center
-        self._align_edge = align_edge
-        self._container_color = container_color
-        self._bg_color = bg_color
-        self._fill_color = fill_color
-        self._cell_params_auto = cell_params_auto
-        self._cell_height = cell_height
-        self._top_bottom_buff = top_bottom_buff
-        self._top_buff = top_buff
-        self._bottom_buff = bottom_buff
-        self._deep_bottom_buff = deep_bottom_buff
 
         self._cell_params(
             self._cell_params_auto,
@@ -156,8 +161,6 @@ class Array(RectangleCellsStructure):
         )
 
     def _create_containers_mob(self):
-        # NB: if opacity is not specified, it will be set to None
-        # and some methods will break for unknown reasons
         cells_mobs_list = []
         for text_mob in self._values_mob:
             cell_mob = mn.Rectangle(

@@ -31,22 +31,27 @@ class LinkedList(LinearContainerStructure):
         font="",
         font_color: ManimColor | str = mn.BLACK,
         weight: str = "NORMAL",
+        # ---- kwargs ----
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(
+            container_color=node_color,
+            fill_color=fill_color,
+            bg_color=bg_color,
+            vector=vector,
+            mob_center=mob_center,
+            align_edge=align_edge,
+            font=font,
+            font_color=font_color,
+            weight=weight,
+            color_123=mn.WHITE,
+            color_containers_with_value=mn.WHITE,
+            **kwargs,
+        )
+
         self._data = self.linked_list_to_list(head)  # save head as list
         self._radius = radius
         self._direction = direction
-        self._container_color = node_color
-        self._fill_color = fill_color
-        self._bg_color = bg_color
-        self._vector = vector
-        self._mob_center = mob_center
-        self._align_edge = align_edge
-        self._font = font
-        self._font_color = font_color
-        self._weight = weight
-        self._color_123 = mn.WHITE
-        self._color_containers_with_value = mn.WHITE
 
         # empty value
         if not self._data:

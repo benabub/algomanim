@@ -1,7 +1,5 @@
 from abc import ABC
-from typing import Literal
 
-import numpy as np
 import manim as mn
 from manim import ManimColor
 
@@ -13,8 +11,28 @@ class LinearContainerStructure(AlgoManimBase, ABC):
 
     def __init__(
         self,
+        # ---- font ----
+        font=(""),
+        font_size=(35),
+        font_color: ManimColor | str = mn.WHITE,
+        weight: str = "NORMAL",
+        # ---- container colors ----
+        container_color: ManimColor | str = mn.DARK_GRAY,
+        fill_color: ManimColor | str = mn.GRAY,
+        bg_color: ManimColor | str = mn.DARK_GRAY,
+        # ---- highlight containers colors ----
+        color_1: ManimColor | str = mn.RED,
+        color_2: ManimColor | str = mn.BLUE,
+        color_3: ManimColor | str = mn.GREEN,
+        color_123: ManimColor | str = mn.BLACK,
+        color_12: ManimColor | str = mn.PURPLE,
+        color_13: ManimColor | str = mn.YELLOW_E,
+        color_23: ManimColor | str = mn.TEAL,
+        color_containers_with_value: ManimColor | str = mn.BLACK,
+        # ---- kwargs ----
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(**kwargs)
 
         self._data = None
 
@@ -29,31 +47,26 @@ class LinearContainerStructure(AlgoManimBase, ABC):
         self._top_pointers_colors: dict[int, list[ManimColor | str]] = {}
         self._bottom_pointers_colors: dict[int, list[ManimColor | str]] = {}
 
-        # ---- position ----
-        self._vector: np.ndarray = mn.ORIGIN
-        self._mob_center: mn.Mobject = mn.Dot(mn.ORIGIN)
-        self._align_edge: Literal["up", "down", "left", "right"] | None = None
-
         # ---- font ----
-        self._font = ("",)
-        self._font_size = (35,)
-        self._font_color: ManimColor | str = mn.WHITE
-        self._weight: str = "NORMAL"
+        self._font = font
+        self._font_size = font_size
+        self._font_color = font_color
+        self._weight = weight
 
         # ---- container colors ----
-        self._container_color: ManimColor | str = mn.DARK_GRAY
-        self._fill_color: ManimColor | str = mn.GRAY
-        self._bg_color: ManimColor | str = mn.DARK_GRAY
+        self._container_color = container_color
+        self._fill_color = fill_color
+        self._bg_color = bg_color
 
         # ---- highlight containers colors ----
-        self._color_1: ManimColor | str = mn.RED
-        self._color_2: ManimColor | str = mn.BLUE
-        self._color_3: ManimColor | str = mn.GREEN
-        self._color_123: ManimColor | str = mn.BLACK
-        self._color_12: ManimColor | str = mn.PURPLE
-        self._color_13: ManimColor | str = mn.YELLOW_E
-        self._color_23: ManimColor | str = mn.TEAL
-        self._color_containers_with_value: ManimColor | str = mn.BLACK
+        self._color_1 = color_1
+        self._color_2 = color_2
+        self._color_3 = color_3
+        self._color_123 = color_123
+        self._color_12 = color_12
+        self._color_13 = color_13
+        self._color_23 = color_23
+        self._color_containers_with_value = color_containers_with_value
 
     def get_containers_mob(self):
         return self._containers_mob

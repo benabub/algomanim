@@ -20,11 +20,15 @@ class AlgoManimBase(mn.VGroup, ABC):
 
     def __init__(
         self,
+        vector: np.ndarray = mn.ORIGIN,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        **kwargs,
     ):
-        super().__init__()
-        self._vector: np.ndarray = mn.ORIGIN
-        self._mob_center: mn.Mobject = mn.Dot(mn.ORIGIN)
-        self._align_edge: Literal["up", "down", "left", "right"] | None = None
+        super().__init__(**kwargs)
+        self._vector = vector
+        self._mob_center = mob_center
+        self._align_edge: Literal["up", "down", "left", "right"] | None = align_edge
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         """Animate the initial appearance in scene.
