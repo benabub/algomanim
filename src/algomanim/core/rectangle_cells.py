@@ -1,8 +1,23 @@
 from abc import ABC
+from dataclasses import dataclass
 
 import manim as mn
 
 from .linear_container import LinearContainerStructure
+
+
+@dataclass(frozen=True)
+class CellConfig:
+    cell_height: float = 0.65625
+    top_bottom_buff: float = 0.15
+    top_buff: float = 0.09
+    bottom_buff: float = 0.16
+    deep_bottom_buff: float = 0.05
+    top_bottom_buff_div: float = 2.375
+    top_buff_div: float = 3.958
+    bottom_buff_div: float = 35.625
+    deep_bottom_buff_div: float = 7.125
+    inter_buff_factor: float = 2.5
 
 
 class RectangleCellsStructure(LinearContainerStructure, ABC):
@@ -18,27 +33,16 @@ class RectangleCellsStructure(LinearContainerStructure, ABC):
         **kwargs: Additional keyword arguments passed to parent class.
     """
 
-    DEFAULT_CELL_HEIGHT = 0.65625
-    DEFAULT_TOP_BOTTOM_BUFF = 0.15
-    DEFAULT_TOP_BUFF = 0.09
-    DEFAULT_BOTTOM_BUFF = 0.16
-    DEFAULT_DEEP_BOTTOM_BUFF = 0.05
-
-    TOP_BOTTOM_BUFF_DIV = 2.375
-    TOP_BUFF_DIV = 3.958
-    BOTTOM_BUFF_DIV = 35.625
-    DEEP_BOTTOM_BUFF_DIV = 7.125
-
-    INTER_BUFF_FACTOR = 2.5
+    CELL_CONFIG = CellConfig()
 
     def __init__(
         self,
         cell_params_auto=True,
-        cell_height=DEFAULT_CELL_HEIGHT,
-        top_bottom_buff=DEFAULT_TOP_BOTTOM_BUFF,
-        top_buff=DEFAULT_TOP_BUFF,
-        bottom_buff=DEFAULT_BOTTOM_BUFF,
-        deep_bottom_buff=DEFAULT_DEEP_BOTTOM_BUFF,
+        cell_height=CELL_CONFIG.cell_height,
+        top_bottom_buff=CELL_CONFIG.top_bottom_buff,
+        top_buff=CELL_CONFIG.top_buff,
+        bottom_buff=CELL_CONFIG.bottom_buff,
+        deep_bottom_buff=CELL_CONFIG.deep_bottom_buff,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -72,11 +76,13 @@ class RectangleCellsStructure(LinearContainerStructure, ABC):
 
         zero_mob_height = zero_mob.height
 
-        top_bottom_buff = zero_mob_height / self.TOP_BOTTOM_BUFF_DIV
+        top_bottom_buff = zero_mob_height / self.CELL_CONFIG.top_bottom_buff_div
         cell_height = top_bottom_buff * 2 + zero_mob_height
-        top_buff = zero_mob_height / self.TOP_BUFF_DIV
-        bottom_buff = zero_mob_height / self.BOTTOM_BUFF_DIV + top_bottom_buff
-        deep_bottom_buff = zero_mob_height / self.DEEP_BOTTOM_BUFF_DIV
+        top_buff = zero_mob_height / self.CELL_CONFIG.top_buff_div
+        bottom_buff = (
+            zero_mob_height / self.CELL_CONFIG.bottom_buff_div + top_bottom_buff
+        )
+        deep_bottom_buff = zero_mob_height / self.CELL_CONFIG.deep_bottom_buff_div
 
         return {
             "top_bottom_buff": top_bottom_buff,
@@ -103,7 +109,7 @@ class RectangleCellsStructure(LinearContainerStructure, ABC):
             float: Cell width ensuring consistent visual proportions.
         """
         text_mob_height = text_mob.width
-        res = inter_buff * self.INTER_BUFF_FACTOR + text_mob_height
+        res = inter_buff * self.CELL_CONFIG.inter_buff_factor + text_mob_height
         if cell_height >= res:
             return cell_height
         else:
