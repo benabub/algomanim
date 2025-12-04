@@ -8,15 +8,17 @@ Manim use notes:
   - hasattr(mobject, "method_name") -> True (always), so it's bad idea to use it
 """
 
-from abc import ABC
 from typing import Literal
 
 import numpy as np
 import manim as mn
 
 
-class AlgoManimBase(mn.VGroup, ABC):
+class AlgoManimBase(mn.VGroup):
     """Base class for all algomanim classes.
+
+    Warning:
+        This is base class only, cannot be instantiated directly.
 
     Args:
         vector (np.ndarray): Position offset from mob_center.
@@ -32,6 +34,10 @@ class AlgoManimBase(mn.VGroup, ABC):
         align_edge: Literal["up", "down", "left", "right"] | None = None,
         **kwargs,
     ):
+        if type(self) is AlgoManimBase:
+            raise NotImplementedError(
+                "AlgoManimBase is base class only, cannot be instantiated directly."
+            )
         super().__init__(**kwargs)
         self._vector = vector
         self._mob_center = mob_center

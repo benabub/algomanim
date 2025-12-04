@@ -1142,7 +1142,7 @@ class ExampleLinkedlist(mn.Scene):
             cll([1, 0, 2, 0, 3, 0, 4, 0, 5]),
             vector=mn.LEFT * 4.8,
         )
-        self.play(mn.ReplacementTransform(ll, lln, time=0.5))
+        self.play(mn.ReplacementTransform(ll, lln, run_time=0.5))
 
         rt = RelativeText(
             "pointers()   highlight_containers()",
@@ -1186,7 +1186,7 @@ class ExampleLinkedlist(mn.Scene):
             cll([10, 2, 3000, 2, 100, 2, 40]),
             vector=mn.LEFT * 4,
         )
-        self.play(mn.ReplacementTransform(lln, ll, time=0.5))
+        self.play(mn.ReplacementTransform(lln, ll, run_time=0.5))
 
         rt = RelativeText(
             "highlight_containers_with_value()   pointers_on_value()",

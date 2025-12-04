@@ -1,13 +1,14 @@
-from abc import ABC
-
 import manim as mn
 from manim import ManimColor
 
 from .base import AlgoManimBase
 
 
-class LinearContainerStructure(AlgoManimBase, ABC):
+class LinearContainerStructure(AlgoManimBase):
     """Base class for visual data structures with common attributes and methods.
+
+    Warning:
+        This is base class only, cannot be instantiated directly.
 
     Args:
         font (str): Font family for text elements.
@@ -51,6 +52,10 @@ class LinearContainerStructure(AlgoManimBase, ABC):
         # ---- kwargs ----
         **kwargs,
     ):
+        if type(self) is LinearContainerStructure:
+            raise NotImplementedError(
+                "LinearContainerStructure is base class only, cannot be instantiated directly."
+            )
         super().__init__(**kwargs)
 
         self._data = None

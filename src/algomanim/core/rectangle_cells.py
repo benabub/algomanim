@@ -1,4 +1,3 @@
-from abc import ABC
 from dataclasses import dataclass
 
 import manim as mn
@@ -20,8 +19,11 @@ class CellConfig:
     inter_buff_factor: float = 2.5
 
 
-class RectangleCellsStructure(LinearContainerStructure, ABC):
+class RectangleCellsStructure(LinearContainerStructure):
     """Base class for rectangle cell structures with automatic cell parameter calculation.
+
+    Warning:
+        This is base class only, cannot be instantiated directly.
 
     Args:
         cell_params_auto (bool): Whether to auto-calculate cell parameters.
@@ -45,6 +47,10 @@ class RectangleCellsStructure(LinearContainerStructure, ABC):
         deep_bottom_buff=CELL_CONFIG.deep_bottom_buff,
         **kwargs,
     ):
+        if type(self) is RectangleCellsStructure:
+            raise NotImplementedError(
+                "RectangleCellsStructure is base class only, cannot be instantiated directly."
+            )
         super().__init__(**kwargs)
         self._cell_params_auto = cell_params_auto
         self._cell_height = cell_height
