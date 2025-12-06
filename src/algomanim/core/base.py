@@ -71,12 +71,11 @@ class AlgoManimBase(mn.VGroup):
             mobject_to_move (mn.Mobject): The object to position.
             align_point (mn.Mobject): Reference point object for alignment.
         """
-        from algomanim.core.linear_container import LinearContainerStructure
 
         align_edge = self._align_edge.lower() if self._align_edge else None
 
-        if isinstance(self._mob_center, LinearContainerStructure):
-            mob_center = self._mob_center.get_containers_mob()
+        if hasattr(self._mob_center, "_get_positioning"):
+            mob_center = self._mob_center._get_positioning()
         else:
             mob_center = self._mob_center
 

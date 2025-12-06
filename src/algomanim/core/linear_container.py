@@ -92,12 +92,9 @@ class LinearContainerStructure(AlgoManimBase):
         self._color_23 = color_23
         self._color_containers_with_value = color_containers_with_value
 
-    def get_containers_mob(self):
-        """Get the containers mobject group.
+    def _get_positioning(self):
+        """Return containers mobject for positioning purposes."""
 
-        Returns:
-            mn.VGroup: Group of container mobjects.
-        """
         return self._containers_mob
 
     def _update_internal_state(
