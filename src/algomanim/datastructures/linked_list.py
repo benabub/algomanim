@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Any
 
 import numpy as np
 import manim as mn
@@ -129,7 +129,22 @@ class LinkedList(LinearContainerStructure):
         return head
 
     @staticmethod
-    def get_linked_list_length(head: ListNode | None) -> int:
+    def get_head_value(head: ListNode | None) -> Any | None:
+        """Get the value of the head node in a linked list.
+
+        If the linked list is empty (head is None), returns None. Otherwise,
+        extracts and returns the value of the first node.
+
+        Args:
+            head: Head node of the linked list, or None for empty list.
+
+        Returns:
+            Value of the head node, or None if the list is empty.
+        """
+        return LinkedList.linked_list_to_list(head)[0] if head else None
+
+    @staticmethod
+    def get_length(head: ListNode | None) -> int:
         """Calculate the length of a linked list.
 
         Args:

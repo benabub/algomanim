@@ -10,7 +10,9 @@ A Manim-based library for visualizing algorithms and explaining LeetCode-style s
 
 ### GIF
 
-![GIF](assets/bubble_sort_gif.gif)
+![Example Bubble Sort](assets/bubble_sort_gif.gif)
+
+![Example Linked List](assets/linkedlist.gif)
 
 ## Installation
 
