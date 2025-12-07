@@ -159,3 +159,58 @@
 
 ## Fixed
 - `VisualDataStructure`: All highlight containers methods: `self.bg_color` → `self.fill_color`
+
+---
+
+# [0.3.0] - 2025-12-07
+
+## Added
+- New data structure: `LinkedList `class with full visualization capabilities
+    - Circular node visualization with configurable radius
+    - `SVG` arrow connections between nodes
+    - Pointer highlighting system (top/bottom)
+    - Text positioning within circular nodes
+    - Linked list utilities:
+      - `create_linked_list()`
+      - `get_linked_list_length()`
+      - `linked_list_to_list()`
+      - `get_head_value()` 
+    - Update animations with state preservation
+- New example: `ExampleLinkedlist` in `examples.py`
+- Assets: Added `assets/linkedlist.gif`
+- `CellConfig` dataclass in `rectangle_cells.py` for centralized cell parameter management
+- `_get_positioning()` method to `LinearContainerStructure` for positioning protocol support
+- Build: Added `include` section to `pyproject.toml` for proper package distribution
+
+## Changed
+- Breaking Change: Refactored entire module structure:
+    - Split `algomanim.py` into submodules:
+        - `core/`: `base.py`, `linear_container.py`, `rectangle_cells.py`
+        - `datastructures/`: `array.py`, `string.py`, `linked_list.py`
+        - `helpers/`: `datastructures.py`
+        - `ui/`: `code_block.py`, `relative_text.py`, `titles.py`
+- Updated `README.md` with new features and examples
+
+## Refactored
+- Renamed base classes:
+    - `VisualDataStructure` → `LinearContainerStructure`
+    - `RectangleCellsDataStructure` → `RectangleCellsStructure`
+- `AlgoManimBase._position()`:
+    - Changed from `position()` to `_position()`
+    - Removed child class overrides
+    - Replaced `isinstance()` check with `hasattr()` for positioning protocol
+- All classes now use `_name` convention for internal attributes
+- `RectangleCellsStructure` magic numbers replaced with `CONSTANTS`
+- `LinearContainerStructure` color management:
+    - Added `_color_containers_with_value` attribute
+    - Enhanced `highlight_containers_with_value()` and `pointers_on_value()` methods
+- `String` class split `__init__()` into multiple helper methods
+- `Array` class split `__init__()` into multiple helper methods
+
+## Fixed
+- `examples.py` updated for `Manim` breaking changes
+- Circular import issue in `.core.base`
+
+## Removed
+- `ABC` imports from base classes (replaced with runtime instantiation prevention)
+- Child class overrides of `position()` method
