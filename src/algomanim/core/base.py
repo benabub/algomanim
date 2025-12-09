@@ -52,6 +52,20 @@ class AlgoManimBase(mn.VGroup):
         """
         scene.play(mn.FadeIn(self), run_time=time)
 
+    def group_appear(self, scene: mn.Scene, *mobjects: mn.Mobject, time: float = 0.5):
+        """Animate the appearance of this object together with additional mobjects.
+
+        All mobjects fade in simultaneously with the same duration.
+
+        Args:
+            scene: The Manim scene to play the animation in.
+            *mobjects: Additional mobjects to fade in together with this object.
+            time: Duration of the fade-in animation for all objects.
+        """
+
+        animations = [mn.FadeIn(self)] + [mn.FadeIn(mob) for mob in mobjects]
+        scene.play(*animations, run_time=time)
+
     def appear(self, scene: mn.Scene):
         """Add VGroup the given scene.
 

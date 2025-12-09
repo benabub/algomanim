@@ -134,7 +134,7 @@ class RelativeText(AlgoManimBase):
         text: str,
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        vector: np.ndarray = mn.ORIGIN,
+        vector: np.ndarray = mn.UP * 1.0,
         align_edge: Literal["up", "down", "left", "right"] | None = None,
         # --- font ---
         font="",
