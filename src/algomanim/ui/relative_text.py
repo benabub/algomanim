@@ -44,6 +44,7 @@ class RelativeTextValue(AlgoManimBase):
         # --- other ---
         buff=0.5,
         equal_sign: bool = True,
+        items_align_edge=mn.UP,
         **kwargs,
     ):
         super().__init__(
@@ -59,6 +60,7 @@ class RelativeTextValue(AlgoManimBase):
         self._weight = weight
         self._buff = buff
         self._equal_sign = equal_sign
+        self._items_align_edge = items_align_edge
 
         self.submobjects: List = []
         parts = [
@@ -72,7 +74,7 @@ class RelativeTextValue(AlgoManimBase):
             for name, value, color in self._vars
         ]
         self._text_mob = mn.VGroup(*parts).arrange(
-            mn.RIGHT, buff=self._buff, aligned_edge=mn.UP
+            mn.RIGHT, buff=self._buff, aligned_edge=self._items_align_edge
         )
 
         # move to the specified position
@@ -134,7 +136,7 @@ class RelativeText(AlgoManimBase):
         text: str,
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        vector: np.ndarray = mn.UP * 1.0,
+        vector: np.ndarray = mn.UP * 1.1,
         align_edge: Literal["up", "down", "left", "right"] | None = None,
         # --- font ---
         font="",
