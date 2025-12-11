@@ -22,7 +22,7 @@ class CodeBlock(AlgoManimBase):
         font_color_regular: Color for regular text.
         font_color_highlight: Color for highlighted text.
         bg_highlight_color: Background color for highlighted lines.
-        inter_block_buff: Buffer between pre-code and code blocks.
+        between_blocks_buff: Buffer between pre-code and code blocks.
         pre_code_buff: Buffer between pre-code lines.
         code_buff: Buffer between code lines.
         mob_center: Center object for positioning.
@@ -44,7 +44,7 @@ class CodeBlock(AlgoManimBase):
         font_color_regular: ManimColor | str = "WHITE",
         font_color_highlight: ManimColor | str = "YELLOW",
         # --- buffs ---
-        inter_block_buff=0.5,
+        between_blocks_buff=0.5,
         pre_code_buff=0.15,
         code_buff=0.05,
         # --- other ---
@@ -64,7 +64,7 @@ class CodeBlock(AlgoManimBase):
         self._font = font
         self._font_color_regular = font_color_regular
         self._font_color_highlight = font_color_highlight
-        self._inter_block_buff = inter_block_buff
+        self._between_blocks_buff = between_blocks_buff
         self._pre_code_buff = pre_code_buff
         self._code_buff = code_buff
         self._bg_highlight_color = bg_highlight_color
@@ -108,7 +108,7 @@ class CodeBlock(AlgoManimBase):
             ).arrange(
                 mn.DOWN,
                 aligned_edge=mn.LEFT,
-                buff=inter_block_buff,
+                buff=between_blocks_buff,
             )
         else:
             self._code_block_vgroup = code_vgroup

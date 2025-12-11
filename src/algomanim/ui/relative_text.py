@@ -102,6 +102,7 @@ class RelativeTextValue(AlgoManimBase):
             buff=self._buff,
             font=self._font,
             equal_sign=self._equal_sign,
+            items_align_edge=self._items_align_edge,
         )
 
         # move to position

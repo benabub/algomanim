@@ -255,6 +255,7 @@ class Array(RectangleCellsStructure):
 
                 elif val_set.issubset(
                     {
+                        "q",
                         "y",
                         "p",
                         "g",
