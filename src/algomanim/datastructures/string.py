@@ -28,6 +28,7 @@ class String(RectangleCellsStructure):
         top_buff: Top alignment buffer for quotes and accents.
         bottom_buff: Bottom alignment buffer for most characters.
         deep_bottom_buff: Deep bottom alignment for descending characters.
+        pointers: Whether to create and display pointers.
 
     Note:
         Character alignment is automatically handled based on typography:
@@ -61,6 +62,8 @@ class String(RectangleCellsStructure):
         top_buff=0.09,
         bottom_buff=0.16,
         deep_bottom_buff=0.05,
+        # ---- pointers ----
+        pointers: bool = True,
         # ---- kwargs ----
         **kwargs,
     ):
@@ -87,6 +90,7 @@ class String(RectangleCellsStructure):
 
         # create class instance fields
         self._data = string
+        self._pointers = pointers
 
         # cells params
         self._cell_params(
@@ -140,19 +144,22 @@ class String(RectangleCellsStructure):
         # move text mobjects in containers
         self._position_values_in_containers()
 
-        # pointers
-        self._pointers_top, self._pointers_bottom = self.create_pointers(
-            self._containers_mob
-        )
-
         # adds local objects as instance attributes
         self.add(
             self._all_cell_mob,
             self._values_mob,
             self._quotes_mob,
-            self._pointers_top,
-            self._pointers_bottom,
         )
+
+        # pointers
+        if self._pointers:
+            self._pointers_top, self._pointers_bottom = self.create_pointers(
+                self._containers_mob
+            )
+            self.add(
+                self._pointers_top,
+                self._pointers_bottom,
+            )
 
         self._coordinate_y = self.get_y()
 
@@ -332,6 +339,7 @@ class String(RectangleCellsStructure):
             container_color=self._container_color,
             fill_color=self._fill_color,
             bg_color=self._bg_color,
+            pointers=self._pointers,
         )
         new_group._coordinate_y = self._coordinate_y
 

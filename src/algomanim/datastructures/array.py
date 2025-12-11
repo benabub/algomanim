@@ -31,6 +31,7 @@ class Array(RectangleCellsStructure):
         top_buff: Top alignment buffer for specific characters.
         bottom_buff: Bottom alignment buffer for most characters.
         deep_bottom_buff: Deep bottom alignment for descending characters.
+        pointers: Whether to create and display pointers.
 
     Note:
         Character alignment is automatically handled based on typography:
@@ -63,6 +64,8 @@ class Array(RectangleCellsStructure):
         top_buff=0.09,
         bottom_buff=0.16,
         deep_bottom_buff=0.05,
+        # ---- pointers ----
+        pointers: bool = True,
         # ---- kwargs ----
         **kwargs,
     ):
@@ -89,6 +92,7 @@ class Array(RectangleCellsStructure):
 
         # create class instance fields
         self._data = arr.copy()
+        self._pointers = pointers
 
         self._cell_params(
             self._cell_params_auto,
@@ -120,18 +124,21 @@ class Array(RectangleCellsStructure):
         # move text mobjects in containers
         self._position_values_in_containers()
 
-        # pointers
-        self._pointers_top, self._pointers_bottom = self.create_pointers(
-            self._containers_mob
-        )
-
         # adds local objects as instance attributes
         self.add(
             self._containers_mob,
             self._values_mob,
-            self._pointers_top,
-            self._pointers_bottom,
         )
+
+        # pointers
+        if self._pointers:
+            self._pointers_top, self._pointers_bottom = self.create_pointers(
+                self._containers_mob
+            )
+            self.add(
+                self._pointers_top,
+                self._pointers_bottom,
+            )
 
     def _create_empty_array(self):
         """Create visualization for empty array.
@@ -315,6 +322,7 @@ class Array(RectangleCellsStructure):
             font=self._font,
             bg_color=self._bg_color,
             font_size=self._font_size,
+            pointers=self._pointers,
         )
         if left_aligned:
             new_group.align_to(self.get_left(), mn.LEFT)

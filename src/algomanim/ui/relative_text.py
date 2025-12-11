@@ -27,6 +27,7 @@ class RelativeTextValue(AlgoManimBase):
         weight (str): Font weight (NORMAL, BOLD, etc.).
         buff (float): Spacing between text elements.
         equal_sign (bool): Whether to use equals sign between name and value.
+        items_align_edge (np.ndarray): Alignment edge for text items within the group.
         **kwargs: Additional keyword arguments passed to parent class.
     """
 
@@ -44,7 +45,7 @@ class RelativeTextValue(AlgoManimBase):
         # --- other ---
         buff=0.5,
         equal_sign: bool = True,
-        items_align_edge=mn.UP,
+        items_align_edge: np.ndarray = mn.UP,
         **kwargs,
     ):
         super().__init__(

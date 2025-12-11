@@ -162,7 +162,10 @@ class ExampleArray(mn.Scene):
 
         # ============================
 
-        array = Array(arr)
+        array = Array(
+            arr,
+            # pointers=False,
+        )
         array.first_appear(self)
 
         array_20 = Array(
@@ -541,7 +544,10 @@ class ExampleString(mn.Scene):
 
         # ============================
 
-        string = String(s)
+        string = String(
+            s,
+            # pointers=False,
+        )
         string.first_appear(self)
 
         string_20 = String(
@@ -1071,6 +1077,7 @@ class ExampleLinkedlist(mn.Scene):
             cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
             direction=np.array([10, 2, 0]),
             vector=mn.LEFT * 5.85 + mn.DOWN * 2,
+            # pointers=False,
         )
 
         ll.highlight_containers([0, 2, 4])

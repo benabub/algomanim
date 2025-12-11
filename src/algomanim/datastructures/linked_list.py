@@ -25,6 +25,7 @@ class LinkedList(LinearContainerStructure):
         font (str): Font family for text elements.
         font_color (ManimColor | str): Color for text elements.
         weight (str): Font weight (NORMAL, BOLD, etc.).
+        pointers: Whether to create and display pointers.
         **kwargs: Additional keyword arguments passed to parent class.
     """
 
@@ -45,6 +46,8 @@ class LinkedList(LinearContainerStructure):
         font="",
         font_color: ManimColor | str = mn.BLACK,
         weight: str = "NORMAL",
+        # ---- pointers ----
+        pointers: bool = True,
         # ---- kwargs ----
         **kwargs,
     ):
@@ -63,9 +66,11 @@ class LinkedList(LinearContainerStructure):
             **kwargs,
         )
 
+        # create class instance fields
         self._data = self.linked_list_to_list(head)  # save head as list
         self._radius = radius
         self._direction = direction
+        self._pointers = pointers
 
         # empty value
         if not self._data:
@@ -79,9 +84,10 @@ class LinkedList(LinearContainerStructure):
         self._arrows_mob = self._create_and_pos_arrows_mob()
 
         # pointers
-        self._pointers_top, self._pointers_bottom = self.create_pointers(
-            self._containers_mob
-        )
+        if self._pointers:
+            self._pointers_top, self._pointers_bottom = self.create_pointers(
+                self._containers_mob
+            )
 
         # group all mobs
         self._frame_mob = self._create_frame_mob()
@@ -222,13 +228,18 @@ class LinkedList(LinearContainerStructure):
         Returns:
             mn.VGroup: Group containing containers, arrows, and pointers.
         """
-
-        return mn.VGroup(
-            self._containers_mob,
-            self._arrows_mob,
-            self._pointers_top,
-            self._pointers_bottom,
-        )
+        if self._pointers:
+            return mn.VGroup(
+                self._containers_mob,
+                self._arrows_mob,
+                self._pointers_top,
+                self._pointers_bottom,
+            )
+        else:
+            return mn.VGroup(
+                self._containers_mob,
+                self._arrows_mob,
+            )
 
     def _rotate_frame(self) -> None:
         """Rotate the entire linked list frame to match the specified direction."""
@@ -349,6 +360,7 @@ class LinkedList(LinearContainerStructure):
             mob_center=self._mob_center,
             align_edge=self._align_edge,
             vector=self._vector,
+            pointers=self._pointers,
         )
 
         # restore colors

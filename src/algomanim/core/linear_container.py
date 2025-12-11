@@ -111,9 +111,12 @@ class LinearContainerStructure(AlgoManimBase):
         self._data = new_value
         self._containers_mob = new_group._containers_mob
         self._values_mob = new_group._values_mob
+        self.submobjects = new_group.submobjects
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
         self._pointers_top = new_group._pointers_top
         self._pointers_bottom = new_group._pointers_bottom
-        self.submobjects = new_group.submobjects
 
     def _text_config(self):
         """Get text configuration dictionary.
@@ -304,6 +307,9 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- checks --------
 
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
         if not 1 <= len(idx_list) <= 3:
             raise ValueError("idx_list must contain between 1 and 3 indices")
 
@@ -385,6 +391,10 @@ class LinearContainerStructure(AlgoManimBase):
         """
 
         # ------- checks --------
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
