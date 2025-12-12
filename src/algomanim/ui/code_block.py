@@ -78,7 +78,7 @@ class CodeBlock(AlgoManimBase):
             )
             for line in self._code_lines
         ]
-        self._bg_rects: List[mn.Rectangle | None] = [None] * len(
+        self._bg_rects_code: List[mn.Rectangle | None] = [None] * len(
             self._code_lines
         )  # list to save links on all possible rectangles and to manage=delete them
 
@@ -98,6 +98,9 @@ class CodeBlock(AlgoManimBase):
                 )
                 for line in self._pre_code_lines
             ]
+            self._bg_rects_precode: List[mn.Rectangle | None] = [None] * len(
+                self._code_lines
+            )  # list to save links on all possible rectangles and to manage=delete them
             self._pre_code_vgroup = mn.VGroup(*self._pre_code_mobs).arrange(
                 mn.DOWN,
                 aligned_edge=mn.LEFT,
@@ -117,19 +120,25 @@ class CodeBlock(AlgoManimBase):
 
         self.add(self._code_block_vgroup)
 
-    def highlight_line(self, i: int):
-        """Highlights a single line of code with background and text color.
+    def _highlight_block(
+        self,
+        code_mobs_list: List[mn.Text],
+        rects_list: List[mn.Rectangle | None],
+        indices: tuple[int, ...],
+    ) -> None:
+        """Helper method to highlight lines in a code block.
 
         Args:
-            i: Index of the line to highlight.
+            code_mobs_list: List of text mobjects to highlight.
+            rects_list: List of background rectangles (parallel to code_mobs_list).
+            indices: Tuple of line indices to highlight.
         """
-
-        for k, mob in enumerate(self._code_mobs):
-            if k == i:
+        for k, mob in enumerate(code_mobs_list):
+            if k in indices:
                 # change font color
                 mob.set_color(self._font_color_highlight)
                 # create bg rectangle
-                if self._bg_rects[k] is None:
+                if rects_list[k] is None:
                     bg_rect = mn.Rectangle(
                         width=mob.width + 0.2,
                         height=mob.height + 0.1,
@@ -140,12 +149,69 @@ class CodeBlock(AlgoManimBase):
                     bg_rect.move_to(mob.get_center())
                     self.add(bg_rect)
                     bg_rect.z_index = -1  # send background to back
-                    self._bg_rects[k] = bg_rect
+                    rects_list[k] = bg_rect
             else:
                 # normal line: regular font color
                 mob.set_color(self._font_color_regular)
                 # remove rect
-                bg_rect = self._bg_rects[k]
+                bg_rect = rects_list[k]
                 if bg_rect:
                     self.remove(bg_rect)
-                    self._bg_rects[k] = None
+                    rects_list[k] = None
+
+    def _clear_block_highlights(
+        self,
+        code_mobs_list: List[mn.Text],
+        rects_list: List[mn.Rectangle | None],
+    ) -> None:
+        """Clear all highlights from a code block.
+
+        Args:
+            code_mobs_list: List of text mobjects in the block.
+            rects_list: List of background rectangles (parallel to code_mobs_list).
+        """
+
+        for k, mob in enumerate(code_mobs_list):
+            # normal line: regular font color
+            mob.set_color(self._font_color_regular)
+            # remove rect
+            bg_rect = rects_list[k]
+            if bg_rect:
+                self.remove(bg_rect)
+                rects_list[k] = None
+
+    def highlight(
+        self,
+        *code_indices: int,
+        precode_indices: tuple[int, ...] | None = None,
+    ):
+        """Highlights one or more lines with background and text color.
+
+        Args:
+            *i: Tuple of code line indices to highlight.
+            pre_code: Tuple of pre-code line indices to highlight, or None.
+        """
+
+        self._highlight_block(self._code_mobs, self._bg_rects_code, code_indices)
+
+        if hasattr(self, "_pre_code_mobs"):
+            if precode_indices is not None:
+                self._highlight_block(
+                    self._pre_code_mobs, self._bg_rects_precode, precode_indices
+                )
+            else:
+                self._clear_block_highlights(
+                    self._pre_code_mobs, self._bg_rects_precode
+                )
+
+    def highlight_line(self, i: int):
+        """Deprecated: use highlight_lines() instead"""
+
+        import warnings
+
+        warnings.warn(
+            "highlight_line() is deprecated, use highlight()",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.highlight(i)

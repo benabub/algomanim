@@ -1317,11 +1317,11 @@ class ExampleCodeblock(mn.Scene):
             self.wait(pause)
             return new_title
 
-        title = highlight_with_title(self, cb, title, 0, precode=(1,))
+        title = highlight_with_title(self, cb, title, 0)
         title = highlight_with_title(self, cb, title, 1)
         title = highlight_with_title(self, cb, title, 2)
-        title = highlight_with_title(self, cb, title, 3, 5, 7, precode=(1,), pause=3)
-        title = highlight_with_title(self, cb, title, 8, 9, 10, precode=(1,), pause=3)
+        title = highlight_with_title(self, cb, title, 3, 5, 7, pause=3)
+        title = highlight_with_title(self, cb, title, 8, 9, 10, pause=3)
         title = highlight_with_title(self, cb, title, precode=(0,))
         title = highlight_with_title(self, cb, title, precode=(1, 2))
         title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, precode=(0, 2))
