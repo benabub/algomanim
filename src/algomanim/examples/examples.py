@@ -76,7 +76,7 @@ class ExampleBubblesort(mn.Scene):
         )
         # Animation code_block
         code_block.first_appear(self)
-        code_block.highlight_line(0)
+        code_block.highlight(0)
 
         # ========== TOP TEXT ============
 
@@ -110,7 +110,7 @@ class ExampleBubblesort(mn.Scene):
         # ===== ALGORITHM CYCLE ==========
 
         for i in range(len(arr)):
-            code_block.highlight_line(0)
+            code_block.highlight(0)
             bubble -= 1
             array.pointers([i, j, k])
             array.highlight_containers([i, j, k])
@@ -118,7 +118,7 @@ class ExampleBubblesort(mn.Scene):
             self.wait(pause)
 
             for j in range(n - i - 1):
-                code_block.highlight_line(1)
+                code_block.highlight(1)
                 array.pointers([i, j, k])
                 array.highlight_containers([i, j, k])
                 array.pointers_on_value(bubble, color=mn.WHITE)
@@ -127,17 +127,17 @@ class ExampleBubblesort(mn.Scene):
                 self.wait(pause)
 
                 k = j + 1
-                code_block.highlight_line(2)
+                code_block.highlight(2)
                 array.pointers([i, j, k])
                 array.highlight_containers([i, j, k])
                 top_text.update_text(self)
                 self.wait(pause)
 
-                code_block.highlight_line(3)
+                code_block.highlight(3)
                 self.wait(pause)
                 if arr[j] > arr[k]:
                     arr[j], arr[k] = arr[k], arr[j]
-                    code_block.highlight_line(4)
+                    code_block.highlight(4)
                     array.update_value(self, arr, animate=False)
                     array.pointers_on_value(bubble, color=mn.WHITE)
                     array.pointers([i, j, k])
@@ -1233,6 +1233,99 @@ class ExampleLinkedlist(mn.Scene):
         ll.highlight_containers_with_value(0, color=mn.PINK)
         ll.pointers_on_value(0, color=mn.PINK)
         self.wait(1)
+
+        # ========== FINISH ==============
+
+        self.wait(pause)
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+
+
+class ExampleCodeblock(mn.Scene):
+    def construct(self):
+        self.camera.background_color = mn.DARK_GREY  # type: ignore
+        pause = 1
+
+        # ======== INPUTS ============
+
+        pre_code_lines = [
+            "This is pre_code_lines.",
+            "They have the same..",
+            "..functionality.",
+        ]
+
+        code_lines = [
+            "This is code_lines.",  # 0
+            "It is possible to highlight them",  # 1
+            "one by one,",  # 2
+            "or",  # 3
+            "│",  # 4
+            "several",  # 5
+            "│",  # 6
+            "at once.",  # 7
+            "When highlight(...) calls,",  # 8
+            "or calls without args,",  # 9
+            "the old highlight clears.",  # 10
+        ]
+
+        # ======== main mob ============
+
+        # Construction code_block
+        cb = CodeBlock(
+            code_lines,
+            pre_code_lines=pre_code_lines,
+            vector=mn.RIGHT * 3 + mn.DOWN * 0.5,
+            font_size=25,
+        )
+        # Animation code_block
+        cb.first_appear(self)
+
+        # ======== highlight line ============
+
+        title = RelativeText(
+            "highlight()",
+            vector=mn.UP * 3.2 + mn.LEFT * 5.0,
+            font_size=30,
+        )
+        title.first_appear(self)
+        self.wait(pause)
+
+        def highlight_with_title(
+            self: mn.Scene,
+            code_block: CodeBlock,
+            old_title: mn.Mobject,
+            *code_indices: int,
+            precode: tuple[int, ...] | None = None,
+            pause=2,
+        ):
+            code_block.highlight(*code_indices, precode_indices=precode)
+
+            left_point = old_title.get_left()
+            self.remove(old_title)
+
+            args_str = f"({', '.join(map(str, code_indices))}"
+            if precode:
+                args_str += f", precode_indices={precode}"
+            args_str += ")"
+
+            new_title = RelativeText(
+                f"highlight{args_str}",
+                font_size=30,
+            )
+            vector = left_point - new_title.get_left()
+            new_title.shift(vector)
+            new_title.appear(self)
+            self.wait(pause)
+            return new_title
+
+        title = highlight_with_title(self, cb, title, 0, precode=(1,))
+        title = highlight_with_title(self, cb, title, 1)
+        title = highlight_with_title(self, cb, title, 2)
+        title = highlight_with_title(self, cb, title, 3, 5, 7, precode=(1,), pause=3)
+        title = highlight_with_title(self, cb, title, 8, 9, 10, precode=(1,), pause=3)
+        title = highlight_with_title(self, cb, title, precode=(0,))
+        title = highlight_with_title(self, cb, title, precode=(1, 2))
+        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, precode=(0, 2))
+        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, precode=(1,))
 
         # ========== FINISH ==============
 
