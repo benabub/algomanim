@@ -62,6 +62,7 @@ class RelativeTextValue(AlgoManimBase):
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
+        self._align_edge = align_edge
 
         self.submobjects: List = []
         parts = [
@@ -92,10 +93,6 @@ class RelativeTextValue(AlgoManimBase):
             animate: Whether to animate the update.
         """
 
-        # save position
-        old_left_edge = self.get_left()
-        old_y = self.get_y()
-
         # create a new object with the same parameters
         new_group = RelativeTextValue(
             *self._vars,
@@ -106,9 +103,7 @@ class RelativeTextValue(AlgoManimBase):
             items_align_edge=self._items_align_edge,
         )
 
-        # move to position
-        new_group.align_to(old_left_edge, mn.LEFT)
-        new_group.set_y(old_y)
+        self._position_mob_to_self(new_group, self._align_edge)
 
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=time)

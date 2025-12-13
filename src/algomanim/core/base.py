@@ -115,3 +115,23 @@ class AlgoManimBase(mn.VGroup):
 
         shift_vector = target_point - mobject_point
         mobject_to_move.shift(shift_vector)
+
+    def _position_mob_to_self(
+        self: mn.Mobject,
+        new_group: mn.Mobject,
+        align_edge: Literal["up", "down", "left", "right"] | None = None,
+    ):
+        if align_edge == "left":
+            new_group.align_to(self.get_left(), mn.LEFT)
+            new_group.set_y(self.get_y())
+        elif align_edge == "right":
+            new_group.align_to(self.get_right(), mn.RIGHT)
+            new_group.set_y(self.get_y())
+        elif align_edge == "up":
+            new_group.align_to(self.get_top(), mn.UP)
+            new_group.set_x(self.get_x())
+        elif align_edge == "down":
+            new_group.align_to(self.get_bottom(), mn.DOWN)
+            new_group.set_x(self.get_x())
+        else:
+            new_group.move_to(self.get_center())
