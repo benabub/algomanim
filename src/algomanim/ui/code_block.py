@@ -48,7 +48,7 @@ class CodeBlock(AlgoManimBase):
         pre_code_buff=0.15,
         code_buff=0.05,
         # --- other ---
-        bg_highlight_color: ManimColor | str = "BLUE",
+        bg_highlight_color: ManimColor | str = mn.BLACK,
         **kwargs,
     ):
         super().__init__(
@@ -143,7 +143,7 @@ class CodeBlock(AlgoManimBase):
                         width=mob.width + 0.2,
                         height=mob.height + 0.1,
                         fill_color=self._bg_highlight_color,
-                        fill_opacity=0.3,
+                        fill_opacity=1,
                         stroke_width=0,
                     )
                     bg_rect.move_to(mob.get_center())
