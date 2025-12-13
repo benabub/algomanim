@@ -422,7 +422,7 @@ class LinearContainerStructure(AlgoManimBase):
         # ------- apply --------
         self._apply_pointers_colors(pos)
 
-    def highlight_containers(
+    def highlight_containers_1to3(
         self,
         idx_list: list[int],
         color_1: ManimColor | str | None = None,
@@ -521,6 +521,66 @@ class LinearContainerStructure(AlgoManimBase):
         if not self._data:
             return
 
+        self._apply_containers_colors()
+
+    def highlight_containers(
+        self,
+        idx_list: list[int],
+        color_1: ManimColor | str | None = None,
+        color_2: ManimColor | str | None = None,
+        color_3: ManimColor | str | None = None,
+        color_123: ManimColor | str | None = None,
+        color_12: ManimColor | str | None = None,
+        color_13: ManimColor | str | None = None,
+        color_23: ManimColor | str | None = None,
+    ):
+        """Deprecated: use highlight_containers_1to3() instead"""
+
+        import warnings
+
+        warnings.warn(
+            "highlight_containers() is deprecated, use highlight_containers_1to3()",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.highlight_containers_1to3(
+            idx_list,
+            color_1,
+            color_2,
+            color_3,
+            color_123,
+            color_12,
+            color_13,
+            color_23,
+        )
+
+    def highlight_containers_monocolor(
+        self,
+        idx_list: list[int],
+        color: ManimColor | str = mn.RED,
+    ):
+        """Highlight multiple cells with a single color.
+
+        Unlike highlight_containers_1to3(), this method can highlight any number
+        of indices using the same color for all specified cells.
+
+        Args:
+            idx_list: List of indices to highlight (any number of elements).
+            color: Color to apply to all highlighted cells. Default is RED.
+        """
+        # ------- checks --------
+        if not self._data:
+            return
+
+        # ------- clear colors dict --------
+        self._containers_colors = {}
+
+        # ------- fill store --------
+        for idx in range(len(self._data)):
+            if idx in idx_list:
+                self._containers_colors[idx] = color
+
+        # ------- apply --------
         self._apply_containers_colors()
 
     def highlight_containers_with_value(
