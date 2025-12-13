@@ -327,6 +327,8 @@ class Array(RectangleCellsStructure):
         if left_aligned:
             new_group.align_to(self.get_left(), mn.LEFT)
             new_group.set_y(self.get_y())
+        else:
+            new_group.move_to(self._mob_center.get_center() + self._vector)
 
         # restore colors
         self._preserve_highlights_states(new_group, highlight_status)
