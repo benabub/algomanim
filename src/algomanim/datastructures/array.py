@@ -93,6 +93,7 @@ class Array(RectangleCellsStructure):
         # create class instance fields
         self._data = arr.copy()
         self._pointers = pointers
+        self._color_containers_with_value = mn.RED
 
         self._cell_params(
             self._cell_params_auto,

@@ -91,6 +91,7 @@ class String(RectangleCellsStructure):
         # create class instance fields
         self._data = string
         self._pointers = pointers
+        self._color_containers_with_value = mn.RED
 
         # cells params
         self._cell_params(

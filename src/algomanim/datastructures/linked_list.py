@@ -71,6 +71,7 @@ class LinkedList(LinearContainerStructure):
         self._radius = radius
         self._direction = direction
         self._pointers = pointers
+        self._color_containers_with_value = mn.RED
 
         # empty value
         if not self._data:
