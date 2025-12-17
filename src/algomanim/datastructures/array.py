@@ -287,7 +287,7 @@ class Array(RectangleCellsStructure):
         self,
         scene: mn.Scene,
         new_value: List[int],
-        animate: bool = False,
+        animate: bool = True,
         left_aligned=True,
         run_time: float = 0.2,
     ) -> None:
