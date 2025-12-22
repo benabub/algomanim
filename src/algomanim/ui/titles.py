@@ -7,6 +7,7 @@ from manim import ManimColor
 from algomanim.core.base import AlgoManimBase
 
 
+# TODO: underline logo
 class TitleText(AlgoManimBase):
     """Title group with optional decorative flourish and undercaption.
 

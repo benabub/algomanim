@@ -180,6 +180,25 @@ class CodeBlock(AlgoManimBase):
                 self.remove(bg_rect)
                 rects_list[k] = None
 
+    @staticmethod
+    def format_code_lines(code: str) -> list[str]:
+        """Format code string into indented lines with tree markers.
+
+        Args:
+            code: Multiline code string.
+
+        Returns:
+            list[str]: Lines formatted with '│   ' prefixes
+              for indentation levels.
+        """
+        lines = code.strip().split("\n")
+        res = []
+        for line in lines:
+            indent = len(line) - len(line.lstrip())
+            prefix = "│   " * (indent // 4)
+            res.append(prefix + line.lstrip())
+        return res
+
     def highlight(
         self,
         *code_indices: int,
