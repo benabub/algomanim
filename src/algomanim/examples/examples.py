@@ -154,13 +154,11 @@ class ExampleBubblesort(mn.Scene):
 class ExampleArray(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
+        # ============================
+
         pause = 0.5
 
-        # ======== INPUTS ============
-
         arr = [0, "\"'`^", "ace", "ygpj", "ABC", ":*#", "."]
-
-        # ============================
 
         array = Array(
             arr,
@@ -297,13 +295,113 @@ class ExampleArray(mn.Scene):
         self.wait(1)
 
         self.remove(
+            array,
             array_20,
             array_30,
             array_40,
             array_50,
         )
+        # ============================
+
+        pause = 1
+        arr = list("arr")
+
+        center = Array(list("mob_center"), font_size=40)
+        center.first_appear(self)
+
+        top_text = RelativeText(
+            "mob_center=mob_center\nvector=mn.UP * 1",
+            vector=mn.DOWN * 2 + mn.RIGHT * 0,
+        )
+        array = Array(arr, mob_center=center, vector=mn.UP * 2)
+        array.group_appear(self, top_text)
+        self.wait(pause)
+
+        self.remove(array, top_text)
+
+        top_text = RelativeText(
+            "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 1",
+            vector=mn.DOWN * 2 + mn.RIGHT * 0,
+        )
+        array = Array(arr, mob_center=center, align_left=center, vector=mn.UP * 2)
+        array.group_appear(self, top_text)
+        self.wait(pause)
+
+        self.remove(array, top_text)
+
+        top_text = RelativeText(
+            "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 1",
+            vector=mn.DOWN * 2 + mn.RIGHT * 0,
+        )
+        array = Array(arr, mob_center=center, align_right=center, vector=mn.UP * 2)
+        array.group_appear(self, top_text)
+        self.wait(pause)
+
+        self.clear()
+
+        one = Array(list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
+        two = Array(list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
+        one.group_appear(self, two)
+        self.wait(pause)
+
+        # -----------------------
+
+        top_text = RelativeText(
+            "align_left=one\nalign_bottom=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        array = Array(arr, align_left=one, align_bottom=two)
+        array.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(array, top_text)
+
+        top_text = RelativeText(
+            "align_left=one\nalign_top=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        array = Array(arr, align_left=one, align_top=two)
+        array.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(array, top_text)
+
+        top_text = RelativeText(
+            "align_right=one\nalign_top=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        array = Array(arr, align_right=one, align_top=two)
+        array.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(array, top_text)
+
+        top_text = RelativeText(
+            "align_right=one\nalign_bottom=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        array = Array(arr, align_right=one, align_bottom=two)
+        array.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(array, top_text)
+
+        top_text = RelativeText(
+            "align_left=one\nalign_bottom=two\nvector=mn.UP * 1 + mn.RIGHT * 1",
+            vector=mn.UP * 0.7 + mn.RIGHT * 2,
+        )
+        array = Array(
+            arr,
+            align_left=one,
+            align_bottom=two,
+            vector=mn.UP * 1 + mn.RIGHT * 1,
+        )
+        array.group_appear(self, top_text)
+        self.wait(pause)
+        self.clear()
 
         # ============================
+
+        pause = 0.5
+
+        array = Array([1, 12, 123, 1234, 12345, 123456])
+        array.first_appear(self)
 
         top_text = RelativeText(
             "update_value()",
@@ -311,7 +409,6 @@ class ExampleArray(mn.Scene):
         )
         top_text.first_appear(self)
 
-        array.update_value(self, [1, 12, 123, 1234, 12345, 123456], left_aligned=False)
         array.pointers([0, 1, 2])
         array.highlight_containers_1to3([0, 1, 2])
         self.wait(1)
@@ -360,7 +457,7 @@ class ExampleArray(mn.Scene):
         # ============================
 
         top_text = RelativeText(
-            "pointers()   highlight_containers()",
+            "pointers()   highlight_containers_1to3()",
             vector=mn.UP * 2,
         )
         top_text.first_appear(self)
@@ -404,13 +501,33 @@ class ExampleArray(mn.Scene):
         # ============================
 
         top_text = RelativeText(
+            "highlight_containers_monocolor()",
+            vector=mn.UP * 2,
+        )
+        top_text.first_appear(self)
+
+        array.update_value(self, [1, 2, 3, 4, 5, 6, 7, 8, 9], left_aligned=False)
+        self.wait(pause)
+        array.highlight_containers_monocolor([0, 2, 4, 6, 8])
+        self.wait(pause)
+        array.highlight_containers_monocolor([0, 1, 2, 3, 4])
+        self.wait(pause)
+        array.highlight_containers_monocolor([5, 6, 7, 8])
+        self.wait(pause)
+        self.remove(top_text)
+        array.clear_containers_highlights()
+
+        # ============================
+
+        array.update_value(self, [10, 2, 3000, 2, 100, 1, 40], left_aligned=False)
+        self.wait(1)
+
+        top_text = RelativeText(
             "highlight_containers_with_value()   pointers_on_value()",
             vector=mn.UP * 2,
         )
         top_text.first_appear(self)
 
-        array.update_value(self, [10, 2, 3000, 2, 100, 1, 40], left_aligned=False)
-        self.wait(1)
         array.highlight_containers_with_value(0)
         array.pointers_on_value(0)
         self.wait(pause)

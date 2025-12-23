@@ -22,8 +22,8 @@ class Array(RectangleCellsStructure):
         mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
         align_right: Reference mobject to align right edge with.
-        align_up: Reference mobject to align top edge with.
-        align_down: Reference mobject to align bottom edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
         container_color: Border color for cells.
         bg_color: Background color for cells and default pointer color.
         fill_color: Fill color for cells.
@@ -51,8 +51,8 @@ class Array(RectangleCellsStructure):
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
-        align_up: mn.Mobject | None = None,
-        align_down: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
         # ---- font ----
         font="",
         font_size=35,
@@ -80,8 +80,8 @@ class Array(RectangleCellsStructure):
             mob_center=mob_center,
             align_left=align_left,
             align_right=align_right,
-            align_up=align_up,
-            align_down=align_down,
+            align_top=align_top,
+            align_bottom=align_bottom,
             font=font,
             font_size=font_size,
             font_color=font_color,

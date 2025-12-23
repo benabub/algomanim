@@ -25,8 +25,8 @@ class AlgoManimBase(mn.VGroup):
         mob_center (mn.Mobject): Reference mobject for positioning.
         align_left (mn.Mobject | None): Reference mobject to align left edge with.
         align_right (mn.Mobject | None): Reference mobject to align right edge with.
-        align_up (mn.Mobject | None): Reference mobject to align top edge with.
-        align_down (mn.Mobject | None): Reference mobject to align bottom edge with.
+        align_top (mn.Mobject | None): Reference mobject to align top edge with.
+        align_bottom (mn.Mobject | None): Reference mobject to align bottom edge with.
         **kwargs: Additional keyword arguments passed to VGroup.
 
     Raises:
@@ -41,14 +41,14 @@ class AlgoManimBase(mn.VGroup):
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
-        align_up: mn.Mobject | None = None,
-        align_down: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
         **kwargs,
     ):
         # ------ checks -------
         if align_left and align_right:
             raise ValueError("Cannot use align_left and align_right together")
-        if align_up and align_down:
+        if align_top and align_bottom:
             raise ValueError("Cannot use align_up and align_down together")
 
         if type(self) is AlgoManimBase:
@@ -62,8 +62,8 @@ class AlgoManimBase(mn.VGroup):
         self._mob_center = mob_center
         self._align_left = align_left
         self._align_right = align_right
-        self._align_up = align_up
-        self._align_down = align_down
+        self._align_top = align_top
+        self._align_bottom = align_bottom
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         """Animate the initial appearance in scene.
@@ -110,28 +110,40 @@ class AlgoManimBase(mn.VGroup):
         method if available, otherwise uses its center.
         """
 
-        if hasattr(self._mob_center, "_get_positioning"):
-            mob_center = self._mob_center._get_positioning()
+        if hasattr(self._mob_center, "_get_position"):
+            mob_center = self._mob_center._get_position()
         else:
             mob_center = self._mob_center
 
         self.move_to(mob_center)
 
         if self._align_left:
-            shift_vector = self._align_left.get_left() - self.get_left()
-            self.shift(shift_vector)
+            align_mob = self._align_left
+            if hasattr(align_mob, "_get_position"):
+                align_mob = align_mob._get_position()
+            shift_x = align_mob.get_left()[0] - self.get_left()[0]
+            self.shift(mn.RIGHT * shift_x)
 
         if self._align_right:
-            shift_vector = self._align_right.get_right() - self.get_right()
-            self.shift(shift_vector)
+            align_mob = self._align_right
+            if hasattr(align_mob, "_get_position"):
+                align_mob = align_mob._get_position()
+            shift_x = align_mob.get_right()[0] - self.get_right()[0]
+            self.shift(mn.RIGHT * shift_x)
 
-        if self._align_up:
-            shift_vector = self._align_up.get_up() - self.get_up()
-            self.shift(shift_vector)
+        if self._align_top:
+            align_mob = self._align_top
+            if hasattr(align_mob, "_get_position"):
+                align_mob = align_mob._get_position()
+            shift_y = align_mob.get_top()[1] - self.get_top()[1]
+            self.shift(mn.UP * shift_y)
 
-        if self._align_down:
-            shift_vector = self._align_down.get_down() - self.get_down()
-            self.shift(shift_vector)
+        if self._align_bottom:
+            align_mob = self._align_bottom
+            if hasattr(align_mob, "_get_position"):
+                align_mob = align_mob._get_position()
+            shift_y = align_mob.get_bottom()[1] - self.get_bottom()[1]
+            self.shift(mn.UP * shift_y)
 
         self.shift(self._vector)
 

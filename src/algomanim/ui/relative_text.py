@@ -120,7 +120,10 @@ class RelativeText(AlgoManimBase):
         text (str): The text string to visualize.
         mob_center (mn.Mobject): Reference mobject for positioning.
         vector (np.ndarray): Offset vector from reference mobject center.
-        # align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
         font (str): Text font family.
         font_size (float): Text font size.
         font_color (str | ManimColor): Text color.
@@ -137,8 +140,8 @@ class RelativeText(AlgoManimBase):
         # align_edge: Literal["up", "down", "left", "right"] | None = None,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
-        align_up: mn.Mobject | None = None,
-        align_down: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
         # --- font ---
         font="",
         font_size=35,
@@ -149,11 +152,10 @@ class RelativeText(AlgoManimBase):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            # align_edge=align_edge,
             align_left=align_left,
             align_right=align_right,
-            align_up=align_up,
-            align_down=align_down,
+            align_top=align_top,
+            align_bottom=align_bottom,
             **kwargs,
         )
 
