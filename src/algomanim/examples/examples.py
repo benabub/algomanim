@@ -214,36 +214,36 @@ class ExampleArray(mn.Scene):
         array_20 = Array(
             arr,
             mob_center=array,
+            align_left=array,
             vector=mn.UP * 2.8,
             font_size=20,
-            align_edge="left",
         )
         array_20.first_appear(self, time=0.1)
 
         array_30 = Array(
             arr,
             mob_center=array,
+            align_left=array,
             vector=mn.UP * 1.4,
             font_size=30,
-            align_edge="left",
         )
         array_30.first_appear(self, time=0.1)
 
         array_40 = Array(
             arr,
             mob_center=array,
+            align_left=array,
             vector=mn.DOWN * 1.5,
             font_size=40,
-            align_edge="left",
         )
         array_40.first_appear(self, time=0.1)
 
         array_50 = Array(
             arr,
             mob_center=array,
+            align_left=array,
             vector=mn.DOWN * 3.0,
             font_size=50,
-            align_edge="left",
         )
         array_50.first_appear(self, time=0.1)
 
@@ -261,36 +261,36 @@ class ExampleArray(mn.Scene):
         array_20 = Array(
             arr,
             mob_center=array,
+            align_right=array,
             vector=mn.UP * 2.8,
             font_size=20,
-            align_edge="right",
         )
         array_20.first_appear(self, time=0.1)
 
         array_30 = Array(
             arr,
             mob_center=array,
+            align_right=array,
             vector=mn.UP * 1.4,
             font_size=30,
-            align_edge="right",
         )
         array_30.first_appear(self, time=0.1)
 
         array_40 = Array(
             arr,
             mob_center=array,
+            align_right=array,
             vector=mn.DOWN * 1.5,
             font_size=40,
-            align_edge="right",
         )
         array_40.first_appear(self, time=0.1)
 
         array_50 = Array(
             arr,
             mob_center=array,
+            align_right=array,
             vector=mn.DOWN * 3.0,
             font_size=50,
-            align_edge="right",
         )
         array_50.first_appear(self, time=0.1)
 

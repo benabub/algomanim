@@ -21,7 +21,7 @@ class RelativeTextValue(AlgoManimBase):
             Tuples of (name, value_getter, color).
         mob_center (mn.Mobject): Reference mobject for positioning.
         vector (np.ndarray): Offset vector from reference mobject center.
-        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        # align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
         font (str): Text font family.
         font_size (float): Text font size.
         weight (str): Font weight (NORMAL, BOLD, etc.).
@@ -120,7 +120,7 @@ class RelativeText(AlgoManimBase):
         text (str): The text string to visualize.
         mob_center (mn.Mobject): Reference mobject for positioning.
         vector (np.ndarray): Offset vector from reference mobject center.
-        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        # align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
         font (str): Text font family.
         font_size (float): Text font size.
         font_color (str | ManimColor): Text color.
@@ -134,7 +134,11 @@ class RelativeText(AlgoManimBase):
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.UP * 1.1,
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # align_edge: Literal["up", "down", "left", "right"] | None = None,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_up: mn.Mobject | None = None,
+        align_down: mn.Mobject | None = None,
         # --- font ---
         font="",
         font_size=35,
@@ -145,7 +149,11 @@ class RelativeText(AlgoManimBase):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            align_edge=align_edge,
+            # align_edge=align_edge,
+            align_left=align_left,
+            align_right=align_right,
+            align_up=align_up,
+            align_down=align_down,
             **kwargs,
         )
 
@@ -163,7 +171,7 @@ class RelativeText(AlgoManimBase):
             weight=self._weight,
         )
 
-        # construction: Move VGroup to the specified position
-        self._position(self._text_mob, self._text_mob)
+        # self._position(self._text_mob, self._text_mob)
 
         self.add(self._text_mob)
+        self._position()

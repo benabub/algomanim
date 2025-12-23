@@ -23,25 +23,47 @@ class AlgoManimBase(mn.VGroup):
     Args:
         vector (np.ndarray): Position offset from mob_center.
         mob_center (mn.Mobject): Reference mobject for positioning.
-        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        align_left (mn.Mobject | None): Reference mobject to align left edge with.
+        align_right (mn.Mobject | None): Reference mobject to align right edge with.
+        align_up (mn.Mobject | None): Reference mobject to align top edge with.
+        align_down (mn.Mobject | None): Reference mobject to align bottom edge with.
         **kwargs: Additional keyword arguments passed to VGroup.
+
+    Raises:
+        ValueError: If both align_left and align_right are provided,
+                   or both align_up and align_down are provided.
+        NotImplementedError: If instantiated directly.
     """
 
     def __init__(
         self,
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_up: mn.Mobject | None = None,
+        align_down: mn.Mobject | None = None,
         **kwargs,
     ):
+        # ------ checks -------
+        if align_left and align_right:
+            raise ValueError("Cannot use align_left and align_right together")
+        if align_up and align_down:
+            raise ValueError("Cannot use align_up and align_down together")
+
         if type(self) is AlgoManimBase:
             raise NotImplementedError(
                 "AlgoManimBase is base class only, cannot be instantiated directly."
             )
+
+        # ------ inition -------
         super().__init__(**kwargs)
         self._vector = vector
         self._mob_center = mob_center
-        self._align_edge: Literal["up", "down", "left", "right"] | None = align_edge
+        self._align_left = align_left
+        self._align_right = align_right
+        self._align_up = align_up
+        self._align_down = align_down
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         """Animate the initial appearance in scene.
@@ -76,45 +98,42 @@ class AlgoManimBase(mn.VGroup):
 
     def _position(
         self,
-        mobject_to_move: mn.Mobject,
-        align_point: mn.Mobject,
     ) -> None:
-        """Position mobject relative to center with optional edge alignment.
+        """Position the object relative to reference mobject with optional edge alignment.
 
-        Args:
-            mobject_to_move (mn.Mobject): The object to position.
-            align_point (mn.Mobject): Reference point object for alignment.
+        Positioning is performed in this order:
+        1. Move to mob_center's positioning point
+        2. Apply edge alignments if specified
+        3. Apply vector offset
+
+        The positioning point of mob_center is obtained via its `_get_positioning()`
+        method if available, otherwise uses its center.
         """
-
-        align_edge = self._align_edge.lower() if self._align_edge else None
 
         if hasattr(self._mob_center, "_get_positioning"):
             mob_center = self._mob_center._get_positioning()
         else:
             mob_center = self._mob_center
 
-        mobject_point = align_point.get_center()
-        target_point = mob_center.get_center() + self._vector
+        self.move_to(mob_center)
 
-        if align_edge:
-            if align_edge == "left":
-                mobject_point = align_point.get_left()
-                target_point = mob_center.get_left() + self._vector
+        if self._align_left:
+            shift_vector = self._align_left.get_left() - self.get_left()
+            self.shift(shift_vector)
 
-            elif align_edge == "right":
-                mobject_point = align_point.get_right()
-                target_point = mob_center.get_right() + self._vector
+        if self._align_right:
+            shift_vector = self._align_right.get_right() - self.get_right()
+            self.shift(shift_vector)
 
-            elif align_edge == "up":
-                mobject_point = align_point.get_top()
-                target_point = mob_center.get_top() + self._vector
+        if self._align_up:
+            shift_vector = self._align_up.get_up() - self.get_up()
+            self.shift(shift_vector)
 
-            elif align_edge == "down":
-                mobject_point = align_point.get_bottom()
-                target_point = mob_center.get_bottom() + self._vector
+        if self._align_down:
+            shift_vector = self._align_down.get_down() - self.get_down()
+            self.shift(shift_vector)
 
-        shift_vector = target_point - mobject_point
-        mobject_to_move.shift(shift_vector)
+        self.shift(self._vector)
 
     def _position_mob_to_self(
         self: mn.Mobject,

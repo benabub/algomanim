@@ -1,6 +1,5 @@
 from typing import (
     List,
-    Literal,
 )
 
 import numpy as np
@@ -21,7 +20,10 @@ class Array(RectangleCellsStructure):
         font_color: Color for text elements.
         weight: Font weight (NORMAL, BOLD, etc.).
         mob_center: Reference mobject for positioning.
-        align_edge: Edge alignment relative to mob_center.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_up: Reference mobject to align top edge with.
+        align_down: Reference mobject to align bottom edge with.
         container_color: Border color for cells.
         bg_color: Background color for cells and default pointer color.
         fill_color: Fill color for cells.
@@ -47,7 +49,10 @@ class Array(RectangleCellsStructure):
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_up: mn.Mobject | None = None,
+        align_down: mn.Mobject | None = None,
         # ---- font ----
         font="",
         font_size=35,
@@ -73,7 +78,10 @@ class Array(RectangleCellsStructure):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            align_edge=align_edge,
+            align_left=align_left,
+            align_right=align_right,
+            align_up=align_up,
+            align_down=align_down,
             font=font,
             font_size=font_size,
             font_color=font_color,
@@ -119,15 +127,13 @@ class Array(RectangleCellsStructure):
         # arrange cells in a row
         self._containers_mob.arrange(mn.RIGHT, buff=0.1)
 
-        # move VGroup to the specified position
-        self._position(self._containers_mob, self._containers_mob)
+        self.add(self._containers_mob)
+        self._position()
 
         # move text mobjects in containers
         self._position_values_in_containers()
 
-        # adds local objects as instance attributes
         self.add(
-            self._containers_mob,
             self._values_mob,
         )
 
@@ -163,7 +169,8 @@ class Array(RectangleCellsStructure):
             fill_color=self._fill_color,
             fill_opacity=1.0,
         )
-        self._position(containers_mob, containers_mob)
+        # self._position(containers_mob, containers_mob)
+        self._position()
         empty_value_mob.move_to(containers_mob.get_center())
         empty_value_mob.align_to(containers_mob, mn.DOWN)
         empty_value_mob.align_to(containers_mob, mn.LEFT)
