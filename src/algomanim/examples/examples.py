@@ -664,14 +664,12 @@ class ExampleArray(mn.Scene):
 class ExampleString(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
-        pause = 0.5
-
-        # ======== INPUTS ============
-
-        s = "0agA-/*&.^`~"
 
         # ============================
 
+        pause = 0.5
+
+        s = "0agA-/*&.^`~"
         string = String(
             s,
             # pointers=False,
@@ -726,7 +724,7 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.UP * 2.8,
             font_size=25,
-            align_edge="left",
+            align_left=string,
         )
         string_20.first_appear(self, time=0.1)
 
@@ -735,7 +733,7 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.UP * 1.4,
             font_size=30,
-            align_edge="left",
+            align_left=string,
         )
         string_25.first_appear(self, time=0.1)
 
@@ -744,7 +742,7 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.DOWN * 1.5,
             font_size=37,
-            align_edge="left",
+            align_left=string,
         )
         string_35.first_appear(self, time=0.1)
 
@@ -753,7 +751,7 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.DOWN * 3.0,
             font_size=40,
-            align_edge="left",
+            align_left=string,
         )
         string_40.first_appear(self, time=0.1)
 
@@ -773,7 +771,7 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.UP * 2.8,
             font_size=25,
-            align_edge="right",
+            align_right=string,
         )
         string_20.first_appear(self, time=0.1)
 
@@ -782,7 +780,7 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.UP * 1.4,
             font_size=30,
-            align_edge="right",
+            align_right=string,
         )
         string_25.first_appear(self, time=0.1)
 
@@ -791,7 +789,7 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.DOWN * 1.5,
             font_size=37,
-            align_edge="right",
+            align_right=string,
         )
         string_35.first_appear(self, time=0.1)
 
@@ -800,13 +798,14 @@ class ExampleString(mn.Scene):
             mob_center=string,
             vector=mn.DOWN * 3.0,
             font_size=40,
-            align_edge="right",
+            align_right=string,
         )
         string_40.first_appear(self, time=0.1)
 
         self.wait(1)
 
         self.remove(
+            string,
             string_20,
             string_25,
             string_35,
@@ -815,7 +814,104 @@ class ExampleString(mn.Scene):
 
         # ============================
 
-        string.update_value(self, "follow the rabbit", left_aligned=False)
+        pause = 1
+        string = "str"
+
+        center = String("mob_center", font_size=40)
+        center.first_appear(self)
+
+        top_text = RelativeText(
+            "mob_center=mob_center\nvector=mn.UP * 1",
+            vector=mn.DOWN * 2 + mn.RIGHT * 0,
+        )
+        s = String(string, mob_center=center, vector=mn.UP * 2)
+        s.group_appear(self, top_text)
+        self.wait(pause)
+
+        self.remove(s, top_text)
+
+        top_text = RelativeText(
+            "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 1",
+            vector=mn.DOWN * 2 + mn.RIGHT * 0,
+        )
+        s = String(string, mob_center=center, align_left=center, vector=mn.UP * 2)
+        s.group_appear(self, top_text)
+        self.wait(pause)
+
+        self.remove(s, top_text)
+
+        top_text = RelativeText(
+            "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 1",
+            vector=mn.DOWN * 2 + mn.RIGHT * 0,
+        )
+        s = String(string, mob_center=center, align_right=center, vector=mn.UP * 2)
+        s.group_appear(self, top_text)
+        self.wait(pause)
+
+        self.clear()
+
+        one = String("one", font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
+        two = String("two", font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
+        one.group_appear(self, two)
+        self.wait(pause)
+
+        # -----------------------
+
+        top_text = RelativeText(
+            "align_left=one\nalign_bottom=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        s = String(string, align_left=one, align_bottom=two)
+        s.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(s, top_text)
+
+        top_text = RelativeText(
+            "align_left=one\nalign_top=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        s = String(string, align_left=one, align_top=two)
+        s.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(s, top_text)
+
+        top_text = RelativeText(
+            "align_right=one\nalign_top=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        s = String(string, align_right=one, align_top=two)
+        s.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(s, top_text)
+
+        top_text = RelativeText(
+            "align_right=one\nalign_bottom=two",
+            vector=mn.UP * 1 + mn.RIGHT * 2,
+        )
+        s = String(string, align_right=one, align_bottom=two)
+        s.group_appear(self, top_text)
+        self.wait(pause)
+        self.remove(s, top_text)
+
+        top_text = RelativeText(
+            "align_left=one\nalign_bottom=two\nvector=mn.UP * 1 + mn.RIGHT * 1",
+            vector=mn.UP * 0.7 + mn.RIGHT * 2,
+        )
+        s = String(
+            string,
+            align_left=one,
+            align_bottom=two,
+            vector=mn.UP * 1 + mn.RIGHT * 1,
+        )
+        s.group_appear(self, top_text)
+        self.wait(pause)
+        self.clear()
+
+        # ============================
+
+        pause = 0.5
+        string = String("follow the rabbit")
+        string.first_appear(self)
 
         top_text = RelativeText(
             "update_value()",

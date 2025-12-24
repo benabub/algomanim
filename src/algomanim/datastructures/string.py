@@ -1,5 +1,3 @@
-from typing import Literal
-
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -18,7 +16,10 @@ class String(RectangleCellsStructure):
         weight: Font weight (NORMAL, BOLD, etc.).
         font_color: Color for text elements.
         mob_center: Reference mobject for positioning.
-        align_edge: Edge alignment relative to mob_center.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
         container_color: Border color for cells.
         fill_color: Fill color for character cells.
         bg_color: Background color for quote cells and default pointer color.
@@ -45,7 +46,10 @@ class String(RectangleCellsStructure):
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
         # ---- font ----
         font="",
         font_size=35,
@@ -71,7 +75,10 @@ class String(RectangleCellsStructure):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            align_edge=align_edge,
+            align_left=align_left,
+            align_right=align_right,
+            align_top=align_top,
+            align_bottom=align_bottom,
             font=font,
             font_size=font_size,
             font_color=font_color,
@@ -119,22 +126,15 @@ class String(RectangleCellsStructure):
         self._containers_mob.arrange(mn.RIGHT, buff=0.0)
         self._letters_cells_left_edge = self._containers_mob.get_left()
 
+        self.add(self._containers_mob)
         # move letters cells to the specified position
-        self._position(self._containers_mob, self._containers_mob)
+        self._position()
 
         self._left_quote_cell_mob, self._right_quote_cell_mob = (
             self._create_and_pos_quote_cell_mobs()
         )
 
-        self._all_cell_mob = mn.VGroup(
-            [
-                self._left_quote_cell_mob,
-                self._containers_mob,
-                self._right_quote_cell_mob,
-            ],
-        )
-
-        self._quote_cell_left_edge = self._all_cell_mob.get_left()
+        self._quote_cell_left_edge = self._left_quote_cell_mob.get_left()
 
         # text mobs quotes group
         self._quotes_mob = self._create_and_pos_quotes_mob()
@@ -147,7 +147,10 @@ class String(RectangleCellsStructure):
 
         # adds local objects as instance attributes
         self.add(
-            self._all_cell_mob,
+            # self._all_cell_mob,
+            self._left_quote_cell_mob,
+            # self._containers_mob,
+            self._right_quote_cell_mob,
             self._values_mob,
             self._quotes_mob,
         )
@@ -206,7 +209,8 @@ class String(RectangleCellsStructure):
 
         empty_value_mob = mn.Text('""', **self._text_config())
         containers_mob = mn.Square(**self._containers_cell_config())
-        self._position(containers_mob, containers_mob)
+        # self._position(containers_mob, containers_mob)
+        self._position()
         empty_value_mob.next_to(
             containers_mob.get_top(),
             direction=mn.DOWN,
