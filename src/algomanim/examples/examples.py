@@ -60,6 +60,7 @@ class ExampleBubblesort(mn.Scene):
 
         # ========== CODE BLOCK ============
 
+        # hard way:
         code_lines = [
             "for i in range(len(arr)):",  # 0
             "│   for j in range(len(arr) - i - 1):",  # 1
@@ -67,6 +68,16 @@ class ExampleBubblesort(mn.Scene):
             "│   if arr[j] > arr[k]:",  # 3
             "│   │   arr[j], arr[k] = arr[k], arr[j]",  # 4
         ]
+        # easy way:
+        code = """
+for i in range(len(arr)):
+    for j in range(len(arr) - i - 1):
+        k = j + 1
+    if arr[j] > arr[k]:
+        arr[j], arr[k] = arr[k], arr[j]
+"""
+        code_lines = CodeBlock.format_code_lines(code)
+
         # Construction code_block
         code_block = CodeBlock(
             code_lines,
@@ -78,7 +89,7 @@ class ExampleBubblesort(mn.Scene):
         code_block.first_appear(self)
         code_block.highlight(0)
 
-        # ========== TOP TEXT ============
+        # ========== TEXT MOBS ============
 
         # Construction
         bottom_text = RelativeTextValue(

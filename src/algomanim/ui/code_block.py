@@ -26,7 +26,7 @@ class CodeBlock(AlgoManimBase):
         pre_code_buff: Buffer between pre-code lines.
         code_buff: Buffer between code lines.
         mob_center: Center object for positioning.
-        align_edge: Edge to align with reference mobject. If None,
+        # align_edge: Edge to align with reference mobject. If None,
             centers at mobject center.
     """
 
@@ -37,7 +37,7 @@ class CodeBlock(AlgoManimBase):
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # align_edge: Literal["up", "down", "left", "right"] | None = None,
         # --- font ---
         font_size=20,
         font="",
@@ -54,7 +54,7 @@ class CodeBlock(AlgoManimBase):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            align_edge=align_edge,
+            # align_edge=align_edge,
             **kwargs,
         )
 
@@ -116,9 +116,8 @@ class CodeBlock(AlgoManimBase):
         else:
             self._code_block_vgroup = code_vgroup
 
-        self._position(self._code_block_vgroup, self._code_block_vgroup)
-
         self.add(self._code_block_vgroup)
+        self._position()
 
     def _highlight_block(
         self,

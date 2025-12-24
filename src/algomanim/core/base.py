@@ -8,8 +8,6 @@ Manim use notes:
   - hasattr(mobject, "method_name") -> True (always), so it's bad idea to use it
 """
 
-from typing import Literal
-
 import numpy as np
 import manim as mn
 
@@ -146,23 +144,3 @@ class AlgoManimBase(mn.VGroup):
             self.shift(mn.UP * shift_y)
 
         self.shift(self._vector)
-
-    def _position_mob_to_self(
-        self: mn.Mobject,
-        new_group: mn.Mobject,
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
-    ):
-        if align_edge == "left":
-            new_group.align_to(self.get_left(), mn.LEFT)
-            new_group.set_y(self.get_y())
-        elif align_edge == "right":
-            new_group.align_to(self.get_right(), mn.RIGHT)
-            new_group.set_y(self.get_y())
-        elif align_edge == "up":
-            new_group.align_to(self.get_top(), mn.UP)
-            new_group.set_x(self.get_x())
-        elif align_edge == "down":
-            new_group.align_to(self.get_bottom(), mn.DOWN)
-            new_group.set_x(self.get_x())
-        else:
-            new_group.move_to(self.get_center())

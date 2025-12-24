@@ -42,7 +42,7 @@ class TitleText(AlgoManimBase):
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.UP * 2.7,
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        # align_edge: Literal["up", "down", "left", "right"] | None = None,
         # --- font ---
         font: str = "",
         font_size: float = 50,
@@ -68,7 +68,7 @@ class TitleText(AlgoManimBase):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            align_edge=align_edge,
+            # align_edge=align_edge,
             **kwargs,
         )
 
@@ -83,9 +83,8 @@ class TitleText(AlgoManimBase):
             color=text_color,
         )
 
-        self._position(self._text_mobject, self._text_mobject)
-
         self.add(self._text_mobject)
+        self._position()
 
         # optionally create the flourish under the text
         if self._flourish:

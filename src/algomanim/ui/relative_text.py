@@ -3,7 +3,6 @@ from typing import (
     Tuple,
     Callable,
     Any,
-    Literal,
 )
 
 import numpy as np
@@ -21,7 +20,10 @@ class RelativeTextValue(AlgoManimBase):
             Tuples of (name, value_getter, color).
         mob_center (mn.Mobject): Reference mobject for positioning.
         vector (np.ndarray): Offset vector from reference mobject center.
-        # align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
         font (str): Text font family.
         font_size (float): Text font size.
         weight (str): Font weight (NORMAL, BOLD, etc.).
@@ -37,7 +39,10 @@ class RelativeTextValue(AlgoManimBase):
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.UP * 1.2,
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
         # --- font ---
         font="",
         font_size=35,
@@ -51,7 +56,10 @@ class RelativeTextValue(AlgoManimBase):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            align_edge=align_edge,
+            align_left=align_left,
+            align_right=align_right,
+            align_top=align_top,
+            align_bottom=align_bottom,
             **kwargs,
         )
 
@@ -62,7 +70,6 @@ class RelativeTextValue(AlgoManimBase):
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
-        self._align_edge = align_edge
 
         self.submobjects: List = []
         parts = [
@@ -79,10 +86,9 @@ class RelativeTextValue(AlgoManimBase):
             mn.RIGHT, buff=self._buff, aligned_edge=self._items_align_edge
         )
 
-        # move to the specified position
-        self._position(self._text_mob, self._text_mob)
-
         self.add(*self._text_mob)
+
+        self._position()
 
     def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
         """Update text values with current variable values.
@@ -96,14 +102,22 @@ class RelativeTextValue(AlgoManimBase):
         # create a new object with the same parameters
         new_group = RelativeTextValue(
             *self._vars,
-            font_size=self._font_size,
-            buff=self._buff,
+            # --- position ---
+            mob_center=self._mob_center,
+            vector=self._vector,
+            align_left=self._align_left,
+            align_right=self._align_right,
+            align_top=self._align_top,
+            align_bottom=self._align_bottom,
+            # --- font ---
             font=self._font,
+            font_size=self._font_size,
+            weight=self._weight,
+            # --- other ---
+            buff=self._buff,
             equal_sign=self._equal_sign,
             items_align_edge=self._items_align_edge,
         )
-
-        self._position_mob_to_self(new_group, self._align_edge)
 
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=time)
@@ -172,8 +186,6 @@ class RelativeText(AlgoManimBase):
             font_size=self._font_size,
             weight=self._weight,
         )
-
-        # self._position(self._text_mob, self._text_mob)
 
         self.add(self._text_mob)
         self._position()
