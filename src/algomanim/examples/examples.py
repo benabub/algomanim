@@ -1410,12 +1410,11 @@ class ExampleCodeblock(mn.Scene):
         # ======== highlight line ============
 
         title = RelativeText(
-            "highlight()",
+            "highlight(0)",
             vector=mn.UP * 3.2 + mn.LEFT * 5.0,
             font_size=30,
         )
         title.first_appear(self)
-        self.wait(pause)
 
         def highlight_with_title(
             self: mn.Scene,

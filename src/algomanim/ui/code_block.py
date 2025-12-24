@@ -1,6 +1,5 @@
 from typing import (
     List,
-    Literal,
 )
 
 import numpy as np
@@ -26,7 +25,10 @@ class CodeBlock(AlgoManimBase):
         pre_code_buff: Buffer between pre-code lines.
         code_buff: Buffer between code lines.
         mob_center: Center object for positioning.
-        # align_edge: Edge to align with reference mobject. If None,
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
             centers at mobject center.
     """
 
@@ -37,7 +39,10 @@ class CodeBlock(AlgoManimBase):
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        # align_edge: Literal["up", "down", "left", "right"] | None = None,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
         # --- font ---
         font_size=20,
         font="",
@@ -54,7 +59,10 @@ class CodeBlock(AlgoManimBase):
         super().__init__(
             vector=vector,
             mob_center=mob_center,
-            # align_edge=align_edge,
+            align_left=align_left,
+            align_right=align_right,
+            align_top=align_top,
+            align_bottom=align_bottom,
             **kwargs,
         )
 
