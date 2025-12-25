@@ -1,3 +1,4 @@
+import numpy as np
 import manim as mn
 from manim import ManimColor
 
@@ -233,8 +234,47 @@ class LinearContainerStructure(AlgoManimBase):
         new_group._apply_pointers_colors(0)
         new_group._apply_pointers_colors(1)
 
-    def create_pointers(self, cell_mob: mn.VGroup) -> tuple[mn.VGroup, mn.VGroup]:
+    def create_pointers(
+        self,
+        cell_mob: mn.VGroup,
+        direction: np.ndarray = mn.RIGHT,
+    ) -> tuple[mn.VGroup, mn.VGroup]:
         """Create pointer triangles above and below each cell in the group.
+
+        For non-horizontal directions, rotates the pointer groups around their
+        respective cells to align with the specified direction vector.
+
+        Args:
+            cell_mob: VGroup of cells to attach pointers to.
+            direction: Direction vector for pointer orientation (default: RIGHT).
+
+        Returns:
+            Tuple of (top_pointers, bottom_pointers) VGroups where each contains
+            triple triangle groups for every cell | node.
+        """
+        if np.allclose(direction, mn.RIGHT):
+            return self._create_horizontal_pointers(cell_mob)
+
+        angle = mn.angle_of_vector(direction)
+
+        # swich top/bottom pointers
+        if direction[0] < 0:
+            extra_rotation = mn.PI
+        else:
+            extra_rotation = 0
+
+        pointers_top, pointers_bottom = self._create_horizontal_pointers(cell_mob)
+
+        for i, cell in enumerate(cell_mob):
+            center = cell.get_center()
+            total_angle = angle + extra_rotation
+            pointers_top[i].rotate(total_angle, about_point=center)
+            pointers_bottom[i].rotate(total_angle, about_point=center)
+
+        return pointers_top, pointers_bottom
+
+    def _create_horizontal_pointers(self, cell_mob: mn.VGroup):
+        """Create pointer triangles for horizontal direction (direction = RIGHT).
 
         Args:
             cell_mob: VGroup of cells to attach pointers to.
@@ -248,7 +288,6 @@ class LinearContainerStructure(AlgoManimBase):
             Triangle groups are positioned with fixed buffering from cells.
         """
 
-        # create template triangles
         top_triangle = (
             mn.Triangle(color=self._bg_color)
             .stretch_to_fit_width(0.7)
@@ -261,10 +300,10 @@ class LinearContainerStructure(AlgoManimBase):
 
         pointers_top = mn.VGroup()
         pointers_bottom = mn.VGroup()
+
         for cell in cell_mob:
             # create top triangles (3 per cell)
             top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
-
             # arrange top triangles horizontally above the cell
             top_triple_group.arrange(mn.RIGHT, buff=0.08)
             top_triple_group.next_to(cell, mn.UP, buff=0.15)
@@ -272,8 +311,6 @@ class LinearContainerStructure(AlgoManimBase):
 
             # create bottom triangles (3 per cell)
             bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
-
-            # arrange bottom triangles horizontally below the cell
             bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
             bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
             pointers_bottom.add(bottom_triple_group)
