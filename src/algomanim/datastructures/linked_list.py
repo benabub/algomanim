@@ -1,4 +1,4 @@
-from typing import Literal, Any
+from typing import Any
 
 import numpy as np
 import manim as mn
@@ -21,7 +21,10 @@ class LinkedList(LinearContainerStructure):
         bg_color (ManimColor | str): Background color for arrows and default pointer color.
         vector (np.ndarray): Position offset from mob_center.
         mob_center (mn.Mobject): Reference mobject for positioning.
-        align_edge (Literal["up", "down", "left", "right"] | None): Edge alignment.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
         font (str): Font family for text elements.
         font_color (ManimColor | str): Color for text elements.
         weight (str): Font weight (NORMAL, BOLD, etc.).
@@ -41,7 +44,10 @@ class LinkedList(LinearContainerStructure):
         # -- position --
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        align_edge: Literal["up", "down", "left", "right"] | None = None,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
         # -- font --
         font="",
         font_color: ManimColor | str = mn.BLACK,
@@ -57,7 +63,10 @@ class LinkedList(LinearContainerStructure):
             bg_color=bg_color,
             vector=vector,
             mob_center=mob_center,
-            align_edge=align_edge,
+            align_left=align_left,
+            align_right=align_right,
+            align_top=align_top,
+            align_bottom=align_bottom,
             font=font,
             font_color=font_color,
             weight=weight,
@@ -84,25 +93,30 @@ class LinkedList(LinearContainerStructure):
         # arrows
         self._arrows_mob = self._create_and_pos_arrows_mob()
 
-        # pointers
-        if self._pointers:
-            self._pointers_top, self._pointers_bottom = self.create_pointers(
-                self._containers_mob
-            )
+        # # group all mobs
+        # self._frame_mob = self._create_frame_mob()
 
-        # group all mobs
-        self._frame_mob = self._create_frame_mob()
+        self._frame_mob = mn.VGroup(
+            self._containers_mob,
+            self._arrows_mob,
+        )
 
         # rotate frame
         self._rotate_frame()
 
-        self._position(self._frame_mob, self._containers_mob[0])
+        self.add(self._containers_mob, self._arrows_mob)
+        self._position()
+
+        # pointers
+        if self._pointers:
+            self._pointers_top, self._pointers_bottom = self.create_pointers(
+                self._containers_mob, direction=self._direction
+            )
+            self.add(self._pointers_top, self._pointers_bottom)
 
         # values
         self._values_mob = self._create_and_pos_values_mob()
-
-        # ---- add ------
-        self.add(self._frame_mob, self._values_mob)
+        self.add(self._values_mob)
 
     def _empty_linked_list(self):
         """Initialize empty linked list visualization."""
@@ -359,7 +373,10 @@ class LinkedList(LinearContainerStructure):
             font=self._font,
             direction=self._direction,
             mob_center=self._mob_center,
-            align_edge=self._align_edge,
+            align_left=self._align_left,
+            align_right=self._align_right,
+            align_top=self._align_top,
+            align_bottom=self._align_bottom,
             vector=self._vector,
             pointers=self._pointers,
         )
