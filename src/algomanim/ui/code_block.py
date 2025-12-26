@@ -22,7 +22,7 @@ class CodeBlock(AlgoManimBase):
         font_color_highlight: Color for highlighted text.
         bg_highlight_color: Background color for highlighted lines.
         between_blocks_buff: Buffer between pre-code and code blocks.
-        pre_code_buff: Buffer between pre-code lines.
+        precode_buff: Buffer between pre-code lines.
         code_buff: Buffer between code lines.
         mob_center: Center object for positioning.
         align_left: Reference mobject to align left edge with.
@@ -50,11 +50,10 @@ class CodeBlock(AlgoManimBase):
         font_color_highlight: ManimColor | str = "YELLOW",
         # --- buffs ---
         between_blocks_buff=0.5,
-        pre_code_buff=0.15,
+        precode_buff=0.15,
         code_buff=0.05,
-        # --- other ---
+        # --- colors ---
         bg_highlight_color: ManimColor | str = mn.BLACK,
-        **kwargs,
     ):
         super().__init__(
             vector=vector,
@@ -63,18 +62,20 @@ class CodeBlock(AlgoManimBase):
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
-            **kwargs,
         )
 
         self._code_lines = code_lines
-        self._pre_code_lines = pre_code_lines
+        self._precode_lines = pre_code_lines
+        # --- font ---
         self._font_size = font_size
         self._font = font
         self._font_color_regular = font_color_regular
         self._font_color_highlight = font_color_highlight
+        # --- buffs ---
         self._between_blocks_buff = between_blocks_buff
-        self._pre_code_buff = pre_code_buff
+        self._precode_buff = precode_buff
         self._code_buff = code_buff
+        # --- colors ---
         self._bg_highlight_color = bg_highlight_color
 
         self._code_mobs = [
@@ -96,7 +97,7 @@ class CodeBlock(AlgoManimBase):
             buff=self._code_buff,
         )
 
-        if self._pre_code_lines:
+        if self._precode_lines:
             self._pre_code_mobs = [
                 mn.Text(
                     line,
@@ -104,7 +105,7 @@ class CodeBlock(AlgoManimBase):
                     font_size=self._font_size,
                     color=self._font_color_regular,
                 )
-                for line in self._pre_code_lines
+                for line in self._precode_lines
             ]
             self._bg_rects_precode: List[mn.Rectangle | None] = [None] * len(
                 self._code_lines
@@ -112,7 +113,7 @@ class CodeBlock(AlgoManimBase):
             self._pre_code_vgroup = mn.VGroup(*self._pre_code_mobs).arrange(
                 mn.DOWN,
                 aligned_edge=mn.LEFT,
-                buff=self._pre_code_buff,
+                buff=self._precode_buff,
             )
             self._code_block_vgroup = mn.VGroup(
                 self._pre_code_vgroup, code_vgroup
