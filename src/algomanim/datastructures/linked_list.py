@@ -49,7 +49,7 @@ class LinkedList(LinearContainerStructure):
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
         # -- font --
-        font="",
+        font: str = "",
         font_color: ManimColor | str = mn.BLACK,
         weight: str = "NORMAL",
         # ---- pointers ----
@@ -57,6 +57,10 @@ class LinkedList(LinearContainerStructure):
         # ---- kwargs ----
         **kwargs,
     ):
+        kwargs.setdefault("color_123", mn.WHITE)
+        kwargs.setdefault("color_containers_with_value", mn.RED)
+        self._parent_kwargs = kwargs.copy()
+
         super().__init__(
             container_color=node_color,
             fill_color=fill_color,
@@ -70,17 +74,30 @@ class LinkedList(LinearContainerStructure):
             font=font,
             font_color=font_color,
             weight=weight,
-            color_123=mn.WHITE,
-            color_containers_with_value=mn.WHITE,
             **kwargs,
         )
 
         # create class instance fields
-        self._data = self.linked_list_to_list(head)  # save head as list
+        self._data = self.linked_list_to_list(head)  # save head as py builtin list
         self._radius = radius
         self._direction = direction
+        # --- containers colors ---
+        self._node_color = node_color
+        self._fill_color = fill_color
+        self._bg_color = bg_color
+        # -- position --
+        self._vector = vector
+        self._mob_center = mob_center
+        self._align_left = align_left
+        self._align_right = align_right
+        self._align_top = align_top
+        self._align_bottom = align_bottom
+        # -- font --
+        self._font = font
+        self._font_color = font_color
+        self._weight = weight
+        # ---- pointers ----
         self._pointers = pointers
-        self._color_containers_with_value = mn.RED
 
         # empty value
         if not self._data:
@@ -347,8 +364,8 @@ class LinkedList(LinearContainerStructure):
     def update_value(
         self,
         scene: mn.Scene,
-        new_value,
-        animate: bool = False,
+        new_value: ListNode | None,
+        animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
         """Replace the linked list visualization with new nodes.
@@ -369,16 +386,28 @@ class LinkedList(LinearContainerStructure):
 
         # new group
         new_group = LinkedList(
-            new_value,
-            font=self._font,
+            head=new_value,
+            radius=self._radius,
             direction=self._direction,
+            # --- containers colors ---
+            node_color=self._node_color,
+            fill_color=self._fill_color,
+            bg_color=self._bg_color,
+            # -- position --
+            vector=self._vector,
             mob_center=self._mob_center,
             align_left=self._align_left,
             align_right=self._align_right,
             align_top=self._align_top,
             align_bottom=self._align_bottom,
-            vector=self._vector,
+            # -- font --
+            font=self._font,
+            font_color=self._font_color,
+            weight=self._weight,
+            # ---- pointers ----
             pointers=self._pointers,
+            # ---- kwargs ----
+            **self._parent_kwargs,
         )
 
         # restore colors

@@ -33,8 +33,8 @@ class LinearContainerStructure(AlgoManimBase):
     def __init__(
         self,
         # ---- font ----
-        font=(""),
-        font_size=(35),
+        font="",
+        font_size=35,
         font_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
         # ---- container colors ----

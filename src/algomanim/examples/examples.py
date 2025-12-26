@@ -60,15 +60,6 @@ class ExampleBubblesort(mn.Scene):
 
         # ========== CODE BLOCK ============
 
-        # hard way:
-        code_lines = [
-            "for i in range(len(arr)):",  # 0
-            "│   for j in range(len(arr) - i - 1):",  # 1
-            "│   │   k = j + 1",  # 2
-            "│   if arr[j] > arr[k]:",  # 3
-            "│   │   arr[j], arr[k] = arr[k], arr[j]",  # 4
-        ]
-        # easy way:
         code = """
 for i in range(len(arr)):
     for j in range(len(arr) - i - 1):
@@ -1172,7 +1163,7 @@ class ExampleLinkedlist(mn.Scene):
         one = Array(list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
         two = Array(list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
         one.group_appear(self, two)
-        self.wait(pause)
+        self.wait(0.5)
 
         # -----------------------
 
