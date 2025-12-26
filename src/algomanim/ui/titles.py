@@ -66,8 +66,6 @@ class TitleText(AlgoManimBase):
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
         undercaption_buff: float = 0.23,
-        # --- kwargs ---
-        **kwargs,
     ):
         super().__init__(
             vector=vector,
@@ -76,7 +74,6 @@ class TitleText(AlgoManimBase):
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
-            **kwargs,
         )
 
         self._flourish = flourish
@@ -235,7 +232,6 @@ class TitleLogo(AlgoManimBase):
         font: str = "",
         font_size: float = 31,
         text_vector: np.ndarray = mn.ORIGIN,
-        **kwargs,
     ):
         super().__init__(
             vector=vector,
@@ -244,7 +240,6 @@ class TitleLogo(AlgoManimBase):
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
-            **kwargs,
         )
 
         # create the svg mobject
