@@ -51,8 +51,10 @@ class RelativeTextValue(AlgoManimBase):
         buff=0.5,
         equal_sign: bool = True,
         items_align_edge: np.ndarray = mn.UP,
+        # --- kwargs ---
         **kwargs,
     ):
+        self._parent_kwargs = kwargs.copy()
         super().__init__(
             vector=vector,
             mob_center=mob_center,
@@ -64,9 +66,11 @@ class RelativeTextValue(AlgoManimBase):
         )
 
         self._vars = vars
+        # --- font ---
         self._font = font
         self._font_size = font_size
         self._weight = weight
+        # --- other ---
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
@@ -117,6 +121,8 @@ class RelativeTextValue(AlgoManimBase):
             buff=self._buff,
             equal_sign=self._equal_sign,
             items_align_edge=self._items_align_edge,
+            # --- kwargs ---
+            **self._parent_kwargs,
         )
 
         if animate:
@@ -151,7 +157,6 @@ class RelativeText(AlgoManimBase):
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.UP * 1.1,
-        # align_edge: Literal["up", "down", "left", "right"] | None = None,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -161,6 +166,7 @@ class RelativeText(AlgoManimBase):
         font_size=35,
         font_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
+        # --- kwargs ---
         **kwargs,
     ):
         super().__init__(
