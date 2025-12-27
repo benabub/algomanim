@@ -51,7 +51,7 @@ class ExampleBubblesort(mn.Scene):
         # Construction
         array = Array(
             arr,
-            mn.LEFT * 4.1 + mn.DOWN * 0.35,
+            vector=mn.LEFT * 4.1 + mn.DOWN * 0.35,
             font_size=40,
             # font=Vars.font,
         )
@@ -202,14 +202,14 @@ class ExampleArray(mn.Scene):
 
         self.wait(1)
 
-        # ============================
-
         self.remove(
             array_20,
             array_30,
             array_40,
             array_50,
         )
+
+        # ============================
 
         array_20 = Array(
             arr,
@@ -249,14 +249,14 @@ class ExampleArray(mn.Scene):
 
         self.wait(1)
 
-        # ============================
-
         self.remove(
             array_20,
             array_30,
             array_40,
             array_50,
         )
+
+        # ============================
 
         array_20 = Array(
             arr,
@@ -303,7 +303,7 @@ class ExampleArray(mn.Scene):
             array_40,
             array_50,
         )
-        # ============================
+        # ======== positioning ================
 
         pause = 1
         arr = list("arr")
@@ -345,8 +345,6 @@ class ExampleArray(mn.Scene):
         two = Array(list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
         one.group_appear(self, two)
         self.wait(pause)
-
-        # -----------------------
 
         top_text = RelativeText(
             "align_left=one\nalign_bottom=two",
@@ -398,74 +396,171 @@ class ExampleArray(mn.Scene):
         self.wait(pause)
         self.clear()
 
+        # ========== update_value ================
+
+        pause = 1
+        center = Array(list("mob_center"), font_size=50)
+        text_title = RelativeText(
+            "update_value()",
+            vector=mn.LEFT * 4.4 + mn.UP * 3.2,
+            font_color=mn.BLACK,
+            font_size=50,
+        )
+        center.group_appear(self, text_title)
+
+        arr_1 = Array(
+            [1, 2, 3],
+            mob_center=center,
+            vector=mn.UP * 1.5,
+            anchor=None,
+            pointers=False,
+        )
+        arr_2 = Array(
+            [1, 2, 3],
+            mob_center=arr_1,
+            vector=mn.UP * 0.7,
+            anchor=mn.RIGHT,
+            pointers=False,
+        )
+        arr_3 = Array(
+            [1, 2, 3],
+            mob_center=arr_2,
+            vector=mn.UP * 0.7,
+            anchor=mn.LEFT,
+            pointers=False,
+        )
+
+        text_no_align = RelativeText(
+            "no align_sides:", align_bottom=arr_2, vector=mn.LEFT * 4.6
+        )
+        text_arr_1 = RelativeText(
+            "anchor=None", mob_center=arr_1, vector=mn.RIGHT * 4.0
+        )
+        text_arr_2 = RelativeText(
+            "anchor=mn.RIGHT", mob_center=arr_2, vector=mn.RIGHT * 4.6
+        )
+        text_arr_3 = RelativeText(
+            "anchor=mn.LEFT", mob_center=arr_3, vector=mn.RIGHT * 4.4
+        )
+
+        arr_4 = Array(
+            [1, 2, 3],
+            align_left=center,
+            vector=mn.DOWN * 1.5,
+            pointers=False,
+        )
+        arr_5 = Array(
+            [1, 2, 3],
+            align_right=center,
+            vector=mn.DOWN * 1.5,
+            pointers=False,
+        )
+
+        text_arr_4 = RelativeText(
+            "align_left=center",
+            align_left=arr_4,
+            mob_center=arr_4,
+            vector=mn.DOWN * 1.0,
+        )
+        text_arr_5 = RelativeText(
+            "align_right=center",
+            align_right=arr_5,
+            mob_center=arr_5,
+            vector=mn.DOWN * 1.0,
+        )
+
+        arr_1.group_appear(
+            self,
+            arr_2,
+            arr_3,
+            arr_4,
+            arr_5,
+            text_no_align,
+            text_arr_1,
+            text_arr_2,
+            text_arr_3,
+            text_arr_4,
+            text_arr_5,
+        )
+        self.wait(2)
+
+        arr_1.highlight_containers_1to3([0, 1, 2])
+        arr_2.highlight_containers_1to3([0, 1, 2])
+        arr_3.highlight_containers_1to3([0, 1, 2])
+        arr_4.highlight_containers_1to3([0, 1, 2])
+        arr_5.highlight_containers_1to3([0, 1, 2])
+        self.wait(pause)
+
+        arr = [1, 2]
+        arr_1.update_value(self, arr)
+        arr_2.update_value(self, arr)
+        arr_3.update_value(self, arr)
+        arr_4.update_value(self, arr)
+        arr_5.update_value(self, arr)
+        self.wait(pause)
+
+        arr = [1]
+        arr_1.update_value(self, arr)
+        arr_2.update_value(self, arr)
+        arr_3.update_value(self, arr)
+        arr_4.update_value(self, arr)
+        arr_5.update_value(self, arr)
+        self.wait(pause)
+
+        arr = []
+        arr_1.update_value(self, arr)
+        arr_2.update_value(self, arr)
+        arr_3.update_value(self, arr)
+        arr_4.update_value(self, arr)
+        arr_5.update_value(self, arr)
+        self.wait(pause)
+
+        arr = [1]
+        arr_1.update_value(self, arr)
+        arr_2.update_value(self, arr)
+        arr_3.update_value(self, arr)
+        arr_4.update_value(self, arr)
+        arr_5.update_value(self, arr)
+        self.wait(pause)
+
+        arr = [1, 2]
+        arr_1.update_value(self, arr)
+        arr_2.update_value(self, arr)
+        arr_3.update_value(self, arr)
+        arr_4.update_value(self, arr)
+        arr_5.update_value(self, arr)
+        self.wait(pause)
+
+        arr = [1, 2, 3]
+        arr_1.update_value(self, arr)
+        arr_2.update_value(self, arr)
+        arr_3.update_value(self, arr)
+        arr_4.update_value(self, arr)
+        arr_5.update_value(self, arr)
+        self.wait(pause)
+
+        arr = [1, 2, 3, 4]
+        arr_1.update_value(self, arr)
+        arr_2.update_value(self, arr)
+        arr_3.update_value(self, arr)
+        arr_4.update_value(self, arr)
+        arr_5.update_value(self, arr)
+        self.wait(pause)
+
+        self.clear()
+
         # ============================
 
         pause = 0.5
 
-        array = Array([1, 12, 123, 1234, 12345, 123456])
-        array.first_appear(self)
-
-        top_text = RelativeText(
-            "update_value()",
-            vector=mn.UP * 2,
-        )
-        top_text.first_appear(self)
-
-        array.pointers([0, 1, 2])
-        array.highlight_containers_1to3([0, 1, 2])
-        self.wait(1)
-        array.update_value(self, [1, 12, 123, 1234, 12345, 123456])
-        self.wait(pause)
-        array.update_value(self, [123456, 12345, 1234, 123, 12, 1])
-        self.wait(pause)
-        array.update_value(self, [1, 11, 1, 11, 1])
-        self.wait(pause)
-        array.update_value(self, [11, 1, 11, 1])
-        self.wait(pause)
-        array.update_value(self, [1, 11, 1])
-        self.wait(pause)
-        array.update_value(self, [11, 1])
-        self.wait(pause)
-        array.update_value(self, [1])
-        self.wait(pause)
-        array.update_value(self, [])
-        self.wait(pause)
-        array.update_value(self, [])
-        self.wait(pause)
-        array.update_value(self, [1])
-        self.wait(1)
-        array.update_value(self, [1, 2, 3, 4, 5, 6], animate=True)
-        array.pointers([0, 1, 2])
-        array.highlight_containers_1to3([0, 1, 2])
-        self.wait(pause)
-        array.update_value(self, [6, 1, 2, 3, 4, 5], animate=True)
-        self.wait(pause)
-        array.update_value(self, [5, 6, 1, 2, 3, 4], animate=True)
-        self.wait(pause)
-        array.update_value(self, [1, 2, 3, 4, 5], animate=True)
-        self.wait(pause)
-        array.update_value(self, [11, 2, 33, 4], animate=True)
-        self.wait(pause)
-        array.update_value(self, [1, 22, 3, 44], animate=True)
-        self.wait(pause)
-        array.update_value(self, [11, 2, 33], animate=True)
-        self.wait(pause)
-        array.update_value(self, [], animate=True)
-        self.wait(pause)
-        array.update_value(self, [1], animate=True)
-        self.wait(1)
-        self.remove(top_text)
-
-        # ============================
-
+        array = Array([10, 2, 3000, 2, 100, 1, 40])
         top_text = RelativeText(
             "pointers()   highlight_containers_1to3()",
             vector=mn.UP * 2,
         )
-        top_text.first_appear(self)
-
-        array.update_value(self, [10, 2, 3000, 2, 100, 1, 40], left_aligned=False)
+        array.group_appear(self, top_text)
         self.wait(1)
+
         array.pointers([0, 3, 6])
         array.highlight_containers_1to3([0, 3, 6])
         self.wait(pause)
@@ -500,16 +595,17 @@ class ExampleArray(mn.Scene):
         array.clear_pointers_highlights(0)
         array.clear_containers_highlights()
 
+        self.clear()
         # ============================
 
+        array = Array([1, 2, 3, 4, 5, 6, 7, 8, 9])
         top_text = RelativeText(
             "highlight_containers_monocolor()",
             vector=mn.UP * 2,
         )
-        top_text.first_appear(self)
+        array.group_appear(self, top_text)
+        self.wait(1)
 
-        array.update_value(self, [1, 2, 3, 4, 5, 6, 7, 8, 9], left_aligned=False)
-        self.wait(pause)
         array.highlight_containers_monocolor([0, 2, 4, 6, 8])
         self.wait(pause)
         array.highlight_containers_monocolor([0, 1, 2, 3, 4])
@@ -519,16 +615,17 @@ class ExampleArray(mn.Scene):
         self.remove(top_text)
         array.clear_containers_highlights()
 
+        self.clear()
+
         # ============================
 
-        array.update_value(self, [10, 2, 3000, 2, 100, 1, 40], left_aligned=False)
-        self.wait(1)
-
+        array = Array([10, 2, 3000, 2, 100, 1, 40])
         top_text = RelativeText(
             "highlight_containers_with_value()   pointers_on_value()",
             vector=mn.UP * 2,
         )
-        top_text.first_appear(self)
+        array.group_appear(self, top_text)
+        self.wait(1)
 
         array.highlight_containers_with_value(0)
         array.pointers_on_value(0)
@@ -563,16 +660,17 @@ class ExampleArray(mn.Scene):
         self.wait(1)
         self.remove(top_text)
 
+        self.clear()
         # ============================
 
+        array = Array([0, 1, 22, 333, 4444, 55555])
         top_text = RelativeText(
             "mix",
             vector=mn.UP * 2,
         )
-        top_text.first_appear(self)
-
-        array.update_value(self, [0, 1, 22, 333, 4444, 55555], left_aligned=False)
+        array.group_appear(self, top_text)
         self.wait(1)
+
         array.highlight_containers_1to3([0, 2, 4])
         array.pointers([0, 2, 4])
         array.pointers_on_value(0, color=mn.PINK)

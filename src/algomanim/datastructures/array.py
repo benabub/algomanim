@@ -25,6 +25,8 @@ class Array(RectangleCellsStructure):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        anchor: Optional alignment anchor when neither align_left nor align_right
+            is specified. Must be mn.LEFT or mn.RIGHT. Defaults to mn.LEFT.
         container_color: Border color for cells.
         bg_color: Background color for cells and default pointer color.
         fill_color: Fill color for cells.
@@ -55,6 +57,7 @@ class Array(RectangleCellsStructure):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        anchor: np.ndarray | None = mn.LEFT,
         # ---- font ----
         font="",
         font_size=35,
@@ -131,11 +134,19 @@ class Array(RectangleCellsStructure):
             self._top_buff = top_buff
             self._bottom_buff = bottom_buff
             self._deep_bottom_buff = deep_bottom_buff
+        # ---- anchor ----
+        if not (align_left or align_right) and anchor is not None:
+            if not (
+                np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
+            ):
+                raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+            self._anchor = anchor
+        else:
+            self._anchor = None
 
         # empty value
         if not self._data:
-            self._containers_mob, self._empty_value_mob = self._create_empty_array()
-            self.add(self._containers_mob, self._empty_value_mob)
+            self._create_empty_array()
             return
 
         self._values_mob = self._create_values_mob()
@@ -167,31 +178,34 @@ class Array(RectangleCellsStructure):
     def _create_empty_array(self):
         """Create visualization for empty array.
 
+        Creates a single rectangle container with "[]" text for empty arrays.
+        Initializes or clears pointer groups if pointers are enabled.
+
         Returns:
-            tuple: Tuple containing (containers_mob, empty_value_mob).
+            None: Modifies internal mobjects in place instead of returning them.
         """
 
         # clear old fields
         self._values_mob = mn.VGroup()
-        self._pointers_top = mn.VGroup()
-        self._pointers_bottom = mn.VGroup()
+        if self._pointers:
+            self._pointers_top = mn.VGroup()
+            self._pointers_bottom = mn.VGroup()
 
-        empty_value_mob = mn.Text("[]", **self._text_config())
-        containers_mob = mn.Rectangle(
+        self._empty_value_mob = mn.Text("[]", **self._text_config())
+        self._containers_mob = mn.Rectangle(
             height=self._cell_height,
             width=self._get_cell_width(
-                empty_value_mob, self._top_bottom_buff, self._cell_height
+                self._empty_value_mob, self._top_bottom_buff, self._cell_height
             ),
             color=self._bg_color,
             fill_color=self._fill_color,
             fill_opacity=1.0,
         )
-        # self._position(containers_mob, containers_mob)
+        self.add(self._containers_mob)
         self._position()
-        empty_value_mob.move_to(containers_mob.get_center())
-        empty_value_mob.align_to(containers_mob, mn.DOWN)
-        empty_value_mob.align_to(containers_mob, mn.LEFT)
-        return containers_mob, empty_value_mob
+        self._empty_value_mob.move_to(self._containers_mob.get_center())
+        self._empty_value_mob.align_to(self._containers_mob, mn.DOWN)
+        self.add(self._empty_value_mob)
 
     def _create_values_mob(self):
         """Create text mobjects for array values.
@@ -312,7 +326,6 @@ class Array(RectangleCellsStructure):
         scene: mn.Scene,
         new_value: List[int],
         animate: bool = True,
-        left_aligned=True,
         run_time: float = 0.2,
     ) -> None:
         """Replace the array visualization with a new set of values.
@@ -327,9 +340,6 @@ class Array(RectangleCellsStructure):
             new_value: The new list of integer values to display in the array.
             animate: If True, animates the transition using a Transform.
                      If False, updates the object instantly.
-            left_aligned: If True, aligns the left edge of the new array with the
-                         left edge of the current array, maintaining horizontal position.
-                         If False, the new array is centered on the original mob_center.
             run_time: Duration (in seconds) of the animation if `animate=True`.
                      Has no effect if `animate=False`.
         """
@@ -372,11 +382,12 @@ class Array(RectangleCellsStructure):
             # ---- kwargs ----
             **self._parent_kwargs,
         )
-        if left_aligned:
-            new_group.align_to(self.get_left(), mn.LEFT)
-            new_group.set_y(self.get_y())
-        else:
-            new_group.move_to(self._mob_center.get_center() + self._vector)
+
+        if self._anchor is not None:
+            if np.array_equal(self._anchor, mn.LEFT):
+                new_group.align_to(self.get_left(), mn.LEFT)
+            else:
+                new_group.align_to(self.get_right(), mn.RIGHT)
 
         # restore colors
         self._preserve_highlights_states(new_group, highlight_status)
