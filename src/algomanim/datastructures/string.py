@@ -15,7 +15,7 @@ class String(RectangleCellsStructure):
         font: Font family for text elements.
         font_size: Font size for text, scales the whole mobject.
         weight: Font weight (NORMAL, BOLD, etc.).
-        font_color: Color for text elements.
+        text_color: Color for text elements.
         mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
         align_right: Reference mobject to align right edge with.
@@ -55,7 +55,7 @@ class String(RectangleCellsStructure):
         # ---- font ----
         font="",
         font_size=35,
-        font_color: ManimColor | str = mn.WHITE,
+        text_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
         # ---- cell colors ----
         container_color: ManimColor | str = mn.DARK_GRAY,
@@ -85,7 +85,7 @@ class String(RectangleCellsStructure):
             # ---- font ----
             font=font,
             font_size=font_size,
-            font_color=font_color,
+            text_color=text_color,
             weight=weight,
             # ---- cell colors ----
             container_color=container_color,
@@ -108,7 +108,7 @@ class String(RectangleCellsStructure):
         # -- font --
         self._font = font
         self._font_size = font_size
-        self._font_color = font_color
+        self._text_color = text_color
         self._weight = weight
         # ---- cell colors ----
         self._container_color = container_color
@@ -365,7 +365,7 @@ class String(RectangleCellsStructure):
             # -- font --
             font=self._font,
             font_size=self._font_size,
-            font_color=self._font_color,
+            text_color=self._text_color,
             weight=self._weight,
             # --- cell colors ---
             container_color=self._container_color,

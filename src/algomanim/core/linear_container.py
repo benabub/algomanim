@@ -14,7 +14,7 @@ class LinearContainerStructure(AlgoManimBase):
     Args:
         font (str): Font family for text elements.
         font_size (float): Font size for text elements.
-        font_color (ManimColor | str): Color for text elements.
+        text_color (ManimColor | str): Color for text elements.
         weight (str): Font weight (NORMAL, BOLD, etc.).
         container_color (ManimColor | str): Border color for containers.
         fill_color (ManimColor | str): Fill color for containers.
@@ -35,7 +35,7 @@ class LinearContainerStructure(AlgoManimBase):
         # ---- font ----
         font="",
         font_size=35,
-        font_color: ManimColor | str = mn.WHITE,
+        text_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
         # ---- container colors ----
         container_color: ManimColor | str = mn.DARK_GRAY,
@@ -75,7 +75,7 @@ class LinearContainerStructure(AlgoManimBase):
         # ---- font ----
         self._font = font
         self._font_size = font_size
-        self._font_color = font_color
+        self._text_color = text_color
         self._weight = weight
 
         # ---- container colors ----
@@ -129,7 +129,7 @@ class LinearContainerStructure(AlgoManimBase):
             "font": self._font,
             "font_size": self._font_size,
             "weight": self._weight,
-            "color": self._font_color,
+            "color": self._text_color,
         }
 
     def clear_pointers_highlights(self, pos: int):

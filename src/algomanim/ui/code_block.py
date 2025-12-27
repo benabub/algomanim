@@ -18,8 +18,8 @@ class CodeBlock(AlgoManimBase):
         pre_code_lines: Lines to display before the main code.
         font_size: Font size for the code text.
         font: Font for the code text.
-        font_color_regular: Color for regular text.
-        font_color_highlight: Color for highlighted text.
+        text_color_regular: Color for regular text.
+        text_color_highlight: Color for highlighted text.
         bg_highlight_color: Background color for highlighted lines.
         between_blocks_buff: Buffer between pre-code and code blocks.
         precode_buff: Buffer between pre-code lines.
@@ -46,8 +46,8 @@ class CodeBlock(AlgoManimBase):
         # --- font ---
         font_size=20,
         font="",
-        font_color_regular: ManimColor | str = "WHITE",
-        font_color_highlight: ManimColor | str = "YELLOW",
+        text_color_regular: ManimColor | str = "WHITE",
+        text_color_highlight: ManimColor | str = "YELLOW",
         # --- buffs ---
         between_blocks_buff=0.5,
         precode_buff=0.15,
@@ -69,8 +69,8 @@ class CodeBlock(AlgoManimBase):
         # --- font ---
         self._font_size = font_size
         self._font = font
-        self._font_color_regular = font_color_regular
-        self._font_color_highlight = font_color_highlight
+        self._text_color_regular = text_color_regular
+        self._text_color_highlight = text_color_highlight
         # --- buffs ---
         self._between_blocks_buff = between_blocks_buff
         self._precode_buff = precode_buff
@@ -83,7 +83,7 @@ class CodeBlock(AlgoManimBase):
                 line,
                 font=self._font,
                 font_size=self._font_size,
-                color=self._font_color_regular,
+                color=self._text_color_regular,
             )
             for line in self._code_lines
         ]
@@ -103,7 +103,7 @@ class CodeBlock(AlgoManimBase):
                     line,
                     font=self._font,
                     font_size=self._font_size,
-                    color=self._font_color_regular,
+                    color=self._text_color_regular,
                 )
                 for line in self._precode_lines
             ]
@@ -144,7 +144,7 @@ class CodeBlock(AlgoManimBase):
         for k, mob in enumerate(code_mobs_list):
             if k in indices:
                 # change font color
-                mob.set_color(self._font_color_highlight)
+                mob.set_color(self._text_color_highlight)
                 # create bg rectangle
                 if rects_list[k] is None:
                     bg_rect = mn.Rectangle(
@@ -160,7 +160,7 @@ class CodeBlock(AlgoManimBase):
                     rects_list[k] = bg_rect
             else:
                 # normal line: regular font color
-                mob.set_color(self._font_color_regular)
+                mob.set_color(self._text_color_regular)
                 # remove rect
                 bg_rect = rects_list[k]
                 if bg_rect:
@@ -181,7 +181,7 @@ class CodeBlock(AlgoManimBase):
 
         for k, mob in enumerate(code_mobs_list):
             # normal line: regular font color
-            mob.set_color(self._font_color_regular)
+            mob.set_color(self._text_color_regular)
             # remove rect
             bg_rect = rects_list[k]
             if bg_rect:

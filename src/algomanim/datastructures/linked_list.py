@@ -26,7 +26,7 @@ class LinkedList(LinearContainerStructure):
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
         font (str): Font family for text elements.
-        font_color (ManimColor | str): Color for text elements.
+        text_color (ManimColor | str): Color for text elements.
         weight (str): Font weight (NORMAL, BOLD, etc.).
         pointers: Whether to create and display pointers.
         **kwargs: Additional keyword arguments passed to parent class.
@@ -50,7 +50,7 @@ class LinkedList(LinearContainerStructure):
         align_bottom: mn.Mobject | None = None,
         # -- font --
         font: str = "",
-        font_color: ManimColor | str = mn.BLACK,
+        text_color: ManimColor | str = mn.BLACK,
         weight: str = "NORMAL",
         # ---- pointers ----
         pointers: bool = True,
@@ -72,7 +72,7 @@ class LinkedList(LinearContainerStructure):
             align_top=align_top,
             align_bottom=align_bottom,
             font=font,
-            font_color=font_color,
+            text_color=text_color,
             weight=weight,
             **kwargs,
         )
@@ -94,7 +94,7 @@ class LinkedList(LinearContainerStructure):
         self._align_bottom = align_bottom
         # -- font --
         self._font = font
-        self._font_color = font_color
+        self._text_color = text_color
         self._weight = weight
         # ---- pointers ----
         self._pointers = pointers
@@ -287,7 +287,7 @@ class LinkedList(LinearContainerStructure):
         return {
             "font": self._font,
             "weight": self._weight,
-            "color": self._font_color,
+            "color": self._text_color,
         }
 
     def _create_and_pos_values_mob(self):
@@ -402,7 +402,7 @@ class LinkedList(LinearContainerStructure):
             align_bottom=self._align_bottom,
             # -- font --
             font=self._font,
-            font_color=self._font_color,
+            text_color=self._text_color,
             weight=self._weight,
             # ---- pointers ----
             pointers=self._pointers,

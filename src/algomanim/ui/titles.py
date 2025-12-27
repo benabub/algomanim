@@ -228,7 +228,7 @@ class TitleLogo(AlgoManimBase):
         vector: np.ndarray = mn.ORIGIN,
         # --- text ---
         text: str | None = None,
-        font_color: ManimColor | str = "WHITE",
+        text_color: ManimColor | str = "WHITE",
         font: str = "",
         font_size: float = 31,
         text_vector: np.ndarray = mn.ORIGIN,
@@ -258,7 +258,7 @@ class TitleLogo(AlgoManimBase):
                 text,
                 font=font,
                 font_size=font_size,
-                color=font_color,
+                color=text_color,
             )
             self.text_mobject.move_to(self._svg.get_center() + text_vector)
             self.add(self.text_mobject)

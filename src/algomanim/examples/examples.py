@@ -403,7 +403,7 @@ class ExampleArray(mn.Scene):
         text_title = RelativeText(
             "update_value()",
             vector=mn.LEFT * 4.4 + mn.UP * 3.2,
-            font_color=mn.BLACK,
+            text_color=mn.BLACK,
             font_size=50,
         )
         center.group_appear(self, text_title)

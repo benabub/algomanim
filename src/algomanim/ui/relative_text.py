@@ -140,7 +140,7 @@ class RelativeText(AlgoManimBase):
         align_bottom: Reference mobject to align bottom edge with.
         font (str): Text font family.
         font_size (float): Text font size.
-        font_color (str | ManimColor): Text color.
+        text_color (str | ManimColor): Text color.
         weight (str): Text weight (NORMAL, BOLD, etc.).
         **kwargs: Additional keyword arguments passed to parent class.
     """
@@ -158,7 +158,7 @@ class RelativeText(AlgoManimBase):
         # --- font ---
         font="",
         font_size=35,
-        font_color: str | ManimColor = mn.WHITE,
+        text_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
     ):
         super().__init__(
@@ -173,13 +173,13 @@ class RelativeText(AlgoManimBase):
         self._text = text
         self._font = font
         self._font_size = font_size
-        self._font_color = font_color
+        self._text_color = text_color
         self._weight = weight
 
         self._text_mob = mn.Text(
             self._text,
             font=self._font,
-            color=self._font_color,
+            color=self._text_color,
             font_size=self._font_size,
             weight=self._weight,
         )
