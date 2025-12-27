@@ -14,6 +14,7 @@ class Array(RectangleCellsStructure):
 
     Args:
         arr: List of values to visualize.
+        pointers: Whether to create and display pointers.
         vector: Position offset from mob_center.
         font: Font family for text elements.
         font_size: Font size for text, scales the whole mobject.
@@ -33,7 +34,6 @@ class Array(RectangleCellsStructure):
         top_buff: Top alignment buffer for specific characters.
         bottom_buff: Bottom alignment buffer for most characters.
         deep_bottom_buff: Deep bottom alignment for descending characters.
-        pointers: Whether to create and display pointers.
 
     Note:
         Character alignment is automatically handled based on typography:
@@ -46,6 +46,8 @@ class Array(RectangleCellsStructure):
     def __init__(
         self,
         arr: List,
+        # ---- pointers ----
+        pointers: bool = True,
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -69,51 +71,73 @@ class Array(RectangleCellsStructure):
         top_buff=0.09,
         bottom_buff=0.16,
         deep_bottom_buff=0.05,
-        # ---- pointers ----
-        pointers: bool = True,
         # ---- kwargs ----
         **kwargs,
     ):
-        # call __init__ of the parent classes
+        kwargs.setdefault("color_containers_with_value", mn.RED)
+        self._parent_kwargs = kwargs.copy()
+
         super().__init__(
+            # ---- position ----
             vector=vector,
             mob_center=mob_center,
             align_left=align_left,
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
+            # ---- font ----
             font=font,
             font_size=font_size,
             font_color=font_color,
             weight=weight,
+            # ---- cell colors ----
             container_color=container_color,
             bg_color=bg_color,
             fill_color=fill_color,
+            # ---- cell params ----
             cell_params_auto=cell_params_auto,
             cell_height=cell_height,
             top_bottom_buff=top_bottom_buff,
             top_buff=top_buff,
             bottom_buff=bottom_buff,
             deep_bottom_buff=deep_bottom_buff,
+            # ---- kwargs ----
             **kwargs,
         )
 
         # create class instance fields
         self._data = arr.copy()
         self._pointers = pointers
-        self._color_containers_with_value = mn.RED
-
-        self._cell_params(
-            self._cell_params_auto,
-            self._font_size,
-            self._font,
-            self._weight,
-            self._cell_height,
-            self._top_bottom_buff,
-            self._top_buff,
-            self._bottom_buff,
-            self._deep_bottom_buff,
-        )
+        # -- position --
+        self._vector = vector
+        self._mob_center = mob_center
+        self._align_left = align_left
+        self._align_right = align_right
+        self._align_top = align_top
+        self._align_bottom = align_bottom
+        # -- font --
+        self._font = font
+        self._font_size = font_size
+        self._font_color = font_color
+        self._weight = weight
+        # ---- cell colors ----
+        self._container_color = container_color
+        self._bg_color = bg_color
+        self._fill_color = fill_color
+        # ---- cell params ----
+        if cell_params_auto:
+            params = self._get_cell_params(font_size, font, weight)
+            self._cell_height = params["cell_height"]
+            self._top_bottom_buff = params["top_bottom_buff"]
+            self._top_buff = params["top_buff"]
+            self._bottom_buff = params["bottom_buff"]
+            self._deep_bottom_buff = params["deep_bottom_buff"]
+        else:
+            self._cell_height = cell_height
+            self._top_bottom_buff = top_bottom_buff
+            self._top_buff = top_buff
+            self._bottom_buff = bottom_buff
+            self._deep_bottom_buff = deep_bottom_buff
 
         # empty value
         if not self._data:
@@ -327,10 +351,33 @@ class Array(RectangleCellsStructure):
         # new group
         new_group = Array(
             new_value,
-            font=self._font,
-            bg_color=self._bg_color,
-            font_size=self._font_size,
+            # ---- pointers ----
             pointers=self._pointers,
+            # -- position --
+            vector=self._vector,
+            mob_center=self._mob_center,
+            align_left=self._align_left,
+            align_right=self._align_right,
+            align_top=self._align_top,
+            align_bottom=self._align_bottom,
+            # -- font --
+            font=self._font,
+            font_size=self._font_size,
+            font_color=self._font_color,
+            weight=self._weight,
+            # --- cell colors ---
+            container_color=self._container_color,
+            bg_color=self._bg_color,
+            fill_color=self._fill_color,
+            # ---- cell params ----
+            cell_params_auto=False,
+            cell_height=self._cell_height,
+            top_bottom_buff=self._top_bottom_buff,
+            top_buff=self._top_buff,
+            bottom_buff=self._bottom_buff,
+            deep_bottom_buff=self._deep_bottom_buff,
+            # ---- kwargs ----
+            **self._parent_kwargs,
         )
         if left_aligned:
             new_group.align_to(self.get_left(), mn.LEFT)
