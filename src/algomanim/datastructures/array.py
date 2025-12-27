@@ -94,13 +94,6 @@ class Array(RectangleCellsStructure):
             container_color=container_color,
             bg_color=bg_color,
             fill_color=fill_color,
-            # ---- cell params ----
-            cell_params_auto=cell_params_auto,
-            cell_height=cell_height,
-            top_bottom_buff=top_bottom_buff,
-            top_buff=top_buff,
-            bottom_buff=bottom_buff,
-            deep_bottom_buff=deep_bottom_buff,
             # ---- kwargs ----
             **kwargs,
         )
