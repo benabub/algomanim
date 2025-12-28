@@ -147,7 +147,7 @@ for i in range(len(arr)):
                     top_text.update_text(self)
                     self.wait(pause)
 
-        # ========== FINISH ==============
+        # ========== finish ==============
 
         self.wait(pause)
         self.renderer.file_writer.output_file = f"media/{self.__class__.__name__}.mp4"
@@ -761,450 +761,447 @@ class ExampleString(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
-        # ============================
+        def pyramid(self):
+            s = "0agA-/*&.^`~"
+            string = String(
+                s,
+                # pointers=False,
+            )
+            string.first_appear(self)
 
-        pause = 0.5
+            string_20 = String(
+                s,
+                mob_center=string,
+                vector=mn.UP * 2.8,
+                font_size=25,
+            )
+            string_20.first_appear(self, time=0.1)
 
-        s = "0agA-/*&.^`~"
-        string = String(
-            s,
-            # pointers=False,
-        )
-        string.first_appear(self)
+            string_25 = String(
+                s,
+                mob_center=string,
+                vector=mn.UP * 1.4,
+                font_size=30,
+            )
+            string_25.first_appear(self, time=0.1)
 
-        string_20 = String(
-            s,
-            mob_center=string,
-            vector=mn.UP * 2.8,
-            font_size=25,
-        )
-        string_20.first_appear(self, time=0.1)
+            string_35 = String(
+                s,
+                mob_center=string,
+                vector=mn.DOWN * 1.5,
+                font_size=37,
+            )
+            string_35.first_appear(self, time=0.1)
 
-        string_25 = String(
-            s,
-            mob_center=string,
-            vector=mn.UP * 1.4,
-            font_size=30,
-        )
-        string_25.first_appear(self, time=0.1)
+            string_40 = String(
+                s,
+                mob_center=string,
+                vector=mn.DOWN * 3.0,
+                font_size=40,
+            )
+            string_40.first_appear(self, time=0.1)
 
-        string_35 = String(
-            s,
-            mob_center=string,
-            vector=mn.DOWN * 1.5,
-            font_size=37,
-        )
-        string_35.first_appear(self, time=0.1)
+            self.wait(1)
 
-        string_40 = String(
-            s,
-            mob_center=string,
-            vector=mn.DOWN * 3.0,
-            font_size=40,
-        )
-        string_40.first_appear(self, time=0.1)
+            # ============================
+
+            self.remove(
+                string_20,
+                string_25,
+                string_35,
+                string_40,
+            )
+
+            string_20 = String(
+                s,
+                mob_center=string,
+                vector=mn.UP * 2.8,
+                font_size=25,
+                align_left=string,
+            )
+            string_20.first_appear(self, time=0.1)
+
+            string_25 = String(
+                s,
+                mob_center=string,
+                vector=mn.UP * 1.4,
+                font_size=30,
+                align_left=string,
+            )
+            string_25.first_appear(self, time=0.1)
+
+            string_35 = String(
+                s,
+                mob_center=string,
+                vector=mn.DOWN * 1.5,
+                font_size=37,
+                align_left=string,
+            )
+            string_35.first_appear(self, time=0.1)
+
+            string_40 = String(
+                s,
+                mob_center=string,
+                vector=mn.DOWN * 3.0,
+                font_size=40,
+                align_left=string,
+            )
+            string_40.first_appear(self, time=0.1)
+
+            self.wait(1)
+
+            # ============================
+
+            self.remove(
+                string_20,
+                string_25,
+                string_35,
+                string_40,
+            )
+
+            string_20 = String(
+                s,
+                mob_center=string,
+                vector=mn.UP * 2.8,
+                font_size=25,
+                align_right=string,
+            )
+            string_20.first_appear(self, time=0.1)
+
+            string_25 = String(
+                s,
+                mob_center=string,
+                vector=mn.UP * 1.4,
+                font_size=30,
+                align_right=string,
+            )
+            string_25.first_appear(self, time=0.1)
+
+            string_35 = String(
+                s,
+                mob_center=string,
+                vector=mn.DOWN * 1.5,
+                font_size=37,
+                align_right=string,
+            )
+            string_35.first_appear(self, time=0.1)
+
+            string_40 = String(
+                s,
+                mob_center=string,
+                vector=mn.DOWN * 3.0,
+                font_size=40,
+                align_right=string,
+            )
+            string_40.first_appear(self, time=0.1)
+
+            self.wait(1)
+            self.clear()
+
+        def positioning(self):
+            pause = 1
+            string = "str"
+
+            center = String("mob_center", font_size=40)
+            center.first_appear(self)
+
+            top_text = RelativeText(
+                "mob_center=mob_center\nvector=mn.UP * 1",
+                vector=mn.DOWN * 2 + mn.RIGHT * 0,
+            )
+            s = String(string, mob_center=center, vector=mn.UP * 2)
+            s.group_appear(self, top_text)
+            self.wait(pause)
+
+            self.remove(s, top_text)
+
+            top_text = RelativeText(
+                "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 1",
+                vector=mn.DOWN * 2 + mn.RIGHT * 0,
+            )
+            s = String(string, mob_center=center, align_left=center, vector=mn.UP * 2)
+            s.group_appear(self, top_text)
+            self.wait(pause)
+
+            self.remove(s, top_text)
+
+            top_text = RelativeText(
+                "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 1",
+                vector=mn.DOWN * 2 + mn.RIGHT * 0,
+            )
+            s = String(string, mob_center=center, align_right=center, vector=mn.UP * 2)
+            s.group_appear(self, top_text)
+            self.wait(pause)
+
+            self.clear()
+
+            one = String("one", font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
+            two = String("two", font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
+            one.group_appear(self, two)
+            self.wait(pause)
+
+            # -----------------------
+
+            top_text = RelativeText(
+                "align_left=one\nalign_bottom=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            s = String(string, align_left=one, align_bottom=two)
+            s.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(s, top_text)
+
+            top_text = RelativeText(
+                "align_left=one\nalign_top=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            s = String(string, align_left=one, align_top=two)
+            s.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(s, top_text)
+
+            top_text = RelativeText(
+                "align_right=one\nalign_top=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            s = String(string, align_right=one, align_top=two)
+            s.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(s, top_text)
+
+            top_text = RelativeText(
+                "align_right=one\nalign_bottom=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            s = String(string, align_right=one, align_bottom=two)
+            s.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(s, top_text)
+
+            top_text = RelativeText(
+                "align_left=one\nalign_bottom=two\nvector=mn.UP * 1 + mn.RIGHT * 1",
+                vector=mn.UP * 0.7 + mn.RIGHT * 2,
+            )
+            s = String(
+                string,
+                align_left=one,
+                align_bottom=two,
+                vector=mn.UP * 1 + mn.RIGHT * 1,
+            )
+            s.group_appear(self, top_text)
+            self.wait(pause)
+            self.clear()
+
+        def updatevalue(self):
+            pause = 0.5
+            string = String("follow the rabbit")
+            string.first_appear(self)
+
+            top_text = RelativeText(
+                "update_value()",
+                vector=mn.UP * 2,
+            )
+            top_text.first_appear(self)
+
+            string.pointers([4, 5, 6])
+            string.highlight_containers_1to3([4, 5, 6])
+
+            self.wait(1)
+            string.update_value(self, "follow the rabbit")
+            self.wait(pause)
+            string.update_value(self, "follow the")
+            self.wait(pause)
+            string.update_value(self, "follow")
+            self.wait(pause)
+            string.update_value(self, "")
+            self.wait(pause)
+            string.update_value(self, "")
+            self.wait(pause)
+            string.update_value(self, "follow")
+            self.wait(1)
+            string.update_value(self, "follow the", animate=True)
+            string.highlight_containers_1to3([4, 5, 6])
+            string.highlight_containers_1to3([4, 5, 6])
+            self.wait(pause)
+            string.update_value(self, "follow the rabbit", animate=True)
+            self.wait(pause)
+            string.update_value(self, "rabbit follow the", animate=True)
+            self.wait(pause)
+            string.update_value(self, "the rabbit follow", animate=True)
+            self.wait(pause)
+            string.update_value(self, "follow the rabbit", animate=True)
+            self.wait(pause)
+            string.update_value(self, "follow the", animate=True)
+            self.wait(pause)
+            string.update_value(self, "follow", animate=True)
+            self.wait(pause)
+            string.update_value(self, "", animate=True)
+            self.wait(pause)
+            string.update_value(self, "follow", animate=True)
+            self.wait(1)
+
+            self.remove(top_text)
+
+        def highlights_1to3(self):
+            pause = 0.5
+            string = String("follow the rabbit")
+            top_text = RelativeText(
+                "pointers()   highlight_containers()",
+                vector=mn.UP * 2,
+            )
+            string.group_appear(self, top_text)
+            self.wait(1)
+
+            string.pointers([0, 3, 6])
+            string.highlight_containers_1to3([0, 3, 6])
+            self.wait(pause)
+            string.pointers([1, 3, 5])
+            string.highlight_containers_1to3([1, 3, 5])
+            self.wait(pause)
+            string.pointers([2, 3, 4])
+            string.highlight_containers_1to3([2, 3, 4])
+            self.wait(pause)
+            string.pointers([3, 3, 3])
+            string.highlight_containers_1to3([3, 3, 3])
+            self.wait(pause)
+            string.pointers([2, 3, 4])
+            string.highlight_containers_1to3([2, 3, 4])
+            self.wait(pause)
+            string.pointers([2, 2, 4])
+            string.highlight_containers_1to3([2, 2, 4])
+            self.wait(pause)
+            string.pointers([2, 3, 4])
+            string.highlight_containers_1to3([2, 3, 4])
+            self.wait(pause)
+            string.pointers([2, 4, 4])
+            string.highlight_containers_1to3([2, 4, 4])
+            self.wait(pause)
+            string.pointers([2, 4, 3])
+            string.highlight_containers_1to3([2, 4, 3])
+            self.wait(pause)
+            string.pointers([2, 40, 2])
+            string.highlight_containers_1to3([2, 40, 2])
+            self.wait(1)
+            self.clear()
+
+        def highlight_on_value(self):
+            pause = 0.5
+            string = String("follow the rabbit")
+            top_text = RelativeText(
+                "highlight_containers_with_value()   pointers_on_value()",
+                vector=mn.UP * 2,
+            )
+            string.group_appear(self, top_text)
+            self.wait(1)
+
+            string.highlight_containers_with_value("f")
+            string.pointers_on_value("f")
+            self.wait(pause)
+            string.highlight_containers_with_value("t")
+            string.pointers_on_value("t")
+            self.wait(pause)
+            string.highlight_containers_with_value("a", color=mn.LIGHT_BROWN)
+            string.pointers_on_value("a", color=mn.LIGHT_BROWN)
+            self.wait(pause)
+            string.highlight_containers_with_value("b", color=mn.LIGHT_BROWN)
+            string.pointers_on_value("b", color=mn.LIGHT_BROWN)
+            self.wait(pause)
+            string.highlight_containers_with_value("l", color=mn.PURPLE)
+            string.pointers_on_value("l", color=mn.PURPLE)
+            self.wait(pause)
+            string.highlight_containers_with_value("w", color=mn.PURPLE)
+            string.pointers_on_value("w", color=mn.PURPLE)
+            self.wait(pause)
+            string.highlight_containers_with_value(" ", color=mn.PINK)
+            string.pointers_on_value(" ", color=mn.PINK)
+            self.wait(1)
+            self.clear()
+
+        def mix(self):
+            pause = 0.5
+            string = String("follow the rabbit")
+            top_text = RelativeText(
+                "mix",
+                vector=mn.UP * 2,
+            )
+            string.group_appear(self, top_text)
+            self.wait(1)
+
+            string.highlight_containers_1to3([0, 2, 4])
+            string.pointers([0, 2, 4])
+            self.wait(pause)
+
+            string.update_value(self, "follow the")
+            string.clear_pointers_highlights(0)
+            string.pointers_on_value("f", color=mn.PINK)
+            string.highlight_containers_with_value("f", color=mn.PINK)
+            self.wait(pause)
+
+            string.update_value(self, "follow")
+            string.clear_pointers_highlights(1)
+            string.highlight_containers_1to3([0, 2, 4])
+            string.pointers([0, 2, 4])
+            self.wait(pause)
+
+            string.update_value(self, "", animate=True)
+            string.clear_pointers_highlights(0)
+            string.highlight_containers_with_value("b", color=mn.PINK)
+            string.pointers_on_value("b", color=mn.PINK)
+            self.wait(1)
+
+            string.update_value(self, "rabbit", left_aligned=False, animate=True)
+            self.wait(1)
+
+            string.update_value(self, "rabbit", left_aligned=False, animate=True)
+            string.highlight_containers_with_value("b", color=mn.PINK)
+            string.pointers_on_value("b", color=mn.PINK)
+            self.wait(1)
+
+            string.update_value(self, "white rabbit", left_aligned=False, animate=True)
+            string.clear_pointers_highlights(1)
+            string.highlight_containers_1to3([0, 1, 2])
+            string.pointers([0, 1, 2])
+            self.wait(pause)
+
+            string.update_value(self, "rabbit white", left_aligned=False, animate=True)
+            string.clear_pointers_highlights(0)
+            string.highlight_containers_with_value("t", color=mn.PINK)
+            string.pointers_on_value("t", color=mn.PINK)
+            self.wait(pause)
+
+            string.update_value(
+                self, "rabbit the white", left_aligned=False, animate=True
+            )
+            string.clear_pointers_highlights(1)
+            string.highlight_containers_1to3([0, 2, 2])
+            string.pointers([0, 2, 2])
+            self.wait(pause)
+
+            string.update_value(self, "white the rabbit", animate=True)
+            string.clear_pointers_highlights(0)
+            string.pointers_on_value(" ", color=mn.PINK)
+            string.highlight_containers_with_value(" ", color=mn.PINK)
+            self.wait(pause)
+
+            string.update_value(self, "rab follow rab", animate=True)
+            string.highlight_containers_1to3([90, 90, 90])
+            string.pointers([90, 90, 90])
+            string.highlight_containers_with_value("a", color=mn.PINK)
+            string.pointers_on_value("a", color=mn.PINK)
+            self.wait(1)
+
+        # ========== calls ==============
+
+        pyramid(self)
+        positioning(self)
+        updatevalue(self)
+        highlights_1to3(self)
+        highlight_on_value(self)
+        mix(self)
+
+        # ========== finish ==============
 
         self.wait(1)
-
-        # ============================
-
-        self.remove(
-            string_20,
-            string_25,
-            string_35,
-            string_40,
-        )
-
-        string_20 = String(
-            s,
-            mob_center=string,
-            vector=mn.UP * 2.8,
-            font_size=25,
-            align_left=string,
-        )
-        string_20.first_appear(self, time=0.1)
-
-        string_25 = String(
-            s,
-            mob_center=string,
-            vector=mn.UP * 1.4,
-            font_size=30,
-            align_left=string,
-        )
-        string_25.first_appear(self, time=0.1)
-
-        string_35 = String(
-            s,
-            mob_center=string,
-            vector=mn.DOWN * 1.5,
-            font_size=37,
-            align_left=string,
-        )
-        string_35.first_appear(self, time=0.1)
-
-        string_40 = String(
-            s,
-            mob_center=string,
-            vector=mn.DOWN * 3.0,
-            font_size=40,
-            align_left=string,
-        )
-        string_40.first_appear(self, time=0.1)
-
-        self.wait(1)
-
-        # ============================
-
-        self.remove(
-            string_20,
-            string_25,
-            string_35,
-            string_40,
-        )
-
-        string_20 = String(
-            s,
-            mob_center=string,
-            vector=mn.UP * 2.8,
-            font_size=25,
-            align_right=string,
-        )
-        string_20.first_appear(self, time=0.1)
-
-        string_25 = String(
-            s,
-            mob_center=string,
-            vector=mn.UP * 1.4,
-            font_size=30,
-            align_right=string,
-        )
-        string_25.first_appear(self, time=0.1)
-
-        string_35 = String(
-            s,
-            mob_center=string,
-            vector=mn.DOWN * 1.5,
-            font_size=37,
-            align_right=string,
-        )
-        string_35.first_appear(self, time=0.1)
-
-        string_40 = String(
-            s,
-            mob_center=string,
-            vector=mn.DOWN * 3.0,
-            font_size=40,
-            align_right=string,
-        )
-        string_40.first_appear(self, time=0.1)
-
-        self.wait(1)
-
-        self.remove(
-            string,
-            string_20,
-            string_25,
-            string_35,
-            string_40,
-        )
-
-        # ============================
-
-        pause = 1
-        string = "str"
-
-        center = String("mob_center", font_size=40)
-        center.first_appear(self)
-
-        top_text = RelativeText(
-            "mob_center=mob_center\nvector=mn.UP * 1",
-            vector=mn.DOWN * 2 + mn.RIGHT * 0,
-        )
-        s = String(string, mob_center=center, vector=mn.UP * 2)
-        s.group_appear(self, top_text)
-        self.wait(pause)
-
-        self.remove(s, top_text)
-
-        top_text = RelativeText(
-            "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 1",
-            vector=mn.DOWN * 2 + mn.RIGHT * 0,
-        )
-        s = String(string, mob_center=center, align_left=center, vector=mn.UP * 2)
-        s.group_appear(self, top_text)
-        self.wait(pause)
-
-        self.remove(s, top_text)
-
-        top_text = RelativeText(
-            "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 1",
-            vector=mn.DOWN * 2 + mn.RIGHT * 0,
-        )
-        s = String(string, mob_center=center, align_right=center, vector=mn.UP * 2)
-        s.group_appear(self, top_text)
-        self.wait(pause)
-
-        self.clear()
-
-        one = String("one", font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
-        two = String("two", font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
-        one.group_appear(self, two)
-        self.wait(pause)
-
-        # -----------------------
-
-        top_text = RelativeText(
-            "align_left=one\nalign_bottom=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        s = String(string, align_left=one, align_bottom=two)
-        s.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(s, top_text)
-
-        top_text = RelativeText(
-            "align_left=one\nalign_top=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        s = String(string, align_left=one, align_top=two)
-        s.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(s, top_text)
-
-        top_text = RelativeText(
-            "align_right=one\nalign_top=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        s = String(string, align_right=one, align_top=two)
-        s.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(s, top_text)
-
-        top_text = RelativeText(
-            "align_right=one\nalign_bottom=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        s = String(string, align_right=one, align_bottom=two)
-        s.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(s, top_text)
-
-        top_text = RelativeText(
-            "align_left=one\nalign_bottom=two\nvector=mn.UP * 1 + mn.RIGHT * 1",
-            vector=mn.UP * 0.7 + mn.RIGHT * 2,
-        )
-        s = String(
-            string,
-            align_left=one,
-            align_bottom=two,
-            vector=mn.UP * 1 + mn.RIGHT * 1,
-        )
-        s.group_appear(self, top_text)
-        self.wait(pause)
-        self.clear()
-
-        # ============================
-
-        pause = 0.5
-        string = String("follow the rabbit")
-        string.first_appear(self)
-
-        top_text = RelativeText(
-            "update_value()",
-            vector=mn.UP * 2,
-        )
-        top_text.first_appear(self)
-
-        string.pointers([4, 5, 6])
-        string.highlight_containers_1to3([4, 5, 6])
-
-        self.wait(1)
-        string.update_value(self, "follow the rabbit")
-        self.wait(pause)
-        string.update_value(self, "follow the")
-        self.wait(pause)
-        string.update_value(self, "follow")
-        self.wait(pause)
-        string.update_value(self, "")
-        self.wait(pause)
-        string.update_value(self, "")
-        self.wait(pause)
-        string.update_value(self, "follow")
-        self.wait(1)
-        string.update_value(self, "follow the", animate=True)
-        string.highlight_containers_1to3([4, 5, 6])
-        string.highlight_containers_1to3([4, 5, 6])
-        self.wait(pause)
-        string.update_value(self, "follow the rabbit", animate=True)
-        self.wait(pause)
-        string.update_value(self, "rabbit follow the", animate=True)
-        self.wait(pause)
-        string.update_value(self, "the rabbit follow", animate=True)
-        self.wait(pause)
-        string.update_value(self, "follow the rabbit", animate=True)
-        self.wait(pause)
-        string.update_value(self, "follow the", animate=True)
-        self.wait(pause)
-        string.update_value(self, "follow", animate=True)
-        self.wait(pause)
-        string.update_value(self, "", animate=True)
-        self.wait(pause)
-        string.update_value(self, "follow", animate=True)
-        self.wait(1)
-
-        self.remove(top_text)
-
-        # ============================
-
-        top_text = RelativeText(
-            "pointers()   highlight_containers()",
-            vector=mn.UP * 2,
-        )
-        top_text.first_appear(self)
-
-        string.update_value(self, "follow the rabbit", left_aligned=False)
-        self.wait(1)
-        string.pointers([0, 3, 6])
-        string.highlight_containers_1to3([0, 3, 6])
-        self.wait(pause)
-        string.pointers([1, 3, 5])
-        string.highlight_containers_1to3([1, 3, 5])
-        self.wait(pause)
-        string.pointers([2, 3, 4])
-        string.highlight_containers_1to3([2, 3, 4])
-        self.wait(pause)
-        string.pointers([3, 3, 3])
-        string.highlight_containers_1to3([3, 3, 3])
-        self.wait(pause)
-        string.pointers([2, 3, 4])
-        string.highlight_containers_1to3([2, 3, 4])
-        self.wait(pause)
-        string.pointers([2, 2, 4])
-        string.highlight_containers_1to3([2, 2, 4])
-        self.wait(pause)
-        string.pointers([2, 3, 4])
-        string.highlight_containers_1to3([2, 3, 4])
-        self.wait(pause)
-        string.pointers([2, 4, 4])
-        string.highlight_containers_1to3([2, 4, 4])
-        self.wait(pause)
-        string.pointers([2, 4, 3])
-        string.highlight_containers_1to3([2, 4, 3])
-        self.wait(pause)
-        string.pointers([2, 40, 2])
-        string.highlight_containers_1to3([2, 40, 2])
-        self.wait(1)
-        self.remove(top_text)
-        string.clear_pointers_highlights(0)
-        string.clear_containers_highlights()
-
-        # ============================
-
-        top_text = RelativeText(
-            "highlight_containers_with_value()   pointers_on_value()",
-            vector=mn.UP * 2,
-        )
-        top_text.first_appear(self)
-
-        string.update_value(self, "follow the rabbit", left_aligned=False)
-        self.wait(1)
-        string.highlight_containers_with_value("f")
-        string.pointers_on_value("f")
-        self.wait(pause)
-        string.highlight_containers_with_value("t")
-        string.pointers_on_value("t")
-        self.wait(pause)
-        string.highlight_containers_with_value("a", color=mn.LIGHT_BROWN)
-        string.pointers_on_value("a", color=mn.LIGHT_BROWN)
-        self.wait(pause)
-        string.highlight_containers_with_value("b", color=mn.LIGHT_BROWN)
-        string.pointers_on_value("b", color=mn.LIGHT_BROWN)
-        self.wait(pause)
-        string.highlight_containers_with_value("l", color=mn.PURPLE)
-        string.pointers_on_value("l", color=mn.PURPLE)
-        self.wait(pause)
-        string.highlight_containers_with_value("w", color=mn.PURPLE)
-        string.pointers_on_value("w", color=mn.PURPLE)
-        self.wait(pause)
-        string.highlight_containers_with_value(" ", color=mn.PINK)
-        string.pointers_on_value(" ", color=mn.PINK)
-        self.wait(1)
-        self.remove(top_text)
-
-        # ============================
-
-        top_text = RelativeText(
-            "mix",
-            vector=mn.UP * 2,
-        )
-        top_text.first_appear(self)
-
-        string.update_value(self, "follow the rabbit", left_aligned=False)
-        self.wait(1)
-        string.highlight_containers_1to3([0, 2, 4])
-        string.pointers([0, 2, 4])
-        self.wait(pause)
-
-        string.update_value(self, "follow the")
-        string.clear_pointers_highlights(0)
-        string.pointers_on_value("f", color=mn.PINK)
-        string.highlight_containers_with_value("f", color=mn.PINK)
-        self.wait(pause)
-
-        string.update_value(self, "follow")
-        string.clear_pointers_highlights(1)
-        string.highlight_containers_1to3([0, 2, 4])
-        string.pointers([0, 2, 4])
-        self.wait(pause)
-
-        string.update_value(self, "", animate=True)
-        string.clear_pointers_highlights(0)
-        string.highlight_containers_with_value("b", color=mn.PINK)
-        string.pointers_on_value("b", color=mn.PINK)
-        self.wait(1)
-
-        string.update_value(self, "rabbit", left_aligned=False, animate=True)
-        self.wait(1)
-
-        string.update_value(self, "rabbit", left_aligned=False, animate=True)
-        string.highlight_containers_with_value("b", color=mn.PINK)
-        string.pointers_on_value("b", color=mn.PINK)
-        self.wait(1)
-
-        string.update_value(self, "white rabbit", left_aligned=False, animate=True)
-        string.clear_pointers_highlights(1)
-        string.highlight_containers_1to3([0, 1, 2])
-        string.pointers([0, 1, 2])
-        self.wait(pause)
-
-        string.update_value(self, "rabbit white", left_aligned=False, animate=True)
-        string.clear_pointers_highlights(0)
-        string.highlight_containers_with_value("t", color=mn.PINK)
-        string.pointers_on_value("t", color=mn.PINK)
-        self.wait(pause)
-
-        string.update_value(self, "rabbit the white", left_aligned=False, animate=True)
-        string.clear_pointers_highlights(1)
-        string.highlight_containers_1to3([0, 2, 2])
-        string.pointers([0, 2, 2])
-        self.wait(pause)
-
-        string.update_value(self, "white the rabbit", animate=True)
-        string.clear_pointers_highlights(0)
-        string.pointers_on_value(" ", color=mn.PINK)
-        string.highlight_containers_with_value(" ", color=mn.PINK)
-        self.wait(pause)
-
-        string.update_value(self, "rab follow rab", animate=True)
-        string.highlight_containers_1to3([90, 90, 90])
-        string.pointers([90, 90, 90])
-        string.highlight_containers_with_value("a", color=mn.PINK)
-        string.pointers_on_value("a", color=mn.PINK)
-        self.wait(1)
-
-        # ========== FINISH ==============
-
-        self.wait(pause)
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
 
