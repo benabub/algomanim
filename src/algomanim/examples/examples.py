@@ -1211,490 +1211,493 @@ class ExampleLinkedlist(mn.Scene):
 
         cll = LinkedList.create_linked_list
 
-        # ============================
+        def positioning(self):
+            pause = 1
 
-        pause = 1
+            center = Array(list("mob_center"), font_size=40)
+            center.first_appear(self)
 
-        center = Array(list("mob_center"), font_size=40)
-        center.first_appear(self)
+            top_text = RelativeText(
+                "mob_center=mob_center\nvector=mn.UP * 2",
+                vector=mn.DOWN * 2 + mn.RIGHT * 0,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                mob_center=center,
+                vector=mn.UP * 2,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
 
-        top_text = RelativeText(
-            "mob_center=mob_center\nvector=mn.UP * 2",
-            vector=mn.DOWN * 2 + mn.RIGHT * 0,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            mob_center=center,
-            vector=mn.UP * 2,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
+            self.remove(ll, top_text)
 
-        self.remove(ll, top_text)
+            top_text = RelativeText(
+                "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 2",
+                vector=mn.DOWN * 2 + mn.RIGHT * 0,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                mob_center=center,
+                align_left=center,
+                vector=mn.UP * 2,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
 
-        top_text = RelativeText(
-            "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 2",
-            vector=mn.DOWN * 2 + mn.RIGHT * 0,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            mob_center=center,
-            align_left=center,
-            vector=mn.UP * 2,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
+            self.remove(ll, top_text)
 
-        self.remove(ll, top_text)
+            top_text = RelativeText(
+                "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 2",
+                vector=mn.DOWN * 2 + mn.RIGHT * 0,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                mob_center=center,
+                align_right=center,
+                vector=mn.UP * 2,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
 
-        top_text = RelativeText(
-            "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 2",
-            vector=mn.DOWN * 2 + mn.RIGHT * 0,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            mob_center=center,
-            align_right=center,
-            vector=mn.UP * 2,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
+            self.clear()
 
-        self.clear()
+            one = Array(list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
+            two = Array(list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
+            one.group_appear(self, two)
+            self.wait(0.5)
 
-        one = Array(list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
-        two = Array(list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
-        one.group_appear(self, two)
-        self.wait(0.5)
+            # -----------------------
 
-        # -----------------------
+            top_text = RelativeText(
+                "align_left=one\nalign_bottom=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                align_left=one,
+                align_bottom=two,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(ll, top_text)
 
-        top_text = RelativeText(
-            "align_left=one\nalign_bottom=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            align_left=one,
-            align_bottom=two,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(ll, top_text)
+            top_text = RelativeText(
+                "align_left=one\nalign_top=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                align_left=one,
+                align_top=two,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(ll, top_text)
 
-        top_text = RelativeText(
-            "align_left=one\nalign_top=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            align_left=one,
-            align_top=two,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(ll, top_text)
+            top_text = RelativeText(
+                "align_right=one\nalign_top=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                align_right=one,
+                align_top=two,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(ll, top_text)
 
-        top_text = RelativeText(
-            "align_right=one\nalign_top=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            align_right=one,
-            align_top=two,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(ll, top_text)
+            top_text = RelativeText(
+                "align_right=one\nalign_bottom=two",
+                vector=mn.UP * 1 + mn.RIGHT * 2,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                align_right=one,
+                align_bottom=two,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
+            self.remove(ll, top_text)
 
-        top_text = RelativeText(
-            "align_right=one\nalign_bottom=two",
-            vector=mn.UP * 1 + mn.RIGHT * 2,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            align_right=one,
-            align_bottom=two,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
-        self.remove(ll, top_text)
+            top_text = RelativeText(
+                "align_left=one\nalign_bottom=two\nvector=mn.UP * 1 + mn.RIGHT * 1",
+                vector=mn.UP * 0.7 + mn.RIGHT * 2,
+            )
+            ll = LinkedList(
+                cll([0, 1]),
+                align_left=one,
+                align_bottom=two,
+                vector=mn.UP * 1 + mn.RIGHT * 1,
+            )
+            ll.group_appear(self, top_text)
+            self.wait(pause)
+            self.clear()
 
-        top_text = RelativeText(
-            "align_left=one\nalign_bottom=two\nvector=mn.UP * 1 + mn.RIGHT * 1",
-            vector=mn.UP * 0.7 + mn.RIGHT * 2,
-        )
-        ll = LinkedList(
-            cll([0, 1]),
-            align_left=one,
-            align_bottom=two,
-            vector=mn.UP * 1 + mn.RIGHT * 1,
-        )
-        ll.group_appear(self, top_text)
-        self.wait(pause)
-        self.clear()
+        def rotation(self):
+            pause = 0.3
+            cll = LinkedList.create_linked_list
 
-        # ======== rotation ============
+            arr = Array(list("mob_center"), vector=mn.UP * 3)
+            arr.first_appear(self)
 
-        pause = 0.3
-        cll = LinkedList.create_linked_list
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        arr = Array(list("mob_center"), vector=mn.UP * 3)
-        arr.first_appear(self)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+                direction=np.array([10, -10, 0]),
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+                direction=np.array([0, -10, 0]),
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-            direction=np.array([10, -10, 0]),
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+                direction=np.array([-10, -10, 0]),
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-            direction=np.array([0, -10, 0]),
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+                direction=np.array([-10, 0, 0]),
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-            direction=np.array([-10, -10, 0]),
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+                direction=np.array([-10, 10, 0]),
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-            direction=np.array([-10, 0, 0]),
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+                direction=np.array([0, 10, 0]),
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-            direction=np.array([-10, 10, 0]),
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+                direction=np.array([10, 10, 0]),
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(pause)
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-            direction=np.array([0, 10, 0]),
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            self.remove(ll)
+            ll = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                vector=mn.DOWN * 3.5,
+            )
+            ll.appear(self)
+            ll.pointers([0, 1, 2])
+            self.wait(1)
+            self.remove(ll)
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-            direction=np.array([10, 10, 0]),
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
-        self.wait(pause)
+            # ======== left | right alignment ============
 
-        self.remove(ll)
-        ll = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            vector=mn.DOWN * 3.5,
-        )
-        ll.appear(self)
-        ll.pointers([0, 1, 2])
+            ll1 = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                align_right=arr,
+                vector=mn.DOWN * 2,
+            )
+            ll2 = LinkedList(
+                cll([0, 1, 2]),
+                mob_center=arr,
+                align_left=arr,
+                vector=mn.DOWN * 2,
+            )
+
+            # rt1 = RelativeText(
+            #     "align_edge=right",
+            #     mob_center=ll1,
+            #     vector=mn.DOWN * 2,
+            # )
+            # rt2 = RelativeText(
+            #     "align_edge=left",
+            #     mob_center=ll2,
+            #     vector=mn.DOWN * 2,
+            # )
+
+            self.play(
+                mn.FadeIn(ll1),
+                mn.FadeIn(ll2),
+                # mn.FadeIn(rt1),
+                # mn.FadeIn(rt2),
+                run_time=0.5,
+            )
+
+            self.wait(1)
+            self.remove(
+                ll1,
+                ll2,
+                # rt1,
+                # rt2,
+            )
+
+            # ======== up | down alignment ============
+
+            self.play(arr.animate.move_to(mn.ORIGIN))
+
+            ll1 = LinkedList(
+                cll([0, 1]),
+                radius=0.8,
+                mob_center=arr,
+                align_top=arr,
+                vector=mn.LEFT * 5.3,
+                direction=mn.UP,
+            )
+            ll2 = LinkedList(
+                cll([0, 1]),
+                radius=0.8,
+                mob_center=arr,
+                align_bottom=arr,
+                vector=mn.RIGHT * 5.3,
+                direction=mn.UP,
+            )
+
+            # rt1 = RelativeText(
+            #     "align_edge=up",
+            #     mob_center=ll1,
+            #     vector=mn.DOWN * 3,
+            #     align_edge="left",
+            # )
+            # rt2 = RelativeText(
+            #     "align_edge=down",
+            #     mob_center=ll2,
+            #     vector=mn.DOWN * 3.9,
+            #     align_edge="right",
+            # )
+
+            self.play(
+                mn.FadeIn(ll1),
+                mn.FadeIn(ll2),
+                # mn.FadeIn(rt1),
+                # mn.FadeIn(rt2),
+                run_time=0.5,
+            )
+
+            self.wait(1)
+            self.clear()
+
+        def updatevalue(self):
+            pause = 0.5
+
+            ll = LinkedList(
+                cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
+                direction=np.array([10, 2, 0]),
+                vector=mn.DOWN * 2,
+                # pointers=False,
+            )
+
+            ll.highlight_containers_1to3([0, 2, 4])
+            ll.pointers([0, 2, 4])
+
+            rt = RelativeText(
+                "update_value()",
+                mob_center=ll,
+                vector=mn.UP * 3,
+            )
+
+            self.play(mn.FadeIn(ll), mn.FadeIn(rt))
+            self.wait(pause)
+
+            ll.update_value(
+                self,
+                cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]),
+            )
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0, 12, 12345, "'", '^"']),
+            )
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0, 12]),
+            )
+            self.wait(pause)
+            ll.update_value(self, cll([0]))
+            self.wait(pause)
+            ll.update_value(self, cll([]))
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0]),
+                animate=True,
+            )
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0, 12]),
+                animate=True,
+            )
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0, 12, 12345, "'", '^"']),
+                animate=True,
+            )
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]),
+                animate=True,
+            )
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
+                animate=True,
+            )
+            self.wait(1)
+            self.clear()
+
+        def highlights_1to3(self):
+            pause = 0.5
+            lln = LinkedList(
+                cll([1, 0, 2, 0, 3, 0, 4, 0, 5]),
+                # vector=mn.LEFT * 4.8,
+            )
+            rt = RelativeText(
+                "pointers()   highlight_containers()",
+                mob_center=lln,
+                vector=mn.UP * 2,
+            )
+            lln.group_appear(self, rt)
+
+            lln.pointers([2, 4, 6])
+            lln.highlight_containers_1to3([2, 4, 6])
+            self.wait(pause)
+            lln.pointers([3, 4, 5])
+            lln.highlight_containers_1to3([3, 4, 5])
+            self.wait(pause)
+            lln.pointers([4, 4, 4])
+            lln.highlight_containers_1to3([4, 4, 4])
+            self.wait(pause)
+            lln.pointers([5, 4, 3])
+            lln.highlight_containers_1to3([5, 4, 3])
+            self.wait(pause)
+            lln.pointers([5, 3, 3])
+            lln.highlight_containers_1to3([5, 3, 3])
+            self.wait(pause)
+            lln.pointers([5, 4, 3])
+            lln.highlight_containers_1to3([5, 4, 3])
+            self.wait(pause)
+            lln.pointers([5, 5, 3])
+            lln.highlight_containers_1to3([5, 5, 3])
+            self.wait(pause)
+            lln.pointers([5, 5, 60])
+            lln.highlight_containers_1to3([5, 5, 60])
+            self.wait(pause)
+            lln.clear_containers_highlights()
+            lln.clear_pointers_highlights(0)
+            self.wait(1)
+            self.clear()
+
+        def highlight_on_value(self):
+            pause = 0.5
+            ll = LinkedList(
+                cll([10, 2, 3000, 2, 100, 2, 40]),
+                # vector=mn.LEFT * 4,
+            )
+            ll.first_appear(self)
+
+            rt = RelativeText(
+                "highlight_containers_with_value()   pointers_on_value()",
+                vector=mn.UP * 2,
+            )
+            rt.first_appear(self)
+            self.wait(pause)
+
+            ll.highlight_containers_with_value(2)
+            ll.pointers_on_value(2)
+            self.wait(pause)
+            ll.update_value(self, cll([22, 0, 22, 0, 22, 0]))
+            ll.highlight_containers_with_value(0)
+            ll.pointers_on_value(0)
+            self.wait(pause)
+            ll.update_value(self, cll([0, 22, 0, 22, 0, 22]))
+            ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
+            ll.pointers_on_value(0, color=mn.LIGHT_BROWN)
+            self.wait(pause)
+            ll.update_value(self, cll([22, 0, 22, 0, 22, 0]), animate=True)
+            ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
+            ll.pointers_on_value(0, color=mn.LIGHT_BROWN)
+            self.wait(pause)
+            ll.update_value(self, cll([0, 22, 0, 22, 0, 22]), animate=True)
+            ll.highlight_containers_with_value(0, color=mn.PURPLE)
+            ll.pointers_on_value(0, color=mn.PURPLE)
+            self.wait(pause)
+            ll.update_value(self, cll([22, 0, 22, 0, 22]), animate=True)
+            ll.highlight_containers_with_value(0, color=mn.PURPLE)
+            ll.pointers_on_value(0, color=mn.PURPLE)
+            self.wait(pause)
+            ll.update_value(self, cll([0, 22, 0, 22, 0, 22]), animate=True)
+            ll.highlight_containers_with_value(0, color=mn.PINK)
+            ll.pointers_on_value(0, color=mn.PINK)
+            self.wait(pause)
+            ll.update_value(self, cll([22, 0, 22, 0, 22]), animate=True)
+            ll.highlight_containers_with_value(0, color=mn.PINK)
+            ll.pointers_on_value(0, color=mn.PINK)
+            self.wait(1)
+
+        # ========== calls ==============
+
+        positioning(self)
+        rotation(self)
+        updatevalue(self)
+        highlights_1to3(self)
+        highlight_on_value(self)
+
+        # ========== finish ==============
+
         self.wait(1)
-        self.remove(ll)
-
-        # ======== left | right alignment ============
-
-        ll1 = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            align_right=arr,
-            vector=mn.DOWN * 2,
-        )
-        ll2 = LinkedList(
-            cll([0, 1, 2]),
-            mob_center=arr,
-            align_left=arr,
-            vector=mn.DOWN * 2,
-        )
-
-        # rt1 = RelativeText(
-        #     "align_edge=right",
-        #     mob_center=ll1,
-        #     vector=mn.DOWN * 2,
-        # )
-        # rt2 = RelativeText(
-        #     "align_edge=left",
-        #     mob_center=ll2,
-        #     vector=mn.DOWN * 2,
-        # )
-
-        self.play(
-            mn.FadeIn(ll1),
-            mn.FadeIn(ll2),
-            # mn.FadeIn(rt1),
-            # mn.FadeIn(rt2),
-            run_time=0.5,
-        )
-
-        self.wait(1)
-        self.remove(
-            ll1,
-            ll2,
-            # rt1,
-            # rt2,
-        )
-
-        # ======== up | down alignment ============
-
-        self.play(arr.animate.move_to(mn.ORIGIN))
-
-        ll1 = LinkedList(
-            cll([0, 1]),
-            radius=0.8,
-            mob_center=arr,
-            align_top=arr,
-            vector=mn.LEFT * 5.3,
-            direction=mn.UP,
-        )
-        ll2 = LinkedList(
-            cll([0, 1]),
-            radius=0.8,
-            mob_center=arr,
-            align_bottom=arr,
-            vector=mn.RIGHT * 5.3,
-            direction=mn.UP,
-        )
-
-        # rt1 = RelativeText(
-        #     "align_edge=up",
-        #     mob_center=ll1,
-        #     vector=mn.DOWN * 3,
-        #     align_edge="left",
-        # )
-        # rt2 = RelativeText(
-        #     "align_edge=down",
-        #     mob_center=ll2,
-        #     vector=mn.DOWN * 3.9,
-        #     align_edge="right",
-        # )
-
-        self.play(
-            mn.FadeIn(ll1),
-            mn.FadeIn(ll2),
-            # mn.FadeIn(rt1),
-            # mn.FadeIn(rt2),
-            run_time=0.5,
-        )
-
-        self.wait(1)
-        self.clear()
-
-        # ======== update value ============
-
-        pause = 0.5
-
-        ll = LinkedList(
-            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
-            direction=np.array([10, 2, 0]),
-            vector=mn.DOWN * 2,
-            # pointers=False,
-        )
-
-        ll.highlight_containers_1to3([0, 2, 4])
-        ll.pointers([0, 2, 4])
-
-        rt = RelativeText(
-            "update_value()",
-            mob_center=ll,
-            vector=mn.UP * 3,
-        )
-
-        self.play(mn.FadeIn(ll), mn.FadeIn(rt))
-        self.wait(pause)
-
-        ll.update_value(
-            self,
-            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]),
-        )
-        self.wait(pause)
-        ll.update_value(
-            self,
-            cll([0, 12, 12345, "'", '^"']),
-        )
-        self.wait(pause)
-        ll.update_value(
-            self,
-            cll([0, 12]),
-        )
-        self.wait(pause)
-        ll.update_value(self, cll([0]))
-        self.wait(pause)
-        ll.update_value(self, cll([]))
-        self.wait(pause)
-        ll.update_value(
-            self,
-            cll([0]),
-            animate=True,
-        )
-        self.wait(pause)
-        ll.update_value(
-            self,
-            cll([0, 12]),
-            animate=True,
-        )
-        self.wait(pause)
-        ll.update_value(
-            self,
-            cll([0, 12, 12345, "'", '^"']),
-            animate=True,
-        )
-        self.wait(pause)
-        ll.update_value(
-            self,
-            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]),
-            animate=True,
-        )
-        self.wait(pause)
-        ll.update_value(
-            self,
-            cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
-            animate=True,
-        )
-        self.wait(1)
-        self.remove(rt)
-
-        # ======== highlight on index ============
-
-        lln = LinkedList(
-            cll([1, 0, 2, 0, 3, 0, 4, 0, 5]),
-            # vector=mn.LEFT * 4.8,
-        )
-        self.play(mn.ReplacementTransform(ll, lln, run_time=0.5))
-
-        rt = RelativeText(
-            "pointers()   highlight_containers()",
-            mob_center=ll,
-            vector=mn.UP * 2,
-        )
-        rt.first_appear(self)
-
-        lln.pointers([2, 4, 6])
-        lln.highlight_containers_1to3([2, 4, 6])
-        self.wait(pause)
-        lln.pointers([3, 4, 5])
-        lln.highlight_containers_1to3([3, 4, 5])
-        self.wait(pause)
-        lln.pointers([4, 4, 4])
-        lln.highlight_containers_1to3([4, 4, 4])
-        self.wait(pause)
-        lln.pointers([5, 4, 3])
-        lln.highlight_containers_1to3([5, 4, 3])
-        self.wait(pause)
-        lln.pointers([5, 3, 3])
-        lln.highlight_containers_1to3([5, 3, 3])
-        self.wait(pause)
-        lln.pointers([5, 4, 3])
-        lln.highlight_containers_1to3([5, 4, 3])
-        self.wait(pause)
-        lln.pointers([5, 5, 3])
-        lln.highlight_containers_1to3([5, 5, 3])
-        self.wait(pause)
-        lln.pointers([5, 5, 60])
-        lln.highlight_containers_1to3([5, 5, 60])
-        self.wait(pause)
-        lln.clear_containers_highlights()
-        lln.clear_pointers_highlights(0)
-        self.remove(rt)
-        self.wait(1)
-
-        # ======== highlight on value ============
-
-        ll = LinkedList(
-            cll([10, 2, 3000, 2, 100, 2, 40]),
-            # vector=mn.LEFT * 4,
-        )
-        self.play(mn.ReplacementTransform(lln, ll, run_time=0.5))
-
-        rt = RelativeText(
-            "highlight_containers_with_value()   pointers_on_value()",
-            vector=mn.UP * 2,
-        )
-        rt.first_appear(self)
-        self.wait(pause)
-
-        ll.highlight_containers_with_value(2)
-        ll.pointers_on_value(2)
-        self.wait(pause)
-        ll.update_value(self, cll([22, 0, 22, 0, 22, 0]))
-        ll.highlight_containers_with_value(0)
-        ll.pointers_on_value(0)
-        self.wait(pause)
-        ll.update_value(self, cll([0, 22, 0, 22, 0, 22]))
-        ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-        ll.pointers_on_value(0, color=mn.LIGHT_BROWN)
-        self.wait(pause)
-        ll.update_value(self, cll([22, 0, 22, 0, 22, 0]), animate=True)
-        ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-        ll.pointers_on_value(0, color=mn.LIGHT_BROWN)
-        self.wait(pause)
-        ll.update_value(self, cll([0, 22, 0, 22, 0, 22]), animate=True)
-        ll.highlight_containers_with_value(0, color=mn.PURPLE)
-        ll.pointers_on_value(0, color=mn.PURPLE)
-        self.wait(pause)
-        ll.update_value(self, cll([22, 0, 22, 0, 22]), animate=True)
-        ll.highlight_containers_with_value(0, color=mn.PURPLE)
-        ll.pointers_on_value(0, color=mn.PURPLE)
-        self.wait(pause)
-        ll.update_value(self, cll([0, 22, 0, 22, 0, 22]), animate=True)
-        ll.highlight_containers_with_value(0, color=mn.PINK)
-        ll.pointers_on_value(0, color=mn.PINK)
-        self.wait(pause)
-        ll.update_value(self, cll([22, 0, 22, 0, 22]), animate=True)
-        ll.highlight_containers_with_value(0, color=mn.PINK)
-        ll.pointers_on_value(0, color=mn.PINK)
-        self.wait(1)
-
-        # ========== FINISH ==============
-
-        self.wait(pause)
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
 
@@ -1738,7 +1741,7 @@ the old highlight clears.
         # Animation code_block
         cb.first_appear(self)
 
-        # ======== highlight line ============
+        # ======== highlight() ============
 
         title = RelativeText(
             "highlight(0)",
