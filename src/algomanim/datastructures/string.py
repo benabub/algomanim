@@ -21,6 +21,8 @@ class String(RectangleCellsStructure):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        anchor: Optional alignment anchor when neither align_left nor align_right
+            is specified. Must be mn.LEFT or mn.RIGHT. Defaults to mn.LEFT.
         container_color: Border color for cells.
         fill_color: Fill color for character cells.
         bg_color: Background color for quote cells and default pointer color.
@@ -52,6 +54,7 @@ class String(RectangleCellsStructure):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        anchor: np.ndarray | None = mn.LEFT,
         # ---- font ----
         font="",
         font_size=35,
@@ -128,11 +131,19 @@ class String(RectangleCellsStructure):
             self._top_buff = top_buff
             self._bottom_buff = bottom_buff
             self._deep_bottom_buff = deep_bottom_buff
+        # ---- anchor ----
+        if not (align_left or align_right) and anchor is not None:
+            if not (
+                np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
+            ):
+                raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+            self._anchor = anchor
+        else:
+            self._anchor = None
 
         # empty value
-        if not string:
-            self._containers_mob, self._empty_value_mob = self._create_empty_string()
-            self.add(self._containers_mob, self._empty_value_mob)
+        if not self._data:
+            self._create_empty_string()
             return
 
         # letters cells
@@ -150,8 +161,6 @@ class String(RectangleCellsStructure):
             self._create_and_pos_quote_cell_mobs()
         )
 
-        self._quote_cell_left_edge = self._left_quote_cell_mob.get_left()
-
         # text mobs quotes group
         self._quotes_mob = self._create_and_pos_quotes_mob()
 
@@ -163,9 +172,7 @@ class String(RectangleCellsStructure):
 
         # adds local objects as instance attributes
         self.add(
-            # self._all_cell_mob,
             self._left_quote_cell_mob,
-            # self._containers_mob,
             self._right_quote_cell_mob,
             self._values_mob,
             self._quotes_mob,
@@ -180,8 +187,6 @@ class String(RectangleCellsStructure):
                 self._pointers_top,
                 self._pointers_bottom,
             )
-
-        self._coordinate_y = self.get_y()
 
     def _containers_cell_config(self):
         """Get configuration for character cell containers.
@@ -214,25 +219,30 @@ class String(RectangleCellsStructure):
     def _create_empty_string(self):
         """Create visualization for empty string.
 
+        Creates a single square container with "" text for empty strings.
+        Initializes or clears pointer groups if pointers are enabled.
+
         Returns:
-            tuple: Tuple containing (containers_mob, empty_value_mob).
+            None: Modifies internal mobjects in place instead of returning them.
         """
 
         # clear old fields
         self._values_mob = mn.VGroup()
-        self._pointers_top = mn.VGroup()
-        self._pointers_bottom = mn.VGroup()
+        if self._pointers:
+            self._pointers_top = mn.VGroup()
+            self._pointers_bottom = mn.VGroup()
 
-        empty_value_mob = mn.Text('""', **self._text_config())
-        containers_mob = mn.Square(**self._containers_cell_config())
-        # self._position(containers_mob, containers_mob)
+        self._empty_value_mob = mn.Text('""', **self._text_config())
+        self._containers_mob = mn.Square(**self._containers_cell_config())
+        self.add(self._containers_mob)
         self._position()
-        empty_value_mob.next_to(
-            containers_mob.get_top(),
+
+        self._empty_value_mob.next_to(
+            self._containers_mob.get_top(),
             direction=mn.DOWN,
             buff=self._top_buff,
         )
-        return containers_mob, empty_value_mob
+        self.add(self._empty_value_mob)
 
     def _create_containers_mob(self):
         """Create square mobjects for character cells.
@@ -319,8 +329,7 @@ class String(RectangleCellsStructure):
         self,
         scene: mn.Scene,
         new_value: str,
-        animate: bool = False,
-        left_aligned=True,
+        animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
         """Replace the string visualization with a new string value.
@@ -336,10 +345,6 @@ class String(RectangleCellsStructure):
             new_value: The new string value to display.
             animate: If True, animates the transition using a Transform.
                      If False, updates the object instantly.
-            left_aligned: If True, aligns the left edge of the new string's quote cells
-                         and character cells with the corresponding left edges of the
-                         current string, maintaining horizontal position. If False,
-                         the new string is centered on the original mob_center.
             run_time: Duration (in seconds) of the animation if `animate=True`.
                      Has no effect if `animate=False`.
         """
@@ -381,27 +386,28 @@ class String(RectangleCellsStructure):
             # ---- kwargs ----
             **self._parent_kwargs,
         )
-        new_group._coordinate_y = self._coordinate_y
 
-        if left_aligned:
-            new_group._quote_cell_left_edge = self._quote_cell_left_edge
-            new_group._letters_cells_left_edge = self._letters_cells_left_edge
-
-            if new_value:
-                left_edge = self._quote_cell_left_edge
-            else:
-                left_edge = self._letters_cells_left_edge
-
-            new_group.align_to(left_edge, mn.LEFT)
-            new_group.set_y(self._coordinate_y)
-
-        else:
-            new_group.move_to(self._mob_center)
-            new_group.shift(self._vector)
-
-        self._quote_cell_left_edge = new_group._quote_cell_left_edge
-        self._letters_cells_left_edge = new_group._letters_cells_left_edge
-        # --------------------------
+        if self._anchor is not None:
+            if np.array_equal(self._anchor, mn.LEFT):
+                if self._data and new_value:
+                    new_group.align_to(self.get_left(), mn.LEFT)
+                elif self._data and not new_value:
+                    new_group.align_to(self._containers_mob.get_left(), mn.LEFT)
+                elif not self._data and new_value:
+                    target = (
+                        self._containers_mob.get_left() + mn.LEFT * self._cell_height
+                    )
+                    new_group.align_to(target, mn.LEFT)
+            elif np.array_equal(self._anchor, mn.RIGHT):
+                if self._data and new_value:
+                    new_group.align_to(self.get_right(), mn.RIGHT)
+                elif self._data and not new_value:
+                    new_group.align_to(self._containers_mob.get_right(), mn.RIGHT)
+                elif not self._data and new_value:
+                    target = (
+                        self._containers_mob.get_right() + mn.RIGHT * self._cell_height
+                    )
+                    new_group.align_to(target, mn.RIGHT)
 
         # restore colors
         self._preserve_highlights_states(new_group, highlight_status)
