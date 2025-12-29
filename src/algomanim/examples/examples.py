@@ -1211,57 +1211,96 @@ class ExampleString(mn.Scene):
             str_5.update_value(self, string)
             self.wait(pause)
 
-            self.clear()
+            self.remove(
+                str_1,
+                str_2,
+                str_3,
+                str_4,
+                str_5,
+            )
+            self.wait(pause)
 
-        # def updatevalue(self):
-        #     pause = 0.5
-        #     string = String("follow the rabbit")
-        #     string.first_appear(self)
-        #
-        #     top_text = RelativeText(
-        #         "update_value()",
-        #         vector=mn.UP * 2,
-        #     )
-        #     top_text.first_appear(self)
-        #
-        #     string.pointers([4, 5, 6])
-        #     string.highlight_containers_1to3([4, 5, 6])
-        #
-        #     self.wait(1)
-        #     string.update_value(self, "follow the rabbit")
-        #     self.wait(pause)
-        #     string.update_value(self, "follow the")
-        #     self.wait(pause)
-        #     string.update_value(self, "follow")
-        #     self.wait(pause)
-        #     string.update_value(self, "")
-        #     self.wait(pause)
-        #     string.update_value(self, "")
-        #     self.wait(pause)
-        #     string.update_value(self, "follow")
-        #     self.wait(1)
-        #     string.update_value(self, "follow the", animate=True)
-        #     string.highlight_containers_1to3([4, 5, 6])
-        #     string.highlight_containers_1to3([4, 5, 6])
-        #     self.wait(pause)
-        #     string.update_value(self, "follow the rabbit", animate=True)
-        #     self.wait(pause)
-        #     string.update_value(self, "rabbit follow the", animate=True)
-        #     self.wait(pause)
-        #     string.update_value(self, "the rabbit follow", animate=True)
-        #     self.wait(pause)
-        #     string.update_value(self, "follow the rabbit", animate=True)
-        #     self.wait(pause)
-        #     string.update_value(self, "follow the", animate=True)
-        #     self.wait(pause)
-        #     string.update_value(self, "follow", animate=True)
-        #     self.wait(pause)
-        #     string.update_value(self, "", animate=True)
-        #     self.wait(pause)
-        #     string.update_value(self, "follow", animate=True)
-        #     self.wait(1)
-        #
-        #     self.remove(top_text)
+            string = ""
+            str_1 = String(
+                string,
+                mob_center=center,
+                vector=mn.UP * 1.5,
+                anchor=None,
+                pointers=False,
+            )
+            str_2 = String(
+                string,
+                mob_center=str_1,
+                vector=mn.UP * 0.7,
+                anchor=mn.RIGHT,
+                pointers=False,
+            )
+            str_3 = String(
+                string,
+                mob_center=str_2,
+                vector=mn.UP * 0.7,
+                anchor=mn.LEFT,
+                pointers=False,
+            )
+            str_4 = String(
+                string,
+                align_left=center,
+                vector=mn.DOWN * 1.5,
+                pointers=False,
+            )
+            str_5 = String(
+                string,
+                align_right=center,
+                vector=mn.DOWN * 1.5,
+                pointers=False,
+            )
+            str_1.highlight_containers_1to3([0, 1, 2])
+            str_2.highlight_containers_1to3([0, 1, 2])
+            str_3.highlight_containers_1to3([0, 1, 2])
+            str_4.highlight_containers_1to3([0, 1, 2])
+            str_5.highlight_containers_1to3([0, 1, 2])
+            str_1.group_appear(
+                self,
+                str_2,
+                str_3,
+                str_4,
+                str_5,
+            )
+            self.wait(1)
+
+            string = "1"
+            str_1.update_value(self, string)
+            str_2.update_value(self, string)
+            str_3.update_value(self, string)
+            str_4.update_value(self, string)
+            str_5.update_value(self, string)
+            self.wait(pause)
+
+            string = ""
+            str_1.update_value(self, string)
+            str_2.update_value(self, string)
+            str_3.update_value(self, string)
+            str_4.update_value(self, string)
+            str_5.update_value(self, string)
+            self.wait(pause)
+
+            string = "12"
+            str_1.update_value(self, string)
+            str_2.update_value(self, string)
+            str_3.update_value(self, string)
+            str_4.update_value(self, string)
+            str_5.update_value(self, string)
+            self.wait(pause)
+
+            string = "123"
+            str_1.update_value(self, string)
+            str_2.update_value(self, string)
+            str_3.update_value(self, string)
+            str_4.update_value(self, string)
+            str_5.update_value(self, string)
+            self.wait(pause)
+
+            self.clear()
 
         def highlights_1to3(self):
             pause = 0.5
