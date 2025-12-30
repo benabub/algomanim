@@ -360,7 +360,7 @@ class ExampleArray(mn.Scene):
             array.group_appear(self, top_text)
             self.wait(pause)
             update_text = RelativeText(
-                "update_text()",
+                "update_value()",
                 mob_center=top_text,
                 align_left=top_text,
                 vector=mn.DOWN * 1,
@@ -387,7 +387,7 @@ class ExampleArray(mn.Scene):
             self.wait(pause)
 
             update_text = RelativeText(
-                "update_text()",
+                "update_value()",
                 mob_center=top_text,
                 align_left=top_text,
                 vector=mn.DOWN * 1,
@@ -488,16 +488,16 @@ class ExampleArray(mn.Scene):
             )
 
             text_arr_4 = RelativeText(
-                "align_left=center",
+                "align_left=mob_center",
                 align_left=arr_4,
                 mob_center=arr_4,
-                vector=mn.DOWN * 1.0,
+                vector=mn.DOWN * 1.0 + mn.LEFT * 1,
             )
             text_arr_5 = RelativeText(
-                "align_right=center",
+                "align_right=mob_center",
                 align_right=arr_5,
                 mob_center=arr_5,
-                vector=mn.DOWN * 1.0,
+                vector=mn.DOWN * 1.0 + mn.RIGHT * 1,
             )
 
             arr_1.group_appear(
@@ -994,7 +994,7 @@ class ExampleString(mn.Scene):
             s.group_appear(self, top_text)
             self.wait(pause)
             update_text = RelativeText(
-                "update_text()",
+                "update_value()",
                 mob_center=top_text,
                 align_left=top_text,
                 vector=mn.DOWN * 1,
@@ -1020,7 +1020,7 @@ class ExampleString(mn.Scene):
             s.group_appear(self, top_text)
             self.wait(pause)
             update_text = RelativeText(
-                "update_text()",
+                "update_value()",
                 mob_center=top_text,
                 align_left=top_text,
                 vector=mn.DOWN * 1,
@@ -1121,16 +1121,16 @@ class ExampleString(mn.Scene):
             )
 
             text_str_4 = RelativeText(
-                "align_left=center",
+                "align_left=mob_center",
                 align_left=str_4,
                 mob_center=str_4,
-                vector=mn.DOWN * 1.0,
+                vector=mn.DOWN * 1.0 + mn.LEFT * 2,
             )
             text_str_5 = RelativeText(
-                "align_right=center",
+                "align_right=mob_center",
                 align_right=str_5,
                 mob_center=str_5,
-                vector=mn.DOWN * 1.0,
+                vector=mn.DOWN * 1.0 + mn.RIGHT * 2,
             )
 
             str_1.group_appear(
@@ -1344,6 +1344,24 @@ class ExampleString(mn.Scene):
             self.wait(1)
             self.clear()
 
+        def highlights_monocolor(self):
+            pause = 1
+            string = String("follow rab", anchor=None)
+            top_text = RelativeText(
+                "highlight_containers_monocolor()",
+                vector=mn.UP * 2,
+            )
+            string.group_appear(self, top_text)
+            self.wait(pause)
+
+            string.highlight_containers_monocolor([0, 1, 2, 3, 4, 5])
+            self.wait(pause)
+            string.highlight_containers_monocolor([7, 8, 9, 10, 11, 12])
+            self.wait(pause)
+            string.update_value(self, "follow rabbit")
+            self.wait(2)
+            self.clear()
+
         def highlight_on_value(self):
             pause = 0.5
             string = String("follow the rabbit")
@@ -1454,6 +1472,7 @@ class ExampleString(mn.Scene):
         positioning(self)
         updatevalue(self)
         highlights_1to3(self)
+        highlights_monocolor(self)
         highlight_on_value(self)
         mix(self)
 
