@@ -600,19 +600,18 @@ class LinearContainerStructure(AlgoManimBase):
             idx_list: List of indices to highlight (any number of elements).
             color: Color to apply to all highlighted cells. Default is RED.
         """
-        # ------- checks --------
+        # checks
         if not self._data:
             return
 
-        # ------- clear colors dict --------
+        # clear colors dict
         self._containers_colors = {}
 
-        # ------- fill store --------
-        for idx in range(len(self._data)):
-            if idx in idx_list:
-                self._containers_colors[idx] = color
+        # fill store
+        for idx in idx_list:
+            self._containers_colors[idx] = color
 
-        # ------- apply --------
+        # apply
         self._apply_containers_colors()
 
     def highlight_containers_with_value(
