@@ -514,6 +514,7 @@ class LinearContainerStructure(AlgoManimBase):
         if not color_23:
             color_23 = self._color_23
 
+        # clear self._containers_color
         self._containers_colors = {}
 
         # ------- fill self._containers_colors --------
@@ -523,37 +524,31 @@ class LinearContainerStructure(AlgoManimBase):
             self._containers_colors[i] = color_1
 
         elif len(idx_list) == 2:
-            i = idx_list[0]
-            j = idx_list[1]
-
-            for idx, _ in enumerate(self._containers_mob):
-                if idx == i == j:
-                    self._containers_colors[idx] = color_12
-                elif idx == i:
-                    self._containers_colors[idx] = color_1
-                elif idx == j:
-                    self._containers_colors[idx] = color_2
+            i, j = idx_list[0], idx_list[1]
+            if i == j:
+                self._containers_colors[i] = color_12
+            else:
+                self._containers_colors[i] = color_1
+                self._containers_colors[j] = color_2
 
         elif len(idx_list) == 3:
-            i = idx_list[0]
-            j = idx_list[1]
-            k = idx_list[2]
+            i, j, k = idx_list[0], idx_list[1], idx_list[2]
 
-            for idx, _ in enumerate(self._containers_mob):
-                if idx == i == j == k:
-                    self._containers_colors[idx] = color_123
-                elif idx == i == j:
-                    self._containers_colors[idx] = color_12
-                elif idx == i == k:
-                    self._containers_colors[idx] = color_13
-                elif idx == k == j:
-                    self._containers_colors[idx] = color_23
-                elif idx == i:
-                    self._containers_colors[idx] = color_1
-                elif idx == j:
-                    self._containers_colors[idx] = color_2
-                elif idx == k:
-                    self._containers_colors[idx] = color_3
+            if i == j == k:
+                self._containers_colors[i] = color_123
+            elif i == j:
+                self._containers_colors[i] = color_12
+                self._containers_colors[k] = color_3
+            elif i == k:
+                self._containers_colors[i] = color_13
+                self._containers_colors[j] = color_2
+            elif j == k:
+                self._containers_colors[i] = color_1
+                self._containers_colors[j] = color_23
+            else:
+                self._containers_colors[i] = color_1
+                self._containers_colors[j] = color_2
+                self._containers_colors[k] = color_3
 
         if not self._data:
             return
