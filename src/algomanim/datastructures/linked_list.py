@@ -18,13 +18,14 @@ class LinkedList(LinearContainerStructure):
         direction (np.ndarray): Direction vector for list orientation.
         node_color (ManimColor | str): Border color for nodes.
         fill_color (ManimColor | str): Fill color for nodes.
-        bg_color (ManimColor | str): Background color for arrows and default pointer color.
+        bg_color (ManimColor | str): Background color of scene and default pointer color.
         vector (np.ndarray): Position offset from mob_center.
         mob_center (mn.Mobject): Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        anchor: Optional alignment anchor when neither align_left nor align_right
         font (str): Font family for text elements.
         text_color (ManimColor | str): Color for text elements.
         weight (str): Font weight (NORMAL, BOLD, etc.).
@@ -48,6 +49,7 @@ class LinkedList(LinearContainerStructure):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        anchor: np.ndarray | None = mn.LEFT,
         # -- font --
         font: str = "",
         text_color: ManimColor | str = mn.BLACK,
@@ -98,10 +100,19 @@ class LinkedList(LinearContainerStructure):
         self._weight = weight
         # ---- pointers ----
         self._pointers = pointers
+        # ---- anchor ----
+        if not (align_left or align_right) and anchor is not None:
+            if not (
+                np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
+            ):
+                raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+            self._anchor = anchor
+        else:
+            self._anchor = None
 
         # empty value
         if not self._data:
-            self._empty_linked_list()
+            self._create_empty_linked_list()
             return
 
         # nodes
@@ -109,9 +120,6 @@ class LinkedList(LinearContainerStructure):
 
         # arrows
         self._arrows_mob = self._create_and_pos_arrows_mob()
-
-        # # group all mobs
-        # self._frame_mob = self._create_frame_mob()
 
         self._frame_mob = mn.VGroup(
             self._containers_mob,
@@ -135,16 +143,41 @@ class LinkedList(LinearContainerStructure):
         self._values_mob = self._create_and_pos_values_mob()
         self.add(self._values_mob)
 
-    def _empty_linked_list(self):
+    def _create_empty_linked_list(self):
         """Initialize empty linked list visualization."""
 
-        # clear old fields
-        self._containers_mob = mn.VGroup()
-        self._arrows_mob = mn.VGroup()
-        self._pointers_top = mn.VGroup()
-        self._pointers_bottom = mn.VGroup()
-        self._frame_mob = mn.VGroup()
-        self._values_mob = mn.VGroup()
+        # # clear old fields
+        # if self._pointers:
+        #     self._pointers_top = mn.VGroup()
+        #     self._pointers_bottom = mn.VGroup()
+        #     self.add(self._pointers_top, self._pointers_bottom)
+        # self._arrows_mob = mn.VGroup()
+        # self._values_mob = mn.VGroup()
+        # self.add(self._arrows_mob, self._values_mob)
+
+        self._containers_mob = mn.Circle(
+            radius=self._radius,
+            color=self._bg_color,
+            fill_color=self._bg_color,
+            fill_opacity=1,
+            stroke_width=self._radius * 7,
+        )
+
+        self.add(self._containers_mob)
+        self._position()
+
+        top_bottom_buff = self._radius / 2
+        max_size_center = (self._radius - top_bottom_buff) * 2.5
+        self._empty_value_mob = mn.Text(
+            "None",
+            font_size=40,
+            font=self._font,
+            weight=self._weight,
+            color=mn.WHITE,
+        )
+        self._empty_value_mob.scale_to_fit_width(max_size_center)
+        self._empty_value_mob.move_to(self._containers_mob)
+        self.add(self._empty_value_mob)
 
     @staticmethod
     def create_linked_list(value: list) -> ListNode | None:
@@ -365,7 +398,7 @@ class LinkedList(LinearContainerStructure):
         self,
         scene: mn.Scene,
         new_value: ListNode | None,
-        animate: bool = True,
+        animate: bool = False,
         run_time: float = 0.2,
     ) -> None:
         """Replace the linked list visualization with new nodes.
@@ -380,9 +413,6 @@ class LinkedList(LinearContainerStructure):
         # checks
         if not self._data and not new_value:
             return
-
-        # save old group status
-        highlight_status = self._save_highlights_states()
 
         # new group
         new_group = LinkedList(
@@ -410,8 +440,16 @@ class LinkedList(LinearContainerStructure):
             **self._parent_kwargs,
         )
 
+        if self._anchor is not None:
+            if np.array_equal(self._anchor, mn.LEFT):
+                new_group.align_to(self.get_left(), mn.LEFT)
+            else:
+                new_group.align_to(self.get_right(), mn.RIGHT)
+
         # restore colors
-        self._preserve_highlights_states(new_group, highlight_status)
+        if new_value:
+            highlight_status = self._save_highlights_states()
+            self._preserve_highlights_states(new_group, highlight_status)
 
         # add
         if animate:

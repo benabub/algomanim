@@ -353,9 +353,6 @@ class String(RectangleCellsStructure):
         if not self._data and not new_value:
             return
 
-        # save old group status
-        highlight_status = self._save_highlights_states()
-
         new_group = String(
             new_value,
             # ---- pointers ----
@@ -409,6 +406,8 @@ class String(RectangleCellsStructure):
                     )
                     new_group.align_to(target, mn.RIGHT)
 
+        # save old group status
+        highlight_status = self._save_highlights_states()
         # restore colors
         self._preserve_highlights_states(new_group, highlight_status)
 

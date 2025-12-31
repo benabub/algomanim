@@ -6,6 +6,8 @@ Manim use notes:
   - Simply assigning  causes an unexpected shift in position:
     example: var = mobject
   - hasattr(mobject, "method_name") -> True (always), so it's bad idea to use it
+  - Transform animations with SVGMobjects will produce visual artifacts
+    for unknown reason (artifacts are located in mn.ORIGIN)
 """
 
 import numpy as np

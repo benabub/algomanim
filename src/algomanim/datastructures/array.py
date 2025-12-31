@@ -192,6 +192,7 @@ class Array(RectangleCellsStructure):
             self._pointers_bottom = mn.VGroup()
 
         self._empty_value_mob = mn.Text("[]", **self._text_config())
+
         self._containers_mob = mn.Rectangle(
             height=self._cell_height,
             width=self._get_cell_width(
@@ -203,6 +204,7 @@ class Array(RectangleCellsStructure):
         )
         self.add(self._containers_mob)
         self._position()
+
         self._empty_value_mob.move_to(self._containers_mob.get_center())
         self._empty_value_mob.align_to(self._containers_mob, mn.DOWN)
         self.add(self._empty_value_mob)
@@ -348,9 +350,6 @@ class Array(RectangleCellsStructure):
         if not self._data and not new_value:
             return
 
-        # save old group status
-        highlight_status = self._save_highlights_states()
-
         # new group
         new_group = Array(
             new_value,
@@ -389,6 +388,8 @@ class Array(RectangleCellsStructure):
             else:
                 new_group.align_to(self.get_right(), mn.RIGHT)
 
+        # save old group status
+        highlight_status = self._save_highlights_states()
         # restore colors
         self._preserve_highlights_states(new_group, highlight_status)
 
