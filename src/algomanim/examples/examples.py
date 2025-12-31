@@ -2061,7 +2061,7 @@ class ExampleLinkedlist(mn.Scene):
 
             # ------------------
 
-            pause = 1
+            pause = 0.7
 
             ll = LinkedList(
                 cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
@@ -2110,6 +2110,43 @@ class ExampleLinkedlist(mn.Scene):
             ll.pointers([0, 2, 4])
             rt = RelativeText(
                 "anchor=mn.RIGHT\ndirection=np.array([10, 2, 0])\nupdate_value()",
+                align_left=ll,
+                vector=mn.UP * 3,
+            )
+            ll.group_appear(self, rt)
+            self.wait(pause)
+
+            ll.update_value(self, cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]))
+            self.wait(pause)
+            ll.update_value(self, cll([0, 12, 12345, "'", '^"']))
+            self.wait(pause)
+            ll.update_value(self, cll([]))
+            self.wait(pause)
+            ll.update_value(self, cll([0, 12]))
+            self.wait(pause)
+            ll.update_value(self, cll([0, 12, 12345, "'", '^"']))
+            self.wait(pause)
+            ll.update_value(self, cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"]))
+            self.wait(pause)
+            ll.update_value(
+                self,
+                cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
+            )
+            self.wait(pause)
+            self.clear()
+
+            # ------------------
+
+            ll = LinkedList(
+                cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"]),
+                direction=np.array([-10, -2, 0]),
+                vector=mn.DOWN * 1,
+                anchor=mn.RIGHT,
+            )
+            ll.highlight_containers_1to3([0, 2, 4])
+            ll.pointers([0, 2, 4])
+            rt = RelativeText(
+                "anchor=mn.RIGHT\ndirection=np.array([-10, -2, 0])\nupdate_value()",
                 align_left=ll,
                 vector=mn.UP * 3,
             )

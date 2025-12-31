@@ -441,10 +441,41 @@ class LinkedList(LinearContainerStructure):
         )
 
         if self._anchor is not None:
-            if np.array_equal(self._anchor, mn.LEFT):
-                new_group.align_to(self.get_left(), mn.LEFT)
+            if self._direction[0] >= 0:
+                left_idx = 0
+                right_idx = -1
             else:
-                new_group.align_to(self.get_right(), mn.RIGHT)
+                left_idx = -1
+                right_idx = 0
+
+            if np.array_equal(self._anchor, mn.LEFT):
+                self_left_node_center = self._containers_mob[left_idx].get_center()
+                new_left_node_center = new_group._containers_mob[left_idx].get_center()
+                shift_vector = self_left_node_center - new_left_node_center
+                new_group.shift(shift_vector)
+
+            elif np.array_equal(self._anchor, mn.RIGHT):
+                self_right_node_center = self._containers_mob[right_idx].get_center()
+                new_right_node_center = new_group._containers_mob[
+                    right_idx
+                ].get_center()
+                shift_vector = self_right_node_center - new_right_node_center
+                new_group.shift(shift_vector)
+
+        # if self._anchor is not None:
+        #     if np.array_equal(self._anchor, mn.LEFT):
+        #         shift_vector = (
+        #             self._containers_mob[0].get_center()
+        #             - new_group._containers_mob[0].get_center()
+        #         )
+        #         new_group.shift(shift_vector)
+        #
+        #     elif np.array_equal(self._anchor, mn.RIGHT):
+        #         shift_vector = (
+        #             self._containers_mob[-1].get_center()
+        #             - new_group._containers_mob[-1].get_center()
+        #         )
+        #         new_group.shift(shift_vector)
 
         # restore colors
         if new_value:
