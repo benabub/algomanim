@@ -15,7 +15,7 @@ class CodeBlock(AlgoManimBase):
     Args:
         code_lines: List of code lines to display.
         vector: Position vector to place the code block.
-        pre_code_lines: Lines to display before the main code.
+        precode_lines: Lines to display before the main code.
         font_size: Font size for the code text.
         font: Font for the code text.
         text_color_regular: Color for regular text.
@@ -35,7 +35,7 @@ class CodeBlock(AlgoManimBase):
     def __init__(
         self,
         code_lines: List[str],
-        pre_code_lines: List[str] = [],
+        precode_lines: List[str] = [],
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -65,7 +65,7 @@ class CodeBlock(AlgoManimBase):
         )
 
         self._code_lines = code_lines
-        self._precode_lines = pre_code_lines
+        self._precode_lines = precode_lines
         # --- font ---
         self._font_size = font_size
         self._font = font
@@ -98,7 +98,7 @@ class CodeBlock(AlgoManimBase):
         )
 
         if self._precode_lines:
-            self._pre_code_mobs = [
+            self._precode_mobs = [
                 mn.Text(
                     line,
                     font=self._font,
@@ -110,13 +110,13 @@ class CodeBlock(AlgoManimBase):
             self._bg_rects_precode: List[mn.Rectangle | None] = [None] * len(
                 self._code_lines
             )  # list to save links on all possible rectangles and to manage=delete them
-            self._pre_code_vgroup = mn.VGroup(*self._pre_code_mobs).arrange(
+            self._precode_vgroup = mn.VGroup(*self._precode_mobs).arrange(
                 mn.DOWN,
                 aligned_edge=mn.LEFT,
                 buff=self._precode_buff,
             )
             self._code_block_vgroup = mn.VGroup(
-                self._pre_code_vgroup, code_vgroup
+                self._precode_vgroup, code_vgroup
             ).arrange(
                 mn.DOWN,
                 aligned_edge=mn.LEFT,
@@ -216,20 +216,18 @@ class CodeBlock(AlgoManimBase):
 
         Args:
             *i: Tuple of code line indices to highlight.
-            pre_code: Tuple of pre-code line indices to highlight, or None.
+            precode: Tuple of precode line indices to highlight, or None.
         """
 
         self._highlight_block(self._code_mobs, self._bg_rects_code, code_indices)
 
-        if hasattr(self, "_pre_code_mobs"):
+        if hasattr(self, "_precode_mobs"):
             if precode_indices is not None:
                 self._highlight_block(
-                    self._pre_code_mobs, self._bg_rects_precode, precode_indices
+                    self._precode_mobs, self._bg_rects_precode, precode_indices
                 )
             else:
-                self._clear_block_highlights(
-                    self._pre_code_mobs, self._bg_rects_precode
-                )
+                self._clear_block_highlights(self._precode_mobs, self._bg_rects_precode)
 
     def highlight_line(self, i: int):
         """Deprecated: use highlight_lines() instead"""

@@ -2113,7 +2113,7 @@ the old highlight clears.
         # Construction code_block
         cb = CodeBlock(
             code_lines,
-            pre_code_lines=precode_lines,
+            precode_lines=precode_lines,
             vector=mn.RIGHT * 3 + mn.DOWN * 0.5,
             font_size=25,
         )
