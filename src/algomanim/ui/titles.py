@@ -5,7 +5,6 @@ from manim import ManimColor
 from algomanim.core.base import AlgoManimBase
 
 
-# TODO: underline logo
 class TitleText(AlgoManimBase):
     """Title group with optional decorative flourish and undercaption.
 
@@ -33,7 +32,9 @@ class TitleText(AlgoManimBase):
         undercaption_color: Color of the undercaption text.
         undercaption_font: Font family for the undercaption.
         undercaption_font_size: Font size for the undercaption.
-        undercaption_buff: Buffer between text and undercaption.
+        undercaption_svg: Path to SVG file to display as undercaption instead of text.
+        svg_height: height of the undercaption SVG. Defaults to 0.25.
+        undercaption_buff: vertical buffer between text/flourish and undercaption.
         **kwargs: Additional keyword arguments for text mobject.
     """
 
@@ -42,7 +43,7 @@ class TitleText(AlgoManimBase):
         text: str,
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        vector: np.ndarray = mn.UP * 2.7,
+        vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -56,7 +57,8 @@ class TitleText(AlgoManimBase):
         flourish_color: ManimColor | str = "WHITE",
         flourish_stroke_width: float = 4,
         flourish_padding: float = 0.2,
-        flourish_buff: float = 0.15,
+        # flourish_buff: float = 0.15,
+        flourish_buff: float = 0.05,
         spiral_offset: float = 0.3,
         spiral_radius: float = 0.15,
         spiral_turns: float = 1.0,
@@ -65,7 +67,11 @@ class TitleText(AlgoManimBase):
         undercaption_color: ManimColor | str = "WHITE",
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
-        undercaption_buff: float = 0.23,
+        # --- undercaption svg ---
+        undercaption_svg: str = "",
+        svg_height: float = 0.25,
+        # --- undercaption buff ---
+        undercaption_buff: float = 0.20,
     ):
         super().__init__(
             vector=vector,
@@ -77,7 +83,6 @@ class TitleText(AlgoManimBase):
         )
 
         self._flourish = flourish
-        self._undercaption = undercaption
 
         # create the text mobject
         self._text_mobject = mn.Text(
@@ -106,18 +111,25 @@ class TitleText(AlgoManimBase):
             self.add(self._flourish)
 
         # optionally create the undercaption under the text
-        if self._undercaption:
+        if undercaption:
             # create the text mobject
-            self._undercaption_mob = mn.Text(
-                self._undercaption,
+            undercaption_mob = mn.Text(
+                undercaption,
                 font=undercaption_font,
                 font_size=undercaption_font_size,
                 color=undercaption_color,
             )
-            self._undercaption_mob.next_to(
-                self._text_mobject, mn.DOWN, undercaption_buff
+            undercaption_mob.next_to(self._text_mobject, mn.DOWN, undercaption_buff)
+            self.add(undercaption_mob)
+
+        # create the svg mobject
+        if undercaption_svg:
+            svg = mn.SVGMobject(
+                undercaption_svg,
+                height=svg_height,
             )
-            self.add(self._undercaption_mob)
+            svg.next_to(self._text_mobject, mn.DOWN, undercaption_buff)
+            self.add(svg)
 
     def _create_flourish(
         self,

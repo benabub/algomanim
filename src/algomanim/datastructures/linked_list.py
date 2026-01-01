@@ -462,21 +462,6 @@ class LinkedList(LinearContainerStructure):
                 shift_vector = self_right_node_center - new_right_node_center
                 new_group.shift(shift_vector)
 
-        # if self._anchor is not None:
-        #     if np.array_equal(self._anchor, mn.LEFT):
-        #         shift_vector = (
-        #             self._containers_mob[0].get_center()
-        #             - new_group._containers_mob[0].get_center()
-        #         )
-        #         new_group.shift(shift_vector)
-        #
-        #     elif np.array_equal(self._anchor, mn.RIGHT):
-        #         shift_vector = (
-        #             self._containers_mob[-1].get_center()
-        #             - new_group._containers_mob[-1].get_center()
-        #         )
-        #         new_group.shift(shift_vector)
-
         # restore colors
         if new_value:
             highlight_status = self._save_highlights_states()
