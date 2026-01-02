@@ -146,15 +146,6 @@ class LinkedList(LinearContainerStructure):
     def _create_empty_linked_list(self):
         """Initialize empty linked list visualization."""
 
-        # # clear old fields
-        # if self._pointers:
-        #     self._pointers_top = mn.VGroup()
-        #     self._pointers_bottom = mn.VGroup()
-        #     self.add(self._pointers_top, self._pointers_bottom)
-        # self._arrows_mob = mn.VGroup()
-        # self._values_mob = mn.VGroup()
-        # self.add(self._arrows_mob, self._values_mob)
-
         self._containers_mob = mn.Circle(
             radius=self._radius,
             color=self._bg_color,

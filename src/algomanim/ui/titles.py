@@ -6,36 +6,49 @@ from algomanim.core.base import AlgoManimBase
 
 
 class TitleText(AlgoManimBase):
-    """Title group with optional decorative flourish and undercaption.
+    """Title group with optional decorative flourish and text|svg undercaption.
 
     Args:
         text: The title text to display.
-        vector: Offset vector from center for positioning.
-        text_color: Color of the title text.
-        font: Font family for the title text.
-        font_size: Font size for the title text.
-        mob_center: Reference mobject for positioning.
+        mob_center: Reference mobject for positioning. Defaults to Dot(ORIGIN).
+        vector: Offset vector from mob_center for positioning. Defaults to ORIGIN.
         align_left: Reference mobject to align left edge with.
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
-            centers at mobject center.
-        flourish: Whether to render flourish under the text.
-        flourish_color: Color of the flourish line.
-        flourish_stroke_width: Stroke width of the flourish.
-        flourish_padding: Padding between text and flourish.
-        flourish_buff: Buffer between text and flourish.
-        spiral_offset: Vertical offset of spirals relative to flourish.
-        spiral_radius: Radius of the spiral ends of the flourish.
-        spiral_turns: Number of turns in each spiral.
-        undercaption: Text under the flourish.
-        undercaption_color: Color of the undercaption text.
-        undercaption_font: Font family for the undercaption.
-        undercaption_font_size: Font size for the undercaption.
+        font: Font family for the title text. Defaults to system default.
+        font_size: Font size for the title text. Defaults to 50.
+        text_color: Color of the title text. Defaults to WHITE.
+        flourish: Whether to render decorative flourish under the text. Defaults to False.
+        flourish_color: Color of the flourish line. Defaults to WHITE.
+        flourish_stroke_width: Stroke width of the flourish. Defaults to 4.
+        flourish_padding: Horizontal padding added to text width for flourish width.
+            Defaults to 0.2.
+        flourish_buff_manual: Manual override for vertical buffer between text and flourish.
+            If 0 (default), buffer is auto-calculated based on text glyphs.
+        spiral_offset: Vertical offset of spiral centers relative to flourish line.
+            Defaults to 0.3.
+        spiral_radius: Radius of the spiral ends. Defaults to 0.15.
+        spiral_turns: Number of turns in each spiral. Defaults to 1.0.
+        undercaption: Text to display below the flourish or text. Defaults to empty.
+        undercaption_color: Color of the undercaption text. Defaults to WHITE.
+        undercaption_font: Font family for the undercaption. Inherits from font if empty.
+        undercaption_font_size: Font size for the undercaption. Defaults to 20.
         undercaption_svg: Path to SVG file to display as undercaption instead of text.
-        svg_height: height of the undercaption SVG. Defaults to 0.25.
-        undercaption_buff: vertical buffer between text/flourish and undercaption.
-        **kwargs: Additional keyword arguments for text mobject.
+        svg_height: Height of the undercaption SVG. Defaults to 0.20.
+        undercaption_buff_manual: Manual override for vertical buffer between
+            text/flourish and undercaption. If 0 (default), buffer is auto-calculated.
+
+    Note:
+        Automatic buffer calculation depends on text:
+        - If text contains descending characters (q, y, j, p, g):
+          flourish_buff = 0.05, buff_increment = 0.15
+        - Otherwise: flourish_buff = 0.15, buff_increment = 0.10
+        - undercaption_buff = flourish_buff + buff_increment
+
+    Raises:
+        ValueError: If both align_left and align_right, or align_top and align_bottom
+            are provided simultaneously.
     """
 
     def __init__(
@@ -57,8 +70,7 @@ class TitleText(AlgoManimBase):
         flourish_color: ManimColor | str = "WHITE",
         flourish_stroke_width: float = 4,
         flourish_padding: float = 0.2,
-        # flourish_buff: float = 0.15,
-        flourish_buff: float = 0.05,
+        flourish_buff_manual: float = 0.0,
         spiral_offset: float = 0.3,
         spiral_radius: float = 0.15,
         spiral_turns: float = 1.0,
@@ -69,9 +81,9 @@ class TitleText(AlgoManimBase):
         undercaption_font_size: float = 20,
         # --- undercaption svg ---
         undercaption_svg: str = "",
-        svg_height: float = 0.25,
+        svg_height: float = 0.20,
         # --- undercaption buff ---
-        undercaption_buff: float = 0.20,
+        undercaption_buff_manual: float = 0.0,
     ):
         super().__init__(
             vector=vector,
@@ -83,6 +95,25 @@ class TitleText(AlgoManimBase):
         )
 
         self._flourish = flourish
+
+        has_descenders = not set(text).isdisjoint(set("qyjpg"))
+
+        if flourish_buff_manual:
+            flourish_buff = flourish_buff_manual
+        else:
+            if has_descenders:
+                flourish_buff = 0.05
+            else:
+                flourish_buff = 0.15
+
+        if undercaption_buff_manual:
+            undercaption_buff = undercaption_buff_manual
+        else:
+            if has_descenders:
+                buff_increment = 0.15
+            else:
+                buff_increment = 0.10
+            undercaption_buff = flourish_buff + buff_increment
 
         # create the text mobject
         self._text_mobject = mn.Text(
