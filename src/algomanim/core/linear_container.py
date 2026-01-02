@@ -555,37 +555,6 @@ class LinearContainerStructure(AlgoManimBase):
 
         self._apply_containers_colors()
 
-    def highlight_containers(
-        self,
-        idx_list: list[int],
-        color_1: ManimColor | str | None = None,
-        color_2: ManimColor | str | None = None,
-        color_3: ManimColor | str | None = None,
-        color_123: ManimColor | str | None = None,
-        color_12: ManimColor | str | None = None,
-        color_13: ManimColor | str | None = None,
-        color_23: ManimColor | str | None = None,
-    ):
-        """Deprecated: use highlight_containers_1to3() instead"""
-
-        import warnings
-
-        warnings.warn(
-            "highlight_containers() is deprecated, use highlight_containers_1to3()",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        self.highlight_containers_1to3(
-            idx_list,
-            color_1,
-            color_2,
-            color_3,
-            color_123,
-            color_12,
-            color_13,
-            color_23,
-        )
-
     def highlight_containers_monocolor(
         self,
         idx_list: list[int],

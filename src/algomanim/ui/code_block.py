@@ -228,15 +228,3 @@ class CodeBlock(AlgoManimBase):
                 )
             else:
                 self._clear_block_highlights(self._precode_mobs, self._bg_rects_precode)
-
-    def highlight_line(self, i: int):
-        """Deprecated: use highlight_lines() instead"""
-
-        import warnings
-
-        warnings.warn(
-            "highlight_line() is deprecated, use highlight()",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        self.highlight(i)
