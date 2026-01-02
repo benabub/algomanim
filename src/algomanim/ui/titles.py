@@ -30,7 +30,7 @@ class TitleText(AlgoManimBase):
             Defaults to 0.3.
         spiral_radius: Radius of the spiral ends. Defaults to 0.15.
         spiral_turns: Number of turns in each spiral. Defaults to 1.0.
-        undercaption: Text to display below the flourish or text. Defaults to empty.
+        undercaption_text: Text to display below the flourish or text. Defaults to empty.
         undercaption_color: Color of the undercaption text. Defaults to WHITE.
         undercaption_font: Font family for the undercaption. Inherits from font if empty.
         undercaption_font_size: Font size for the undercaption. Defaults to 20.
@@ -75,7 +75,7 @@ class TitleText(AlgoManimBase):
         spiral_radius: float = 0.15,
         spiral_turns: float = 1.0,
         # --- undercaption ---
-        undercaption: str = "",
+        undercaption_text: str = "",
         undercaption_color: ManimColor | str = "WHITE",
         undercaption_font: str = "",
         undercaption_font_size: float = 20,
@@ -142,25 +142,27 @@ class TitleText(AlgoManimBase):
             self.add(self._flourish)
 
         # optionally create the undercaption under the text
-        if undercaption:
+        if undercaption_text:
             # create the text mobject
-            undercaption_mob = mn.Text(
-                undercaption,
+            undercaption_text_mob = mn.Text(
+                undercaption_text,
                 font=undercaption_font,
                 font_size=undercaption_font_size,
                 color=undercaption_color,
             )
-            undercaption_mob.next_to(self._text_mobject, mn.DOWN, undercaption_buff)
-            self.add(undercaption_mob)
+            undercaption_text_mob.next_to(
+                self._text_mobject, mn.DOWN, undercaption_buff
+            )
+            self.add(undercaption_text_mob)
 
         # create the svg mobject
         if undercaption_svg:
-            svg = mn.SVGMobject(
+            svg_mob = mn.SVGMobject(
                 undercaption_svg,
                 height=svg_height,
             )
-            svg.next_to(self._text_mobject, mn.DOWN, undercaption_buff)
-            self.add(svg)
+            svg_mob.next_to(self._text_mobject, mn.DOWN, undercaption_buff)
+            self.add(svg_mob)
 
     def _create_flourish(
         self,
