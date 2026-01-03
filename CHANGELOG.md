@@ -214,3 +214,50 @@
 ## Removed
 - `ABC` imports from base classes (replaced with runtime instantiation prevention)
 - Child class overrides of `position()` method
+
+---
+
+# [0.4.0] - 2026-01-03
+
+## Added
+- `LinearContainerStructure`: `highlight_containers_monocolor()` method for single-color highlights
+- `AlgoManimBase`: `group_appear()` method for simultaneous appearance animations
+- `CodeBlock`: `highlight()` method with multi-line support; `_highlight_precode_block()` and `_clear_block_highlights()` methods
+- `Array`, `String`, `LinkedList`: `pointers` boolean parameter to control pointer visibility
+- `TitleText`: `undercaption_svg` parameter for SVG undercaptions
+- `CodeBlock`: `format_code_lines()` static method
+- `Array`, `String`, `LinkedList`: `anchor` parameter for positioning control
+- `LinearContainerStructure`: `create_pointers()` method with direction parameter support
+- `RelativeTextValue`: `items_align_edge` parameter for text item alignment
+- `Array`, `String`, `LinkedList`: `_color_containers_with_value` field
+
+## Changed
+- `TitleText`: Breaking - `undercaption` parameter renamed to `undercaption_text`
+- `TitleText`: Breaking - Added automatic descender detection for buffer calculation; parameter defaults modified
+- `CodeBlock`: Breaking - All `pre_code` parameters renamed to `precode`
+- `LinkedList`: `update_value()` now handles positioning with non-default directions
+- `Array`, `String`: `update_value()` methods changed to default `animate=True`
+- `RelativeTextValue`: `update_text()` method changed to default `animate=True`
+- `CodeBlock`: Breaking - `inter_block_buff` parameter renamed to `between_blocks_buff`
+- `AlgoManimBase`: Breaking - `align_edge` parameter replaced with `align_left`, `align_right`, `align_top`, `align_bottom`
+- All repository: Breaking - `font_color` renamed to `text_color`
+- `CodeBlock`: `bg_highlight_color` default value and opacity modified
+
+## Refactored
+- `LinearContainerStructure`: `highlight_containers()` renamed to `highlight_containers_1to3()`
+- `CodeBlock`: `highlight_line()` renamed to `highlight()`
+- `ExampleLinkedlist`, `ExampleString`, `ExampleArray`: Split into modular functions
+- `String`, `Array`, `LinkedList`, `CodeBlock`, `TitleText`, `TitleLogo`, `RelativeTextValue`, `RelativeText`: Constructor parameters cleaned up and standardized
+- `AlgoManimBase`: Removed `_position_mob_to_self()` method
+- `RectangleCellsStructure`: Removed `_cell_params()` method
+
+## Fixed
+- `LinearContainerStructure`: `highlight_containers_1to3()` no longer depends on `self._containers_mob`
+- `LinearContainerStructure`: `highlight_containers_monocolor()` no longer depends on `self._data`
+- `RelativeTextValue`: Positioning in `update_text()` method
+- `Array`: Removed cell parameters from `super().__init__()` call
+- `AlgoManimBase`: `_position()` logic corrected to use container bounds
+
+## Removed
+- All deprecated methods across codebase
+- `LinkedList`, `String`, `Array`: `left_aligned` parameter from `update_value()`
