@@ -14,22 +14,32 @@ class CodeBlock(AlgoManimBase):
 
     Args:
         code_lines: List of code lines to display.
-        vector: Position vector to place the code block.
         precode_lines: Lines to display before the main code.
-        font_size: Font size for the code text.
-        font: Font for the code text.
-        text_color_regular: Color for regular text.
-        text_color_highlight: Color for highlighted text.
-        bg_highlight_color: Background color for highlighted lines.
-        between_blocks_buff: Buffer between pre-code and code blocks.
-        precode_buff: Buffer between pre-code lines.
-        code_buff: Buffer between code lines.
-        mob_center: Center object for positioning.
+        vector: Position offset from mob_center for positioning.
+        mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
-            centers at mobject center.
+        font_size: Font size for the code text.
+        font: Font family for the code text. Defaults to system default.
+        text_color_regular: Color for regular (non-highlighted) text.
+        text_color_highlight: Color for highlighted text.
+        between_blocks_buff: Vertical buffer between pre-code and code blocks.
+        precode_buff: Vertical buffer between pre-code lines.
+        code_buff: Vertical buffer between code lines.
+        bg_rect_fill_color: Background fill color for the code block container.
+        bg_rect_stroke_width: Stroke width for the code block container.
+        bg_rect_stroke_color: Stroke color for the code block container.
+        bg_rect_corner_radius: Corner radius for the rounded rectangle container.
+        bg_rect_buff: Padding around the code text within the background container.
+        bg_highlight_color: Background color for highlighted lines.
+
+    Note:
+        The code block uses a layered z-index system:
+        - -2: Main background rectangle (deepest)
+        - -1: Line highlight rectangles
+        -  0: Text lines (topmost)
     """
 
     def __init__(
@@ -52,7 +62,13 @@ class CodeBlock(AlgoManimBase):
         between_blocks_buff=0.5,
         precode_buff=0.15,
         code_buff=0.05,
-        # --- colors ---
+        # --- bg_rect ---
+        bg_rect_fill_color: ManimColor | str = "#545454",
+        bg_rect_stroke_width: float = 4,
+        bg_rect_stroke_color: ManimColor | str = "#151515",
+        bg_rect_corner_radius: float = 0.1,
+        bg_rect_buff: float = 0.5,
+        # --- highlights ---
         bg_highlight_color: ManimColor | str = mn.BLACK,
     ):
         super().__init__(
@@ -125,7 +141,19 @@ class CodeBlock(AlgoManimBase):
         else:
             self._code_block_vgroup = code_vgroup
 
-        self.add(self._code_block_vgroup)
+        self._bg_rect = mn.RoundedRectangle(
+            width=self._code_block_vgroup.width + bg_rect_buff,
+            height=self._code_block_vgroup.height + bg_rect_buff,
+            fill_color=bg_rect_fill_color,
+            fill_opacity=1,
+            stroke_width=bg_rect_stroke_width,
+            stroke_color=bg_rect_stroke_color,
+            corner_radius=bg_rect_corner_radius,
+        )
+
+        self._bg_rect.z_index = -2  # deepest layout
+
+        self.add(self._bg_rect, self._code_block_vgroup)
         self._position()
 
     def _highlight_block(
@@ -156,7 +184,7 @@ class CodeBlock(AlgoManimBase):
                     )
                     bg_rect.move_to(mob.get_center())
                     self.add(bg_rect)
-                    bg_rect.z_index = -1  # send background to back
+                    bg_rect.z_index = -1  # medium layout
                     rects_list[k] = bg_rect
             else:
                 # normal line: regular font color
