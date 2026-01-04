@@ -38,7 +38,7 @@ class RelativeTextValue(AlgoManimBase):
         *vars: Tuple[str, Callable[[], Any], str | ManimColor],
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        vector: np.ndarray = mn.UP * 1.2,
+        vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -150,7 +150,7 @@ class RelativeText(AlgoManimBase):
         text: str,
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
-        vector: np.ndarray = mn.UP * 1.1,
+        vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
