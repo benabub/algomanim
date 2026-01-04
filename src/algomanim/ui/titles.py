@@ -17,7 +17,7 @@ class TitleText(AlgoManimBase):
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
         font: Font family for the title text. Defaults to system default.
-        font_size: Font size for the title text. Defaults to 50.
+        font_size: Font size for the title text.
         text_color: Color of the title text. Defaults to WHITE.
         flourish: Whether to render decorative flourish under the text. Defaults to False.
         flourish_color: Color of the flourish line. Defaults to WHITE.
@@ -63,7 +63,7 @@ class TitleText(AlgoManimBase):
         align_bottom: mn.Mobject | None = None,
         # --- font ---
         font: str = "",
-        font_size: float = 50,
+        font_size: float = 40,
         text_color: ManimColor | str = "WHITE",
         # --- flourish ---
         flourish: bool = False,
