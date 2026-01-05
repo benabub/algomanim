@@ -27,10 +27,10 @@ from algomanim import (
 class ExampleBubblesort(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.DARK_GRAY  # type: ignore
+        pause = 1
 
         # ======== INPUTS ============
 
-        pause = 1
         arr = [5, 4, 3, 2, 1]
         counter, j, k = 0, 0, 1
         bubble = 5
@@ -45,6 +45,7 @@ for counter in range(len_arr):
         k = j + 1
         if arr[j] > arr[k]:
             arr[j], arr[k] = arr[k], arr[j]
+return arr
 """
         precode_lines = CodeBlock.format_code_lines(precode)
         code_lines = CodeBlock.format_code_lines(code)
@@ -58,7 +59,7 @@ for counter in range(len_arr):
         )
 
         title = TitleText(
-            "Bubble Sort",
+            "Bubble Sort: Basic",
             vector=mn.UP * 3.0,
             flourish=True,
             undercaption_text="Benabub Viz",
@@ -148,9 +149,19 @@ for counter in range(len_arr):
                     array.pointers_on_value(bubble, color=mn.WHITE)
                     self.wait(pause)
 
+        code_block.highlight(5)
+        return_text = RelativeTextValue(
+            ("return", lambda: arr, mn.ORANGE),
+            align_bottom=bubble_text,
+            align_left=code_block,
+            equal_sign=False,
+        )
+        return_text.first_appear(self)
+
         # ========== FINISH ==============
 
-        self.wait(pause)
+        self.wait(7)
+        # self.wait(pause)
         self.renderer.file_writer.output_file = f"media/{self.__class__.__name__}.mp4"
 
 
