@@ -37,9 +37,9 @@ class CodeBlock(AlgoManimBase):
 
     Note:
         The code block uses a layered z-index system:
-        - -2: Main background rectangle (deepest)
-        - -1: Line highlight rectangles
-        -  0: Text lines (topmost)
+        -2: Main background rectangle (deepest)
+        -1: Line highlight rectangles
+        -0: Text lines (topmost)
     """
 
     def __init__(
