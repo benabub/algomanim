@@ -24,6 +24,8 @@ class RelativeTextValue(AlgoManimBase):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        anchor: Optional alignment anchor when neither align_left nor align_right
+            is specified. Must be mn.LEFT or mn.RIGHT. Defaults to mn.LEFT.
         font (str): Text font family.
         font_size (float): Text font size.
         weight (str): Font weight (NORMAL, BOLD, etc.).
@@ -43,6 +45,7 @@ class RelativeTextValue(AlgoManimBase):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        anchor: np.ndarray | None = mn.LEFT,
         # --- font ---
         font="",
         font_size=35,
@@ -70,6 +73,15 @@ class RelativeTextValue(AlgoManimBase):
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
+        # ---- anchor ----
+        if not (align_left or align_right) and anchor is not None:
+            if not (
+                np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
+            ):
+                raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+            self._anchor = anchor
+        else:
+            self._anchor = None
 
         self.submobjects: List = []
         parts = [
@@ -118,6 +130,12 @@ class RelativeTextValue(AlgoManimBase):
             equal_sign=self._equal_sign,
             items_align_edge=self._items_align_edge,
         )
+
+        if self._anchor is not None:
+            if np.array_equal(self._anchor, mn.LEFT):
+                new_group.align_to(self.get_left(), mn.LEFT)
+            else:
+                new_group.align_to(self.get_right(), mn.RIGHT)
 
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=time)
