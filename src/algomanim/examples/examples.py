@@ -24,27 +24,31 @@ from algomanim import (
 )
 
 
-class ExampleBubblesort(mn.Scene):
+class ExampleSelectionsort(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.DARK_GRAY  # type: ignore
-        pause = 1
 
         # ======== INPUTS ============
 
-        arr = [5, 4, 3, 2, 1]
-        counter, j, k = 0, 0, 1
-        bubble = 5
-        len_arr = len(arr)
+        pause = 1
+
+        arr = [1, 3, 5, 4, 5, 2]
+        length = len(arr)
+        i = 0
+        min_index = i
+        k = i + 1
 
         precode = """
-len_arr = len(arr)
-        """
+length = len(arr)
+"""
         code = """
-for counter in range(len_arr):
-    for j in range(len_arr - counter - 1):
-        k = j + 1
-        if arr[j] > arr[k]:
-            arr[j], arr[k] = arr[k], arr[j]
+for i in range(length - 1):
+    min_index = i
+    for k in range(i + 1, length):
+        if arr[min_index] > arr[k]:
+            min_index = k
+    if min_index != i:
+        arr[i], arr[min_index] = arr[min_index], arr[i]
 return arr
 """
         precode_lines = CodeBlock.format_code_lines(precode)
@@ -52,116 +56,120 @@ return arr
 
         # ======== MOBJECTS CONSTRUCTION ============
 
+        title = TitleText(
+            "Selection Sort",
+            vector=mn.UP * 3.3,
+            flourish=True,
+        )
+
         code_block = CodeBlock(
             code_lines,
             precode_lines=precode_lines,
-            vector=mn.DOWN * 0.6 + mn.RIGHT * 2.8,
+            vector=mn.DOWN * 0.3 + mn.RIGHT * 2.5,
         )
 
-        title = TitleText(
-            "Bubble Sort: Basic",
-            vector=mn.UP * 3.0,
-            flourish=True,
-            undercaption_text="Benabub Viz",
+        length_text = RelativeTextValue(
+            ("length", lambda: length, mn.WHITE),
+            align_top=code_block,
+            vector=mn.LEFT * 5,
+        )
+
+        i_text = RelativeTextValue(
+            ("i", lambda: i, mn.RED),
+            mob_center=length_text,
+            align_left=length_text,
+            vector=mn.DOWN * 0.7,
+        )
+
+        min_text = RelativeTextValue(
+            ("min_index", lambda: min_index, mn.BLUE),
+            mob_center=i_text,
+            align_left=length_text,
+            vector=mn.DOWN * 0.7,
+        )
+
+        k_text = RelativeTextValue(
+            ("k", lambda: k, mn.GREEN),
+            mob_center=min_text,
+            align_left=length_text,
+            vector=mn.DOWN * 0.7,
         )
 
         array = Array(
             arr,
-            vector=mn.LEFT * 3.8 + mn.DOWN * 1.8,
+            mob_center=k_text,
+            align_bottom=code_block,
+            vector=mn.RIGHT * 1.2,
             font_size=40,
-        )
-
-        pointers_text = RelativeTextValue(
-            ("j", lambda: j, mn.BLUE),
-            ("k", lambda: k, mn.GREEN),
-            mob_center=array,
-            align_left=array,
-            vector=mn.UP * 1.5,
-        )
-
-        counter_text = RelativeTextValue(
-            ("counter", lambda: counter, mn.RED),
-            mob_center=pointers_text,
-            align_left=array,
-            vector=mn.UP * 0.7,
-        )
-
-        len_text = RelativeTextValue(
-            ("len_arr", lambda: len_arr, mn.WHITE),
-            mob_center=counter_text,
-            align_left=array,
-            vector=mn.UP * 0.7,
-        )
-
-        bubble_text = RelativeTextValue(
-            ("bubble", lambda: bubble, mn.WHITE),
-            mob_center=array,
-            align_left=array,
-            vector=mn.DOWN * 1.2,
         )
 
         # ======== PRE-CYCLE LOGIC =============
 
         title.appear(self)
-        self.wait(pause)
-
         array.first_appear(self)
-
         code_block.first_appear(self)
-        self.wait(pause)
 
         code_block.highlight(precode_indices=(0,))
-        len_text.first_appear(self)
-        self.wait(pause)
-
-        code_block.highlight(0)
-        counter_text.first_appear(self)
+        length_text.first_appear(self)
         self.wait(pause)
 
         # ===== ALGORITHM CYCLE ==========
 
-        bubble = 6
-        for counter in range(len_arr):
+        for i in range(length - 1):
             code_block.highlight(0)
-            bubble -= 1
-            array.pointers_on_value(bubble, color=mn.WHITE)
-            counter_text.update_text(self)
-            bubble_text.update_text(self, animate=False)
+            i_text.update_text(self)
+            array.pointers([i])
+            array.highlight_containers_1to3([i])
             self.wait(pause)
 
-            for j in range(len_arr - counter - 1):
-                k = j + 1
-                code_block.highlight(1, 2)
-                array.pointers([j, k], color_1=mn.BLUE, color_2=mn.GREEN)
-                array.highlight_containers_1to3(
-                    [j, k], color_1=mn.BLUE, color_2=mn.GREEN, color_12=mn.TEAL
-                )
-                pointers_text.update_text(self)
+            min_index = i
+            code_block.highlight(1)
+            array.pointers([i, min_index])
+            array.highlight_containers_1to3([i, min_index])
+            min_text.update_text(self)
+            self.wait(pause)
+
+            for k in range(i + 1, length):
+                code_block.highlight(2)
+                array.pointers([i, min_index, k])
+                array.highlight_containers_1to3([i, min_index, k])
+                k_text.update_text(self)
                 self.wait(pause)
 
                 code_block.highlight(3)
                 self.wait(pause)
-                if arr[j] > arr[k]:
+                if arr[k] < arr[min_index]:
                     #
-                    arr[j], arr[k] = arr[k], arr[j]
+                    min_index = k
                     code_block.highlight(4)
-                    array.update_value(self, arr)
-                    array.pointers_on_value(bubble, color=mn.WHITE)
+                    array.pointers([i, min_index, k])
+                    array.highlight_containers_1to3([i, min_index, k])
+                    min_text.update_text(self)
                     self.wait(pause)
 
-        code_block.highlight(5)
+            code_block.highlight(5)
+            self.wait(pause)
+            if min_index != i:
+                #
+                arr[i], arr[min_index] = arr[min_index], arr[i]
+                array.update_value(self, arr)
+                code_block.highlight(6)
+                self.wait(pause)
+
+        # return arr
+        code_block.highlight(7)
         return_text = RelativeTextValue(
             ("return", lambda: arr, mn.ORANGE),
-            align_bottom=bubble_text,
+            mob_center=code_block,
             align_left=code_block,
+            vector=mn.DOWN * 3.0,
             equal_sign=False,
         )
         return_text.first_appear(self)
 
         # ========== FINISH ==============
 
-        self.wait(7)
-        # self.wait(pause)
+        self.wait(pause)
         self.renderer.file_writer.output_file = f"media/{self.__class__.__name__}.mp4"
 
 
