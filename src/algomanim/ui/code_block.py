@@ -220,13 +220,13 @@ class CodeBlock(AlgoManimBase):
     def highlight(
         self,
         *code_indices: int,
-        precode_indices: tuple[int, ...] | None = None,
+        precode_indices: list[int] | None = None,
     ):
         """Highlights one or more lines with background and text color.
 
         Args:
             *i: Tuple of code line indices to highlight.
-            precode: Tuple of precode line indices to highlight, or None.
+            precode: list of precode line indices to highlight, or None.
         """
 
         self._highlight_block(self._code_mobs, self._bg_rects_code, code_indices)
@@ -234,7 +234,7 @@ class CodeBlock(AlgoManimBase):
         if hasattr(self, "_precode_mobs"):
             if precode_indices is not None:
                 self._highlight_block(
-                    self._precode_mobs, self._bg_rects_precode, precode_indices
+                    self._precode_mobs, self._bg_rects_precode, tuple(precode_indices)
                 )
             else:
                 self._clear_block_highlights(self._precode_mobs, self._bg_rects_precode)
