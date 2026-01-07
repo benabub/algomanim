@@ -461,7 +461,7 @@ class LinearContainerStructure(AlgoManimBase):
 
     def highlight_containers_1to3(
         self,
-        idx_list: list[int],
+        *indices: int,
         color_1: ManimColor | str | None = None,
         color_2: ManimColor | str | None = None,
         color_3: ManimColor | str | None = None,
@@ -481,7 +481,7 @@ class LinearContainerStructure(AlgoManimBase):
             method determines the final appearance.
 
         Args:
-            idx_list: List of indices to highlight.
+            *indices: Positional arguments for indices to highlight (1-3 elements).
             color_1: Color for the idx_list[0].
             color_2: Color for the idx_list[1].
             color_3: Color for the idx_list[2].
@@ -491,12 +491,12 @@ class LinearContainerStructure(AlgoManimBase):
             color_23: Color if idx_list[1] == idx_list[2].
 
         Raises:
-            ValueError: If idx_list has invalid length.
+            ValueError: if indices has invalid length.
         """
 
         # ------- checks --------
-        if not 1 <= len(idx_list) <= 3:
-            raise ValueError("idx_list must contain between 1 and 3 indices")
+        if not 1 <= len(indices) <= 3:
+            raise ValueError("indices must contain between 1 and 3 elements")
 
         # ------- asserts --------
         if not color_1:
@@ -519,20 +519,20 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- fill self._containers_colors --------
 
-        if len(idx_list) == 1:
-            i = idx_list[0]
+        if len(indices) == 1:
+            i = indices[0]
             self._containers_colors[i] = color_1
 
-        elif len(idx_list) == 2:
-            i, j = idx_list[0], idx_list[1]
+        elif len(indices) == 2:
+            i, j = indices[0], indices[1]
             if i == j:
                 self._containers_colors[i] = color_12
             else:
                 self._containers_colors[i] = color_1
                 self._containers_colors[j] = color_2
 
-        elif len(idx_list) == 3:
-            i, j, k = idx_list[0], idx_list[1], idx_list[2]
+        elif len(indices) == 3:
+            i, j, k = indices[0], indices[1], indices[2]
 
             if i == j == k:
                 self._containers_colors[i] = color_123
