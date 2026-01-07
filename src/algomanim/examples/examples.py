@@ -117,7 +117,7 @@ return arr
 
         for i in range(length - 1):
             code_block.highlight(0)
-            i_text.update_text(self)
+            i_text.update_value(self)
             array.pointers([i])
             array.highlight_containers_1to3([i])
             self.wait(pause)
@@ -126,14 +126,14 @@ return arr
             code_block.highlight(1)
             array.pointers([i, min_index])
             array.highlight_containers_1to3([i, min_index])
-            min_text.update_text(self)
+            min_text.update_value(self)
             self.wait(pause)
 
             for k in range(i + 1, length):
                 code_block.highlight(2)
                 array.pointers([i, min_index, k])
                 array.highlight_containers_1to3([i, min_index, k])
-                k_text.update_text(self)
+                k_text.update_value(self)
                 self.wait(pause)
 
                 code_block.highlight(3)
@@ -144,7 +144,7 @@ return arr
                     code_block.highlight(4)
                     array.pointers([i, min_index, k])
                     array.highlight_containers_1to3([i, min_index, k])
-                    min_text.update_text(self)
+                    min_text.update_value(self)
                     self.wait(pause)
 
             code_block.highlight(5)

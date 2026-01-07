@@ -102,7 +102,7 @@ class RelativeTextValue(AlgoManimBase):
 
         self._position()
 
-    def update_text(self, scene: mn.Scene, time=0.1, animate: bool = True):
+    def update_value(self, scene: mn.Scene, time=0.1, animate: bool = True):
         """Update text values with current variable values.
 
         Args:
