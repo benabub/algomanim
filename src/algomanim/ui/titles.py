@@ -124,7 +124,6 @@ class TitleText(AlgoManimBase):
         )
 
         self.add(self._text_mobject)
-        self._position()
 
         # optionally create the flourish under the text
         if self._flourish:
@@ -163,6 +162,8 @@ class TitleText(AlgoManimBase):
             )
             svg_mob.next_to(self._text_mobject, mn.DOWN, undercaption_buff)
             self.add(svg_mob)
+
+        self._position()
 
     def _create_flourish(
         self,
