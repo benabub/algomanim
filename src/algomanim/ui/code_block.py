@@ -281,10 +281,13 @@ class CodeBlock(AlgoManimBase):
         tab = "    "
         base_tab = tab * 2
         i = 0
-        for line in code_lines:
+        for i, line in enumerate(code_lines):
             line_lstrip = line.lstrip()
             indent = line[: len(line) - len(line_lstrip)]
-            if line_lstrip.startswith("if "):
+
+            if line_lstrip.startswith("if ") or (
+                i != 0 and line_lstrip.startswith("while ")
+            ):
                 line_1 = base_tab + indent + f"code_block.highlight({i})\n"
                 line_2 = base_tab + indent + "self.wait(pause)\n"
                 line_3 = base_tab + line + "\n"
@@ -292,9 +295,9 @@ class CodeBlock(AlgoManimBase):
                 add_block = line_1 + line_2 + line_3 + line_4
             elif (
                 line_lstrip.startswith("for ")
-                or line_lstrip.startswith("while ")
                 or line_lstrip.startswith("else ")
                 or line_lstrip.startswith("elif ")
+                or (i == 0 and line_lstrip.startswith("while "))
             ):
                 line_1 = base_tab + line + "\n"
                 line_2 = base_tab + indent + tab + f"code_block.highlight({i})\n"
