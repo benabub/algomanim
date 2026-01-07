@@ -319,7 +319,7 @@ class LinearContainerStructure(AlgoManimBase):
 
     def pointers(
         self,
-        idx_list: list[int],
+        *indices: int,
         pos: int = 0,
         color_1: ManimColor | str = mn.RED,
         color_2: ManimColor | str = mn.BLUE,
@@ -332,14 +332,14 @@ class LinearContainerStructure(AlgoManimBase):
         and finally applies the new state to the visual objects if data exists.
 
         Args:
-            idx_list: List of indices to highlight (1-3 elements).
+            *indices: Positional arguments for indices to highlight (1-3 elements).
             pos: 0 for top side, 1 for bottom.
             color_1: idx_list[0] highlighted pointer color.
             color_2: idx_list[1] highlighted pointer color.
             color_3: idx_list[2] highlighted pointer color.
 
         Raises:
-            ValueError: If idx_list has invalid length or pos is invalid.
+            ValueError: if indices has invalid length.
         """
 
         # ------- checks --------
@@ -347,8 +347,8 @@ class LinearContainerStructure(AlgoManimBase):
         if hasattr(self, "_pointers") and not self._pointers:
             return
 
-        if not 1 <= len(idx_list) <= 3:
-            raise ValueError("idx_list must contain between 1 and 3 indices")
+        if not 1 <= len(indices) <= 3:
+            raise ValueError("indices must contain between 1 and 3 elements")
 
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
@@ -364,13 +364,13 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- fill store --------
 
-        if len(idx_list) == 1:
-            i = idx_list[0]
+        if len(indices) == 1:
+            i = indices[0]
             colors_dict[i] = [self._bg_color, color_1, self._bg_color]
 
-        elif len(idx_list) == 2:
-            i = idx_list[0]
-            j = idx_list[1]
+        elif len(indices) == 2:
+            i = indices[0]
+            j = indices[1]
 
             for idx, _ in enumerate(self._containers_mob):
                 if idx == i == j:
@@ -380,10 +380,10 @@ class LinearContainerStructure(AlgoManimBase):
                 elif idx == j:
                     colors_dict[idx] = [self._bg_color, color_2, self._bg_color]
 
-        elif len(idx_list) == 3:
-            i = idx_list[0]
-            j = idx_list[1]
-            k = idx_list[2]
+        elif len(indices) == 3:
+            i = indices[0]
+            j = indices[1]
+            k = indices[2]
 
             for idx, _ in enumerate(self._containers_mob):
                 if idx == i == j == k:
