@@ -295,7 +295,7 @@ class CodeBlock(AlgoManimBase):
                 add_block = line_1 + line_2 + line_3 + line_4
             elif (
                 line_lstrip.startswith("for ")
-                or line_lstrip.startswith("else ")
+                or line_lstrip.startswith("else")
                 or line_lstrip.startswith("elif ")
                 or (j == 0 and line_lstrip.startswith("while "))
             ):
