@@ -19,6 +19,7 @@ from algomanim import (
     RelativeTextValue,
     RelativeText,
     CodeBlock,
+    CodeBlockLense,
     TitleText,
     LinkedList,
 )
@@ -109,7 +110,7 @@ return arr
         array.first_appear(self)
         code_block.first_appear(self)
 
-        code_block.highlight(precode_indices=(0,))
+        code_block.highlight(precode_indices=[0])
         length_text.first_appear(self)
         self.wait(pause)
 
@@ -118,21 +119,21 @@ return arr
         for i in range(length - 1):
             code_block.highlight(0)
             i_text.update_value(self)
-            array.pointers([i])
-            array.highlight_containers_1to3([i])
+            array.pointers(i)
+            array.highlight_containers_1to3(i)
             self.wait(pause)
 
             min_index = i
             code_block.highlight(1)
-            array.pointers([i, min_index])
-            array.highlight_containers_1to3([i, min_index])
+            array.pointers(i, min_index)
+            array.highlight_containers_1to3(i, min_index)
             min_text.update_value(self)
             self.wait(pause)
 
             for k in range(i + 1, length):
                 code_block.highlight(2)
-                array.pointers([i, min_index, k])
-                array.highlight_containers_1to3([i, min_index, k])
+                array.pointers(i, min_index, k)
+                array.highlight_containers_1to3(i, min_index, k)
                 k_text.update_value(self)
                 self.wait(pause)
 
@@ -142,8 +143,8 @@ return arr
                     #
                     min_index = k
                     code_block.highlight(4)
-                    array.pointers([i, min_index, k])
-                    array.highlight_containers_1to3([i, min_index, k])
+                    array.pointers(i, min_index, k)
+                    array.highlight_containers_1to3(i, min_index, k)
                     min_text.update_value(self)
                     self.wait(pause)
 
@@ -535,11 +536,11 @@ class ExampleArray(mn.Scene):
             )
             self.wait(2)
 
-            arr_1.highlight_containers_1to3([0, 1, 2])
-            arr_2.highlight_containers_1to3([0, 1, 2])
-            arr_3.highlight_containers_1to3([0, 1, 2])
-            arr_4.highlight_containers_1to3([0, 1, 2])
-            arr_5.highlight_containers_1to3([0, 1, 2])
+            arr_1.highlight_containers_1to3(0, 1, 2)
+            arr_2.highlight_containers_1to3(0, 1, 2)
+            arr_3.highlight_containers_1to3(0, 1, 2)
+            arr_4.highlight_containers_1to3(0, 1, 2)
+            arr_5.highlight_containers_1to3(0, 1, 2)
             self.wait(pause)
 
             arr = [1, 2]
@@ -611,35 +612,35 @@ class ExampleArray(mn.Scene):
             array.group_appear(self, top_text)
             self.wait(1)
 
-            array.pointers([0, 3, 6])
-            array.highlight_containers_1to3([0, 3, 6])
+            array.pointers(0, 3, 6)
+            array.highlight_containers_1to3(0, 3, 6)
             self.wait(pause)
-            array.pointers([1, 3, 5])
-            array.highlight_containers_1to3([1, 3, 5])
+            array.pointers(1, 3, 5)
+            array.highlight_containers_1to3(1, 3, 5)
             self.wait(pause)
-            array.pointers([2, 3, 4])
-            array.highlight_containers_1to3([2, 3, 4])
+            array.pointers(2, 3, 4)
+            array.highlight_containers_1to3(2, 3, 4)
             self.wait(pause)
-            array.pointers([3, 3, 3])
-            array.highlight_containers_1to3([3, 3, 3])
+            array.pointers(3, 3, 3)
+            array.highlight_containers_1to3(3, 3, 3)
             self.wait(pause)
-            array.pointers([2, 3, 4])
-            array.highlight_containers_1to3([2, 3, 4])
+            array.pointers(2, 3, 4)
+            array.highlight_containers_1to3(2, 3, 4)
             self.wait(pause)
-            array.pointers([2, 2, 4])
-            array.highlight_containers_1to3([2, 2, 4])
+            array.pointers(2, 2, 4)
+            array.highlight_containers_1to3(2, 2, 4)
             self.wait(pause)
-            array.pointers([2, 3, 4])
-            array.highlight_containers_1to3([2, 3, 4])
+            array.pointers(2, 3, 4)
+            array.highlight_containers_1to3(2, 3, 4)
             self.wait(pause)
-            array.pointers([2, 4, 4])
-            array.highlight_containers_1to3([2, 4, 4])
+            array.pointers(2, 4, 4)
+            array.highlight_containers_1to3(2, 4, 4)
             self.wait(pause)
-            array.pointers([2, 4, 3])
-            array.highlight_containers_1to3([2, 4, 3])
+            array.pointers(2, 4, 3)
+            array.highlight_containers_1to3(2, 4, 3)
             self.wait(pause)
-            array.pointers([2, 4, 2])
-            array.highlight_containers_1to3([2, 4, 2])
+            array.pointers(2, 4, 2)
+            array.highlight_containers_1to3(2, 4, 2)
             self.wait(1)
             self.remove(top_text)
             array.clear_pointers_highlights(0)
@@ -723,8 +724,8 @@ class ExampleArray(mn.Scene):
             array.group_appear(self, top_text)
             self.wait(1)
 
-            array.highlight_containers_1to3([0, 2, 4])
-            array.pointers([0, 2, 4])
+            array.highlight_containers_1to3(0, 2, 4)
+            array.pointers(0, 2, 4)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
@@ -735,8 +736,8 @@ class ExampleArray(mn.Scene):
             self.wait(pause)
 
             array.update_value(self, [0, 333, 0])
-            array.highlight_containers_1to3([0, 2, 4])
-            array.pointers([0, 2, 4])
+            array.highlight_containers_1to3(0, 2, 4)
+            array.pointers(0, 2, 4)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
@@ -747,14 +748,14 @@ class ExampleArray(mn.Scene):
             self.wait(pause)
 
             array.update_value(self, [0])
-            array.highlight_containers_1to3([0, 2, 4])
-            array.pointers([0, 2, 4])
+            array.highlight_containers_1to3(0, 2, 4)
+            array.pointers(0, 2, 4)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
             array.update_value(self, [], animate=True)
-            array.highlight_containers_1to3([0, 2, 4])
-            array.pointers([0, 2, 4])
+            array.highlight_containers_1to3(0, 2, 4)
+            array.pointers(0, 2, 4)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
@@ -769,8 +770,8 @@ class ExampleArray(mn.Scene):
 
             array.update_value(self, [0, 22, 0, 333, 0], animate=True)
             array.clear_pointers_highlights(1)
-            array.highlight_containers_1to3([1, 1, 2])
-            array.pointers([1, 1, 2])
+            array.highlight_containers_1to3(1, 1, 2)
+            array.pointers(1, 1, 2)
             self.wait(pause)
 
             array.update_value(self, [1, 0, 22, 0, 333, 0, 22], animate=True)
@@ -781,13 +782,13 @@ class ExampleArray(mn.Scene):
 
             array.update_value(self, [0, 22, 0, 333, 0, 55555], animate=True)
             array.clear_pointers_highlights(1)
-            array.highlight_containers_1to3([3, 5, 3])
-            array.pointers([3, 5, 3])
+            array.highlight_containers_1to3(3, 5, 3)
+            array.pointers(3, 5, 3)
             self.wait(pause)
 
             array.update_value(self, [1, 0], animate=True)
-            array.highlight_containers_1to3([0, 0, 0])
-            array.pointers([0, 0, 0])
+            array.highlight_containers_1to3(0, 0, 0)
+            array.pointers(0, 0, 0)
             self.wait(pause)
 
             array.update_value(self, [0, 0, 0, 0, 0, 0], animate=True)
@@ -1168,11 +1169,11 @@ class ExampleString(mn.Scene):
             )
             self.wait(2)
 
-            str_1.highlight_containers_1to3([0, 1, 2])
-            str_2.highlight_containers_1to3([0, 1, 2])
-            str_3.highlight_containers_1to3([0, 1, 2])
-            str_4.highlight_containers_1to3([0, 1, 2])
-            str_5.highlight_containers_1to3([0, 1, 2])
+            str_1.highlight_containers_1to3(0, 1, 2)
+            str_2.highlight_containers_1to3(0, 1, 2)
+            str_3.highlight_containers_1to3(0, 1, 2)
+            str_4.highlight_containers_1to3(0, 1, 2)
+            str_5.highlight_containers_1to3(0, 1, 2)
             self.wait(pause)
 
             string = "12"
@@ -1274,11 +1275,11 @@ class ExampleString(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 pointers=False,
             )
-            str_1.highlight_containers_1to3([0, 1, 2])
-            str_2.highlight_containers_1to3([0, 1, 2])
-            str_3.highlight_containers_1to3([0, 1, 2])
-            str_4.highlight_containers_1to3([0, 1, 2])
-            str_5.highlight_containers_1to3([0, 1, 2])
+            str_1.highlight_containers_1to3(0, 1, 2)
+            str_2.highlight_containers_1to3(0, 1, 2)
+            str_3.highlight_containers_1to3(0, 1, 2)
+            str_4.highlight_containers_1to3(0, 1, 2)
+            str_5.highlight_containers_1to3(0, 1, 2)
             str_1.group_appear(
                 self,
                 str_2,
@@ -1332,35 +1333,35 @@ class ExampleString(mn.Scene):
             string.group_appear(self, top_text)
             self.wait(1)
 
-            string.pointers([0, 3, 6])
-            string.highlight_containers_1to3([0, 3, 6])
+            string.pointers(0, 3, 6)
+            string.highlight_containers_1to3(0, 3, 6)
             self.wait(pause)
-            string.pointers([1, 3, 5])
-            string.highlight_containers_1to3([1, 3, 5])
+            string.pointers(1, 3, 5)
+            string.highlight_containers_1to3(1, 3, 5)
             self.wait(pause)
-            string.pointers([2, 3, 4])
-            string.highlight_containers_1to3([2, 3, 4])
+            string.pointers(2, 3, 4)
+            string.highlight_containers_1to3(2, 3, 4)
             self.wait(pause)
-            string.pointers([3, 3, 3])
-            string.highlight_containers_1to3([3, 3, 3])
+            string.pointers(3, 3, 3)
+            string.highlight_containers_1to3(3, 3, 3)
             self.wait(pause)
-            string.pointers([2, 3, 4])
-            string.highlight_containers_1to3([2, 3, 4])
+            string.pointers(2, 3, 4)
+            string.highlight_containers_1to3(2, 3, 4)
             self.wait(pause)
-            string.pointers([2, 2, 4])
-            string.highlight_containers_1to3([2, 2, 4])
+            string.pointers(2, 2, 4)
+            string.highlight_containers_1to3(2, 2, 4)
             self.wait(pause)
-            string.pointers([2, 3, 4])
-            string.highlight_containers_1to3([2, 3, 4])
+            string.pointers(2, 3, 4)
+            string.highlight_containers_1to3(2, 3, 4)
             self.wait(pause)
-            string.pointers([2, 4, 4])
-            string.highlight_containers_1to3([2, 4, 4])
+            string.pointers(2, 4, 4)
+            string.highlight_containers_1to3(2, 4, 4)
             self.wait(pause)
-            string.pointers([2, 4, 3])
-            string.highlight_containers_1to3([2, 4, 3])
+            string.pointers(2, 4, 3)
+            string.highlight_containers_1to3(2, 4, 3)
             self.wait(pause)
-            string.pointers([2, 40, 2])
-            string.highlight_containers_1to3([2, 40, 2])
+            string.pointers(2, 40, 2)
+            string.highlight_containers_1to3(2, 40, 2)
             self.wait(1)
             self.clear()
 
@@ -1425,8 +1426,8 @@ class ExampleString(mn.Scene):
             string.group_appear(self, top_text)
             self.wait(1)
 
-            string.highlight_containers_1to3([0, 2, 4])
-            string.pointers([0, 2, 4])
+            string.highlight_containers_1to3(0, 2, 4)
+            string.pointers(0, 2, 4)
             self.wait(pause)
 
             string.update_value(self, "follow the")
@@ -1437,8 +1438,8 @@ class ExampleString(mn.Scene):
 
             string.update_value(self, "follow")
             string.clear_pointers_highlights(1)
-            string.highlight_containers_1to3([0, 2, 4])
-            string.pointers([0, 2, 4])
+            string.highlight_containers_1to3(0, 2, 4)
+            string.pointers(0, 2, 4)
             self.wait(pause)
 
             string.update_value(self, "", animate=True)
@@ -1457,8 +1458,8 @@ class ExampleString(mn.Scene):
 
             string.update_value(self, "white rabbit", animate=True)
             string.clear_pointers_highlights(1)
-            string.highlight_containers_1to3([0, 1, 2])
-            string.pointers([0, 1, 2])
+            string.highlight_containers_1to3(0, 1, 2)
+            string.pointers(0, 1, 2)
             self.wait(pause)
 
             string.update_value(self, "rabbit white", animate=True)
@@ -1469,8 +1470,8 @@ class ExampleString(mn.Scene):
 
             string.update_value(self, "rabbit the white", animate=True)
             string.clear_pointers_highlights(1)
-            string.highlight_containers_1to3([0, 2, 2])
-            string.pointers([0, 2, 2])
+            string.highlight_containers_1to3(0, 2, 2)
+            string.pointers(0, 2, 2)
             self.wait(pause)
 
             string.update_value(self, "white the rabbit", animate=True)
@@ -1480,8 +1481,8 @@ class ExampleString(mn.Scene):
             self.wait(pause)
 
             string.update_value(self, "rab follow rab", animate=True)
-            string.highlight_containers_1to3([90, 90, 90])
-            string.pointers([90, 90, 90])
+            string.highlight_containers_1to3(90, 90, 90)
+            string.pointers(90, 90, 90)
             string.highlight_containers_with_value("a", color=mn.PINK)
             string.pointers_on_value("a", color=mn.PINK)
             self.wait(1)
@@ -1644,7 +1645,7 @@ class ExampleLinkedlist(mn.Scene):
                 vector=mn.DOWN * 3.5,
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1655,7 +1656,7 @@ class ExampleLinkedlist(mn.Scene):
                 direction=np.array([10, -10, 0]),
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1666,7 +1667,7 @@ class ExampleLinkedlist(mn.Scene):
                 direction=np.array([0, -10, 0]),
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1677,7 +1678,7 @@ class ExampleLinkedlist(mn.Scene):
                 direction=np.array([-10, -10, 0]),
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1688,7 +1689,7 @@ class ExampleLinkedlist(mn.Scene):
                 direction=np.array([-10, 0, 0]),
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1699,7 +1700,7 @@ class ExampleLinkedlist(mn.Scene):
                 direction=np.array([-10, 10, 0]),
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1710,7 +1711,7 @@ class ExampleLinkedlist(mn.Scene):
                 direction=np.array([0, 10, 0]),
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1721,7 +1722,7 @@ class ExampleLinkedlist(mn.Scene):
                 direction=np.array([10, 10, 0]),
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(pause)
 
             self.remove(ll)
@@ -1731,7 +1732,7 @@ class ExampleLinkedlist(mn.Scene):
                 vector=mn.DOWN * 3.5,
             )
             ll.appear(self)
-            ll.pointers([0, 1, 2])
+            ll.pointers(0, 1, 2)
             self.wait(1)
             self.remove(ll)
 
@@ -1833,8 +1834,8 @@ class ExampleLinkedlist(mn.Scene):
                 vector=mn.DOWN * 1,
                 anchor=mn.LEFT,
             )
-            ll.highlight_containers_1to3([0, 2, 4])
-            ll.pointers([0, 2, 4])
+            ll.highlight_containers_1to3(0, 2, 4)
+            ll.pointers(0, 2, 4)
             rt = RelativeText(
                 "anchor=mn.LEFT\ndirection=np.array([10, 2, 0])\nupdate_value()",
                 align_left=ll,
@@ -1870,8 +1871,8 @@ class ExampleLinkedlist(mn.Scene):
                 vector=mn.DOWN * 1,
                 anchor=mn.RIGHT,
             )
-            ll.highlight_containers_1to3([0, 2, 4])
-            ll.pointers([0, 2, 4])
+            ll.highlight_containers_1to3(0, 2, 4)
+            ll.pointers(0, 2, 4)
             rt = RelativeText(
                 "anchor=mn.RIGHT\ndirection=np.array([10, 2, 0])\nupdate_value()",
                 align_left=ll,
@@ -1907,8 +1908,8 @@ class ExampleLinkedlist(mn.Scene):
                 vector=mn.DOWN * 1,
                 anchor=mn.RIGHT,
             )
-            ll.highlight_containers_1to3([0, 2, 4])
-            ll.pointers([0, 2, 4])
+            ll.highlight_containers_1to3(0, 2, 4)
+            ll.pointers(0, 2, 4)
             rt = RelativeText(
                 "anchor=mn.RIGHT\ndirection=np.array([-10, -2, 0])\nupdate_value()",
                 align_left=ll,
@@ -1944,8 +1945,8 @@ class ExampleLinkedlist(mn.Scene):
                 vector=mn.DOWN * 1,
                 anchor=None,
             )
-            ll.highlight_containers_1to3([0, 2, 4])
-            ll.pointers([0, 2, 4])
+            ll.highlight_containers_1to3(0, 2, 4)
+            ll.pointers(0, 2, 4)
             rt = RelativeText(
                 "anchor=None\ndirection=np.array([10, 2, 0])\nupdate_value()",
                 align_left=ll,
@@ -1986,29 +1987,29 @@ class ExampleLinkedlist(mn.Scene):
             )
             lln.group_appear(self, rt)
 
-            lln.pointers([2, 4, 6])
-            lln.highlight_containers_1to3([2, 4, 6])
+            lln.pointers(2, 4, 6)
+            lln.highlight_containers_1to3(2, 4, 6)
             self.wait(pause)
-            lln.pointers([3, 4, 5])
-            lln.highlight_containers_1to3([3, 4, 5])
+            lln.pointers(3, 4, 5)
+            lln.highlight_containers_1to3(3, 4, 5)
             self.wait(pause)
-            lln.pointers([4, 4, 4])
-            lln.highlight_containers_1to3([4, 4, 4])
+            lln.pointers(4, 4, 4)
+            lln.highlight_containers_1to3(4, 4, 4)
             self.wait(pause)
-            lln.pointers([5, 4, 3])
-            lln.highlight_containers_1to3([5, 4, 3])
+            lln.pointers(5, 4, 3)
+            lln.highlight_containers_1to3(5, 4, 3)
             self.wait(pause)
-            lln.pointers([5, 3, 3])
-            lln.highlight_containers_1to3([5, 3, 3])
+            lln.pointers(5, 3, 3)
+            lln.highlight_containers_1to3(5, 3, 3)
             self.wait(pause)
-            lln.pointers([5, 4, 3])
-            lln.highlight_containers_1to3([5, 4, 3])
+            lln.pointers(5, 4, 3)
+            lln.highlight_containers_1to3(5, 4, 3)
             self.wait(pause)
-            lln.pointers([5, 5, 3])
-            lln.highlight_containers_1to3([5, 5, 3])
+            lln.pointers(5, 5, 3)
+            lln.highlight_containers_1to3(5, 5, 3)
             self.wait(pause)
-            lln.pointers([5, 5, 60])
-            lln.highlight_containers_1to3([5, 5, 60])
+            lln.pointers(5, 5, 60)
+            lln.highlight_containers_1to3(5, 5, 60)
             self.wait(pause)
             lln.clear_containers_highlights()
             lln.clear_pointers_highlights(0)
@@ -2154,7 +2155,7 @@ the old highlight clears.
             code_block: CodeBlock,
             old_title: mn.Mobject,
             *code_indices: int,
-            precode: tuple[int, ...] | None = None,
+            precode: list[int] | None = None,
             pause=2,
         ):
             code_block.highlight(*code_indices, precode_indices=precode)
@@ -2182,10 +2183,15 @@ the old highlight clears.
         title = highlight_with_title(self, cb, title, 2)
         title = highlight_with_title(self, cb, title, 3, 5, 7, pause=3)
         title = highlight_with_title(self, cb, title, 8, 9, 10, pause=3)
-        title = highlight_with_title(self, cb, title, precode=(0,))
-        title = highlight_with_title(self, cb, title, precode=(1, 2))
-        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, precode=(0, 2))
-        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, precode=(1,))
+        title = highlight_with_title(self, cb, title, precode=[0])
+        title = highlight_with_title(self, cb, title, precode=[1, 2])
+        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, precode=[0, 2])
+        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, precode=[1])
+
+        # ========== FINISH ==============
+
+        self.wait(pause)
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
         # ========== FINISH ==============
 
