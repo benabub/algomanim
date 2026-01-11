@@ -110,55 +110,55 @@ return arr
         array.first_appear(self)
         code_block.first_appear(self)
 
-        code_block.highlight(precode_indices=[0])
+        code_block.highlight(0)
         length_text.first_appear(self)
         self.wait(pause)
 
         # ===== ALGORITHM CYCLE ==========
 
         for i in range(length - 1):
-            code_block.highlight(0)
+            code_block.highlight(1)
             i_text.update_value(self)
             array.pointers(i)
             array.highlight_containers_1to3(i)
             self.wait(pause)
 
             min_index = i
-            code_block.highlight(1)
+            code_block.highlight(2)
             array.pointers(i, min_index)
             array.highlight_containers_1to3(i, min_index)
             min_text.update_value(self)
             self.wait(pause)
 
             for k in range(i + 1, length):
-                code_block.highlight(2)
+                code_block.highlight(3)
                 array.pointers(i, min_index, k)
                 array.highlight_containers_1to3(i, min_index, k)
                 k_text.update_value(self)
                 self.wait(pause)
 
-                code_block.highlight(3)
+                code_block.highlight(4)
                 self.wait(pause)
                 if arr[k] < arr[min_index]:
                     #
                     min_index = k
-                    code_block.highlight(4)
+                    code_block.highlight(5)
                     array.pointers(i, min_index, k)
                     array.highlight_containers_1to3(i, min_index, k)
                     min_text.update_value(self)
                     self.wait(pause)
 
-            code_block.highlight(5)
+            code_block.highlight(6)
             self.wait(pause)
             if min_index != i:
                 #
                 arr[i], arr[min_index] = arr[min_index], arr[i]
                 array.update_value(self, arr)
-                code_block.highlight(6)
+                code_block.highlight(7)
                 self.wait(pause)
 
         # return arr
-        code_block.highlight(7)
+        code_block.highlight(8)
         return_text = RelativeTextValue(
             ("return", lambda: arr, mn.ORANGE),
             mob_center=code_block,
@@ -2109,22 +2109,23 @@ class ExampleCodeblock(mn.Scene):
         # ======== INPUTS ============
 
         precode = """
-This is precode_lines.
-They have the same..
-..functionality.
+This is precode_lines.  # 0
+They have the same..  # 1
+..functionality,  # 2
+but different buffs. # 3
 """
         code = """
-This is code_lines.
-It is possible to highlight them
-one by one,
-or
-│
-several
-│
-at once.
-When highlight(...) calls,
-or calls without args,
-the old highlight clears.
+This is code_lines.  # 4
+It is possible to highlight them  # 5
+one by one,  # 6
+or  # 7
+│  # 8
+several  # 9
+│  # 10
+at once.  # 11
+When highlight(...) calls,  # 12
+or calls without args,  # 13
+the old highlight clears.  # 14
 """
         precode_lines = CodeBlock.format_code_lines(precode)
         code_lines = CodeBlock.format_code_lines(code)
@@ -2135,7 +2136,7 @@ the old highlight clears.
         cb = CodeBlock(
             code_lines,
             precode_lines=precode_lines,
-            vector=mn.RIGHT * 3 + mn.DOWN * 0.5,
+            vector=mn.RIGHT * 3,
             font_size=25,
         )
         # Animation code_block
@@ -2154,19 +2155,19 @@ the old highlight clears.
             self: mn.Scene,
             code_block: CodeBlock,
             old_title: mn.Mobject,
-            *code_indices: int,
-            precode: list[int] | None = None,
+            *indices: int,
+            # precode: list[int] | None = None,
             pause=2,
         ):
-            code_block.highlight(*code_indices, precode_indices=precode)
+            code_block.highlight(*indices)
 
             left_point = old_title.get_left()
             self.remove(old_title)
 
-            args_str = f"({', '.join(map(str, code_indices))}"
-            if precode:
-                args_str += f", precode_indices={precode}"
-            args_str += ")"
+            args_str = f"({', '.join(map(str, indices))})"
+            # if precode:
+            #     args_str += f", precode_indices={precode}"
+            # args_str += ")"
 
             new_title = RelativeText(
                 f"highlight{args_str}",
@@ -2178,20 +2179,74 @@ the old highlight clears.
             self.wait(pause)
             return new_title
 
+        title = highlight_with_title(self, cb, title, 4)
+        title = highlight_with_title(self, cb, title, 5)
+        title = highlight_with_title(self, cb, title, 6)
+        title = highlight_with_title(self, cb, title, 7, 9, 11, pause=3)
+        title = highlight_with_title(self, cb, title, 12, 13, 14, pause=3)
         title = highlight_with_title(self, cb, title, 0)
-        title = highlight_with_title(self, cb, title, 1)
-        title = highlight_with_title(self, cb, title, 2)
-        title = highlight_with_title(self, cb, title, 3, 5, 7, pause=3)
-        title = highlight_with_title(self, cb, title, 8, 9, 10, pause=3)
-        title = highlight_with_title(self, cb, title, precode=[0])
-        title = highlight_with_title(self, cb, title, precode=[1, 2])
-        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, precode=[0, 2])
-        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, precode=[1])
+        title = highlight_with_title(self, cb, title, 1, 2)
+        title = highlight_with_title(self, cb, title, 3)
+        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, 12, 14)
+        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11, 13)
 
         # ========== FINISH ==============
 
         self.wait(pause)
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+
+
+class ExampleCodeblocklense(mn.Scene):
+    def construct(self):
+        self.camera.background_color = mn.DARK_GREY  # type: ignore
+
+        # ========== INPUTS ==============
+        pause = 1
+        code = """
+1
+2
+3
+4
+5 ---------------
+6
+7
+8
+9
+10
+"""
+        code_lines = CodeBlock.format_code_lines(code)
+
+        # ========== construction ==============
+
+        cb = CodeBlockLense(
+            code_lines,
+            vector=mn.DOWN * 0.3 + mn.RIGHT * 2.5,
+        )
+        cb.first_appear(self)
+        self.wait(pause)
+
+        # ========== highlight ==============
+
+        # cb.highlight(0)
+        # self.wait(0.8)
+        # cb.highlight(1)
+        # self.wait(0.8)
+        # cb.highlight(2)
+        # self.wait(0.8)
+        # cb.highlight(3)
+        # self.wait(0.8)
+        # cb.highlight(4)
+        # self.wait(0.8)
+        # cb.highlight(5)
+        # self.wait(0.8)
+        # cb.highlight(6)
+        # self.wait(0.8)
+        # cb.highlight(7)
+        # self.wait(0.8)
+        # cb.highlight(8)
+        # self.wait(0.8)
+        # cb.highlight(9)
+        # self.wait(0.8)
 
         # ========== FINISH ==============
 
