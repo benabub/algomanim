@@ -167,8 +167,8 @@ class CodeBlock(AlgoManimBase):
 
         Args:
             code_mobs_list: List of text mobjects to highlight.
-            rects_list: List of background rectangles (parallel to code_mobs_list).
-            indices: Tuple of line indices to highlight.
+            rects_list: list of background rectangles (parallel to code_mobs_list).
+            indices: tuple of line indices to highlight.
         """
         for k, mob in enumerate(code_mobs_list):
             if k in indices:
@@ -217,24 +217,49 @@ class CodeBlock(AlgoManimBase):
                 self.remove(bg_rect)
                 rects_list[k] = None
 
+    def _separate_indices(self, *indices) -> tuple[tuple[int, ...], tuple[int, ...]]:
+        """Separates indices into precode and code tuples.
+
+        Args:
+            *indices: Line indices to separate.
+
+        Returns:
+            Tuple of (precode_indices, code_indices) where:
+            - precode_indices: tuple of indices referring to precode lines
+            - code_indices: tuple of indices referring to main code lines (rebase to 0)
+        """
+        len_precode_lines = len(self._precode_lines)
+
+        if self._precode_lines:
+            precode_indices = tuple(
+                idx for idx in indices if idx in range(len_precode_lines)
+            )
+            code_indices = tuple(
+                idx - len_precode_lines for idx in indices if idx >= len_precode_lines
+            )
+        else:
+            precode_indices = ()
+            code_indices = indices
+        return precode_indices, code_indices
+
     def highlight(
         self,
-        *code_indices: int,
-        precode_indices: list[int] | None = None,
+        *indices: int,
     ):
         """Highlights one or more lines with background and text color.
 
         Args:
             *i: Tuple of code line indices to highlight.
-            precode: list of precode line indices to highlight, or None.
         """
+
+        precode_indices, code_indices = self._separate_indices(*indices)
 
         self._highlight_block(self._code_mobs, self._bg_rects_code, code_indices)
 
         if hasattr(self, "_precode_mobs"):
             if precode_indices is not None:
                 self._highlight_block(
-                    self._precode_mobs, self._bg_rects_precode, tuple(precode_indices)
+                    self._precode_mobs, self._bg_rects_precode, precode_indices
                 )
             else:
                 self._clear_block_highlights(self._precode_mobs, self._bg_rects_precode)
