@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Usage: ./rend_poetry.sh -l|-m|-h class_name (without 'Example', case-insensitive)
-# Example: ./rend_poetry.sh -l array
+# Usage: ./rend_poetry.sh -l|-m|-h class_name (without 'Example_', case-insensitive)
+# Example: ./rend_poetry.sh -l code_block
 
 set -e
 
@@ -32,9 +32,9 @@ case "$1" in
         ;;
 esac
 
-# Format class name: Example + Capitalized
-ARG_LOWER="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
-CLASS="Example$(echo "${ARG_LOWER:0:1}" | tr '[:lower:]' '[:upper:]')${ARG_LOWER:1}"
+# Format class name: Example_ + name_snake_case
+CLASS="Example_$(echo "$2" | tr '[:upper:]' '[:lower:]')"
+
 
 if ! grep -q "class $CLASS(" examples.py; then
     echo "Error: Class '$CLASS' not found in examples.py"

@@ -31,10 +31,10 @@ After installation, you can find the examples directory at:
    ```sh
    # Usage: ./rend_poetry.sh -l|-m|-h class_name
    # (-l: low quality, -m: medium quality, -h: high quality)
-   # (class_name: without 'Example', case-insensitive)
-   ./rend_poetry.sh -l array
-   ./rend_poetry.sh -m Array
-   ./rend_poetry.sh -h aRrAy
+   # (class_name: without 'Example_', case-insensitive, snake_case)
+   ./rend_poetry.sh -l code_block
+   ./rend_poetry.sh -m Code_Block
+   ./rend_poetry.sh -h cOdE_BlOCK
    ```
 
    The rendered video will appear in the corresponding `video_output/<quality>/` folder.
