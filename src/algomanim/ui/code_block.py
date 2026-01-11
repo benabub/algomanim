@@ -284,7 +284,7 @@ class CodeBlock(AlgoManimBase):
         return res
 
     @staticmethod
-    def create_animation_template(code: str) -> None:
+    def create_animation_template(code: str, precode_len: int = 0) -> None:
         """Generate animation scaffolding from algorithm code.
 
         This static method converts algorithm code into a template for Manim
@@ -305,7 +305,7 @@ class CodeBlock(AlgoManimBase):
         res = ""
         tab = "    "
         base_tab = tab * 2
-        i = 0
+        i = precode_len
         for j, line in enumerate(code_lines):
             line_lstrip = line.lstrip()
             indent = line[: len(line) - len(line_lstrip)]
