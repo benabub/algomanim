@@ -6,7 +6,7 @@ from .datastructures.array import Array
 from .datastructures.string import String
 from .datastructures.linked_list import LinkedList
 
-from .ui.code_block import CodeBlock
+from .ui.code_block import CodeBlock, CodeBlockLense
 from .ui.relative_text import RelativeText, RelativeTextValue
 from .ui.titles import TitleText, TitleLogo
 
@@ -18,6 +18,7 @@ __all__ = [
     "String",
     "LinkedList",
     "CodeBlock",
+    "CodeBlockLense",
     "RelativeText",
     "RelativeTextValue",
     "TitleText",

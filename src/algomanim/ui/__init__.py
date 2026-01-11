@@ -1,4 +1,4 @@
-from .code_block import CodeBlock
+from .code_block import CodeBlock, CodeBlockLense
 from .relative_text import (
     RelativeText,
     RelativeTextValue,
@@ -10,6 +10,7 @@ from .titles import (
 
 __all__ = [
     "CodeBlock",
+    "CodeBlockLense",
     "RelativeText",
     "RelativeTextValue",
     "TitleText",

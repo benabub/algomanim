@@ -25,7 +25,7 @@ from algomanim import (
 )
 
 
-class ExampleSelectionsort(mn.Scene):
+class Example_selection_sort(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.DARK_GRAY  # type: ignore
 
@@ -174,7 +174,7 @@ return arr
         self.renderer.file_writer.output_file = f"media/{self.__class__.__name__}.mp4"
 
 
-class ExampleArray(mn.Scene):
+class Example_array(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
@@ -813,7 +813,7 @@ class ExampleArray(mn.Scene):
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
 
-class ExampleString(mn.Scene):
+class Example_string(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
@@ -1503,7 +1503,7 @@ class ExampleString(mn.Scene):
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
 
-class ExampleLinkedlist(mn.Scene):
+class Example_linked_list(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
@@ -2101,7 +2101,7 @@ class ExampleLinkedlist(mn.Scene):
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
 
-class ExampleCodeblock(mn.Scene):
+class Example_code_block(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.DARK_GREY  # type: ignore
         pause = 1
@@ -2196,31 +2196,36 @@ the old highlight clears.  # 14
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
 
-class ExampleCodeblocklense(mn.Scene):
+class Example_code_block_lense(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.DARK_GREY  # type: ignore
 
         # ========== INPUTS ==============
         pause = 1
-        code = """
+        precode = """
 1
 2
 3
+"""
+        code = """
 4
-5 ---------------
-6
-7
-8
-9
+│5 ---------------
+│6
+│7
+│8
+│9
 10
 """
         code_lines = CodeBlock.format_code_lines(code)
+        precode_lines = CodeBlock.format_code_lines(precode)
 
         # ========== construction ==============
 
         cb = CodeBlockLense(
             code_lines,
+            precode_lines=precode_lines,
             vector=mn.DOWN * 0.3 + mn.RIGHT * 2.5,
+            # code_buff=0.1,
         )
         cb.first_appear(self)
         self.wait(pause)
