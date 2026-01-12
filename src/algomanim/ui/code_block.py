@@ -15,7 +15,6 @@ class CodeBlock(AlgoManimBase):
 
     Args:
         code_lines: List of code lines to display.
-        precode_lines: Lines to display before the main code.
         vector: Position offset from mob_center for positioning.
         mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
@@ -26,8 +25,6 @@ class CodeBlock(AlgoManimBase):
         font: Font family for the code text. Defaults to system default.
         text_color_regular: Color for regular (non-highlighted) text.
         text_color_highlight: Color for highlighted text.
-        between_blocks_buff: Vertical buffer between pre-code and code blocks.
-        precode_buff: Vertical buffer between pre-code lines.
         code_buff: Vertical buffer between code lines.
         bg_rect_fill_color: Background fill color for the code block container.
         bg_rect_stroke_width: Stroke width for the code block container.
@@ -46,7 +43,6 @@ class CodeBlock(AlgoManimBase):
     def __init__(
         self,
         code_lines: List[str],
-        precode_lines: List[str] = [],
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -60,15 +56,13 @@ class CodeBlock(AlgoManimBase):
         text_color_regular: ManimColor | str = "WHITE",
         text_color_highlight: ManimColor | str = "YELLOW",
         # --- buffs ---
-        between_blocks_buff=0.5,
-        precode_buff=0.15,
         code_buff=0.05,
         # --- bg_rect ---
         bg_rect_fill_color: ManimColor | str = "#545454",
         bg_rect_stroke_width: float = 4,
         bg_rect_stroke_color: ManimColor | str = "#151515",
         bg_rect_corner_radius: float = 0.1,
-        bg_rect_buff: float = 0.5,
+        bg_rect_buff: float = 0.2,
         # --- highlights ---
         bg_highlight_color: ManimColor | str = mn.BLACK,
     ):
@@ -82,20 +76,67 @@ class CodeBlock(AlgoManimBase):
         )
 
         self._code_lines = code_lines
-        self._precode_lines = precode_lines
         # --- font ---
         self._font_size = font_size
         self._font = font
         self._text_color_regular = text_color_regular
         self._text_color_highlight = text_color_highlight
         # --- buffs ---
-        self._between_blocks_buff = between_blocks_buff
-        self._precode_buff = precode_buff
         self._code_buff = code_buff
         # --- colors ---
         self._bg_highlight_color = bg_highlight_color
+        self._bg_rect_fill_color = bg_rect_fill_color
+        # --- rect params ---
+        self._rect_height = self._get_rect_height()
+        # --- highlights ---
+        self._highlighted_indices: set[int] = set()
 
-        self._code_mobs = [
+        self._text_mobs = self._create_text_mobs()
+        self._rect_mobs = self._create_rect_mobs()
+        self._line_vgroups = self._create_line_vgroups()
+
+        self._code_vgroup = mn.VGroup(*self._line_vgroups).arrange(
+            mn.DOWN,
+            aligned_edge=mn.LEFT,
+            buff=0,
+        )
+
+        self._bg_rect = mn.RoundedRectangle(
+            width=self._code_vgroup.width + bg_rect_buff,
+            height=self._code_vgroup.height + bg_rect_buff,
+            fill_color=bg_rect_fill_color,
+            fill_opacity=1,
+            stroke_width=bg_rect_stroke_width,
+            stroke_color=bg_rect_stroke_color,
+            corner_radius=bg_rect_corner_radius,
+        )
+
+        self.add(self._bg_rect)
+        self._position()
+
+        self._code_vgroup.move_to(self._bg_rect)
+        self.add(self._code_vgroup)
+
+    def _get_rect_height(self):
+        """Calculate the standard height for line rectangles.
+
+        Returns:
+            Height based on font size and line spacing buffer.
+        """
+        spec_mob = mn.Text(
+            "│",
+            font=self._font,
+            font_size=self._font_size,
+        )
+        return spec_mob.height + self._code_buff
+
+    def _create_text_mobs(self):
+        """Create text mobjects for each code line.
+
+        Returns:
+            List of text mobjects.
+        """
+        text_mobs = [
             mn.Text(
                 line,
                 font=self._font,
@@ -104,165 +145,80 @@ class CodeBlock(AlgoManimBase):
             )
             for line in self._code_lines
         ]
-        self._bg_rects_code: List[mn.Rectangle | None] = [None] * len(
-            self._code_lines
-        )  # list to save links on all possible rectangles and to manage=delete them
+        return text_mobs
 
-        code_vgroup = mn.VGroup(*self._code_mobs).arrange(
-            mn.DOWN,
-            aligned_edge=mn.LEFT,
-            buff=self._code_buff,
-        )
-
-        if self._precode_lines:
-            self._precode_mobs = [
-                mn.Text(
-                    line,
-                    font=self._font,
-                    font_size=self._font_size,
-                    color=self._text_color_regular,
-                )
-                for line in self._precode_lines
-            ]
-            self._bg_rects_precode: List[mn.Rectangle | None] = [None] * len(
-                self._code_lines
-            )  # list to save links on all possible rectangles and to manage=delete them
-            self._precode_vgroup = mn.VGroup(*self._precode_mobs).arrange(
-                mn.DOWN,
-                aligned_edge=mn.LEFT,
-                buff=self._precode_buff,
-            )
-            self._code_block_vgroup = mn.VGroup(
-                self._precode_vgroup, code_vgroup
-            ).arrange(
-                mn.DOWN,
-                aligned_edge=mn.LEFT,
-                buff=between_blocks_buff,
-            )
-        else:
-            self._code_block_vgroup = code_vgroup
-
-        self._bg_rect = mn.RoundedRectangle(
-            width=self._code_block_vgroup.width + bg_rect_buff,
-            height=self._code_block_vgroup.height + bg_rect_buff,
-            fill_color=bg_rect_fill_color,
-            fill_opacity=1,
-            stroke_width=bg_rect_stroke_width,
-            stroke_color=bg_rect_stroke_color,
-            corner_radius=bg_rect_corner_radius,
-        )
-
-        self._bg_rect.z_index = -2  # deepest layout
-
-        self.add(self._bg_rect, self._code_block_vgroup)
-        self._position()
-
-    def _highlight_block(
-        self,
-        code_mobs_list: List[mn.Text],
-        rects_list: List[mn.Rectangle | None],
-        indices: tuple[int, ...],
-    ) -> None:
-        """Helper method to highlight lines in a code block.
-
-        Args:
-            code_mobs_list: List of text mobjects to highlight.
-            rects_list: list of background rectangles (parallel to code_mobs_list).
-            indices: tuple of line indices to highlight.
-        """
-        for k, mob in enumerate(code_mobs_list):
-            if k in indices:
-                # change font color
-                mob.set_color(self._text_color_highlight)
-                # create bg rectangle
-                if rects_list[k] is None:
-                    bg_rect = mn.Rectangle(
-                        width=mob.width + 0.2,
-                        height=mob.height + 0.1,
-                        fill_color=self._bg_highlight_color,
-                        fill_opacity=1,
-                        stroke_width=0,
-                    )
-                    bg_rect.move_to(mob.get_center())
-                    self.add(bg_rect)
-                    bg_rect.z_index = -1  # medium layout
-                    rects_list[k] = bg_rect
-            else:
-                # normal line: regular font color
-                mob.set_color(self._text_color_regular)
-                # remove rect
-                bg_rect = rects_list[k]
-                if bg_rect:
-                    self.remove(bg_rect)
-                    rects_list[k] = None
-
-    def _clear_block_highlights(
-        self,
-        code_mobs_list: List[mn.Text],
-        rects_list: List[mn.Rectangle | None],
-    ) -> None:
-        """Clear all highlights from a code block.
-
-        Args:
-            code_mobs_list: List of text mobjects in the block.
-            rects_list: List of background rectangles (parallel to code_mobs_list).
-        """
-
-        for k, mob in enumerate(code_mobs_list):
-            # normal line: regular font color
-            mob.set_color(self._text_color_regular)
-            # remove rect
-            bg_rect = rects_list[k]
-            if bg_rect:
-                self.remove(bg_rect)
-                rects_list[k] = None
-
-    def _separate_indices(self, *indices) -> tuple[tuple[int, ...], tuple[int, ...]]:
-        """Separates indices into precode and code tuples.
-
-        Args:
-            *indices: Line indices to separate.
+    def _create_rect_mobs(self):
+        """Create background rectangles for each line.
 
         Returns:
-            Tuple of (precode_indices, code_indices) where:
-            - precode_indices: tuple of indices referring to precode lines
-            - code_indices: tuple of indices referring to main code lines (rebase to 0)
+            List of Rectangle mobjects sized according to line content.
+            Non-empty lines have width matching text width,
+               empty lines use standard height.
         """
-        len_precode_lines = len(self._precode_lines)
+        rect_mobs = []
+        for line in self._text_mobs:
+            if line:  # not empty
+                rect = mn.Rectangle(
+                    width=line.width + 0.2,
+                    height=self._rect_height,
+                    fill_color=self._bg_rect_fill_color,
+                    fill_opacity=1,
+                    stroke_width=0,
+                )
+            else:  # empty line
+                rect = mn.Rectangle(
+                    width=self._rect_height,
+                    height=self._rect_height,
+                    fill_color=self._bg_rect_fill_color,
+                    fill_opacity=1,
+                    stroke_width=0,
+                )
+            rect_mobs.append(rect)
+        return rect_mobs
 
-        if self._precode_lines:
-            precode_indices = tuple(
-                idx for idx in indices if idx in range(len_precode_lines)
-            )
-            code_indices = tuple(
-                idx - len_precode_lines for idx in indices if idx >= len_precode_lines
-            )
-        else:
-            precode_indices = ()
-            code_indices = indices
-        return precode_indices, code_indices
+    def _create_line_vgroups(self):
+        """Create VGroups pairing rectangles with text mobjects.
 
-    def highlight(
-        self,
-        *indices: int,
-    ):
-        """Highlights one or more lines with background and text color.
+        Returns:
+            List of VGroups where each contains (rectangle, text) centered together.
+        """
+        line_vgroups = []
+        for i in range(len(self._rect_mobs)):
+            group = mn.VGroup(
+                self._rect_mobs[i],
+                self._text_mobs[i],
+            )
+            self._text_mobs[i].move_to(self._rect_mobs[i])
+            line_vgroups.append(group)
+        return line_vgroups
+
+    def highlight(self, *indices: int):
+        """Highlight specified lines by changing text and rectangle colors.
+
+        Maintains internal set of highlighted indices to minimize state changes.
+        Empty lines are ignored.
 
         Args:
-            *i: Tuple of code line indices to highlight.
+            *indices: line indices to highlight.
+
+        Note:
+            Previous highlights are cleared from lines not in the new indices.
         """
+        new_highlighted = set(indices)
 
-        precode_indices, code_indices = self._separate_indices(*indices)
+        # Clear old highlights
+        for idx in self._highlighted_indices - new_highlighted:
+            if self._text_mobs[idx]:
+                self._text_mobs[idx].set_color(self._text_color_regular)
+                self._rect_mobs[idx].set_fill_color(self._bg_rect_fill_color)
 
-        self._highlight_block(self._code_mobs, self._bg_rects_code, code_indices)
+        # Apply new highlights
+        for idx in new_highlighted - self._highlighted_indices:
+            if self._text_mobs[idx]:
+                self._text_mobs[idx].set_color(self._text_color_highlight)
+                self._rect_mobs[idx].set_fill_color(self._bg_highlight_color)
 
-        if hasattr(self, "_precode_mobs"):
-            if precode_indices is not None:
-                self._highlight_block(
-                    self._precode_mobs, self._bg_rects_precode, precode_indices
-                )
-            else:
-                self._clear_block_highlights(self._precode_mobs, self._bg_rects_precode)
+        self._highlighted_indices = new_highlighted
 
     @staticmethod
     def format_code_lines(code: str) -> list[str]:
@@ -683,7 +639,7 @@ class CodeBlockLense(AlgoManimBase):
         self,
         scene: mn.Scene,
         *indices,
-        run_time: float = 0.2,
+        # run_time: float = 0.2,
     ):
         """
         ...

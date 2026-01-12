@@ -39,9 +39,9 @@ class Example_selection_sort(mn.Scene):
         min_index = i
         k = i + 1
 
-        precode = """
-length = len(arr)
-"""
+        #         precode = """
+        # length = len(arr)
+        # """
         code = """
 for i in range(length - 1):
     min_index = i
@@ -52,7 +52,7 @@ for i in range(length - 1):
         arr[i], arr[min_index] = arr[min_index], arr[i]
 return arr
 """
-        precode_lines = CodeBlock.format_code_lines(precode)
+        # precode_lines = CodeBlock.format_code_lines(precode)
         code_lines = CodeBlock.format_code_lines(code)
 
         # ======== MOBJECTS CONSTRUCTION ============
@@ -65,7 +65,7 @@ return arr
 
         code_block = CodeBlock(
             code_lines,
-            precode_lines=precode_lines,
+            # precode_lines=precode_lines,
             vector=mn.DOWN * 0.3 + mn.RIGHT * 2.5,
         )
 
@@ -2108,26 +2108,20 @@ class Example_code_block(mn.Scene):
 
         # ======== INPUTS ============
 
-        precode = """
-This is precode_lines.  # 0
-They have the same..  # 1
-..functionality,  # 2
-but different buffs. # 3
-"""
         code = """
-This is code_lines.  # 4
-It is possible to highlight them  # 5
-one by one,  # 6
-or  # 7
-│  # 8
-several  # 9
-│  # 10
-at once.  # 11
-When highlight(...) calls,  # 12
-or calls without args,  # 13
-the old highlight clears.  # 14
+This is code_lines.  # 0
+It is possible to highlight them  # 1
+one by one,  # 2
+or  # 3
+
+several  # 5
+
+at once.  # 7 
+
+When highlight(...) calls,  # 9
+or calls without args,  # 10
+the old highlight clears.  # 11
 """
-        precode_lines = CodeBlock.format_code_lines(precode)
         code_lines = CodeBlock.format_code_lines(code)
 
         # ======== main mob ============
@@ -2135,7 +2129,6 @@ the old highlight clears.  # 14
         # Construction code_block
         cb = CodeBlock(
             code_lines,
-            precode_lines=precode_lines,
             vector=mn.RIGHT * 3,
             font_size=25,
         )
@@ -2156,7 +2149,6 @@ the old highlight clears.  # 14
             code_block: CodeBlock,
             old_title: mn.Mobject,
             *indices: int,
-            # precode: list[int] | None = None,
             pause=2,
         ):
             code_block.highlight(*indices)
@@ -2165,9 +2157,6 @@ the old highlight clears.  # 14
             self.remove(old_title)
 
             args_str = f"({', '.join(map(str, indices))})"
-            # if precode:
-            #     args_str += f", precode_indices={precode}"
-            # args_str += ")"
 
             new_title = RelativeText(
                 f"highlight{args_str}",
@@ -2179,16 +2168,13 @@ the old highlight clears.  # 14
             self.wait(pause)
             return new_title
 
-        title = highlight_with_title(self, cb, title, 4)
-        title = highlight_with_title(self, cb, title, 5)
-        title = highlight_with_title(self, cb, title, 6)
-        title = highlight_with_title(self, cb, title, 7, 9, 11, pause=3)
-        title = highlight_with_title(self, cb, title, 12, 13, 14, pause=3)
         title = highlight_with_title(self, cb, title, 0)
-        title = highlight_with_title(self, cb, title, 1, 2)
-        title = highlight_with_title(self, cb, title, 3)
-        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, 12, 14)
-        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11, 13)
+        title = highlight_with_title(self, cb, title, 1)
+        title = highlight_with_title(self, cb, title, 2)
+        title = highlight_with_title(self, cb, title, 3, 5, 7, pause=3)
+        title = highlight_with_title(self, cb, title, 9, 10, 11, pause=3)
+        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10)
+        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11)
 
         # ========== FINISH ==============
 
