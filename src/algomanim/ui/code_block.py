@@ -413,7 +413,7 @@ class CodeBlockLense(AlgoManimBase):
         bg_rect_buff: float = 0.3,
         # --- highlights ---
         bg_highlight_color: ManimColor | str = mn.BLACK,
-        dimm_opacity: float = 0.8,
+        dim_opacity: float = 0.5,
     ):
         super().__init__(
             vector=vector,
@@ -449,7 +449,7 @@ class CodeBlockLense(AlgoManimBase):
         self._bg_rect_buff = bg_rect_buff
         # --- highlight ---
         self._highlight_rect = None  # the only highlight rect possible
-        self._dimm_opacity = dimm_opacity
+        self._dimm_opacity = dim_opacity
         # --- limit ---
         if limit % 2:
             self._limit = limit
@@ -480,8 +480,6 @@ class CodeBlockLense(AlgoManimBase):
             for line in self._code_lines
         ]
 
-        # ==============
-
         self._bg_rect = self._bg_rect_construct()
         self._bg_rect.z_index = -2
         self.add(self._bg_rect)
@@ -493,6 +491,8 @@ class CodeBlockLense(AlgoManimBase):
         self._text_vgroup = self._construct_text_vgroup(precode_indices, code_indices)
 
         self._position_text_vgroup()
+
+        self._dim_lines(-1)
 
         self.add(self._text_vgroup)
 
@@ -606,11 +606,12 @@ class CodeBlockLense(AlgoManimBase):
         """
         ...
 
-    def _dimm_lines(self):
+    def _dim_lines(self, *indices: int):
         """
         ...
         """
-        ...
+        for idx in indices:
+            self._text_vgroup[idx].set_opacity(self._dimm_opacity)
 
     # def highlight(self, block_line_idx: int):
     #     # block_line_idx = 0..(precode_len + code_len - 1)
