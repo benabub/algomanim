@@ -39,10 +39,9 @@ class Example_selection_sort(mn.Scene):
         min_index = i
         k = i + 1
 
-        #         precode = """
-        # length = len(arr)
-        # """
         code = """
+length = len(arr)
+
 for i in range(length - 1):
     min_index = i
     for k in range(i + 1, length):
@@ -52,7 +51,6 @@ for i in range(length - 1):
         arr[i], arr[min_index] = arr[min_index], arr[i]
 return arr
 """
-        # precode_lines = CodeBlock.format_code_lines(precode)
         code_lines = CodeBlock.format_code_lines(code)
 
         # ======== MOBJECTS CONSTRUCTION ============
@@ -65,8 +63,8 @@ return arr
 
         code_block = CodeBlock(
             code_lines,
-            # precode_lines=precode_lines,
-            vector=mn.DOWN * 0.3 + mn.RIGHT * 2.5,
+            vector=mn.DOWN * 0.3 + mn.RIGHT * 2.6,
+            font="Monospace",
         )
 
         length_text = RelativeTextValue(
@@ -117,48 +115,48 @@ return arr
         # ===== ALGORITHM CYCLE ==========
 
         for i in range(length - 1):
-            code_block.highlight(1)
+            code_block.highlight(2)
             i_text.update_value(self)
             array.pointers(i)
             array.highlight_containers_1to3(i)
             self.wait(pause)
 
             min_index = i
-            code_block.highlight(2)
+            code_block.highlight(3)
             array.pointers(i, min_index)
             array.highlight_containers_1to3(i, min_index)
             min_text.update_value(self)
             self.wait(pause)
 
             for k in range(i + 1, length):
-                code_block.highlight(3)
+                code_block.highlight(4)
                 array.pointers(i, min_index, k)
                 array.highlight_containers_1to3(i, min_index, k)
                 k_text.update_value(self)
                 self.wait(pause)
 
-                code_block.highlight(4)
+                code_block.highlight(5)
                 self.wait(pause)
                 if arr[k] < arr[min_index]:
                     #
                     min_index = k
-                    code_block.highlight(5)
+                    code_block.highlight(6)
                     array.pointers(i, min_index, k)
                     array.highlight_containers_1to3(i, min_index, k)
                     min_text.update_value(self)
                     self.wait(pause)
 
-            code_block.highlight(6)
+            code_block.highlight(7)
             self.wait(pause)
             if min_index != i:
                 #
                 arr[i], arr[min_index] = arr[min_index], arr[i]
                 array.update_value(self, arr)
-                code_block.highlight(7)
+                code_block.highlight(8)
                 self.wait(pause)
 
         # return arr
-        code_block.highlight(8)
+        code_block.highlight(9)
         return_text = RelativeTextValue(
             ("return", lambda: arr, mn.ORANGE),
             mob_center=code_block,
