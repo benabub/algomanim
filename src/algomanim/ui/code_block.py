@@ -430,6 +430,7 @@ class CodeBlockLense(AlgoManimBase):
         # self fields
         self._code_lines = code_lines
         self._precode_lines = precode_lines
+        self._all_code_lines = self._precode_lines + self._code_lines
         # --- font ---
         self._font_size = font_size
         self._font = font
@@ -490,19 +491,26 @@ class CodeBlockLense(AlgoManimBase):
         precode_indices, code_indices = self._get_initial_indices()
         self._text_vgroup = self._construct_text_vgroup(precode_indices, code_indices)
 
-        self._position_text_vgroup()
+        self._position_text_vgroup(self._text_vgroup)
 
-        self._dim_lines(-1)
+        self._dim_lines(self._text_vgroup, -1)
 
         self.add(self._text_vgroup)
 
-    def _position_text_vgroup(self):
+    def _position_text_vgroup(self, text_vgroup: mn.VGroup):
         """
         ...
         """
-        self._text_vgroup.move_to(self._bg_rect)
+        text_vgroup.move_to(self._bg_rect)
         shift_x = self._text_left_edge - self._text_vgroup.get_left()[0]
-        self._text_vgroup.shift(mn.RIGHT * shift_x)
+        text_vgroup.shift(mn.RIGHT * shift_x)
+
+    def _dim_lines(self, text_vgroup: mn.VGroup, *indices: int):
+        """
+        ...
+        """
+        for idx in indices:
+            text_vgroup[idx].set_opacity(self._dimm_opacity)
 
     def _bg_rect_construct(self):
         """
@@ -550,6 +558,9 @@ class CodeBlockLense(AlgoManimBase):
         precode_indices: tuple[int, ...] = (),
         code_indices: tuple[int, ...] = (),
     ):
+        """
+        ...
+        """
         mobs = []
 
         if precode_indices:
@@ -600,120 +611,105 @@ class CodeBlockLense(AlgoManimBase):
                 code_indices.append(idx - precode_len)
         return tuple(precode_indices), tuple(code_indices)
 
-    def _get_indices_for_highlight(self):
+    def _get_indices_for_highlight(self, *indices):
+        first_idx = indices[0]
+        total_len = len(self._all_code_lines)
+        precode_len = len(self._precode_lines)
+        middle = self._limit // 2 + 1
+
+        if first_idx <= middle:
+            # top lines only
+            return self._get_initial_indices()
+
+        elif first_idx >= total_len - middle:
+            # bottom lines only
+            start = max(0, total_len - self._limit)
+            precode_indices = []
+            code_indices = []
+            for idx in range(start, total_len):
+                if idx < precode_len:
+                    precode_indices.append(idx)
+                else:
+                    code_indices.append(idx - precode_len)
+            return tuple(precode_indices), tuple(code_indices)
+
+        else:
+            # fix first_idx in middle position
+            start = first_idx - (middle - 1)
+            end = start + self._limit
+            if end > total_len:
+                end = total_len
+                start = end - self._limit
+
+            precode_indices = []
+            code_indices = []
+            for idx in range(start, end):
+                if idx < precode_len:
+                    precode_indices.append(idx)
+                else:
+                    code_indices.append(idx - precode_len)
+            return tuple(precode_indices), tuple(code_indices)
+
+    # 0
+    # 1
+    # 2
+    # ----
+    # 3
+    # 4
+    # 5
+    # 6 --
+    # 7
+    # 8
+    # 9
+
+    def _get_dim_indices_for_highlight(self, *indices):
         """
         ...
         """
-        ...
+        first_idx = indices[0]
 
-    def _dim_lines(self, *indices: int):
+        if first_idx <= 1:
+            dim_indices = (-1,)
+
+        elif first_idx >= len(self._all_code_lines) - 2:
+            dim_indices = (0,)
+
+        else:
+            dim_indices = 0, -1
+
+        return dim_indices
+
+    def highlight(
+        self,
+        scene: mn.Scene,
+        *indices,
+        run_time: float = 0.2,
+    ):
         """
         ...
         """
-        for idx in indices:
-            self._text_vgroup[idx].set_opacity(self._dimm_opacity)
 
-    # def highlight(self, block_line_idx: int):
-    #     # block_line_idx = 0..(precode_len + code_len - 1)
-    #     if block_line_idx < self._precode_lines_len:
-    #         # Это прекод
-    #         precode_idx = block_line_idx
-    #         code_idx = None
-    #     else:
-    #         # Это код
-    #         precode_idx = None
-    #         code_idx = block_line_idx - self._precode_lines_len
-    #
-    #     # Вычисляем срезы для прокрутки
-    #     precode_indices, code_indices = self._get_indices_for_highlight(code_idx, precode_idx)
+        # --- checks ---
+        if not list(indices) == list(range(min(indices), max(indices) + 1)):
+            raise ValueError("indices must be consecutive integers")
+        if len(indices) > self._limit // 2:
+            raise ValueError(
+                f"Cannot highlight {len(indices)} lines, maximum is {self._limit // 2}"
+            )
 
-    # def highlight(self, *code_indices, precode_indices=None):
-    #     # Удалить старый прямоугольник
-    #     if self._current_highlight_rect:
-    #         self.remove(self._current_highlight_rect)
-    #         self._current_highlight_rect = None
-    #
-    #     # Создать новый на основе новых позиций строк
-    #     # ...
+        # --- new_text_vgroup ---
 
-    # def _highlight_block(
-    #     self,
-    #     code_mobs_list: List[mn.Text],
-    #     rects_list: List[mn.Rectangle | None],
-    #     indices: tuple[int, ...],
-    # ) -> None:
-    #     """Helper method to highlight lines in a code block.
-    #
-    #     Args:
-    #         code_mobs_list: List of text mobjects to highlight.
-    #         rects_list: List of background rectangles (parallel to code_mobs_list).
-    #         indices: Tuple of line indices to highlight.
-    #     """
-    #     for k, mob in enumerate(code_mobs_list):
-    #         if k in indices:
-    #             # change font color
-    #             mob.set_color(self._text_color_highlight)
-    #             # create bg rectangle
-    #             if rects_list[k] is None:
-    #                 bg_rect = mn.Rectangle(
-    #                     width=mob.width + 0.2,
-    #                     height=mob.height + 0.1,
-    #                     fill_color=self._bg_highlight_color,
-    #                     fill_opacity=1,
-    #                     stroke_width=0,
-    #                 )
-    #                 bg_rect.move_to(mob.get_center())
-    #                 self.add(bg_rect)
-    #                 bg_rect.z_index = -1  # medium layout
-    #                 rects_list[k] = bg_rect
-    #         else:
-    #             # normal line: regular font color
-    #             mob.set_color(self._text_color_regular)
-    #             # remove rect
-    #             bg_rect = rects_list[k]
-    #             if bg_rect:
-    #                 self.remove(bg_rect)
-    #                 rects_list[k] = None
+        precode_indices, code_indices = self._get_indices_for_highlight(*indices)
+        new_text_vgroup = self._construct_text_vgroup(precode_indices, code_indices)
 
-    # def _clear_block_highlights(
-    #     self,
-    #     code_mobs_list: List[mn.Text],
-    #     rects_list: List[mn.Rectangle | None],
-    # ) -> None:
-    #     """Clear all highlights from a code block.
-    #
-    #     Args:
-    #         code_mobs_list: List of text mobjects in the block.
-    #         rects_list: List of background rectangles (parallel to code_mobs_list).
-    #     """
-    #
-    #     for k, mob in enumerate(code_mobs_list):
-    #         # normal line: regular font color
-    #         mob.set_color(self._text_color_regular)
-    #         # remove rect
-    #         bg_rect = rects_list[k]
-    #         if bg_rect:
-    #             self.remove(bg_rect)
-    #             rects_list[k] = None
+        dim_indices = self._get_dim_indices_for_highlight(*indices)
+        self._dim_lines(new_text_vgroup, *dim_indices)
 
-    # def highlight(
-    #     self,
-    #     *code_indices: int,
-    #     precode_indices: list[int] | None = None,
-    # ):
-    #     """Highlights one or more lines with background and text color.
-    #
-    #     Args:
-    #         *i: Tuple of code line indices to highlight.
-    #         precode: list of precode line indices to highlight, or None.
-    #     """
-    #
-    #     self._highlight_block(self._code_mobs, self._bg_rects_code, code_indices)
-    #
-    #     if hasattr(self, "_precode_mobs"):
-    #         if precode_indices is not None:
-    #             self._highlight_block(
-    #                 self._precode_mobs, self._bg_rects_precode, tuple(precode_indices)
-    #             )
-    #         else:
-    #             self._clear_block_highlights(self._precode_mobs, self._bg_rects_precode)
+        scene.remove(self._text_vgroup)
+        self._text_vgroup = new_text_vgroup
+
+        self._position_text_vgroup(self._text_vgroup)
+        scene.add(self._text_vgroup)
+
+        # scene.play(mn.Transform(self._text_vgroup, new_text_vgroup), run_time=run_time)
+        # self._text_vgroup = new_text_vgroup

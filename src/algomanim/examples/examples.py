@@ -2202,19 +2202,55 @@ class Example_code_block_lense(mn.Scene):
 
         # ========== INPUTS ==============
         pause = 1
+
+        #         precode = """
+        # 1
+        # 2
+        # 3
+        # """
+        #         code = """
+        # 4
+        # │5 ---------------
+        # │6
+        # │7
+        # │8
+        # │9
+        # 10
+        # """
+
         precode = """
-1
-2
-3
+if len(nums1) > len(nums2):
+    nums1, nums2 = nums2, nums1
+m, n = len(nums1), len(nums2)
+imin, imax, half_len = 0, m, (m + n + 1) // 2
 """
         code = """
-4
-│5 ---------------
-│6
-│7
-│8
-│9
-10
+while imin <= imax:
+    i = (imin + imax) // 2
+    j = half_len - i
+    if i < m and nums2[j - 1] > nums1[i]:
+        imin = i + 1
+    elif i > 0 and nums1[i - 1] > nums2[j]:
+        imax = i - 1
+    else:
+        if i == 0:
+            max_of_left = nums2[j - 1]
+        elif j == 0:
+            max_of_left = nums1[i - 1]
+        else:
+            max_of_left = max(nums1[i - 1], nums2[j - 1])
+
+        if (m + n) % 2 == 1:
+            return float(max_of_left)
+
+        if i == m:
+            min_of_right = nums2[j]
+        elif j == n:
+            min_of_right = nums1[i]
+        else:
+            min_of_right = min(nums1[i], nums2[j])
+
+        return (max_of_left + min_of_right) / 2.0
 """
         code_lines = CodeBlock.format_code_lines(code)
         precode_lines = CodeBlock.format_code_lines(precode)
@@ -2232,25 +2268,33 @@ class Example_code_block_lense(mn.Scene):
 
         # ========== highlight ==============
 
-        # cb.highlight(0)
+        for i in range(5):
+            cb.highlight(self, i)
+            self.wait(0.5)
+
+        for i in range(25, 31):
+            cb.highlight(self, i)
+            self.wait(0.5)
+
+        # cb.highlight(self, 0)
         # self.wait(0.8)
-        # cb.highlight(1)
+        # cb.highlight(self, 1)
         # self.wait(0.8)
-        # cb.highlight(2)
+        # cb.highlight(self, 2)
         # self.wait(0.8)
-        # cb.highlight(3)
+        # cb.highlight(self, 3)
         # self.wait(0.8)
-        # cb.highlight(4)
+        # cb.highlight(self, 4)
         # self.wait(0.8)
-        # cb.highlight(5)
+        # cb.highlight(self, 5)
         # self.wait(0.8)
-        # cb.highlight(6)
+        # cb.highlight(self, 6)
         # self.wait(0.8)
-        # cb.highlight(7)
+        # cb.highlight(self, 7)
         # self.wait(0.8)
-        # cb.highlight(8)
+        # cb.highlight(self, 8)
         # self.wait(0.8)
-        # cb.highlight(9)
+        # cb.highlight(self, 9)
         # self.wait(0.8)
 
         # ========== FINISH ==============
