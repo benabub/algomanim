@@ -492,12 +492,17 @@ class CodeBlockLense(AlgoManimBase):
         precode_indices, code_indices = self._get_initial_indices()
         self._text_vgroup = self._construct_text_vgroup(precode_indices, code_indices)
 
-        # text_vgroup positioning
+        self._position_text_vgroup()
+
+        self.add(self._text_vgroup)
+
+    def _position_text_vgroup(self):
+        """
+        ...
+        """
         self._text_vgroup.move_to(self._bg_rect)
         shift_x = self._text_left_edge - self._text_vgroup.get_left()[0]
         self._text_vgroup.shift(mn.RIGHT * shift_x)
-
-        self.add(self._text_vgroup)
 
     def _bg_rect_construct(self):
         """
