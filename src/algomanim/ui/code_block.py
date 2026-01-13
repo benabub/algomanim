@@ -137,7 +137,174 @@ class CodeBlock(CodeBlockBase):
 
 
 class CodeBlockLense(CodeBlockBase):
-    ...
+    """Code block with limited viewport and scrolling highlighting.
+
+    Displays only `limit` lines at a time, dimming boundary lines when scrolling.
+    Designed for long code blocks where full display is impractical.
+
+    Args:
+        code_lines: List of code lines to display.
+        limit: Maximum number of visible lines (odd number, minimum 5).
+        vector: Position offset from mob_center for positioning.
+        mob_center: Reference mobject for positioning.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
+        font_size: Font size for the code text.
+        font: Font family for the code text. Defaults to system default.
+        text_color_regular: Color for regular (non-highlighted) text.
+        text_color_highlight: Color for highlighted text.
+        code_buff: Vertical buffer between code lines.
+        bg_rect_fill_color: Background fill color for the code block container.
+        bg_rect_stroke_width: Stroke width for the code block container.
+        bg_rect_stroke_color: Stroke color for the code block container.
+        bg_rect_corner_radius: Corner radius for the rounded rectangle container.
+        bg_rect_buff: Padding around the code text within the background container.
+        bg_highlight_color: Background color for highlighted lines.
+        dim_opacity: Opacity for dimmed boundary lines during scrolling (0.0-1.0).
+
+    Raises:
+        ValueError: If `limit` < 5, or `len(code_lines)` <= `limit`.
+    """
+
+    def __init__(
+        self,
+        code_lines: list[str],
+        limit: int = 7,
+        # --- position ---
+        vector: np.ndarray = mn.ORIGIN,
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
+        # --- font ---
+        font_size=20,
+        font="",
+        text_color_regular: ManimColor | str = "WHITE",
+        text_color_highlight: ManimColor | str = "YELLOW",
+        # --- buffs ---
+        code_buff=0.05,
+        # --- bg_rect ---
+        bg_rect_fill_color: ManimColor | str = "#545454",
+        bg_rect_stroke_width: float = 4,
+        bg_rect_stroke_color: ManimColor | str = "#151515",
+        bg_rect_corner_radius: float = 0.1,
+        # bg_rect_buff: float = 0.5,
+        bg_rect_buff: float = 0.3,
+        # --- highlights ---
+        bg_highlight_color: ManimColor | str = mn.BLACK,
+        dim_opacity: float = 0.5,
+    ):
+        super().__init__(
+            code_lines=code_lines,
+            # --- position ---
+            vector=vector,
+            mob_center=mob_center,
+            align_left=align_left,
+            align_right=align_right,
+            align_top=align_top,
+            align_bottom=align_bottom,
+            # --- font ---
+            font_size=font_size,
+            font=font,
+            text_color_regular=text_color_regular,
+            text_color_highlight=text_color_highlight,
+            # --- buffs ---
+            code_buff=code_buff,
+            # --- bg_rect ---
+            bg_rect_fill_color=bg_rect_fill_color,
+            bg_rect_stroke_width=bg_rect_stroke_width,
+            bg_rect_stroke_color=bg_rect_stroke_color,
+            bg_rect_corner_radius=bg_rect_corner_radius,
+            bg_rect_buff=bg_rect_buff,
+            # --- highlights ---
+            bg_highlight_color=bg_highlight_color,
+        )
+        # checks
+        if limit < 5:
+            raise ValueError("limit must be at least 5")
+
+        if len(self._code_lines) <= limit:
+            raise ValueError("code lines <= limit (too short), use CodeBlock instead")
+
+        # self fields
+        # --- dim ---
+        self._dim_opacity = dim_opacity
+        # --- limit ---
+        if limit % 2:
+            self._limit = limit
+        else:
+            self._limit = limit - 1
+
+        self._text_mobs = self._create_text_mobs()
+        self._rect_mobs = self._create_rect_mobs(self._text_mobs)
+        self._line_vgroups = self._create_line_vgroups(
+            self._rect_mobs,
+            self._text_mobs,
+        )
+
+        self._bg_rect = self._create_bg_rect(
+            max([mob.width for mob in self._rect_mobs]),
+            self._rect_height * self._limit,
+        )
+        self.add(self._bg_rect)
+        self._position()
+
+        self._text_left_edge = self._bg_rect.get_left()[0] + (self._bg_rect_buff / 2)
+
+        self._code_vgroup = self._create_code_vgroup(0)
+        self._position_code_vgroup(self._code_vgroup)
+
+        self._dim_lines(self._code_vgroup, -1)
+
+        self.add(self._code_vgroup)
+
+    def _create_code_vgroup(self, start: int):
+        """Create a VGroup containing visible lines for the given start index.
+
+        Args:
+            start: Starting line index (0-based) for the visible window.
+
+        Returns:
+            VGroup containing `limit` line groups arranged vertically.
+
+        Raises:
+            ValueError: If `start` is out of valid range.
+        """
+        if start < 0 or start + self._limit > len(self._code_lines):
+            raise ValueError("start index out of scope")
+
+        split = self._line_vgroups[start : start + self._limit]
+        code_vgroup = mn.VGroup(*split).arrange(
+            mn.DOWN,
+            aligned_edge=mn.LEFT,
+            buff=0,
+        )
+        return code_vgroup
+
+    def _position_code_vgroup(self, code_vgroup: mn.VGroup):
+        """Position the code VGroup within the background rectangle.
+
+        Aligns left edge with internal text boundary and centers vertically.
+
+        Args:
+            code_vgroup: The VGroup to position.
+        """
+        code_vgroup.move_to(self._bg_rect)
+        shift_x = self._text_left_edge - code_vgroup.get_left()[0]
+        code_vgroup.shift(mn.RIGHT * shift_x)
+
+    def _dim_lines(self, text_vgroup: mn.VGroup, *indices: int):
+        """Apply dimming opacity to specified lines within a VGroup.
+
+        Args:
+            text_vgroup: VGroup containing line groups.
+            *indices: Line indices (within the VGroup) to dim.
+        """
+        for idx in indices:
+            text_vgroup[idx].set_opacity(self._dim_opacity)
 
     # """Code block visualization with syntax highlighting capabilities.
     #

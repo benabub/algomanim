@@ -161,8 +161,15 @@ class CodeBlockBase(AlgoManimBase):
         text_block_width: float,
         text_block_height: float,
     ):
-        """
-        ...
+        """Create the background rounded rectangle for the code block.
+
+        Args:
+            text_block_width: total width of the text content.
+            text_block_height: total height of the text content.
+
+        Returns:
+            RoundedRectangle mobject with padding and styling configured
+            from instance parameters.
         """
         bg_rect = mn.RoundedRectangle(
             width=text_block_width + self._bg_rect_buff,
