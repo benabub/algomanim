@@ -1,6 +1,7 @@
 from .core.base import AlgoManimBase
 from .core.linear_container import LinearContainerStructure
 from .core.rectangle_cells import RectangleCellsStructure
+from .core.code_block_base import CodeBlockBase
 
 from .datastructures.array import Array
 from .datastructures.string import String
@@ -14,6 +15,7 @@ __all__ = [
     "AlgoManimBase",
     "LinearContainerStructure",
     "RectangleCellsStructure",
+    "CodeBlockBase",
     "Array",
     "String",
     "LinkedList",

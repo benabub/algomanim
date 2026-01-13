@@ -19,7 +19,7 @@ from algomanim import (
     RelativeTextValue,
     RelativeText,
     CodeBlock,
-    CodeBlockLense,
+    # CodeBlockLense,
     TitleText,
     LinkedList,
 )
@@ -2119,6 +2119,8 @@ at once.  # 7
 When highlight(...) calls,  # 9
 or calls without args,  # 10
 the old highlight clears.  # 11
+
+It is impossible to highlight empty lines. # 13
 """
         code_lines = CodeBlock.format_code_lines(code)
 
@@ -2137,7 +2139,7 @@ the old highlight clears.  # 11
 
         title = RelativeText(
             "highlight(0)",
-            vector=mn.UP * 3.2 + mn.LEFT * 5.0,
+            vector=mn.UP * 3.2 + mn.LEFT * 5.5,
             font_size=30,
         )
         title.first_appear(self)
@@ -2169,10 +2171,11 @@ the old highlight clears.  # 11
         title = highlight_with_title(self, cb, title, 0)
         title = highlight_with_title(self, cb, title, 1)
         title = highlight_with_title(self, cb, title, 2)
-        title = highlight_with_title(self, cb, title, 3, 5, 7, pause=3)
-        title = highlight_with_title(self, cb, title, 9, 10, 11, pause=3)
-        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10)
-        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11)
+        title = highlight_with_title(self, cb, title, 3, 5, 7, pause=2)
+        title = highlight_with_title(self, cb, title, 9, 10, 11, pause=2)
+        title = highlight_with_title(self, cb, title, 13)
+        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, 12)
+        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11, 13)
 
         # ========== FINISH ==============
 
@@ -2180,108 +2183,108 @@ the old highlight clears.  # 11
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
 
 
-class Example_code_block_lense(mn.Scene):
-    def construct(self):
-        self.camera.background_color = mn.DARK_GREY  # type: ignore
-
-        # ========== INPUTS ==============
-        pause = 1
-
-        #         precode = """
-        # 1
-        # 2
-        # 3
-        # """
-        #         code = """
-        # 4
-        # │5 ---------------
-        # │6
-        # │7
-        # │8
-        # │9
-        # 10
-        # """
-
-        precode = """
-if len(nums1) > len(nums2):
-    nums1, nums2 = nums2, nums1
-m, n = len(nums1), len(nums2)
-imin, imax, half_len = 0, m, (m + n + 1) // 2
-"""
-        code = """
-while imin <= imax:
-    i = (imin + imax) // 2
-    j = half_len - i
-    if i < m and nums2[j - 1] > nums1[i]:
-        imin = i + 1
-    elif i > 0 and nums1[i - 1] > nums2[j]:
-        imax = i - 1
-    else:
-        if i == 0:
-            max_of_left = nums2[j - 1]
-        elif j == 0:
-            max_of_left = nums1[i - 1]
-        else:
-            max_of_left = max(nums1[i - 1], nums2[j - 1])
-
-        if (m + n) % 2 == 1:
-            return float(max_of_left)
-
-        if i == m:
-            min_of_right = nums2[j]
-        elif j == n:
-            min_of_right = nums1[i]
-        else:
-            min_of_right = min(nums1[i], nums2[j])
-
-        return (max_of_left + min_of_right) / 2.0
-"""
-        code_lines = CodeBlock.format_code_lines(code)
-        precode_lines = CodeBlock.format_code_lines(precode)
-
-        # ========== construction ==============
-
-        cb = CodeBlockLense(
-            code_lines,
-            precode_lines=precode_lines,
-            vector=mn.DOWN * 0.3 + mn.RIGHT * 2.5,
-            # code_buff=0.1,
-        )
-        cb.first_appear(self)
-        self.wait(pause)
-
-        # ========== highlight ==============
-
-        for i in range(5):
-            cb.highlight(self, i)
-            self.wait(0.5)
-
-        for i in range(25, 31):
-            cb.highlight(self, i)
-            self.wait(0.5)
-
-        # cb.highlight(self, 0)
-        # self.wait(0.8)
-        # cb.highlight(self, 1)
-        # self.wait(0.8)
-        # cb.highlight(self, 2)
-        # self.wait(0.8)
-        # cb.highlight(self, 3)
-        # self.wait(0.8)
-        # cb.highlight(self, 4)
-        # self.wait(0.8)
-        # cb.highlight(self, 5)
-        # self.wait(0.8)
-        # cb.highlight(self, 6)
-        # self.wait(0.8)
-        # cb.highlight(self, 7)
-        # self.wait(0.8)
-        # cb.highlight(self, 8)
-        # self.wait(0.8)
-        # cb.highlight(self, 9)
-        # self.wait(0.8)
-
-        # ========== FINISH ==============
-
-        self.wait(pause)
-        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+# class Example_code_block_lense(mn.Scene):
+#     def construct(self):
+#         self.camera.background_color = mn.DARK_GREY  # type: ignore
+#
+#         # ========== INPUTS ==============
+#         pause = 1
+#
+#         #         precode = """
+#         # 1
+#         # 2
+#         # 3
+#         # """
+#         #         code = """
+#         # 4
+#         # │5 ---------------
+#         # │6
+#         # │7
+#         # │8
+#         # │9
+#         # 10
+#         # """
+#
+#         precode = """
+# if len(nums1) > len(nums2):
+#     nums1, nums2 = nums2, nums1
+# m, n = len(nums1), len(nums2)
+# imin, imax, half_len = 0, m, (m + n + 1) // 2
+# """
+#         code = """
+# while imin <= imax:
+#     i = (imin + imax) // 2
+#     j = half_len - i
+#     if i < m and nums2[j - 1] > nums1[i]:
+#         imin = i + 1
+#     elif i > 0 and nums1[i - 1] > nums2[j]:
+#         imax = i - 1
+#     else:
+#         if i == 0:
+#             max_of_left = nums2[j - 1]
+#         elif j == 0:
+#             max_of_left = nums1[i - 1]
+#         else:
+#             max_of_left = max(nums1[i - 1], nums2[j - 1])
+#
+#         if (m + n) % 2 == 1:
+#             return float(max_of_left)
+#
+#         if i == m:
+#             min_of_right = nums2[j]
+#         elif j == n:
+#             min_of_right = nums1[i]
+#         else:
+#             min_of_right = min(nums1[i], nums2[j])
+#
+#         return (max_of_left + min_of_right) / 2.0
+# """
+#         code_lines = CodeBlock.format_code_lines(code)
+#         precode_lines = CodeBlock.format_code_lines(precode)
+#
+#         # ========== construction ==============
+#
+#         cb = CodeBlockLense(
+#             code_lines,
+#             precode_lines=precode_lines,
+#             vector=mn.DOWN * 0.3 + mn.RIGHT * 2.5,
+#             # code_buff=0.1,
+#         )
+#         cb.first_appear(self)
+#         self.wait(pause)
+#
+#         # ========== highlight ==============
+#
+#         for i in range(5):
+#             cb.highlight(self, i)
+#             self.wait(0.5)
+#
+#         for i in range(25, 31):
+#             cb.highlight(self, i)
+#             self.wait(0.5)
+#
+#         # cb.highlight(self, 0)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 1)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 2)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 3)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 4)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 5)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 6)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 7)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 8)
+#         # self.wait(0.8)
+#         # cb.highlight(self, 9)
+#         # self.wait(0.8)
+#
+#         # ========== FINISH ==============
+#
+#         self.wait(pause)
+#         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
