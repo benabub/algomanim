@@ -2191,24 +2191,34 @@ class Example_code_block_lense(mn.Scene):
         pause = 1
 
         code = """
-if len(nums1) > len(nums2): # 0
-    nums1, nums2 = nums2, nums1 # 1
-m, n = len(nums1), len(nums2) # 2
-imin, imax, half_len = 0, m, (m + n + 1) // 2 # 3
+This is CodeBlockLense # 0
 
-while imin <= imax: # 5
-    i = (imin + imax) // 2 # 6
-    j = half_len - i # 7
-    if i < m and nums2[j - 1] > nums1[i]: # 8
-        imin = i + 1 # 9
-    elif i > 0 and nums1[i - 1] > nums2[j]: # 10
-        imax = i - 1 # 11
-    else: # 12
-        if i == 0: # 13
-            max_of_left = nums2[j - 1] # 14
-        elif j == 0: # 15
-            max_of_left = nums1[i - 1] # 16
-        else: # 17
+It is needed for displaying # 2
+    large code blocks # 3
+        that do not fit # 4
+    entirely in screen height, # 5
+and need scrolling. # 6
+
+The limit parameter determines # 8
+    how many lines are displayed # 9
+        in the block. # 10
+
+There is a restriction on limit: # 12
+    7 lines. # 13
+If your code is shorter - # 14
+    scrolling makes no sense, # 15
+        use CodeBlock. # 16
+
+Unlike CodeBlock, # 18
+    CodeBlockLense # 19
+has restrictions on highlighting: # 20
+    - only consecutive lines # 21
+        can be highlighted # 22
+    - no more than three at once. # 23
+
+As in CodeBlock, # 25
+    empty lines # 26
+        are not highlighted. # 27
 """
         code_lines = CodeBlock.format_code_lines(code)
 
@@ -2222,36 +2232,62 @@ while imin <= imax: # 5
         cb.first_appear(self)
         self.wait(pause)
 
-        # ========== highlight ==============
+        # ======== highlight() ============
 
-        for i in range(18):
-            cb.highlight(self, i)
-            self.wait(0.5)
+        title = RelativeText(
+            "highlight(0)",
+            vector=mn.UP * 3.2 + mn.LEFT * 5.5,
+            font_size=30,
+        )
+        title.first_appear(self)
 
-        # for i in range(25, 31):
-        #     cb.highlight(self, i)
-        #     self.wait(0.5)
+        def highlight_with_title(
+            self: mn.Scene,
+            code_block: CodeBlockLense,
+            old_title: mn.Mobject,
+            *indices: int,
+            pause=1,
+        ):
+            code_block.highlight(self, *indices)
 
-        # cb.highlight(self, 0)
-        # self.wait(0.8)
-        # cb.highlight(self, 1)
-        # self.wait(0.8)
-        # cb.highlight(self, 2)
-        # self.wait(0.8)
-        # cb.highlight(self, 3)
-        # self.wait(0.8)
-        # cb.highlight(self, 4)
-        # self.wait(0.8)
-        # cb.highlight(self, 5)
-        # self.wait(0.8)
-        # cb.highlight(self, 6)
-        # self.wait(0.8)
-        # cb.highlight(self, 7)
-        # self.wait(0.8)
-        # cb.highlight(self, 8)
-        # self.wait(0.8)
-        # cb.highlight(self, 9)
-        # self.wait(0.8)
+            left_point = old_title.get_left()
+            self.remove(old_title)
+
+            args_str = f"(mn.scene, {', '.join(map(str, indices))})"
+
+            new_title = RelativeText(
+                f"highlight{args_str}",
+                font_size=30,
+            )
+            vector = left_point - new_title.get_left()
+            new_title.shift(vector)
+            new_title.appear(self)
+            self.wait(pause)
+            return new_title
+
+        title = highlight_with_title(self, cb, title, 0)
+
+        title = highlight_with_title(self, cb, title, 2)
+        title = highlight_with_title(self, cb, title, 3)
+        title = highlight_with_title(self, cb, title, 4)
+        title = highlight_with_title(self, cb, title, 5)
+        title = highlight_with_title(self, cb, title, 6)
+
+        title = highlight_with_title(self, cb, title, 8)
+        title = highlight_with_title(self, cb, title, 9)
+        title = highlight_with_title(self, cb, title, 10)
+
+        title = highlight_with_title(self, cb, title, 12, 13)
+        title = highlight_with_title(self, cb, title, 14)
+        title = highlight_with_title(self, cb, title, 15)
+        title = highlight_with_title(self, cb, title, 16)
+
+        title = highlight_with_title(self, cb, title, 18, 19, 20)
+        title = highlight_with_title(self, cb, title, 21, 22)
+        title = highlight_with_title(self, cb, title, 23)
+
+        title = highlight_with_title(self, cb, title, 24, 25)
+        title = highlight_with_title(self, cb, title, 26, 27)
 
         # ========== FINISH ==============
 
