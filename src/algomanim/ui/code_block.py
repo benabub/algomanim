@@ -162,7 +162,8 @@ class CodeBlockLense(CodeBlockBase):
         bg_rect_corner_radius: Corner radius for the rounded rectangle container.
         bg_rect_buff: Padding around the code text within the background container.
         bg_highlight_color: Background color for highlighted lines.
-        dim_opacity: Opacity for dimmed boundary lines during scrolling (0.0-1.0).
+        dim_high: Opacity for strongly dimmed boundary lines.
+        dim_low: Opacity for weakly dimmed boundary lines.
 
     Raises:
         ValueError: If `limit` < 5, or `len(code_lines)` <= `limit`.
@@ -195,7 +196,8 @@ class CodeBlockLense(CodeBlockBase):
         bg_rect_buff: float = 0.3,
         # --- highlights ---
         bg_highlight_color: ManimColor | str = mn.BLACK,
-        dim_opacity: float = 0.5,
+        dim_high: float = 0.3,
+        dim_low: float = 0.7,
     ):
         super().__init__(
             code_lines=code_lines,
@@ -231,7 +233,8 @@ class CodeBlockLense(CodeBlockBase):
 
         # self fields
         # --- dim ---
-        self._dim_opacity = dim_opacity
+        self._dim_high = dim_high
+        self._dim_low = dim_low
         # --- limit ---
         if limit % 2:
             self._limit = limit
@@ -259,7 +262,7 @@ class CodeBlockLense(CodeBlockBase):
         self._code_vgroup = self._create_code_vgroup(0)
         self._position_code_vgroup(self._code_vgroup)
 
-        self._dim_lines(self._code_vgroup, -1)
+        self._dim_lines(self._code_vgroup, (-1,), (-2,))
 
         self.add(self._code_vgroup)
 
@@ -298,37 +301,61 @@ class CodeBlockLense(CodeBlockBase):
         shift_x = self._text_left_edge - code_vgroup.get_left()[0]
         code_vgroup.shift(mn.RIGHT * shift_x)
 
-    def _dim_lines(self, code_vgroup: mn.VGroup, *indices: int) -> None:
-        """Apply dimming opacity to specified lines within a VGroup.
+    def _dim_lines(
+        self,
+        code_vgroup: mn.VGroup,
+        dim_high_indices: tuple[int, ...],
+        dim_low_indices: tuple[int, ...],
+    ) -> None:
+        """Apply dimming opacity to lines with two intensity levels.
 
         Args:
-            text_vgroup: VGroup containing line groups.
-            *indices: Line indices (within the VGroup) to dim.
+            code_vgroup: VGroup containing line groups.
+            dim_high_indices: Line indices for strong dimming.
+            dim_low_indices: Line indices for weak dimming.
         """
-        for idx in indices:
-            if self._text_mobs[idx]:
-                code_vgroup[idx][1].set_opacity(self._dim_opacity)
 
-    def _get_dim_indices_for_highlight(self, *indices: int) -> tuple[int, ...]:
+        for idx in dim_high_indices:
+            if self._text_mobs[idx]:
+                code_vgroup[idx][1].set_opacity(self._dim_high)
+        for idx in dim_low_indices:
+            if self._text_mobs[idx]:
+                code_vgroup[idx][1].set_opacity(self._dim_low)
+
+    def _get_dim_indices_for_highlight(
+        self, *indices: int
+    ) -> tuple[tuple[int, ...], tuple[int, ...]]:
         """Calculate which lines to dim based on highlight position.
 
         Args:
             *indices: Highlighted line indices (global).
 
         Returns:
-            Tuple of indices (within current viewport) to dim.
+            Tuple of two tuples: (dim_high_indices, dim_low_indices) where
+            each contains line indices within the current viewport.
         """
 
         first_idx = indices[0]
+        total_len = len(self._line_vgroups)
+        middle = self._limit // 2 + 1
 
         if first_idx <= 1:
-            dim_indices = (-1,)
-        elif first_idx >= len(self._line_vgroups) - 2:
-            dim_indices = (0,)
+            dim_low = (-2,)
+            dim_high = (-1,)
+        elif 1 < first_idx < middle:
+            dim_low = (0, -2)
+            dim_high = (-1,)
+        elif total_len - middle < first_idx < total_len - 2:
+            dim_low = (1, -1)
+            dim_high = (0,)
+        elif first_idx >= total_len - 2:
+            dim_high = (0,)
+            dim_low = (1,)
         else:
-            dim_indices = 0, -1
+            dim_high = (0, -1)
+            dim_low = (1, -2)
 
-        return dim_indices
+        return dim_high, dim_low
 
     def _get_code_index_for_highlight(self, *indices: int) -> int:
         """Calculate starting index for viewport to center highlights.
