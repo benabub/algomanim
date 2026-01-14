@@ -32,8 +32,10 @@ case "$1" in
         ;;
 esac
 
+NAME_LOWER=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+
 # Format class name: Example_ + name_snake_case
-CLASS="Example_$(echo "$2" | tr '[:upper:]' '[:lower:]')"
+CLASS="Example_${NAME_LOWER}"
 
 
 if ! grep -q "class $CLASS(" examples.py; then
@@ -49,5 +51,5 @@ if [ ! -f "$OUTFILE" ]; then
     exit 1
 fi
 
-mv "$OUTFILE" "video_output/${OUTDIR}/${ARG_LOWER}.mp4"
+mv "$OUTFILE" "video_output/${OUTDIR}/${NAME_LOWER}.mp4"
 rm -rf media __pycache__
