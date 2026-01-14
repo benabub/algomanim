@@ -261,3 +261,31 @@
 ## Removed
 - All deprecated methods across codebase
 - `LinkedList`, `String`, `Array`: `left_aligned` parameter from `update_value()`
+
+---
+
+# [0.5.0] - 2026-01-14
+
+## Added
+- `CodeBlockLense` class for limited-view code blocks with viewport scrolling and dual-level dimming
+- `CodeBlockBase` parent class in `core/code_block_base.py` with shared code block logic
+- `CodeBlock.create_animation_template()` staticmethod
+
+## Changed
+- `CodeBlock`: Breaking – removed `precode_lines` parameter, simplified to rectangle+text per line structure
+- `LinearContainerStructure`: Breaking – `pointers()` and `highlight_containers_1to3()` now use `*indices` instead of `idx_list` parameter
+- `RelativeTextValue`: Breaking – `update_text()` renamed to `update_value()`
+- `RelativeTextValue`: added `anchor` parameter for positioning control
+- `TitleText`: `font_size` parameter default changed
+- `{RelativeText, RelativeTextValue}`: `vector` parameter default changed
+
+## Fixed
+- `TitleText` positioning
+- `examples.py` updated for latest breaking changes
+
+## Refactored
+- Extracted common code block logic to `CodeBlockBase` parent class
+- Examples scripts (`.sh`) and README updated for new `Example_class_name` convention
+
+## Removed
+- `CodeBlock` precode-related parameters and logic
