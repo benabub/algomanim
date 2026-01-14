@@ -225,8 +225,8 @@ class CodeBlockLense(CodeBlockBase):
             bg_highlight_color=bg_highlight_color,
         )
         # checks
-        if limit < 5:
-            raise ValueError("limit must be at least 5")
+        if limit < 7:
+            raise ValueError("limit must be at least 7")
 
         if len(self._code_lines) <= limit:
             raise ValueError("code lines <= limit (too short), use CodeBlock instead")
@@ -316,11 +316,9 @@ class CodeBlockLense(CodeBlockBase):
         """
 
         for idx in dim_high_indices:
-            if self._text_mobs[idx]:
-                code_vgroup[idx][1].set_opacity(self._dim_high)
+            code_vgroup[idx][1].set_opacity(self._dim_high)
         for idx in dim_low_indices:
-            if self._text_mobs[idx]:
-                code_vgroup[idx][1].set_opacity(self._dim_low)
+            code_vgroup[idx][1].set_opacity(self._dim_low)
 
     def _get_dim_indices_for_highlight(
         self, *indices: int
