@@ -40,12 +40,12 @@ class CodeBlock(CodeBlockBase):
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
         # --- font ---
-        font_size=20,
-        font="",
+        font_size: int = 20,
+        font: str = "",
         text_color_regular: ManimColor | str = "WHITE",
         text_color_highlight: ManimColor | str = "YELLOW",
         # --- buffs ---
-        code_buff=0.05,
+        code_buff: float = 0.05,
         # --- bg_rect ---
         bg_rect_fill_color: ManimColor | str = "#545454",
         bg_rect_stroke_width: float = 4,
@@ -180,12 +180,12 @@ class CodeBlockLense(CodeBlockBase):
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
         # --- font ---
-        font_size=20,
-        font="",
+        font_size: int = 20,
+        font: str = "",
         text_color_regular: ManimColor | str = "WHITE",
         text_color_highlight: ManimColor | str = "YELLOW",
         # --- buffs ---
-        code_buff=0.05,
+        code_buff: float = 0.05,
         # --- bg_rect ---
         bg_rect_fill_color: ManimColor | str = "#545454",
         bg_rect_stroke_width: float = 4,
@@ -263,7 +263,7 @@ class CodeBlockLense(CodeBlockBase):
 
         self.add(self._code_vgroup)
 
-    def _create_code_vgroup(self, start: int):
+    def _create_code_vgroup(self, start: int) -> mn.VGroup:
         """Create a VGroup containing visible lines for the given start index.
 
         Args:
@@ -286,7 +286,7 @@ class CodeBlockLense(CodeBlockBase):
         )
         return code_vgroup
 
-    def _position_code_vgroup(self, code_vgroup: mn.VGroup):
+    def _position_code_vgroup(self, code_vgroup: mn.VGroup) -> None:
         """Position the code VGroup within the background rectangle.
 
         Aligns left edge with internal text boundary and centers vertically.
@@ -298,7 +298,7 @@ class CodeBlockLense(CodeBlockBase):
         shift_x = self._text_left_edge - code_vgroup.get_left()[0]
         code_vgroup.shift(mn.RIGHT * shift_x)
 
-    def _dim_lines(self, code_vgroup: mn.VGroup, *indices: int):
+    def _dim_lines(self, code_vgroup: mn.VGroup, *indices: int) -> None:
         """Apply dimming opacity to specified lines within a VGroup.
 
         Args:
@@ -309,10 +309,16 @@ class CodeBlockLense(CodeBlockBase):
             if self._text_mobs[idx]:
                 code_vgroup[idx][1].set_opacity(self._dim_opacity)
 
-    def _get_dim_indices_for_highlight(self, *indices):
+    def _get_dim_indices_for_highlight(self, *indices: int) -> tuple[int, ...]:
+        """Calculate which lines to dim based on highlight position.
+
+        Args:
+            *indices: Highlighted line indices (global).
+
+        Returns:
+            Tuple of indices (within current viewport) to dim.
         """
-        ...
-        """
+
         first_idx = indices[0]
 
         if first_idx <= 1:
@@ -324,7 +330,15 @@ class CodeBlockLense(CodeBlockBase):
 
         return dim_indices
 
-    def _get_code_index_for_highlight(self, *indices):
+    def _get_code_index_for_highlight(self, *indices: int) -> int:
+        """Calculate starting index for viewport to center highlights.
+
+        Args:
+            *indices: Highlighted line indices (global).
+
+        Returns:
+            Start index for the visible window.
+        """
         first_idx = indices[0]
         total_len = len(self._line_vgroups)
         middle = self._limit // 2 + 1
@@ -344,8 +358,14 @@ class CodeBlockLense(CodeBlockBase):
         scene: mn.Scene,
         *indices: int,
     ) -> None:
-        """
-        ...
+        """Highlight lines and scroll viewport to center them.
+
+        Args:
+            scene: Manim scene for rendering updates.
+            *indices: Consecutive line indices to highlight (global 0-based).
+
+        Raises:
+            ValueError: If indices are not consecutive or exceed limit//2.
         """
 
         # --- checks ---

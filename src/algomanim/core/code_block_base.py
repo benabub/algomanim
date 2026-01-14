@@ -36,12 +36,12 @@ class CodeBlockBase(AlgoManimBase):
         self,
         code_lines: list[str],
         # --- font ---
-        font_size=20,
-        font="",
+        font_size: int = 20,
+        font: str = "",
         text_color_regular: ManimColor | str = "WHITE",
         text_color_highlight: ManimColor | str = "YELLOW",
         # --- buffs ---
-        code_buff=0.05,
+        code_buff: float = 0.05,
         # --- bg_rect ---
         bg_rect_fill_color: ManimColor | str = "#545454",
         bg_rect_stroke_width: float = 4,
