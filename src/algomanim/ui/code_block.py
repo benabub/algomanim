@@ -171,7 +171,7 @@ class CodeBlockLense(CodeBlockBase):
     def __init__(
         self,
         code_lines: list[str],
-        limit: int = 7,
+        limit: int = 13,
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -344,7 +344,7 @@ class CodeBlockLense(CodeBlockBase):
         middle = self._limit // 2 + 1
 
         # top lines only
-        if first_idx <= middle:
+        if first_idx < middle:
             return 0
         # bottom lines only
         elif first_idx >= total_len - middle:
