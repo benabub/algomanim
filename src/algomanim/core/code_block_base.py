@@ -1,6 +1,5 @@
 import manim as mn
 from manim import ManimColor
-import pyperclip
 
 from .base import AlgoManimBase
 
@@ -200,70 +199,3 @@ class CodeBlockBase(AlgoManimBase):
             prefix = "│   " * (indent // 4)
             res.append(prefix + line.lstrip())
         return res
-
-    @staticmethod
-    def create_animation_template(code: str) -> None:
-        """Generate animation scaffolding from algorithm code.
-
-        This static method converts algorithm code into a template for Manim
-        animation construction. It parses the code structure and generates
-        corresponding highlight calls and wait statements.
-
-        The generated template is copied to the system clipboard for easy
-        insertion into Manim scene construct() method.
-
-        Important:
-            The CodeBlock instance in the scene must be named `code_block`
-            for the generated template to work correctly.
-
-        Args:
-            code: Multiline string containing the algorithm code to animate.
-        """
-        code_lines = code.strip().split("\n")
-        res = ""
-        tab = "    "
-        base_tab = tab * 2
-        i = 0
-        for j, line in enumerate(code_lines):
-            line_lstrip = line.lstrip()
-            indent = line[: len(line) - len(line_lstrip)]
-
-            if not line_lstrip:
-                i += 1
-                continue
-            elif line_lstrip.startswith("if ") or (
-                j != 0 and line_lstrip.startswith("while ")
-            ):
-                line_1 = base_tab + indent + f"code_block.highlight({i})\n"
-                line_2 = base_tab + indent + "self.wait(pause)\n"
-                line_3 = base_tab + line + "\n"
-                line_4 = base_tab + indent + tab + "#\n"
-                add_block = line_1 + line_2 + line_3 + line_4
-            elif (
-                line_lstrip.startswith("for ")
-                or line_lstrip.startswith("else")
-                or line_lstrip.startswith("elif ")
-                or (j == 0 and line_lstrip.startswith("while "))
-            ):
-                line_1 = base_tab + line + "\n"
-                line_2 = base_tab + indent + tab + f"code_block.highlight({i})\n"
-                line_3 = base_tab + indent + tab + "self.wait(pause)\n"
-                line_4 = base_tab + indent + tab + "#\n"
-                add_block = line_1 + line_2 + line_3 + line_4
-            elif line_lstrip.startswith("return "):
-                line_1 = base_tab + indent + "# " + line_lstrip + "\n"
-                line_2 = base_tab + indent + f"code_block.highlight({i})\n"
-                line_3 = base_tab + indent + "self.wait(pause)\n"
-                line_4 = "\n"
-                add_block = line_1 + line_2 + line_3 + line_4
-            else:
-                line_1 = base_tab + line + "\n"
-                line_2 = base_tab + indent + f"code_block.highlight({i})\n"
-                line_3 = base_tab + indent + "self.wait(pause)\n"
-                line_4 = "\n"
-                add_block = line_1 + line_2 + line_3 + line_4
-
-            res += add_block
-            i += 1
-
-        pyperclip.copy(res)
