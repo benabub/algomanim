@@ -48,7 +48,7 @@ class RelativeTextValue(AlgoManimBase):
         anchor: np.ndarray | None = mn.LEFT,
         # --- font ---
         font="",
-        font_size=35,
+        font_size=30,
         weight: str = "NORMAL",
         # --- other ---
         buff=0.5,
@@ -175,7 +175,7 @@ class RelativeText(AlgoManimBase):
         align_bottom: mn.Mobject | None = None,
         # --- font ---
         font="",
-        font_size=35,
+        font_size=30,
         text_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
     ):

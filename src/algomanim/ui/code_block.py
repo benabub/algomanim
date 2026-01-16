@@ -5,6 +5,8 @@ import pyperclip
 
 from ..core.code_block_base import CodeBlockBase
 
+# TODO: both create_animation_template: while -> 2lines down; # lines -> ignore
+
 
 class CodeBlock(CodeBlockBase):
     """Code block visualization with syntax highlighting capabilities.
@@ -455,7 +457,7 @@ class CodeBlockLense(CodeBlockBase):
 
         Args:
             scene: Manim scene for rendering updates.
-            *indices: Consecutive line indices to highlight (global 0-based).
+            *indices: Consecutive line indices to highlight (global, 0-based).
 
         Raises:
             ValueError: If indices are not consecutive or exceed limit//2.
@@ -480,18 +482,18 @@ class CodeBlockLense(CodeBlockBase):
         for i in range(len(self._code_vgroup)):
             self._code_vgroup[i][1].set_opacity(1.0)
 
+        # --- clear old highlights ---
+        for idx in self._highlighted_indices:
+            self._text_mobs[idx].set_color(self._text_color_regular)
+            self._rect_mobs[idx].set_fill_color(self._bg_rect_fill_color)
+
         # --- apply new dim ---
         self._dim_lines(new_code_vgroup, *dim_indices)
 
-        # --- transfer highlights ---
+        # --- apply new highlights ---
         for i in range(len(new_code_vgroup)):
             global_idx = start_idx + i
-            if global_idx in self._highlighted_indices:
-                if global_idx not in indices:
-                    if self._text_mobs[global_idx]:
-                        new_code_vgroup[i][1].set_color(self._text_color_regular)
-                        new_code_vgroup[i][0].set_fill_color(self._bg_rect_fill_color)
-            elif global_idx in indices:
+            if global_idx in indices:
                 if self._text_mobs[global_idx]:
                     new_code_vgroup[i][1].set_color(self._text_color_highlight)
                     new_code_vgroup[i][0].set_fill_color(self._bg_highlight_color)
