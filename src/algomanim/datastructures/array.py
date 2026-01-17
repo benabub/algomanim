@@ -1,6 +1,4 @@
-from typing import (
-    List,
-)
+from typing import Any
 
 import numpy as np
 import manim as mn
@@ -47,7 +45,7 @@ class Array(RectangleCellsStructure):
 
     def __init__(
         self,
-        arr: List,
+        arr: list,
         # ---- pointers ----
         pointers: bool = True,
         # ---- position ----
@@ -326,7 +324,7 @@ class Array(RectangleCellsStructure):
     def update_value(
         self,
         scene: mn.Scene,
-        new_value: List[int],
+        new_value: list[Any],
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
