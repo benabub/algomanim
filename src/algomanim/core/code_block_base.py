@@ -265,9 +265,8 @@ class CodeBlockBase(AlgoManimBase):
             elif line_lstrip.startswith("return "):  # return lines only - same indent
                 line_1 = base_tab + indent + "# " + line_lstrip + "\n"
                 line_2 = base_tab + indent + f"code_block.highlight({self_arg}{i})\n"
-                line_3 = base_tab + indent + "self.wait(pause)\n"
-                line_4 = "\n"
-                add_block = line_1 + line_2 + line_3 + line_4
+                line_3 = "\n"
+                add_block = line_1 + line_2 + line_3
             else:
                 line_1 = base_tab + line + "\n"
                 line_2 = base_tab + indent + f"code_block.highlight({self_arg}{i})\n"
