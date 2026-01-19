@@ -25,6 +25,8 @@ class LinkedList(LinearContainerStructure):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        align_screen (np.ndarray | None): Direction vector for screen edge alignment
+        screen_buff (float): Buffer distance from screen edge when using align_screen.
         anchor: Optional alignment anchor when neither align_left nor align_right
         font (str): Font family for text elements.
         text_color (ManimColor | str): Color for text elements.
@@ -49,6 +51,8 @@ class LinkedList(LinearContainerStructure):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        align_screen: np.ndarray | None = None,
+        screen_buff: float = 0.2,
         anchor: np.ndarray | None = mn.LEFT,
         # -- font --
         font: str = "",
@@ -64,18 +68,24 @@ class LinkedList(LinearContainerStructure):
         self._parent_kwargs = kwargs.copy()
 
         super().__init__(
+            # ---- containers ----
             container_color=node_color,
             fill_color=fill_color,
             bg_color=bg_color,
+            # ---- position ----
             vector=vector,
             mob_center=mob_center,
             align_left=align_left,
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
+            align_screen=align_screen,
+            screen_buff=screen_buff,
+            # ---- font ----
             font=font,
             text_color=text_color,
             weight=weight,
+            # ---- kwargs ----
             **kwargs,
         )
 

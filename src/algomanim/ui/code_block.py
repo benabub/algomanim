@@ -18,6 +18,8 @@ class CodeBlock(CodeBlockBase):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        align_screen (np.ndarray | None): Direction vector for screen edge alignment
+        screen_buff (float): Buffer distance from screen edge when using align_screen.
         font_size: Font size for the code text.
         font: Font family for the code text. Defaults to system default.
         text_color_regular: Color for regular (non-highlighted) text.
@@ -41,6 +43,8 @@ class CodeBlock(CodeBlockBase):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        align_screen: np.ndarray | None = None,
+        screen_buff: float = 0.2,
         # --- font ---
         font_size: int = 20,
         font: str = "",
@@ -66,6 +70,8 @@ class CodeBlock(CodeBlockBase):
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
+            align_screen=align_screen,
+            screen_buff=screen_buff,
             # --- font ---
             font_size=font_size,
             font=font,

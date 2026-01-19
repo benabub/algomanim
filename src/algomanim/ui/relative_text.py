@@ -24,6 +24,8 @@ class RelativeTextValue(AlgoManimBase):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        align_screen (np.ndarray | None): Direction vector for screen edge alignment
+        screen_buff (float): Buffer distance from screen edge when using align_screen.
         anchor: Optional alignment anchor when neither align_left nor align_right
             is specified. Must be mn.LEFT or mn.RIGHT. Defaults to mn.LEFT.
         font (str): Text font family.
@@ -45,6 +47,8 @@ class RelativeTextValue(AlgoManimBase):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        align_screen: np.ndarray | None = None,
+        screen_buff: float = 0.2,
         anchor: np.ndarray | None = mn.LEFT,
         # --- font ---
         font="",
@@ -62,6 +66,8 @@ class RelativeTextValue(AlgoManimBase):
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
+            align_screen=align_screen,
+            screen_buff=screen_buff,
         )
 
         self._vars = vars

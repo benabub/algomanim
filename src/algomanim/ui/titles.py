@@ -16,6 +16,8 @@ class TitleText(AlgoManimBase):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
+        align_screen (np.ndarray | None): Direction vector for screen edge alignment
+        screen_buff (float): Buffer distance from screen edge when using align_screen.
         font: Font family for the title text. Defaults to system default.
         font_size: Font size for the title text.
         text_color: Color of the title text. Defaults to WHITE.
@@ -61,6 +63,8 @@ class TitleText(AlgoManimBase):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        align_screen: np.ndarray | None = None,
+        screen_buff: float = 0.2,
         # --- font ---
         font: str = "",
         font_size: float = 40,
@@ -92,6 +96,8 @@ class TitleText(AlgoManimBase):
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
+            align_screen=align_screen,
+            screen_buff=screen_buff,
         )
 
         self._flourish = flourish

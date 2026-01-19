@@ -27,12 +27,16 @@ class AlgoManimBase(mn.VGroup):
         align_right (mn.Mobject | None): Reference mobject to align right edge with.
         align_top (mn.Mobject | None): Reference mobject to align top edge with.
         align_bottom (mn.Mobject | None): Reference mobject to align bottom edge with.
+        align_screen (np.ndarray | None): Direction vector for screen edge alignment
+        screen_buff (float): Buffer distance from screen edge when using align_screen.
         **kwargs: Additional keyword arguments passed to VGroup.
 
     Raises:
         ValueError: If both align_left and align_right are provided,
-                   or both align_up and align_down are provided.
+            or both align_up and align_down are provided.
         NotImplementedError: If instantiated directly.
+        ValueError: If align_screen is not one of the pure direction vectors
+            (LEFT, RIGHT, UP, DOWN).
     """
 
     def __init__(
@@ -43,6 +47,8 @@ class AlgoManimBase(mn.VGroup):
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
+        align_screen: np.ndarray | None = None,
+        screen_buff: float = 0.2,
         **kwargs,
     ):
         # ------ checks -------
@@ -56,6 +62,17 @@ class AlgoManimBase(mn.VGroup):
                 "AlgoManimBase is base class only, cannot be instantiated directly."
             )
 
+        if align_screen is not None:
+            if not (
+                np.array_equal(align_screen, mn.LEFT)
+                or np.array_equal(align_screen, mn.RIGHT)
+                or np.array_equal(align_screen, mn.UP)
+                or np.array_equal(align_screen, mn.DOWN)
+            ):
+                raise ValueError(
+                    "align_screen must be one of: mn.LEFT, mn.RIGHT, mn.UP, mn.DOWN"
+                )
+
         # ------ inition -------
         super().__init__(**kwargs)
         self._vector = vector
@@ -64,6 +81,8 @@ class AlgoManimBase(mn.VGroup):
         self._align_right = align_right
         self._align_top = align_top
         self._align_bottom = align_bottom
+        self._align_screen = align_screen
+        self._screen_buff = screen_buff
 
     def first_appear(self, scene: mn.Scene, time=0.5):
         """Animate the initial appearance in scene.
@@ -103,8 +122,9 @@ class AlgoManimBase(mn.VGroup):
 
         Positioning is performed in this order:
         1. Move to mob_center's positioning point
-        2. Apply edge alignments if specified
-        3. Apply vector offset
+        2. Apply screen-edge alignments if specified
+        3. Apply edge alignments if specified
+        4. Apply vector offset
 
         The positioning point of mob_center is obtained via its `_get_positioning()`
         method if available, otherwise uses its center.
@@ -116,6 +136,9 @@ class AlgoManimBase(mn.VGroup):
             mob_center = self._mob_center
 
         self.move_to(mob_center)
+
+        if self._align_screen is not None:
+            self.to_edge(self._align_screen, buff=self._screen_buff)
 
         if self._align_left:
             align_mob = self._align_left
