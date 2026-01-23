@@ -202,7 +202,7 @@ class CodeBlockBase(AlgoManimBase):
         return res
 
     @staticmethod
-    def create_animation_template(code: str, self_param: bool = False) -> None:
+    def create_animation_template(code: str, scene_param: bool = False) -> None:
         """Generate animation scaffolding from algorithm code.
 
         This static method converts algorithm code into a template for Manim
@@ -222,10 +222,10 @@ class CodeBlockBase(AlgoManimBase):
                         calls (for CodeBlockLense). Default False (for CodeBlock).
         """
 
-        if self_param:
-            self_arg = "self, "
+        if scene_param:
+            scene_arg = "self, "
         else:
-            self_arg = ""
+            scene_arg = ""
 
         code_lines = code.strip().split("\n")
         res = ""
@@ -244,7 +244,7 @@ class CodeBlockBase(AlgoManimBase):
                 or line_lstrip.startswith("break")
                 or line_lstrip.startswith("continue")
             ):
-                line_1 = base_tab + indent + f"code_block.highlight({self_arg}{i})\n"
+                line_1 = base_tab + indent + f"code_block.highlight({scene_arg}{i})\n"
                 line_2 = base_tab + indent + "self.wait(pause)\n"
                 line_3 = base_tab + line + "\n"
                 line_4 = base_tab + indent + tab + "#\n"
@@ -257,19 +257,19 @@ class CodeBlockBase(AlgoManimBase):
             ):
                 line_1 = base_tab + line + "\n"
                 line_2 = (
-                    base_tab + indent + tab + f"code_block.highlight({self_arg}{i})\n"
+                    base_tab + indent + tab + f"code_block.highlight({scene_arg}{i})\n"
                 )
                 line_3 = base_tab + indent + tab + "self.wait(pause)\n"
                 line_4 = base_tab + indent + tab + "#\n"
                 add_block = line_1 + line_2 + line_3 + line_4
             elif line_lstrip.startswith("return "):  # return lines only - same indent
                 line_1 = base_tab + indent + "# " + line_lstrip + "\n"
-                line_2 = base_tab + indent + f"code_block.highlight({self_arg}{i})\n"
+                line_2 = base_tab + indent + f"code_block.highlight({scene_arg}{i})\n"
                 line_3 = "\n"
                 add_block = line_1 + line_2 + line_3
             else:
                 line_1 = base_tab + line + "\n"
-                line_2 = base_tab + indent + f"code_block.highlight({self_arg}{i})\n"
+                line_2 = base_tab + indent + f"code_block.highlight({scene_arg}{i})\n"
                 line_3 = base_tab + indent + "self.wait(pause)\n"
                 line_4 = "\n"
                 add_block = line_1 + line_2 + line_3 + line_4
