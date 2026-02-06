@@ -204,6 +204,33 @@ class LinkedList(LinearContainerStructure):
         return head
 
     @staticmethod
+    def get_node_index(head: ListNode | None, target: ListNode | None) -> int:
+        """
+        Find the index of target node in linked list starting from head.
+
+        Args:
+            head: Head node of the linked list.
+            target: Node to find (must be same object reference).
+
+        Returns:
+            Zero-based index of target node.
+
+        Raises:
+            ValueError: If target is not in the list.
+        """
+
+        current = head
+        i = 0
+
+        while current:
+            if current is target:
+                return i
+            i += 1
+            current = current.next
+
+        raise ValueError("target node is not in the head linked list")
+
+    @staticmethod
     def get_head_value(head: ListNode | None) -> Any | None:
         """Get the value of the head node in a linked list.
 
