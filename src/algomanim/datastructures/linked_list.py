@@ -119,6 +119,9 @@ class LinkedList(LinearContainerStructure):
             self._anchor = anchor
         else:
             self._anchor = None
+        # ---- spacing ----
+        self.node_width = self._radius * 2
+        self.node_arrow_width = self._radius * 3
 
         # empty value
         if not self._data:
