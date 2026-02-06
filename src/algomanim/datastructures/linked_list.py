@@ -204,7 +204,7 @@ class LinkedList(LinearContainerStructure):
         return head
 
     @staticmethod
-    def get_node_index(head: ListNode | None, target: ListNode | None) -> int:
+    def get_node_index(head: ListNode | None, target: ListNode | None) -> int | None:
         """
         Find the index of target node in linked list starting from head.
 
@@ -213,10 +213,7 @@ class LinkedList(LinearContainerStructure):
             target: Node to find (must be same object reference).
 
         Returns:
-            Zero-based index of target node.
-
-        Raises:
-            ValueError: If target is not in the list.
+            Zero-based index of target node, or None if not found.
         """
 
         current = head
@@ -227,8 +224,6 @@ class LinkedList(LinearContainerStructure):
                 return i
             i += 1
             current = current.next
-
-        raise ValueError("target node is not in the head linked list")
 
     @staticmethod
     def get_head_value(head: ListNode | None) -> Any | None:
@@ -506,3 +501,34 @@ class LinkedList(LinearContainerStructure):
             scene.remove(self)
             self._update_internal_state(self.linked_list_to_list(new_value), new_group)
             scene.add(self)
+
+    def append(
+        self,
+        scene: mn.Scene,
+        tail: "LinkedList",
+        animate: bool = False,
+        run_time: float = 0.2,
+    ) -> None:
+        """
+        Append another linked list to the end of this one in the scene.
+
+        Args:
+            scene: The Manim scene to play animations in.
+            tail: Linked list to append.
+            animate: Whether to animate the transition.
+            run_time: Animation duration if animate=True.
+        """
+
+        if not tail._data:
+            return
+
+        new_values = self._data + tail._data
+        scene.remove(tail)
+
+        new_value = LinkedList.create_linked_list(new_values)
+        self.update_value(
+            scene=scene,
+            new_value=new_value,
+            animate=animate,
+            run_time=run_time,
+        )
