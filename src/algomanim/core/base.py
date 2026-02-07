@@ -68,9 +68,13 @@ class AlgoManimBase(mn.VGroup):
                 or np.array_equal(align_screen, mn.RIGHT)
                 or np.array_equal(align_screen, mn.UP)
                 or np.array_equal(align_screen, mn.DOWN)
+                or np.array_equal(align_screen, mn.DOWN + mn.LEFT)
+                or np.array_equal(align_screen, mn.DOWN + mn.RIGHT)
+                or np.array_equal(align_screen, mn.UP + mn.RIGHT)
+                or np.array_equal(align_screen, mn.UP + mn.LEFT)
             ):
                 raise ValueError(
-                    "align_screen must be one of: mn.LEFT, mn.RIGHT, mn.UP, mn.DOWN"
+                    "align_screen must be one of: mn.LEFT, mn.RIGHT, mn.UP, mn.DOWN, mn.DOWN + mn.LEFT, mn.DOWN + mn.RIGHT, mn.UP + mn.LEFT, mn.UP + mn.RIGHT"
                 )
 
         # ------ inition -------
