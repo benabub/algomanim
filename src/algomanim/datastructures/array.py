@@ -62,7 +62,7 @@ class Array(RectangleCellsStructure):
         anchor: np.ndarray | None = mn.LEFT,
         # ---- font ----
         font="",
-        font_size=35,
+        font_size: float = 29.5,
         text_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
         # ---- cell colors ----
