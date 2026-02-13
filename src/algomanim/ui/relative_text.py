@@ -52,7 +52,7 @@ class RelativeTextValue(AlgoManimBase):
         anchor: np.ndarray | None = mn.LEFT,
         # --- font ---
         font="",
-        font_size: float = 30,
+        font_size: float = 25,
         weight: str = "NORMAL",
         # --- other ---
         buff=0.5,
@@ -186,7 +186,7 @@ class RelativeText(AlgoManimBase):
         screen_buff: float = 0.2,
         # --- font ---
         font="",
-        font_size: float = 30,
+        font_size: float = 25,
         text_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
     ):
