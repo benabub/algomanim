@@ -15,7 +15,7 @@ class AlgoScene(mn.Scene):
 
     @contextmanager
     def sound_block(
-        self, sound: str, offset: float = 0.0, wait_after: float = 0.5
+        self, sound: str, offset: float = 0.0, after: float = 0.5
     ) -> Generator[None, Any, None]:
         """Context manager to play a sound and wait after an animation block.
 
@@ -46,4 +46,4 @@ class AlgoScene(mn.Scene):
             self.add_sound(sound, time_offset=offset)
             yield
 
-        self.wait(wait_after)
+        self.wait(after)

@@ -202,7 +202,10 @@ class CodeBlockBase(AlgoManimBase):
         return res
 
     @staticmethod
-    def create_animation_template(code: str, scene_param: bool = False) -> None:
+    def create_animation_template(
+        code: str,
+        scene_param: bool = False,
+    ) -> None:
         """Generate animation scaffolding from algorithm code.
 
         This static method converts algorithm code into a template for Manim
@@ -232,6 +235,7 @@ class CodeBlockBase(AlgoManimBase):
         tab = "    "
         base_tab = tab * 2
         i = 0
+
         for line in code_lines:
             line_lstrip = line.lstrip()
             indent = line[: len(line) - len(line_lstrip)]
@@ -271,6 +275,122 @@ class CodeBlockBase(AlgoManimBase):
                 line_1 = base_tab + line + "\n"
                 line_2 = base_tab + indent + f"code_block.highlight({scene_arg}{i})\n"
                 line_3 = base_tab + indent + "self.wait(pause)\n"
+                line_4 = "\n"
+                add_block = line_1 + line_2 + line_3 + line_4
+
+            res += add_block
+            i += 1
+
+        pyperclip.copy(res)
+
+    @staticmethod
+    def create_animation_template_sound(
+        code: str,
+        scene_param: bool = False,
+    ) -> None:
+        """Generates animation scaffolding with sound blocks from algorithm code.
+
+        Parses the provided code and generates a template compatible with the
+        `with sound(...)` pattern. The output includes logic for automatic
+        sound selection (step vs cycle) and proper indentation for Manim
+        animations.
+
+        The generated string is automatically copied to the system clipboard.
+
+        Important:
+            1. The CodeBlock instance in the scene must be named `code_block`.
+            2. The scene must have an alias `sound = self.sound_block`.
+            3. Global variables for sounds must be available:
+               - step (highlight line in CodeBlock)
+               - cycle (highlight cycle-start line in CodeBlock)
+               - slide (pointers | highlights move)
+               - update (mobjects update | appear)
+               - appear (main animation structures appear)
+               - point (pointers appear)
+               - rtn (return mobject appear)
+
+        Args:
+            code (str): Multiline string containing the algorithm code.
+            scene_param (bool): If True, prepends 'self, ' to highlight() arguments,
+                specifically for CodeBlockLense support. Defaults to False.
+        """
+
+        if scene_param:
+            scene_arg = "self, "
+        else:
+            scene_arg = ""
+
+        code_lines = code.strip().split("\n")
+        res = ""
+        tab = "    "
+        base_tab = tab * 2
+        i = 0
+
+        for line in code_lines:
+            line_lstrip = line.lstrip()
+            indent = line[: len(line) - len(line_lstrip)]
+
+            if not line_lstrip or line_lstrip.startswith("#"):
+                i += 1
+                continue
+
+            elif (  # pre-highlight line - same indent
+                line_lstrip.startswith("if ")
+                or line_lstrip.startswith("break")
+                or line_lstrip.startswith("continue")
+            ):
+                if line_lstrip.startswith("if "):
+                    sound = "cycle"
+                else:
+                    sound = "step"
+
+                line_1 = base_tab + indent + f"with sound({sound}, after=pause):\n"
+                line_2 = (
+                    base_tab + indent + tab + f"code_block.highlight({scene_arg}{i})\n"
+                )
+                line_3 = base_tab + line + "\n"
+                line_4 = base_tab + indent + tab + "#\n"
+                add_block = line_1 + line_2 + line_3 + line_4
+
+            elif (  # after-highlight line - plus indent
+                line_lstrip.startswith("for ")
+                or line_lstrip.startswith("else")
+                or line_lstrip.startswith("elif ")
+                or line_lstrip.startswith("while ")
+            ):
+                if line_lstrip.startswith("for ") or line_lstrip.startswith("while "):
+                    sound = "cycle"
+                else:
+                    sound = "step"
+
+                line_1 = base_tab + line + "\n"
+                line_2 = (
+                    base_tab + indent + tab + f"with sound({sound}, after=pause):\n"
+                )
+                line_3 = (
+                    base_tab
+                    + indent
+                    + tab * 2
+                    + f"code_block.highlight({scene_arg}{i})\n"
+                )
+                line_4 = base_tab + indent + tab + "#\n"
+                add_block = line_1 + line_2 + line_3 + line_4
+
+            elif line_lstrip.startswith("return "):  # return lines only - same indent
+                line_1 = base_tab + indent + "# " + line_lstrip + "\n"
+                line_2 = base_tab + indent + "with sound(step):\n"
+                line_3 = (
+                    base_tab + tab + indent + f"code_block.highlight({scene_arg}{i})\n"
+                )
+                line_4 = "\n"
+                add_block = line_1 + line_2 + line_3 + line_4
+
+            else:
+                line_1 = base_tab + line + "\n"
+                line_2 = base_tab + indent + "with sound(step):\n"
+                line_3 = (
+                    base_tab + indent + tab + f"code_block.highlight({scene_arg}{i})\n"
+                )
                 line_4 = "\n"
                 add_block = line_1 + line_2 + line_3 + line_4
 
