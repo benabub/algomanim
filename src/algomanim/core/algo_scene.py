@@ -37,6 +37,13 @@ class AlgoScene(mn.Scene):
             with self.sound_block(Sounds.click, offset=0.2, wait_after=1.0):
                 self.play(FadeIn(mobject))
         """
-        self.add_sound(sound, time_offset=offset)
-        yield
+
+        if offset < 0:
+            self.add_sound(sound)
+            self.wait(abs(offset))
+            yield
+        else:
+            self.add_sound(sound, time_offset=offset)
+            yield
+
         self.wait(wait_after)
