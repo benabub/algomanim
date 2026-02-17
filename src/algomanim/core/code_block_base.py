@@ -1,6 +1,7 @@
 import manim as mn
 from manim import ManimColor
 import pyperclip
+import re
 
 from .base import AlgoManimBase
 
@@ -288,14 +289,13 @@ class CodeBlockBase(AlgoManimBase):
         code: str,
         scene_param: bool = False,
     ) -> None:
-        """Generates animation scaffolding with sound blocks from algorithm code.
+        """Generate animation scaffolding with sound blocks from algorithm code.
 
         Parses the provided code and generates a template compatible with the
         `with sound(...)` pattern. The output includes logic for automatic
         sound selection (step vs cycle) and proper indentation for Manim
-        animations.
-
-        The generated string is automatically copied to the system clipboard.
+        animations. The generated string is automatically copied to the system
+        clipboard.
 
         Important:
             1. The CodeBlock instance in the scene must be named `code_block`.
@@ -310,9 +310,13 @@ class CodeBlockBase(AlgoManimBase):
                - rtn (return mobject appear)
 
         Args:
-            code (str): Multiline string containing the algorithm code.
-            scene_param (bool): If True, prepends 'self, ' to highlight() arguments,
+            code: Multiline string containing the algorithm code to animate.
+            scene_param: If True, prepends 'self, ' to highlight() arguments,
                 specifically for CodeBlockLense support. Defaults to False.
+
+        Raises:
+            ValueError: If an unknown command (not a, u, p, s) is found in
+            a line ending with '=.' pattern.
         """
 
         if scene_param:
@@ -386,13 +390,67 @@ class CodeBlockBase(AlgoManimBase):
                 add_block = line_1 + line_2 + line_3 + line_4
 
             else:
-                line_1 = base_tab + line + "\n"
-                line_2 = base_tab + indent + "with sound(step):\n"
-                line_3 = (
-                    base_tab + indent + tab + f"code_block.highlight({scene_arg}{i})\n"
-                )
-                line_4 = "\n"
-                add_block = line_1 + line_2 + line_3 + line_4
+                line = line.rstrip()
+                if re.search(r"=.$", line):
+                    main_part, tail = line.rsplit(" ", 1)
+                    commands = tail.split("=")[1:]
+                    line = main_part
+
+                    lines_block_list = []
+
+                    for j in range(len(commands)):
+                        if j == len(commands) - 1:
+                            pause = ", pause"
+                        else:
+                            pause = ""
+
+                        if commands[j] == "a":  # appear
+                            with_string = f"with sound(appear, offset_appear{pause}):"
+                            code_string = "# .first_appear(self)"
+                        elif commands[j] == "u":  # update
+                            with_string = f"with sound(update, offset_update{pause}):"
+                            code_string = "# .update_value(self, )"
+                        elif commands[j] == "p":  # point
+                            with_string = f"with sound(point, offset_point{pause}):"
+                            code_string = "# .highlight_containers_1to3()"
+                        elif commands[j] == "s":  # slide
+                            with_string = f"with sound(slide, offset_slide{pause}):"
+                            code_string = "# .highlight_containers_1to3()"
+                        else:
+                            raise ValueError(
+                                f"No such code_block command: ={commands[j]}"
+                            )
+
+                        line_up = base_tab + indent + f"{with_string}\n"
+                        line_middle = base_tab + indent + tab + f"{code_string}\n"
+                        line_down = base_tab + indent + tab + "...\n"
+                        lines_block_list.append(line_up + line_middle + line_down)
+
+                    lines_block = "".join(lines_block_list)
+
+                    line_1 = base_tab + line + "\n"
+                    line_2 = base_tab + indent + "with sound(step):\n"
+                    line_3 = (
+                        base_tab
+                        + indent
+                        + tab
+                        + f"code_block.highlight({scene_arg}{i})\n"
+                    )
+                    # line_5 = base_tab + indent + tab + "...\n"
+                    line_5 = "\n"
+                    add_block = line_1 + line_2 + line_3 + lines_block + line_5
+
+                else:
+                    line_1 = base_tab + line + "\n"
+                    line_2 = base_tab + indent + "with sound(step):\n"
+                    line_3 = (
+                        base_tab
+                        + indent
+                        + tab
+                        + f"code_block.highlight({scene_arg}{i})\n"
+                    )
+                    line_4 = "\n"
+                    add_block = line_1 + line_2 + line_3 + line_4
 
             res += add_block
             i += 1
