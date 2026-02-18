@@ -187,19 +187,29 @@ class CodeBlockBase(AlgoManimBase):
     def format_code_lines(code: str) -> list[str]:
         """Format code string into indented lines with tree markers.
 
+        Strips trailing inline commands (patterns ending with '=.' followed by
+        command characters) used by create_animation_template_sound() for
+        generating animation scaffolding with sound blocks.
+
         Args:
             code: Multiline code string.
 
         Returns:
             list[str]: Lines formatted with '│   ' prefixes
-              for indentation levels.
+              for indentation levels and stripped of inline commands.
         """
         lines = code.strip().split("\n")
         res = []
         for line in lines:
             indent = len(line) - len(line.lstrip())
             prefix = "│   " * (indent // 4)
-            res.append(prefix + line.lstrip())
+            line = prefix + line.lstrip()
+
+            if re.search(r"=.$", line):
+                line = line.rsplit(" ", 1)[0]
+
+            res.append(line)
+
         return res
 
     @staticmethod
@@ -436,7 +446,6 @@ class CodeBlockBase(AlgoManimBase):
                         + tab
                         + f"code_block.highlight({scene_arg}{i})\n"
                     )
-                    # line_5 = base_tab + indent + tab + "...\n"
                     line_5 = "\n"
                     add_block = line_1 + line_2 + line_3 + lines_block + line_5
 
