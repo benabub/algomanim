@@ -173,3 +173,38 @@ class AlgoManimBase(mn.VGroup):
             self.shift(mn.UP * shift_y)
 
         self.shift(self._vector)
+
+    def get_glow(
+        self,
+        glow_color: mn.ManimColor | str = mn.WHITE,
+        layers: int = 50,
+        max_width: float = 100,
+        opacity_multiplier: float = 0.4,
+    ) -> mn.VGroup:
+        """Creates a gradient glow effect based on the current object's shape.
+
+        Args:
+            glow_color: The color of the neon light.
+            layers: Number of layers for the gradient. Defaults to 50.
+            max_width: Maximum spread of the glow. Defaults to 100.
+            opacity_multiplier: Overall brightness. Defaults to 0.4.
+
+        Returns:
+            mn.VGroup: A group containing all glow layers, positioned behind this object.
+        """
+        glows = mn.VGroup()
+        for i in range(layers, 0, -1):
+            opacity = (1 - (i / layers)) ** 3
+            width = max_width * (i / layers)
+
+            layer = self.copy()
+            layer.set_style(
+                stroke_color=glow_color,
+                stroke_width=width,
+                stroke_opacity=opacity * opacity_multiplier,
+                fill_opacity=0,
+            )
+            glows.add(layer)
+
+        glows.set_z_index(self.z_index - 1)
+        return glows
