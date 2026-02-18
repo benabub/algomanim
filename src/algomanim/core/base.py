@@ -176,21 +176,29 @@ class AlgoManimBase(mn.VGroup):
 
     def get_glow(
         self,
+        scene: mn.Scene,
         glow_color: mn.ManimColor | str = mn.WHITE,
         layers: int = 50,
         max_width: float = 100,
         opacity_multiplier: float = 0.4,
-    ) -> mn.VGroup:
-        """Creates a gradient glow effect based on the current object's shape.
+    ) -> None:
+        """Creates a gradient glow effect based on the current object's shape
+        and adds it to the provided scene.
+
+        The glow is constructed from multiple layers with exponentially
+        decaying opacity to simulate a neon light effect. The resulting
+        glow group is automatically placed behind this object.
 
         Args:
-            glow_color: The color of the neon light.
-            layers: Number of layers for the gradient. Defaults to 50.
-            max_width: Maximum spread of the glow. Defaults to 100.
-            opacity_multiplier: Overall brightness. Defaults to 0.4.
-
-        Returns:
-            mn.VGroup: A group containing all glow layers, positioned behind this object.
+            scene (mn.Scene): The Manim scene to add the glow to.
+            glow_color (mn.ManimColor | str): The color of the neon light.
+                Defaults to mn.WHITE.
+            layers (int): Number of layers for the gradient.
+                Higher values result in smoother glows. Defaults to 50.
+            max_width (float): Maximum spread of the glow stroke.
+                Defaults to 100.
+            opacity_multiplier (float): Overall brightness coefficient.
+                Defaults to 0.4.
         """
         glows = mn.VGroup()
         for i in range(layers, 0, -1):
@@ -207,4 +215,5 @@ class AlgoManimBase(mn.VGroup):
             glows.add(layer)
 
         glows.set_z_index(self.z_index - 1)
-        return glows
+
+        scene.add(glows)
