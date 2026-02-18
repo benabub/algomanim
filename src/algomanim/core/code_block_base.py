@@ -213,7 +213,7 @@ class CodeBlockBase(AlgoManimBase):
         return res
 
     @staticmethod
-    def create_animation_template(
+    def create_animation_template_no_sound(
         code: str,
         scene_param: bool = False,
     ) -> None:
@@ -295,7 +295,7 @@ class CodeBlockBase(AlgoManimBase):
         pyperclip.copy(res)
 
     @staticmethod
-    def create_animation_template_sound(
+    def create_animation_template(
         code: str,
         scene_param: bool = False,
     ) -> None:
