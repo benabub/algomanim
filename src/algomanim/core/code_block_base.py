@@ -355,10 +355,12 @@ class CodeBlockBase(AlgoManimBase):
             ):
                 if line_lstrip.startswith("if "):
                     sound = "cycle"
+                    offset = "offset_cycle"
                 else:
                     sound = "step"
+                    offset = "offset_step"
 
-                line_1 = base_tab + indent + f"with sound({sound}, after=pause):\n"
+                line_1 = base_tab + indent + f"with sound({sound}, {offset}, pause):\n"
                 line_2 = (
                     base_tab + indent + tab + f"code_block.highlight({scene_arg}{i})\n"
                 )
@@ -367,19 +369,20 @@ class CodeBlockBase(AlgoManimBase):
                 add_block = line_1 + line_2 + line_3 + line_4
 
             elif (  # after-highlight line - plus indent
-                line_lstrip.startswith("for ")
-                or line_lstrip.startswith("else")
+                line_lstrip.startswith("else")
                 or line_lstrip.startswith("elif ")
                 or line_lstrip.startswith("while ")
             ):
                 if line_lstrip.startswith("for ") or line_lstrip.startswith("while "):
                     sound = "cycle"
+                    offset = "offset_cycle"
                 else:
                     sound = "step"
+                    offset = "offset_step"
 
                 line_1 = base_tab + line + "\n"
                 line_2 = (
-                    base_tab + indent + tab + f"with sound({sound}, after=pause):\n"
+                    base_tab + indent + tab + f"with sound({sound}, {offset}, pause):\n"
                 )
                 line_3 = (
                     base_tab
@@ -390,9 +393,33 @@ class CodeBlockBase(AlgoManimBase):
                 line_4 = base_tab + indent + tab + "#\n"
                 add_block = line_1 + line_2 + line_3 + line_4
 
+            elif (  # after-highlight line - plus indent
+                line_lstrip.startswith("for ")
+            ):
+                line_1 = base_tab + line + "\n"
+                line_2 = base_tab + indent + tab + "with sound(cycle, offset_cycle):\n"
+                line_3 = (
+                    base_tab
+                    + indent
+                    + tab * 2
+                    + f"code_block.highlight({scene_arg}{i})\n"
+                )
+                line_4 = (
+                    base_tab
+                    + indent
+                    + tab
+                    + "with sound(point, offset_point, pause):\n"
+                )
+                line_5 = (
+                    base_tab + indent + tab * 2 + "# .highlight_containers_1to3()\n"
+                )
+                line_6 = base_tab + indent + tab * 2 + "...\n"
+                line_7 = base_tab + indent + tab + "#\n"
+                add_block = line_1 + line_2 + line_3 + line_4 + line_5 + line_6 + line_7
+
             elif line_lstrip.startswith("return "):  # return lines only - same indent
                 line_1 = base_tab + indent + "# " + line_lstrip + "\n"
-                line_2 = base_tab + indent + "with sound(step):\n"
+                line_2 = base_tab + indent + "with sound(step, offset_step):\n"
                 line_3 = (
                     base_tab + tab + indent + f"code_block.highlight({scene_arg}{i})\n"
                 )
@@ -438,7 +465,7 @@ class CodeBlockBase(AlgoManimBase):
                             code_string = "# .update_value(self, )"
                         elif commands[j] == "U":  # update with standard sound
                             with_string = f"with sound(update, offset_update{pause}):"
-                            code_string = "# .update_value(self, )"
+                            code_string = "# .update_value(self)"
                         elif commands[j] == "p":  # point
                             with_string = f"with sound(point, offset_point{pause}):"
                             code_string = "# .highlight_containers_1to3()"
@@ -458,7 +485,7 @@ class CodeBlockBase(AlgoManimBase):
                     lines_block = "".join(lines_block_list)
 
                     line_1 = base_tab + line + "\n"
-                    line_2 = base_tab + indent + "with sound(step):\n"
+                    line_2 = base_tab + indent + "with sound(step, offset_step):\n"
                     line_3 = (
                         base_tab
                         + indent
@@ -477,7 +504,7 @@ class CodeBlockBase(AlgoManimBase):
 
                 else:
                     line_1 = base_tab + line + "\n"
-                    line_2 = base_tab + indent + "with sound(step):\n"
+                    line_2 = base_tab + indent + "with sound(step, offset_step):\n"
                     line_3 = (
                         base_tab
                         + indent
