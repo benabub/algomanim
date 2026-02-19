@@ -405,8 +405,20 @@ class CodeBlockBase(AlgoManimBase):
                     main_part, tail = line.rsplit(" ", 1)
                     commands = tail.split("=")[1:]
                     line = main_part
-
                     lines_block_list = []
+
+                    if "u" not in commands:
+                        sound_diff_line = ""
+                    else:
+                        operands = line.split("=", 1)
+                        val1 = operands[0].strip()
+                        val2 = operands[1].strip()
+                        sound_diff_line = (
+                            base_tab
+                            + indent
+                            + f"curr_sound, curr_offset = sound_diff({val1}, {val2})"
+                            + "\n"
+                        )
 
                     for j in range(len(commands)):
                         if j == len(commands) - 1:
@@ -418,7 +430,7 @@ class CodeBlockBase(AlgoManimBase):
                             with_string = f"with sound(appear, offset_appear{pause}):"
                             code_string = "# .first_appear(self)"
                         elif commands[j] == "u":  # update
-                            with_string = f"with sound(update, offset_update{pause}):"
+                            with_string = f"with sound(curr_sound, curr_offset{pause}):"
                             code_string = "# .update_value(self, )"
                         elif commands[j] == "p":  # point
                             with_string = f"with sound(point, offset_point{pause}):"
@@ -447,7 +459,14 @@ class CodeBlockBase(AlgoManimBase):
                         + f"code_block.highlight({scene_arg}{i})\n"
                     )
                     line_5 = "\n"
-                    add_block = line_1 + line_2 + line_3 + lines_block + line_5
+                    add_block = (
+                        sound_diff_line
+                        + line_1
+                        + line_2
+                        + line_3
+                        + lines_block
+                        + line_5
+                    )
 
                 else:
                     line_1 = base_tab + line + "\n"
