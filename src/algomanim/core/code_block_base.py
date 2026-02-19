@@ -431,8 +431,13 @@ class CodeBlockBase(AlgoManimBase):
                         if commands[j] == "a":  # appear
                             with_string = f"with sound(appear, offset_appear{pause}):"
                             code_string = "# .first_appear(self)"
-                        elif commands[j] == "u":  # update
+                        elif (
+                            commands[j] == "u"
+                        ):  # update with var change check -> choose sound
                             with_string = f"with sound(curr_sound, curr_offset{pause}):"
+                            code_string = "# .update_value(self, )"
+                        elif commands[j] == "U":  # update with standard sound
+                            with_string = f"with sound(update, offset_update{pause}):"
                             code_string = "# .update_value(self, )"
                         elif commands[j] == "p":  # point
                             with_string = f"with sound(point, offset_point{pause}):"
