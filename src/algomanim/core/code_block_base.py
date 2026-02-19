@@ -396,8 +396,10 @@ class CodeBlockBase(AlgoManimBase):
                 line_3 = (
                     base_tab + tab + indent + f"code_block.highlight({scene_arg}{i})\n"
                 )
-                line_4 = "\n"
-                add_block = line_1 + line_2 + line_3 + line_4
+                line_4 = base_tab + indent + "with sound(rtn, offset_return, 3):\n"
+                line_5 = base_tab + indent + tab + "...\n"
+                line_6 = "\n"
+                add_block = line_1 + line_2 + line_3 + line_4 + line_5 + line_6
 
             else:
                 line = line.rstrip()
