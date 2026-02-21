@@ -3,6 +3,7 @@ from .core.linear_container import LinearContainerStructure
 from .core.rectangle_cells import RectangleCellsStructure
 from .core.code_block_base import CodeBlockBase
 from .core.algo_scene import AlgoScene
+from .core.code_generator import CodeGenerator
 
 from .datastructures.array import Array
 from .datastructures.string import String
@@ -18,6 +19,7 @@ __all__ = [
     "RectangleCellsStructure",
     "CodeBlockBase",
     "AlgoScene",
+    "CodeGenerator",
     "Array",
     "String",
     "LinkedList",

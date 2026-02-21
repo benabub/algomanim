@@ -9,7 +9,7 @@ class CodeBlock(CodeBlockBase):
     """Code block visualization with syntax highlighting capabilities.
 
     Args:
-        code_lines: List of code lines to display.
+        code_lines: code lines to display.
         vector: Position offset from mob_center for positioning.
         mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
@@ -33,7 +33,7 @@ class CodeBlock(CodeBlockBase):
 
     def __init__(
         self,
-        code_lines: list[str],
+        code: str,
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -60,7 +60,7 @@ class CodeBlock(CodeBlockBase):
         bg_highlight_color: ManimColor | str = mn.BLACK,
     ):
         super().__init__(
-            code_lines=code_lines,
+            code=code,
             # --- position ---
             vector=vector,
             mob_center=mob_center,
@@ -149,7 +149,7 @@ class CodeBlockLense(CodeBlockBase):
     Designed for long code blocks where full display is impractical.
 
     Args:
-        code_lines: List of code lines to display.
+        code_lines: code lines to display.
         limit: Maximum number of visible lines (odd number, minimum 5).
         vector: Position offset from mob_center for positioning.
         mob_center: Reference mobject for positioning.
@@ -179,7 +179,7 @@ class CodeBlockLense(CodeBlockBase):
 
     def __init__(
         self,
-        code_lines: list[str],
+        code: str,
         limit: int = 13,
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
@@ -210,7 +210,7 @@ class CodeBlockLense(CodeBlockBase):
         dim_low: float = 0.7,
     ):
         super().__init__(
-            code_lines=code_lines,
+            code=code,
             # --- position ---
             vector=vector,
             mob_center=mob_center,
