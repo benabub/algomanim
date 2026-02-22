@@ -32,12 +32,23 @@ class Config:
         True: ", pause):\n",
     }
     tab = "    "
-    base_tab = tab * 2
+    base_indent = tab * 2
 
 
 class CodeGenerator:
-    """
-    ...
+    """Generates Manim animation templates from algorithm code.
+
+    This class parses algorithm code and produces structured templates for
+    Manim animations, including proper indentation, highlight calls, and
+    sound effect blocks. It supports two output formats: with sound effects
+    (for audio-enhanced animations) and without sound (for silent animations).
+
+    The generator recognizes special inline commands in the format "=x" where
+    x is one command character (a, u, U, p, s) that determine which
+    animation blocks to generate for that line.
+
+    Attributes:
+        CONFIG: Default configuration instance with template strings.
     """
 
     CONFIG = Config()
@@ -48,24 +59,47 @@ class CodeGenerator:
         commands_dict=CONFIG.commands_dict,
         suffix_dict=CONFIG.suffix_dict,
         tab=CONFIG.tab,
-        base_tab=CONFIG.base_tab,
+        base_indent=CONFIG.base_indent,
     ) -> None:
+        """Initialize CodeGenerator with source code and optional template overrides.
+
+        Args:
+            code: Multiline string containing the algorithm code to animate.
+            commands_dict: Optional custom command templates. If not provided,
+                uses defaults from CONFIG.
+            suffix_dict: Optional custom suffix mappings. If not provided,
+                uses defaults from CONFIG.
+            tab: Indentation string (typically four spaces). If not provided,
+                uses default from CONFIG.
+            base_indent: Base indentation level (typically eight spaces).
+                If not provided, uses default from CONFIG.
+        """
         self._code = code
         self._commands_dict = commands_dict
         self._suffix_dict = suffix_dict
         self._tab = tab
-        self._base_tab = base_tab
+        self._base_indent = base_indent
 
     def _get_command_pair(
         self,
         command: str,
         indent: str,
-        if_last: bool,
+        is_last: bool,
         pass_line: bool,
     ) -> str:
+        """Generate a command block for a specific animation action.
 
+        Args:
+            command: Command character.
+            indent: Indentation string for the block.
+            is_last: Whether this is the last command in a sequence.
+            pass_line: Whether to include a "..." placeholder line.
+
+        Returns:
+            Formatted string containing the command block.
+        """
         curr_command_dict = self._commands_dict[command]
-        with_line = indent + curr_command_dict["with_line"] + self._suffix_dict[if_last]
+        with_line = indent + curr_command_dict["with_line"] + self._suffix_dict[is_last]
         code_line = indent + self._tab + curr_command_dict["code_line"]
 
         if not pass_line:
@@ -81,256 +115,58 @@ class CodeGenerator:
         offset: str,
         scene_arg: str,
         line_number: int,
-        if_last: bool,
+        is_last: bool,
     ) -> str:
-        with_line = (
-            indent + f"with sound({sound}, {offset}{self._suffix_dict[if_last]}\n"
-        )
+        """Generate a code block for highlighting a line in CodeBlock.
+
+        Args:
+            indent: Indentation string for the block.
+            sound: Sound type ('step', 'cycle', etc.).
+            offset: Offset parameter name for the sound.
+            scene_arg: Scene argument string (empty or "self, ").
+            line_number: Line number to highlight.
+            is_last: Whether this is the last highlight in a sequence.
+
+        Returns:
+            Formatted string containing the highlight block.
+        """
+        with_line = indent + f"with sound({sound}, {offset}{self._suffix_dict[is_last]}"
         code_line = (
             indent + self._tab + f"code_block.highlight({scene_arg}{line_number})\n"
         )
         return with_line + code_line
 
-    def generate(
+    def _get_custom_line(
         self,
-        scene_param: bool = False,
-    ) -> None:
-        """Generate animation scaffolding with sound blocks from algorithm code.
-        ...
+        clean_line: str,
+        indent,
+    ) -> str:
+        """Generate a simple indented line of code.
+
+        Args:
+            clean_line: The code line content (without indentation).
+            indent: Indentation string to prepend.
+
+        Returns:
+            Indented line with newline character.
         """
-
-        # commands_dict = self._commands_dict
-        # suffix_dict = self._suffix_dict
-
-        tab = self._tab
-        base_tab = self._base_tab
-
-        if scene_param:
-            scene_arg = "self, "
-        else:
-            scene_arg = ""
-
-        code_lines = self._code.strip().split("\n")
-        res = ""
-        line_number = 0
-
-        add_block_list = []
-
-        # --------- main iterating -------------
-
-        for line in code_lines:
-            line = line.lstrip()
-            indent = line[: len(line) - len(line)]
-
-            if not line or line.startswith("#"):
-                line_number += 1
-                continue
-
-            if re.search(r"=.$", line):
-                main_part, tail = line.rsplit(" ", 1)
-                commands = tail.split("=")[1:]
-                line = main_part
-                inline_commands = True
-            else:
-                inline_commands = False
-                commands = ""
-
-            # --------- head block -------------
-
-            if (  # pre-highlight line - same indent
-                line.startswith("if ")
-                or line.startswith("break")
-                or line.startswith("continue")
-            ):
-                if line.startswith("if "):
-                    sound = "cycle"
-                    offset = "offset_cycle"
-                else:
-                    sound = "step"
-                    offset = "offset_step"
-
-                highlight_pair = self._get_highlight_pair(
-                    base_tab + indent,
-                    sound,
-                    offset,
-                    scene_arg,
-                    line_number,
-                    not inline_commands,
-                )
-
-                line_3 = base_tab + line + "\n"
-                line_4 = base_tab + indent + tab + "#\n"
-                head_block = highlight_pair + line_3 + line_4
-
-            elif (  # after-highlight line - plus indent
-                line.startswith("else")
-                or line.startswith("elif ")
-                or line.startswith("while ")
-            ):
-                if line.startswith("for ") or line.startswith("while "):
-                    sound = "cycle"
-                    offset = "offset_cycle"
-                else:
-                    sound = "step"
-                    offset = "offset_step"
-
-                line_1 = base_tab + line + "\n"
-
-                highlight_pair = self._get_highlight_pair(
-                    base_tab + indent + tab,
-                    sound,
-                    offset,
-                    scene_arg,
-                    line_number,
-                    not inline_commands,
-                )
-
-                line_4 = base_tab + indent + tab + "#\n"
-                head_block = line_1 + highlight_pair + line_4
-
-            elif (  # after-highlight line - plus indent
-                line.startswith("for ")
-            ):
-                line_1 = base_tab + line + "\n"
-
-                highlight_pair = self._get_highlight_pair(
-                    base_tab + indent + tab,
-                    "cycle",
-                    "offset_cycle",
-                    scene_arg,
-                    line_number,
-                    not inline_commands,
-                )
-
-                command_pair = self._get_command_pair(
-                    command="p",
-                    indent=base_tab + indent + tab,
-                    if_last=not inline_commands,
-                    pass_line=True,
-                )
-
-                line_7 = base_tab + indent + tab + "#\n"
-                head_block = line_1 + highlight_pair + command_pair + line_7
-
-            elif line.startswith("return "):  # return lines only - same indent
-                line_1 = base_tab + indent + "# " + line + "\n"
-
-                line_2 = base_tab + indent + "with sound(step, offset_step):\n"
-                line_3 = (
-                    base_tab
-                    + tab
-                    + indent
-                    + f"code_block.highlight({scene_arg}{line_number})\n"
-                )
-
-                highlight_pair = self._get_highlight_pair(
-                    base_tab + indent,
-                    "step",
-                    "offset_step",
-                    scene_arg,
-                    line_number,
-                    not inline_commands,
-                )
-
-                line_4 = base_tab + indent + "with sound(rtn, offset_return, 3):\n"
-                line_5 = base_tab + indent + tab + "...\n"
-                line_6 = "\n"
-                head_block = line_1 + line_2 + line_3 + line_4 + line_5 + line_6
-            else:
-                head_block = ""
-
-            add_block_list.append(head_block)
-
-            # --------- bottom block -------------
-
-            if inline_commands:
-                commands_lines_list = []
-
-                if "u" not in commands:
-                    sound_diff_line = ""
-                else:
-                    operands = line.split("=", 1)
-                    val1 = operands[0].strip()
-                    val2 = operands[1].strip()
-                    sound_diff_line = (
-                        base_tab
-                        + indent
-                        + f"curr_sound, curr_offset = sound_diff({val1}, {val2})"
-                        + "\n"
-                    )
-
-                for j in range(len(commands)):
-                    if j == len(commands) - 1:
-                        if_last = True
-                    else:
-                        if_last = False
-
-                    command_pair = self._get_command_pair(
-                        command=commands[j],
-                        indent=base_tab + indent,
-                        if_last=if_last,
-                        pass_line=True,
-                    )
-                    commands_lines_list.append(command_pair)
-
-                commands_block = "".join(commands_lines_list)
-
-                line_1 = base_tab + line + "\n"
-                line_2 = base_tab + indent + "with sound(step, offset_step):\n"
-                line_3 = (
-                    base_tab
-                    + indent
-                    + tab
-                    + f"code_block.highlight({scene_arg}{line_number})\n"
-                )
-                line_5 = "\n"
-                bottom_block = (
-                    sound_diff_line + line_1 + line_2 + line_3 + commands_block + line_5
-                )
-
-            else:
-                line_1 = base_tab + line + "\n"
-                line_2 = base_tab + indent + "with sound(step, offset_step):\n"
-                line_3 = (
-                    base_tab
-                    + indent
-                    + tab
-                    + f"code_block.highlight({scene_arg}{line_number})\n"
-                )
-                line_4 = "\n"
-                bottom_block = line_1 + line_2 + line_3 + line_4
-
-            add_block_list.append(bottom_block)
-
-            # --------- cycle finish -------------
-
-        add_block = "".join(add_block_list)
-        res += add_block
-        line_number += 1
-
-        pyperclip.copy(res)
+        return indent + clean_line + "\n"
 
     def generate_with_no_sound(
         self,
         scene_param: bool = False,
     ) -> None:
-        """Generate animation scaffolding from algorithm code.
+        """Generate a silent animation template without sound effects.
 
-        This static method converts algorithm code into a template for Manim
-        animation construction. It parses the code structure and generates
-        corresponding highlight calls and wait statements.
-
-        The generated template is copied to the system clipboard for easy
-        insertion into Manim scene construct() method.
+        Parses the algorithm code and produces a template with code_block.highlight()
+        calls and self.wait() statements. The output is copied to the clipboard.
 
         Important:
-            The CodeBlock instance in the scene must be named `code_block`
-            for the generated template to work correctly.
+            The CodeBlock instance in the scene must be named `code_block`.
 
         Args:
-            code: Multiline string containing the algorithm code to animate.
-            self_param: If True, includes `self,` as first argument in highlight()
-                        calls (for CodeBlockLense). Default False (for CodeBlock).
+            scene_param: If True, prepends 'self, ' to highlight() arguments
+                for CodeBlockLense compatibility. Defaults to False.
         """
 
         if scene_param:
@@ -390,3 +226,247 @@ class CodeGenerator:
             i += 1
 
         pyperclip.copy(res)
+
+    def generate(
+        self,
+        scene_param: bool = False,
+    ) -> None:
+        """Generate an animation template with sound effects blocks.
+
+        Parses the algorithm code and produces a structured template with
+        'with sound' context managers, code_block.highlight() calls, and
+        command blocks for various animation actions. The output is copied
+        to the clipboard.
+
+        Important:
+            1. The CodeBlock instance in the scene must be named `code_block`.
+            2. The scene must have an alias `sound = self.sound_block`.
+            3. Global variables for sounds must be available:
+               - step (highlight line in CodeBlock)
+               - cycle (highlight cycle-start line in CodeBlock)
+               - slide (pointers/highlights move)
+               - update (mobjects update)
+               - appear (animation structures appear)
+               - point (pointers appear)
+               - rtn (return mobject appear)
+
+        Args:
+            scene_param: If True, prepends 'self, ' to highlight() arguments
+                for CodeBlockLense compatibility. Defaults to False.
+
+        Raises:
+            ValueError: If an unknown command (not a, u, U, p, s) is found in
+                a line ending with '=.' pattern.
+        """
+
+        tab = self._tab
+
+        if scene_param:
+            scene_arg = "self, "
+        else:
+            scene_arg = ""
+
+        code_lines = self._code.strip().split("\n")
+        line_number = 0
+
+        add_block_list = []
+
+        # --------- main iterating -------------
+
+        for line in code_lines:
+            line_lstrip = line.lstrip()
+            indent = line[: len(line) - len(line_lstrip)]
+            edge_indent = self._base_indent + indent
+            line = line.strip()
+
+            # --------- line analyse -------------
+
+            if not line or line.startswith("#"):
+                line_number += 1
+                continue
+
+            if re.search(r"=.$", line):
+                main_part, tail = line.rsplit(" ", 1)
+                commands = tail.split("=")[1:]
+                line = main_part
+                inline_commands = True
+            else:
+                inline_commands = False
+                commands = ""
+
+            if (  # pre-highlight line - same indent
+                line_lstrip.startswith("if ")
+                or line.startswith("for")
+                or line.startswith("while")
+                or line.startswith("return")
+                or line.startswith("else")
+                or line.startswith("elif")
+            ):
+                statement_line = True
+            else:
+                statement_line = False
+
+            # --------- head block -------------
+
+            # sound_diff line
+            if inline_commands and "u" in commands:
+                operands = line.split("=", 1)
+                val1 = operands[0].strip()
+                val2 = operands[1].strip()
+                add_block_list.append(
+                    edge_indent
+                    + f"curr_sound, curr_offset = sound_diff({val1}, {val2})\n"
+                )
+
+            if statement_line:
+                if (  # pre-highlight line - edge_indent
+                    line.startswith("if ")
+                ):
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent,
+                        "cycle",
+                        "offset_cycle",
+                        scene_arg,
+                        line_number,
+                        not inline_commands,
+                    )
+                    add_block_list.append(highlight_pair)
+
+                    add_block_list.append(edge_indent + line + "\n")
+                    add_block_list.append(edge_indent + tab + "#\n")
+
+                elif (  # after-highlight line - edge_indent plus tab
+                    line.startswith("else ") or line.startswith("elif ")
+                ):
+                    add_block_list.append(edge_indent + line + "\n")
+
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent + tab,
+                        "step",
+                        "offset_step",
+                        scene_arg,
+                        line_number,
+                        not inline_commands,
+                    )
+                    add_block_list.append(highlight_pair)
+
+                    if not inline_commands:
+                        add_block_list.append("\n")
+
+                elif (  # after-highlight line - edge_indent plus tab
+                    line.startswith("for ") or line.startswith("while ")
+                ):
+                    add_block_list.append(edge_indent + line + "\n")
+
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent + tab,
+                        "cycle",
+                        "offset_cycle",
+                        scene_arg,
+                        line_number,
+                        False,
+                    )
+                    add_block_list.append(highlight_pair)
+
+                    command_pair = self._get_command_pair(
+                        command="U",
+                        indent=edge_indent + tab,
+                        is_last=False,
+                        pass_line=True,
+                    )
+                    add_block_list.append(command_pair)
+
+                    add_block_list.append(
+                        self._get_custom_line(
+                            "if i == 0:",
+                            edge_indent + tab,
+                        )
+                    )
+
+                    command_pair = self._get_command_pair(
+                        command="p",
+                        indent=edge_indent + tab * 2,
+                        is_last=not inline_commands,
+                        pass_line=True,
+                    )
+                    add_block_list.append(command_pair)
+
+                    add_block_list.append(
+                        self._get_custom_line(
+                            "else:",
+                            edge_indent + tab,
+                        )
+                    )
+
+                    command_pair = self._get_command_pair(
+                        command="s",
+                        indent=edge_indent + tab * 2,
+                        is_last=not inline_commands,
+                        pass_line=True,
+                    )
+                    add_block_list.append(command_pair)
+
+                    if not inline_commands:
+                        add_block_list.append("\n")
+
+                elif line_lstrip.startswith(
+                    "return "
+                ):  # return lines only - edge_indent
+                    add_block_list.append(edge_indent + "# " + line + "\n")
+
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent,
+                        "step",
+                        "offset_step",
+                        scene_arg,
+                        line_number,
+                        False,
+                    )
+                    add_block_list.append(highlight_pair)
+
+                    line_1 = edge_indent + "with sound(rtn, offset_return, 3):\n"
+                    line_2 = edge_indent + tab + "...\n"
+                    add_block_list.append(line_1 + line_2)
+
+                    if not inline_commands:
+                        add_block_list.append("\n")
+
+            else:  # if not statement_line -> start of block
+                add_block_list.append(edge_indent + line + "\n")
+                add_block_list.append(
+                    self._get_highlight_pair(
+                        edge_indent,
+                        "step",
+                        "offset_step",
+                        scene_arg,
+                        line_number,
+                        not inline_commands,
+                    )
+                )
+
+            # --------- bottom block -------------
+
+            if inline_commands:
+                for j in range(len(commands)):
+                    if j == len(commands) - 1:
+                        is_last = True
+                    else:
+                        is_last = False
+
+                    command_pair = self._get_command_pair(
+                        command=commands[j],
+                        indent=edge_indent,
+                        is_last=is_last,
+                        pass_line=True,
+                    )
+                    add_block_list.append(command_pair)
+
+                add_block_list.append("\n")
+
+            # add_block_list.append("\n")
+            line_number += 1
+            # --------- cycle finish -------------
+
+        add_block = "".join(add_block_list)
+
+        pyperclip.copy(add_block)
