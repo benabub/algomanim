@@ -269,7 +269,7 @@ class CodeGenerator:
         code_lines = self._code.strip().split("\n")
         line_number = 0
 
-        add_block_list = []
+        add_block_list = ["\n"]
 
         # --------- main iterating -------------
 
@@ -471,10 +471,10 @@ class CodeGenerator:
 
                 add_block_list.append("\n")
 
-            # add_block_list.append("\n")
             line_number += 1
             # --------- cycle finish -------------
 
+        add_block_list.append("\n")
         add_block = "".join(add_block_list)
 
         pyperclip.copy(add_block)
