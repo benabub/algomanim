@@ -368,14 +368,6 @@ class CodeGenerator:
                     )
                     add_block_list.append(highlight_pair)
 
-                    command_pair = self._get_command_pair(
-                        command="U",
-                        indent=edge_indent + tab,
-                        is_last=False,
-                        pass_line=True,
-                    )
-                    add_block_list.append(command_pair)
-
                     add_block_list.append(
                         self._get_custom_line(
                             "if i == 0:",
@@ -383,13 +375,21 @@ class CodeGenerator:
                         )
                     )
 
-                    command_pair = self._get_command_pair(
+                    appear_pair = self._get_command_pair(
+                        command="a",
+                        indent=edge_indent + tab * 2,
+                        is_last=False,
+                        pass_line=True,
+                    )
+                    add_block_list.append(appear_pair)
+
+                    point_pair = self._get_command_pair(
                         command="p",
                         indent=edge_indent + tab * 2,
                         is_last=not inline_commands,
                         pass_line=True,
                     )
-                    add_block_list.append(command_pair)
+                    add_block_list.append(point_pair)
 
                     add_block_list.append(
                         self._get_custom_line(
@@ -398,13 +398,21 @@ class CodeGenerator:
                         )
                     )
 
-                    command_pair = self._get_command_pair(
+                    update_pair = self._get_command_pair(
+                        command="U",
+                        indent=edge_indent + tab * 2,
+                        is_last=False,
+                        pass_line=True,
+                    )
+                    add_block_list.append(update_pair)
+
+                    slide_pair = self._get_command_pair(
                         command="s",
                         indent=edge_indent + tab * 2,
                         is_last=not inline_commands,
                         pass_line=True,
                     )
-                    add_block_list.append(command_pair)
+                    add_block_list.append(slide_pair)
 
                     if not inline_commands:
                         add_block_list.append("\n")
