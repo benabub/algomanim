@@ -306,7 +306,7 @@ class CodeGenerator:
             else:
                 statement_line = False
 
-            # --------- head block -------------
+            # --------- statement block -------------
 
             # sound_diff line
             if inline_commands and "u" in commands:
@@ -336,7 +336,7 @@ class CodeGenerator:
                     add_block_list.append(edge_indent + tab + "#\n")
 
                 elif (  # after-highlight line - edge_indent plus tab
-                    line.startswith("else ") or line.startswith("elif ")
+                    line.startswith("else:") or line.startswith("elif ")
                 ):
                     add_block_list.append(edge_indent + line + "\n")
 
@@ -451,6 +451,8 @@ class CodeGenerator:
                         not inline_commands,
                     )
                 )
+                if not inline_commands:
+                    add_block_list.append("\n")
 
             # --------- bottom block -------------
 
