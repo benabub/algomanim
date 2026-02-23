@@ -115,6 +115,8 @@ class Array(RectangleCellsStructure):
         self._align_right = align_right
         self._align_top = align_top
         self._align_bottom = align_bottom
+        self._align_screen = align_screen
+        self._screen_buff = screen_buff
         # -- font --
         self._font = font
         self._font_size = font_size
@@ -366,6 +368,8 @@ class Array(RectangleCellsStructure):
             align_right=self._align_right,
             align_top=self._align_top,
             align_bottom=self._align_bottom,
+            align_screen=self._align_screen,
+            screen_buff=self._screen_buff,
             # -- font --
             font=self._font,
             font_size=self._font_size,
