@@ -456,6 +456,8 @@ class LinkedList(LinearContainerStructure):
             align_right=self._align_right,
             align_top=self._align_top,
             align_bottom=self._align_bottom,
+            align_screen=self._align_screen,
+            screen_buff=self._screen_buff,
             # -- font --
             font=self._font,
             text_color=self._text_color,
