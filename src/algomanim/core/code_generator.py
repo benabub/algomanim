@@ -299,7 +299,7 @@ class CodeGenerator:
                 or line.startswith("for")
                 or line.startswith("while")
                 or line.startswith("return")
-                or line.startswith("else")
+                or line.startswith("else:")
                 or line.startswith("elif")
             ):
                 statement_line = True
@@ -336,7 +336,9 @@ class CodeGenerator:
                     add_block_list.append(edge_indent + tab + "#\n")
 
                 elif (  # after-highlight line - edge_indent plus tab
-                    line.startswith("else:") or line.startswith("elif ")
+                    line.startswith("else:")
+                    or line.startswith("elif ")
+                    or line.startswith("while ")
                 ):
                     add_block_list.append(edge_indent + line + "\n")
 
@@ -354,7 +356,7 @@ class CodeGenerator:
                         add_block_list.append("\n")
 
                 elif (  # after-highlight line - edge_indent plus tab
-                    line.startswith("for ") or line.startswith("while ")
+                    line.startswith("for ")
                 ):
                     add_block_list.append(edge_indent + line + "\n")
 
