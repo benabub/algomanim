@@ -132,7 +132,7 @@ class LinearContainerStructure(AlgoManimBase):
             "color": self._text_color,
         }
 
-    def clear_pointers_highlights(self, pos: int):
+    def clear_pointers_highlights(self, pos: int = 0):
         """Clear the highlights for pointers at the specified position.
 
         Args:
