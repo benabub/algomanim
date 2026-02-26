@@ -336,9 +336,7 @@ class CodeGenerator:
                     add_block_list.append(edge_indent + tab + "#\n")
 
                 elif (  # after-highlight line - edge_indent plus tab
-                    line.startswith("else:")
-                    or line.startswith("elif ")
-                    or line.startswith("while ")
+                    line.startswith("else:") or line.startswith("elif ")
                 ):
                     add_block_list.append(edge_indent + line + "\n")
 
@@ -346,6 +344,24 @@ class CodeGenerator:
                         edge_indent + tab,
                         "step",
                         "offset_step",
+                        scene_arg,
+                        line_number,
+                        not inline_commands,
+                    )
+                    add_block_list.append(highlight_pair)
+
+                    if not inline_commands:
+                        add_block_list.append("\n")
+
+                elif (  # after-highlight line - edge_indent plus tab
+                    line.startswith("while ")
+                ):
+                    add_block_list.append(edge_indent + line + "\n")
+
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent + tab,
+                        "cycle",
+                        "offset_cycle",
                         scene_arg,
                         line_number,
                         not inline_commands,
