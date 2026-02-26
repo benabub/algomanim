@@ -212,7 +212,7 @@ class Array(RectangleCellsStructure):
         self._position()
 
         self._empty_value_mob.move_to(self._containers_mob.get_center())
-        self._empty_value_mob.align_to(self._containers_mob, mn.DOWN)
+        self._empty_value_mob.align_to(self._containers_mob, mn.LEFT)
         self.add(self._empty_value_mob)
 
     def _create_values_mob(self):
