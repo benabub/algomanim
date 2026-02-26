@@ -5,7 +5,7 @@ import re
 
 @dataclass(frozen=True)
 class Config:
-    commands_dict = {
+    commands_map = {
         "a": {  # appear
             "with_line": "with sound(appear, offset_appear",
             "code_line": "# .first_appear(self)\n",
@@ -27,7 +27,7 @@ class Config:
             "code_line": "# .highlight_containers_1to3()\n",
         },
     }
-    suffix_dict = {
+    suffix_map = {
         False: "):\n",
         True: ", pause):\n",
     }
@@ -56,8 +56,8 @@ class CodeGenerator:
     def __init__(
         self,
         code: str,
-        commands_dict=CONFIG.commands_dict,
-        suffix_dict=CONFIG.suffix_dict,
+        commands_dict=CONFIG.commands_map,
+        suffix_dict=CONFIG.suffix_map,
         tab=CONFIG.tab,
         base_indent=CONFIG.base_indent,
     ) -> None:
