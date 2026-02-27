@@ -1,9 +1,7 @@
 import pyperclip
-from dataclasses import dataclass
 import re
 
 
-@dataclass(frozen=True)
 class Config:
     commands_map = {
         "a": {  # appear
@@ -51,8 +49,6 @@ class CodeGenerator:
         CONFIG: Default configuration instance with template strings.
     """
 
-    CONFIG = Config()
-
     def __init__(self, code: str) -> None:
         """Initialize CodeGenerator with source code and optional template overrides.
 
@@ -68,10 +64,10 @@ class CodeGenerator:
                 If not provided, uses default from CONFIG.
         """
         self._code = code
-        self._commands_dict = self.CONFIG.commands_map
-        self._suffix_dict = self.CONFIG.suffix_map
-        self._tab = self.CONFIG.tab
-        self._base_indent = self.CONFIG.base_indent
+        self._commands_dict = Config.commands_map
+        self._suffix_dict = Config.suffix_map
+        self._tab = Config.tab
+        self._base_indent = Config.base_indent
 
     def _get_command_pair(
         self,
