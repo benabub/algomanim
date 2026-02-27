@@ -53,14 +53,7 @@ class CodeGenerator:
 
     CONFIG = Config()
 
-    def __init__(
-        self,
-        code: str,
-        commands_dict=CONFIG.commands_map,
-        suffix_dict=CONFIG.suffix_map,
-        tab=CONFIG.tab,
-        base_indent=CONFIG.base_indent,
-    ) -> None:
+    def __init__(self, code: str) -> None:
         """Initialize CodeGenerator with source code and optional template overrides.
 
         Args:
@@ -75,10 +68,10 @@ class CodeGenerator:
                 If not provided, uses default from CONFIG.
         """
         self._code = code
-        self._commands_dict = commands_dict
-        self._suffix_dict = suffix_dict
-        self._tab = tab
-        self._base_indent = base_indent
+        self._commands_dict = self.CONFIG.commands_map
+        self._suffix_dict = self.CONFIG.suffix_map
+        self._tab = self.CONFIG.tab
+        self._base_indent = self.CONFIG.base_indent
 
     def _get_command_pair(
         self,
