@@ -5,23 +5,23 @@ import re
 class Config:
     commands_map = {
         "a": {  # appear
-            "with_line": "with sound(appear, offset_appear",
+            "with_line": "with sound(appear",
             "code_line": "# .first_appear(self)\n",
         },
         "u": {  # update with var change check -> choose sound
-            "with_line": "with sound(curr_sound, curr_offset",
+            "with_line": "with sound(curr_sound",
             "code_line": "# .update_value(self)\n",
         },
         "U": {  # update with standard sound
-            "with_line": "with sound(update, offset_update",
+            "with_line": "with sound(update",
             "code_line": "# .update_value(self)\n",
         },
         "p": {  # point
-            "with_line": "with sound(point, offset_point",
+            "with_line": "with sound(point",
             "code_line": "# .highlight_containers_1to3()\n",
         },
         "s": {  # slide
-            "with_line": "with sound(slide, offset_slide",
+            "with_line": "with sound(slide",
             "code_line": "# .highlight_containers_1to3()\n",
         },
     }
@@ -68,78 +68,6 @@ class CodeGenerator:
         self._suffix_dict = Config.suffix_map
         self._tab = Config.tab
         self._base_indent = Config.base_indent
-
-    def _get_command_pair(
-        self,
-        command: str,
-        indent: str,
-        is_last: bool,
-        pass_line: bool,
-    ) -> str:
-        """Generate a command block for a specific animation action.
-
-        Args:
-            command: Command character.
-            indent: Indentation string for the block.
-            is_last: Whether this is the last command in a sequence.
-            pass_line: Whether to include a "..." placeholder line.
-
-        Returns:
-            Formatted string containing the command block.
-        """
-        curr_command_dict = self._commands_dict[command]
-        with_line = indent + curr_command_dict["with_line"] + self._suffix_dict[is_last]
-        code_line = indent + self._tab + curr_command_dict["code_line"]
-
-        if not pass_line:
-            return with_line + code_line
-        else:
-            dots = indent + self._tab + "...\n"
-            return with_line + code_line + dots
-
-    def _get_highlight_pair(
-        self,
-        indent: str,
-        sound: str,
-        offset: str,
-        scene_arg: str,
-        line_number: int,
-        is_last: bool,
-    ) -> str:
-        """Generate a code block for highlighting a line in CodeBlock.
-
-        Args:
-            indent: Indentation string for the block.
-            sound: Sound type ('step', 'cycle', etc.).
-            offset: Offset parameter name for the sound.
-            scene_arg: Scene argument string (empty or "self, ").
-            line_number: Line number to highlight.
-            is_last: Whether this is the last highlight in a sequence.
-
-        Returns:
-            Formatted string containing the highlight block.
-        """
-        with_line = indent + f"with sound({sound}, {offset}{self._suffix_dict[is_last]}"
-        code_line = (
-            indent + self._tab + f"code_block.highlight({scene_arg}{line_number})\n"
-        )
-        return with_line + code_line
-
-    def _get_custom_line(
-        self,
-        clean_line: str,
-        indent,
-    ) -> str:
-        """Generate a simple indented line of code.
-
-        Args:
-            clean_line: The code line content (without indentation).
-            indent: Indentation string to prepend.
-
-        Returns:
-            Indented line with newline character.
-        """
-        return indent + clean_line + "\n"
 
     def generate_with_no_sound(
         self,
@@ -215,6 +143,76 @@ class CodeGenerator:
             i += 1
 
         pyperclip.copy(res)
+
+    def _get_command_pair(
+        self,
+        command: str,
+        indent: str,
+        is_last: bool,
+        pass_line: bool,
+    ) -> str:
+        """Generate a command block for a specific animation action.
+
+        Args:
+            command: Command character.
+            indent: Indentation string for the block.
+            is_last: Whether this is the last command in a sequence.
+            pass_line: Whether to include a "..." placeholder line.
+
+        Returns:
+            Formatted string containing the command block.
+        """
+        curr_command_dict = self._commands_dict[command]
+        with_line = indent + curr_command_dict["with_line"] + self._suffix_dict[is_last]
+        code_line = indent + self._tab + curr_command_dict["code_line"]
+
+        if not pass_line:
+            return with_line + code_line
+        else:
+            dots = indent + self._tab + "...\n"
+            return with_line + code_line + dots
+
+    def _get_highlight_pair(
+        self,
+        indent: str,
+        sound: str,
+        scene_arg: str,
+        line_number: int,
+        is_last: bool,
+    ) -> str:
+        """Generate a code block for highlighting a line in CodeBlock.
+
+        Args:
+            indent: Indentation string for the block.
+            sound: Sound type ('step', 'cycle', etc.).
+            scene_arg: Scene argument string (empty or "self, ").
+            line_number: Line number to highlight.
+            is_last: Whether this is the last highlight in a sequence.
+
+        Returns:
+            Formatted string containing the highlight block.
+        """
+        with_line = indent + f"with sound({sound}{self._suffix_dict[is_last]}"
+        code_line = (
+            indent + self._tab + f"code_block.highlight({scene_arg}{line_number})\n"
+        )
+        return with_line + code_line
+
+    def _get_custom_line(
+        self,
+        clean_line: str,
+        indent,
+    ) -> str:
+        """Generate a simple indented line of code.
+
+        Args:
+            clean_line: The code line content (without indentation).
+            indent: Indentation string to prepend.
+
+        Returns:
+            Indented line with newline character.
+        """
+        return indent + clean_line + "\n"
 
     def generate(
         self,
@@ -303,8 +301,7 @@ class CodeGenerator:
                 val1 = operands[0].strip()
                 val2 = operands[1].strip()
                 add_block_list.append(
-                    edge_indent
-                    + f"curr_sound, curr_offset = sound_diff({val1}, {val2})\n"
+                    edge_indent + f"curr_sound = sound_diff({val1}, {val2})\n"
                 )
 
             if statement_line:
@@ -314,7 +311,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent,
                         "cycle",
-                        "offset_cycle",
                         scene_arg,
                         line_number,
                         not inline_commands,
@@ -332,7 +328,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
                         "step",
-                        "offset_step",
                         scene_arg,
                         line_number,
                         not inline_commands,
@@ -350,7 +345,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
                         "cycle",
-                        "offset_cycle",
                         scene_arg,
                         line_number,
                         not inline_commands,
@@ -368,7 +362,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
                         "cycle",
-                        "offset_cycle",
                         scene_arg,
                         line_number,
                         False,
@@ -432,14 +425,13 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent,
                         "step",
-                        "offset_step",
                         scene_arg,
                         line_number,
                         False,
                     )
                     add_block_list.append(highlight_pair)
 
-                    line_1 = edge_indent + "with sound(rtn, offset_return, 3):\n"
+                    line_1 = edge_indent + "with sound(rtn, 3):\n"
                     line_2 = edge_indent + tab + "...\n"
                     add_block_list.append(line_1 + line_2)
 
@@ -452,7 +444,6 @@ class CodeGenerator:
                     self._get_highlight_pair(
                         edge_indent,
                         "step",
-                        "offset_step",
                         scene_arg,
                         line_number,
                         not inline_commands,
