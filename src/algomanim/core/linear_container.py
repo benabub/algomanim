@@ -1,3 +1,4 @@
+from typing import Any
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -618,6 +619,38 @@ class LinearContainerStructure(AlgoManimBase):
         for idx in range(len(self._data)):
             if self._data[idx] == val:
                 self._containers_colors[idx] = color
+
+        # ------- apply --------
+        self._apply_containers_colors()
+
+    def highlight_containers_with_values(
+        self,
+        values: tuple[Any, ...],
+        colors: tuple[ManimColor, ...],
+    ):
+        """Highlight cells whose values match any of the provided values.
+
+        Args:
+            values: Tuple of values to match.
+            colors: Tuple of colors corresponding to each value.
+
+        Raises:
+            ValueError: If number of values differs from number of colors.
+        """
+        # ------- checks --------
+        if not self._data:
+            return
+        if len(values) != len(colors):
+            raise ValueError("Number of values is not equal to number of colors")
+
+        # ------- clean --------
+        self._containers_colors = {}
+
+        # ------- fill store --------
+        for val, color in zip(values, colors):
+            for idx in range(len(self._data)):
+                if self._data[idx] == val:
+                    self._containers_colors[idx] = color
 
         # ------- apply --------
         self._apply_containers_colors()
