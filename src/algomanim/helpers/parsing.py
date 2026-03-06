@@ -19,8 +19,7 @@ def indent_cutter(lines: list[str]) -> list[str]:
 def code_to_lines(code: str) -> list[str]:
     """Convert a code string into a list of properly indented lines.
 
-    Strips surrounding whitespace, splits into lines, validates that the
-    first line is not empty, and removes common base indentation.
+    Splits code string into lines and removes common base indentation.
 
     Args:
         code: Multiline string containing Python code.
@@ -31,7 +30,7 @@ def code_to_lines(code: str) -> list[str]:
     Raises:
         ValueError: If the first line is empty after stripping.
     """
-    lines = code.strip().split("\n")
+    lines = code.rstrip().split("\n")[1:]
 
     if not lines[0].strip():
         raise ValueError("code string problem: first line cannot be empty")
