@@ -1,6 +1,8 @@
 import pyperclip
 import re
 
+from algomanim.helpers.parsing import code_to_lines
+
 
 class Config:
     commands_map = {
@@ -253,7 +255,7 @@ class CodeGenerator:
         else:
             scene_arg = ""
 
-        code_lines = self._code.strip().split("\n")
+        code_lines = code_to_lines(self._code)
         line_number = 0
 
         add_block_list = ["\n"]

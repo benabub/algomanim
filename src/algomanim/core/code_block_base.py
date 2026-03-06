@@ -2,6 +2,8 @@ import manim as mn
 import re
 from manim import ManimColor
 
+from algomanim.helpers.parsing import code_to_lines
+
 from .base import AlgoManimBase
 
 
@@ -196,7 +198,7 @@ class CodeBlockBase(AlgoManimBase):
             list[str]: Lines formatted with '│   ' prefixes
               for indentation levels and stripped of inline commands.
         """
-        lines = code.strip().split("\n")
+        lines = code_to_lines(code)
         res = []
         for line in lines:
             indent = len(line) - len(line.lstrip())
