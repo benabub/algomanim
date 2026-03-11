@@ -216,6 +216,8 @@ class CodeGenerator:
         """
         return indent + clean_line + "\n"
 
+    # TODO: while - make before, like if. for both: choose sound on True: fail or cycle
+    # TODO: make =c, =c[ap|Us] key: condition block
     def generate(
         self,
         scene_param: bool = False,
@@ -290,6 +292,8 @@ class CodeGenerator:
                 or line.startswith("return")
                 or line.startswith("else:")
                 or line.startswith("elif")
+                or line.startswith("continue")
+                or line.startswith("break")
             ):
                 statement_line = True
             else:
@@ -308,7 +312,7 @@ class CodeGenerator:
 
             if statement_line:
                 if (  # pre-highlight line - edge_indent
-                    line.startswith("if ")
+                    line.startswith("if ") or line.startswith("while ")
                 ):
                     highlight_pair = self._get_highlight_pair(
                         edge_indent,
@@ -322,6 +326,21 @@ class CodeGenerator:
                     add_block_list.append(edge_indent + line + "\n")
                     add_block_list.append(edge_indent + tab + "#\n")
 
+                if (  # pre-highlight line - edge_indent
+                    line.startswith("continue") or line.startswith("break")
+                ):
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent,
+                        "step",
+                        scene_arg,
+                        line_number,
+                        not inline_commands,
+                    )
+                    add_block_list.append(highlight_pair)
+
+                    add_block_list.append(edge_indent + line + "\n")
+                    add_block_list.append("\n")
+
                 elif (  # after-highlight line - edge_indent plus tab
                     line.startswith("else:") or line.startswith("elif ")
                 ):
@@ -330,23 +349,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
                         "step",
-                        scene_arg,
-                        line_number,
-                        not inline_commands,
-                    )
-                    add_block_list.append(highlight_pair)
-
-                    if not inline_commands:
-                        add_block_list.append("\n")
-
-                elif (  # after-highlight line - edge_indent plus tab
-                    line.startswith("while ")
-                ):
-                    add_block_list.append(edge_indent + line + "\n")
-
-                    highlight_pair = self._get_highlight_pair(
-                        edge_indent + tab,
-                        "cycle",
                         scene_arg,
                         line_number,
                         not inline_commands,
