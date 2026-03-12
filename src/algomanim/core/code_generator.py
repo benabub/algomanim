@@ -200,6 +200,45 @@ class CodeGenerator:
         )
         return with_line + code_line
 
+    def _if_while_highlight_pair(
+        self,
+        line: str,
+        indent: str,
+        scene_arg: str,
+        line_number: int,
+        is_last: bool,
+    ) -> str:
+        """Generate highlight block for if/while lines with dynamic sound selection.
+
+        Creates a with-sound block that uses sound_chk() to determine the sound type
+        based on the condition result, followed by a code_block.highlight() call.
+
+        Args:
+            line: Source code line starting with 'if' or 'while'.
+            indent: Indentation string for the block.
+            scene_arg: Scene argument string (empty or "self, ").
+            line_number: Line number to highlight.
+            is_last: Whether this is the last highlight in a sequence.
+
+        Returns:
+            Formatted string containing the complete block.
+
+        Raises:
+            ValueError: If line doesn't start with 'if' or 'while'.
+        """
+        if not line.startswith(("while", "if")):
+            raise ValueError("The line should starts with while or if")
+
+        condition = re.sub(r"^(if|while)\s+|\s*:\s*$", "", line)
+
+        with_line = (
+            indent + f"with sound(sound_chk({condition}){self._suffix_dict[is_last]}"
+        )
+        code_line = (
+            indent + self._tab + f"code_block.highlight({scene_arg}{line_number})\n"
+        )
+        return with_line + code_line
+
     def _get_custom_line(
         self,
         clean_line: str,
@@ -216,7 +255,6 @@ class CodeGenerator:
         """
         return indent + clean_line + "\n"
 
-    # TODO: while - make before, like if. for both: choose sound on True: fail or cycle
     # TODO: make =c, =c[ap|Us] key: condition block
     def generate(
         self,
@@ -314,9 +352,9 @@ class CodeGenerator:
                 if (  # pre-highlight line - edge_indent
                     line.startswith("if ") or line.startswith("while ")
                 ):
-                    highlight_pair = self._get_highlight_pair(
+                    highlight_pair = self._if_while_highlight_pair(
+                        line,
                         edge_indent,
-                        "cycle",
                         scene_arg,
                         line_number,
                         not inline_commands,
