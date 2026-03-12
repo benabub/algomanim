@@ -27,6 +27,22 @@ class Config:
             "code_line": "# .highlight_containers_1to3()\n",
         },
     }
+    condition_default = [
+        "if i == 0:\n",
+        "    with sound(appear):\n",
+        "        # .first_appear(self)\n",
+        "        ...\n",
+        "    with sound(point, pause):\n",
+        "        # .highlight_containers_1to3()\n",
+        "        ...\n",
+        "else:\n",
+        "    with sound(update):\n",
+        "        # .update_value(self)\n",
+        "        ...\n",
+        "    with sound(slide, pause):\n",
+        "        # .highlight_containers_1to3()\n",
+        "        ...\n",
+    ]
     suffix_map = {
         False: "):\n",
         True: ", pause):\n",
@@ -66,10 +82,11 @@ class CodeGenerator:
                 If not provided, uses default from CONFIG.
         """
         self._code = code
-        self._commands_dict = Config.commands_map
-        self._suffix_dict = Config.suffix_map
-        self._tab = Config.tab
-        self._base_indent = Config.base_indent
+
+        # self._commands_dict = Config.commands_map
+        # self._suffix_dict = Config.suffix_map
+        # self._tab = Config.tab
+        # self._base_indent = Config.base_indent
 
     def generate_with_no_sound(
         self,
@@ -164,15 +181,100 @@ class CodeGenerator:
         Returns:
             Formatted string containing the command block.
         """
-        curr_command_dict = self._commands_dict[command]
-        with_line = indent + curr_command_dict["with_line"] + self._suffix_dict[is_last]
-        code_line = indent + self._tab + curr_command_dict["code_line"]
+        curr_command_dict = Config.commands_map[command]
+        with_line = indent + curr_command_dict["with_line"] + Config.suffix_map[is_last]
+        code_line = indent + Config.tab + curr_command_dict["code_line"]
 
         if not pass_line:
             return with_line + code_line
         else:
-            dots = indent + self._tab + "...\n"
+            dots = indent + Config.tab + "...\n"
             return with_line + code_line + dots
+
+    def _get_condition_default(self, indent) -> str:
+        """Generate default condition block for loop iterations.
+
+        Creates a template block that handles the first iteration separately
+        with 'point' sound and subsequent iterations with 'slide' sound.
+
+        Args:
+            indent: Indentation string for the block.
+
+        Returns:
+            Formatted string containing the default condition block.
+        """
+        lines = Config.condition_default
+        indented_lines = [indent + line for line in lines]
+        return "".join(indented_lines)
+
+    def _get_condition_block(
+        self,
+        command: str,
+        indent: str,
+    ) -> str:
+        """Generate conditional animation block based on inline command syntax.
+
+        Parses commands in format "c[var:if_cmds|else_cmds]" and generates
+        appropriate if/else blocks with nested animation commands.
+
+        Args:
+            command: Condition command string starting with 'c'.
+            indent: Indentation string for the block.
+
+        Returns:
+            Formatted string containing the complete if/else block.
+
+        Raises:
+            ValueError: If command syntax is invalid or doesn't match expected pattern.
+        """
+        if command == "c":
+            return self._get_condition_default(indent)
+
+        tab = Config.tab
+
+        match = re.search(r"c\[([^:]+):([^|]+)\|([^\]]+)\]", command)
+        if match:
+            var = match.group(1)
+            if_list = match.group(2).split(",")
+            else_list = match.group(3).split(",")
+        else:
+            raise ValueError("Wrong condition inline command syntax")
+
+        block_list = []
+
+        if_line = f"if {var} == 0:\n"
+        block_list.append(indent + if_line)
+
+        for j in range(len(if_list)):
+            if j == len(if_list) - 1:
+                is_last = True
+            else:
+                is_last = False
+            command_pair = self._get_command_pair(
+                command=if_list[j],
+                indent=indent + tab,
+                is_last=is_last,
+                pass_line=True,
+            )
+            block_list.append(command_pair)
+
+        else_line = "else:\n"
+        block_list.append(indent + else_line)
+
+        for j in range(len(else_list)):
+            if j == len(else_list) - 1:
+                is_last = True
+            else:
+                is_last = False
+            command_pair = self._get_command_pair(
+                command=else_list[j],
+                indent=indent + tab,
+                is_last=is_last,
+                pass_line=True,
+            )
+            block_list.append(command_pair)
+
+        return "".join(block_list)
 
     def _get_highlight_pair(
         self,
@@ -194,9 +296,9 @@ class CodeGenerator:
         Returns:
             Formatted string containing the highlight block.
         """
-        with_line = indent + f"with sound({sound}{self._suffix_dict[is_last]}"
+        with_line = indent + f"with sound({sound}{Config.suffix_map[is_last]}"
         code_line = (
-            indent + self._tab + f"code_block.highlight({scene_arg}{line_number})\n"
+            indent + Config.tab + f"code_block.highlight({scene_arg}{line_number})\n"
         )
         return with_line + code_line
 
@@ -232,10 +334,10 @@ class CodeGenerator:
         condition = re.sub(r"^(if|while)\s+|\s*:\s*$", "", line)
 
         with_line = (
-            indent + f"with sound(sound_chk({condition}){self._suffix_dict[is_last]}"
+            indent + f"with sound(sound_chk({condition}){Config.suffix_map[is_last]}"
         )
         code_line = (
-            indent + self._tab + f"code_block.highlight({scene_arg}{line_number})\n"
+            indent + Config.tab + f"code_block.highlight({scene_arg}{line_number})\n"
         )
         return with_line + code_line
 
@@ -255,7 +357,6 @@ class CodeGenerator:
         """
         return indent + clean_line + "\n"
 
-    # TODO: make =c, =c[ap|Us] key: condition block
     def generate(
         self,
         scene_param: bool = False,
@@ -288,7 +389,7 @@ class CodeGenerator:
                 a line ending with '=.' pattern.
         """
 
-        tab = self._tab
+        tab = Config.tab
 
         if scene_param:
             scene_arg = "self, "
@@ -305,7 +406,7 @@ class CodeGenerator:
         for line in code_lines:
             line_lstrip = line.lstrip()
             indent = line[: len(line) - len(line_lstrip)]
-            edge_indent = self._base_indent + indent
+            edge_indent = Config.base_indent + indent
             line = line.strip()
 
             # --------- line analyse -------------
@@ -314,7 +415,7 @@ class CodeGenerator:
                 line_number += 1
                 continue
 
-            if re.search(r"=.$", line):
+            if re.search(r"=[^\s]+$", line):
                 main_part, tail = line.rsplit(" ", 1)
                 commands = tail.split("=")[1:]
                 line = main_part
@@ -410,51 +511,8 @@ class CodeGenerator:
                     )
                     add_block_list.append(highlight_pair)
 
-                    add_block_list.append(
-                        self._get_custom_line(
-                            "if i == 0:",
-                            edge_indent + tab,
-                        )
-                    )
-
-                    appear_pair = self._get_command_pair(
-                        command="a",
-                        indent=edge_indent + tab * 2,
-                        is_last=False,
-                        pass_line=True,
-                    )
-                    add_block_list.append(appear_pair)
-
-                    point_pair = self._get_command_pair(
-                        command="p",
-                        indent=edge_indent + tab * 2,
-                        is_last=not inline_commands,
-                        pass_line=True,
-                    )
-                    add_block_list.append(point_pair)
-
-                    add_block_list.append(
-                        self._get_custom_line(
-                            "else:",
-                            edge_indent + tab,
-                        )
-                    )
-
-                    update_pair = self._get_command_pair(
-                        command="U",
-                        indent=edge_indent + tab * 2,
-                        is_last=False,
-                        pass_line=True,
-                    )
-                    add_block_list.append(update_pair)
-
-                    slide_pair = self._get_command_pair(
-                        command="s",
-                        indent=edge_indent + tab * 2,
-                        is_last=not inline_commands,
-                        pass_line=True,
-                    )
-                    add_block_list.append(slide_pair)
+                    condition_block = self._get_condition_default(edge_indent + tab)
+                    add_block_list.append(condition_block)
 
                     if not inline_commands:
                         add_block_list.append("\n")
@@ -503,13 +561,20 @@ class CodeGenerator:
                     else:
                         is_last = False
 
-                    command_pair = self._get_command_pair(
-                        command=commands[j],
-                        indent=edge_indent,
-                        is_last=is_last,
-                        pass_line=True,
-                    )
-                    add_block_list.append(command_pair)
+                    if not commands[j].startswith("c"):
+                        command_pair = self._get_command_pair(
+                            command=commands[j],
+                            indent=edge_indent,
+                            is_last=is_last,
+                            pass_line=True,
+                        )
+                        add_block_list.append(command_pair)
+                    else:
+                        command_block = self._get_condition_block(
+                            command=commands[j],
+                            indent=edge_indent,
+                        )
+                        add_block_list.append(command_block)
 
                 add_block_list.append("\n")
 
