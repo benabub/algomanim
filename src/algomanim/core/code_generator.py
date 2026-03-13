@@ -83,11 +83,6 @@ class CodeGenerator:
         """
         self._code = code
 
-        # self._commands_dict = Config.commands_map
-        # self._suffix_dict = Config.suffix_map
-        # self._tab = Config.tab
-        # self._base_indent = Config.base_indent
-
     def generate_with_no_sound(
         self,
         scene_param: bool = False,

@@ -205,7 +205,7 @@ class CodeBlockBase(AlgoManimBase):
             prefix = "│   " * (indent // 4)
             line = prefix + line.lstrip()
 
-            if re.search(r"=.$", line):
+            if re.search(r"=[^\s]+$", line):
                 line = line.rsplit(" ", 1)[0]
 
             res.append(line)
