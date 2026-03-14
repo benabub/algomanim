@@ -482,7 +482,7 @@ class CodeGenerator:
 
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
-                        "step",
+                        "cycle",
                         scene_arg,
                         line_number,
                         not inline_commands,
