@@ -297,7 +297,7 @@ class CodeGenerator:
         )
         return with_line + code_line
 
-    def _if_while_highlight_pair(
+    def _if_highlight_pair(
         self,
         line: str,
         indent: str,
@@ -323,10 +323,10 @@ class CodeGenerator:
         Raises:
             ValueError: If line doesn't start with 'if' or 'while'.
         """
-        if not line.startswith(("while", "if")):
-            raise ValueError("The line should starts with while or if")
+        if not line.startswith("if"):
+            raise ValueError("The line should starts with if")
 
-        condition = re.sub(r"^(if|while)\s+|\s*:\s*$", "", line)
+        condition = re.sub(r"^(if)\s+|\s*:\s*$", "", line)
 
         with_line = (
             indent + f"with sound(sound_chk({condition}){Config.suffix_map[is_last]}"
@@ -335,6 +335,36 @@ class CodeGenerator:
             indent + Config.tab + f"code_block.highlight({scene_arg}{line_number})\n"
         )
         return with_line + code_line
+
+    def _pre_while_line(
+        self,
+        line: str,
+        indent: str,
+        line_number: int,
+    ) -> str:
+        """Generate pre-while condition check line for animation.
+
+        Creates a line that calls pre_while() with the extracted condition
+        to handle loop precondition checking before entering the while body.
+
+        Args:
+            line: Source code line starting with 'while'.
+            indent: Indentation string for the line.
+            line_number: Line number to pass to pre_while function.
+
+        Returns:
+            Formatted string containing the pre_while function call.
+
+        Raises:
+            ValueError: If line doesn't start with 'while'.
+        """
+        if not line.startswith("while"):
+            raise ValueError("The line should starts with while")
+
+        condition = re.sub(r"^(while)\s+|\s*:\s*$", "", line)
+
+        code_line = indent + f"pre_while({condition}, code_block, {line_number})\n"
+        return code_line
 
     def _get_custom_line(
         self,
@@ -446,9 +476,9 @@ class CodeGenerator:
 
             if statement_line:
                 if (  # pre-highlight line - edge_indent
-                    line.startswith("if ") or line.startswith("while ")
+                    line.startswith("if ")
                 ):
-                    highlight_pair = self._if_while_highlight_pair(
+                    highlight_pair = self._if_highlight_pair(
                         line,
                         edge_indent,
                         scene_arg,
@@ -460,7 +490,28 @@ class CodeGenerator:
                     add_block_list.append(edge_indent + line + "\n")
                     add_block_list.append(edge_indent + tab + "#\n")
 
-                if (  # pre-highlight line - edge_indent
+                elif line.startswith("while "):
+                    pre_while_line = self._pre_while_line(
+                        line,
+                        edge_indent,
+                        line_number,
+                    )
+                    add_block_list.append(pre_while_line)
+                    add_block_list.append(edge_indent + line + "\n")
+
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent + tab,
+                        "cycle",
+                        scene_arg,
+                        line_number,
+                        not inline_commands,
+                    )
+                    add_block_list.append(highlight_pair)
+
+                    if not inline_commands:
+                        add_block_list.append("\n")
+
+                elif (  # pre-highlight line - edge_indent
                     line.startswith("continue") or line.startswith("break")
                 ):
                     highlight_pair = self._get_highlight_pair(
