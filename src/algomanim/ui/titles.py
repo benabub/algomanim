@@ -73,7 +73,7 @@ class TitleText(AlgoManimBase):
         flourish: bool = False,
         flourish_color: ManimColor | str = "WHITE",
         flourish_stroke_width: float = 4,
-        flourish_padding: float = 0.2,
+        flourish_padding: float = 0.4,
         flourish_buff_manual: float = 0.0,
         spiral_offset: float = 0.3,
         spiral_radius: float = 0.15,
@@ -102,24 +102,15 @@ class TitleText(AlgoManimBase):
 
         self._flourish = flourish
 
-        has_descenders = not set(text).isdisjoint(set("qyjpg"))
-
         if flourish_buff_manual:
             flourish_buff = flourish_buff_manual
         else:
-            if has_descenders:
-                flourish_buff = 0.05
-            else:
-                flourish_buff = 0.15
+            flourish_buff = 0.15
 
         if undercaption_buff_manual:
             undercaption_buff = undercaption_buff_manual
         else:
-            if has_descenders:
-                buff_increment = 0.15
-            else:
-                buff_increment = 0.10
-            undercaption_buff = flourish_buff + buff_increment
+            undercaption_buff = 0.3
 
         # create the text mobject
         self._text_mobject = mn.Text(
