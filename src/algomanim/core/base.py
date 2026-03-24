@@ -175,7 +175,7 @@ class AlgoManimBase(mn.VGroup):
         self.shift(self._vector)
 
     def get_glow(
-        self,
+        self: mn.VMobject,
         scene: mn.Scene,
         glow_color: mn.ManimColor | str = mn.WHITE,
         layers: int = 50,
