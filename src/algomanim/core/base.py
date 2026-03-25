@@ -190,14 +190,14 @@ class AlgoManimBase(mn.VGroup):
         glow group is automatically placed behind this object.
 
         Args:
-            scene (mn.Scene): The Manim scene to add the glow to.
-            glow_color (mn.ManimColor | str): The color of the neon light.
+            scene: The Manim scene to add the glow to.
+            glow_color: The color of the neon light.
                 Defaults to mn.WHITE.
-            layers (int): Number of layers for the gradient.
+            layers: Number of layers for the gradient.
                 Higher values result in smoother glows. Defaults to 50.
-            max_width (float): Maximum spread of the glow stroke.
+            max_width: Maximum spread of the glow stroke.
                 Defaults to 100.
-            opacity_multiplier (float): Overall brightness coefficient.
+            opacity_multiplier: Multiplier for the opacity of each glow layer.
                 Defaults to 0.4.
         """
         glows = mn.VGroup()
@@ -214,6 +214,7 @@ class AlgoManimBase(mn.VGroup):
             )
             glows.add(layer)
 
-        glows.set_z_index(self.z_index - 1)
-
         scene.add(glows)
+
+        # readd object to make it above the glow
+        scene.add(self)
