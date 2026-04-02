@@ -10,6 +10,7 @@ Manim use notes:
     for unknown reason (artifacts are located in mn.ORIGIN)
 """
 
+from typing import Any
 import numpy as np
 import manim as mn
 
@@ -88,13 +89,23 @@ class AlgoManimBase(mn.VGroup):
         self._align_screen = align_screen
         self._screen_buff = screen_buff
 
-    def first_appear(self, scene: mn.Scene, time=0.5):
+    # TODO: make mobs already updated to their values
+    def first_appear(
+        self,
+        scene: mn.Scene,
+        time=0.5,
+        new_value: Any = None,
+    ):
         """Animate the initial appearance in scene.
 
         Args:
             scene: The scene to play the animation in.
             time: Duration of the fade-in animation.
         """
+
+        if new_value:
+            self._set_new_value(new_value)
+
         scene.play(mn.FadeIn(self), run_time=time)
 
     def group_appear(self, scene: mn.Scene, *mobjects: mn.Mobject, time: float = 0.5):

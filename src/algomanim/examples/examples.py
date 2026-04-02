@@ -51,7 +51,6 @@ for i in range(length - 1):
         arr[i], arr[min_index] = arr[min_index], arr[i]
 return arr
 """
-        code_lines = CodeBlock.format_code_lines(code)
 
         # ======== MOBJECTS CONSTRUCTION ============
 
@@ -62,7 +61,7 @@ return arr
         )
 
         code_block = CodeBlock(
-            code_lines,
+            code,
             vector=mn.DOWN * 0.3 + mn.RIGHT * 2.6,
             font="Monospace",
         )
@@ -2122,13 +2121,12 @@ the old highlight clears.  # 11
 
 It is impossible to highlight empty lines. # 13
 """
-        code_lines = CodeBlock.format_code_lines(code)
 
         # ======== main mob ============
 
         # Construction code_block
         cb = CodeBlock(
-            code_lines,
+            code,
             vector=mn.RIGHT * 3,
             font_size=25,
         )
@@ -2220,12 +2218,11 @@ As in CodeBlock, # 25
     empty lines # 26
         are not highlighted. # 27
 """
-        code_lines = CodeBlock.format_code_lines(code)
 
         # ========== construction ==============
 
         cb = CodeBlockLense(
-            code_lines,
+            code,
             vector=mn.DOWN * 0.3 + mn.RIGHT * 2.0,
             font="Monospace",
         )
