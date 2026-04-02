@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Callable
 
 import numpy as np
 import manim as mn
@@ -11,7 +11,7 @@ class Array(RectangleCellsStructure):
     """Array visualization as a VGroup of cells with values and pointers.
 
     Args:
-        arr: List of values to visualize.
+        value: Callable that returns a list of values to visualize.
         pointers: Whether to create and display pointers.
         vector: Position offset from mob_center.
         font: Font family for text elements.
@@ -47,7 +47,7 @@ class Array(RectangleCellsStructure):
 
     def __init__(
         self,
-        arr: list,
+        value: Callable[[], list],
         # ---- pointers ----
         pointers: bool = True,
         # ---- position ----
@@ -106,7 +106,8 @@ class Array(RectangleCellsStructure):
         )
 
         # create class instance fields
-        self._data = arr.copy()
+        self._callable = value
+        self._data = value().copy()
         self._pointers = pointers
         # -- position --
         self._vector = vector
@@ -332,20 +333,18 @@ class Array(RectangleCellsStructure):
     def update_value(
         self,
         scene: mn.Scene,
-        new_value: list[Any],
+        # new_value: list[Any],
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
-        """Replace the array visualization with a new set of values.
+        """Replace the array visualization with updated values from the callable.
 
-        This method creates a new `Array` instance with `new_value` and either
-        animates a smooth transformation from the old to the new state, or performs
-        an instantaneous update. Highlight states (container and pointer colors)
-        are preserved across the update.
+        This method creates a new `Array` instance by calling the stored callable,
+        then either animates a smooth transformation or performs an instantaneous
+        update. Highlight states (container and pointer colors) are preserved.
 
         Args:
             scene: The Manim scene in which the animation or update will be played.
-            new_value: The new list of integer values to display in the array.
             animate: If True, animates the transition using a Transform.
                      If False, updates the object instantly.
             run_time: Duration (in seconds) of the animation if `animate=True`.
@@ -353,12 +352,12 @@ class Array(RectangleCellsStructure):
         """
 
         # checks
-        if not self._data and not new_value:
+        if not self._data:
             return
 
         # new group
         new_group = Array(
-            new_value,
+            self._callable,
             # ---- pointers ----
             pointers=self._pointers,
             # -- position --
@@ -404,8 +403,8 @@ class Array(RectangleCellsStructure):
         # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(new_value, new_group)
+            self._update_internal_state(self._callable(), new_group)
         else:
             scene.remove(self)
-            self._update_internal_state(new_value, new_group)
+            self._update_internal_state(self._callable(), new_group)
             scene.add(self)

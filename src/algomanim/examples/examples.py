@@ -94,7 +94,7 @@ return arr
         )
 
         array = Array(
-            arr,
+            lambda: arr,
             mob_center=k_text,
             align_bottom=code_block,
             vector=mn.RIGHT * 1.2,
@@ -150,7 +150,7 @@ return arr
             if min_index != i:
                 #
                 arr[i], arr[min_index] = arr[min_index], arr[i]
-                array.update_value(self, arr)
+                array.update_value(self)
                 code_block.highlight(8)
                 self.wait(pause)
 
@@ -168,7 +168,7 @@ return arr
         # ========== FINISH ==============
 
         self.wait(pause)
-        self.renderer.file_writer.output_file = f"media/{self.__class__.__name__}.mp4"
+        self.renderer.file_writer.output_file = f"media/{self.__class__.__name__}.mp4"  # type: ignore
 
 
 class Example_array(mn.Scene):
@@ -179,12 +179,12 @@ class Example_array(mn.Scene):
             arr = [0, "\"'`^", "ace", "ygpj", "ABC", ":*#", "."]
 
             array = Array(
-                arr,
+                lambda: arr,
             )
             array.first_appear(self)
 
             array_20 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 vector=mn.UP * 2.8,
                 font_size=20,
@@ -192,7 +192,7 @@ class Example_array(mn.Scene):
             array_20.first_appear(self, time=0.1)
 
             array_30 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 vector=mn.UP * 1.4,
                 font_size=30,
@@ -200,7 +200,7 @@ class Example_array(mn.Scene):
             array_30.first_appear(self, time=0.1)
 
             array_40 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 vector=mn.DOWN * 1.5,
                 font_size=40,
@@ -208,7 +208,7 @@ class Example_array(mn.Scene):
             array_40.first_appear(self, time=0.1)
 
             array_50 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 vector=mn.DOWN * 3.0,
                 font_size=50,
@@ -227,7 +227,7 @@ class Example_array(mn.Scene):
             # ============================
 
             array_20 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_left=array,
                 vector=mn.UP * 2.8,
@@ -236,7 +236,7 @@ class Example_array(mn.Scene):
             array_20.first_appear(self, time=0.1)
 
             array_30 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_left=array,
                 vector=mn.UP * 1.4,
@@ -245,7 +245,7 @@ class Example_array(mn.Scene):
             array_30.first_appear(self, time=0.1)
 
             array_40 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_left=array,
                 vector=mn.DOWN * 1.5,
@@ -254,7 +254,7 @@ class Example_array(mn.Scene):
             array_40.first_appear(self, time=0.1)
 
             array_50 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_left=array,
                 vector=mn.DOWN * 3.0,
@@ -274,7 +274,7 @@ class Example_array(mn.Scene):
             # ============================
 
             array_20 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_right=array,
                 vector=mn.UP * 2.8,
@@ -283,7 +283,7 @@ class Example_array(mn.Scene):
             array_20.first_appear(self, time=0.1)
 
             array_30 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_right=array,
                 vector=mn.UP * 1.4,
@@ -292,7 +292,7 @@ class Example_array(mn.Scene):
             array_30.first_appear(self, time=0.1)
 
             array_40 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_right=array,
                 vector=mn.DOWN * 1.5,
@@ -301,7 +301,7 @@ class Example_array(mn.Scene):
             array_40.first_appear(self, time=0.1)
 
             array_50 = Array(
-                arr,
+                lambda: arr,
                 mob_center=array,
                 align_right=array,
                 vector=mn.DOWN * 3.0,
@@ -323,14 +323,14 @@ class Example_array(mn.Scene):
             pause = 1
             arr = list("arr")
 
-            center = Array(list("mob_center"), font_size=40)
+            center = Array(lambda: list("mob_center"), font_size=40)
             center.first_appear(self)
 
             top_text = RelativeText(
                 "mob_center=mob_center\nvector=mn.UP * 1",
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
-            array = Array(arr, mob_center=center, vector=mn.UP * 2)
+            array = Array(lambda: arr, mob_center=center, vector=mn.UP * 2)
             array.group_appear(self, top_text)
             self.wait(pause)
 
@@ -340,7 +340,9 @@ class Example_array(mn.Scene):
                 "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 1",
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
-            array = Array(arr, mob_center=center, align_left=center, vector=mn.UP * 2)
+            array = Array(
+                lambda: arr, mob_center=center, align_left=center, vector=mn.UP * 2
+            )
             array.group_appear(self, top_text)
             self.wait(pause)
 
@@ -350,14 +352,20 @@ class Example_array(mn.Scene):
                 "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 1",
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
-            array = Array(arr, mob_center=center, align_right=center, vector=mn.UP * 2)
+            array = Array(
+                lambda: arr, mob_center=center, align_right=center, vector=mn.UP * 2
+            )
             array.group_appear(self, top_text)
             self.wait(pause)
 
             self.clear()
 
-            one = Array(list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
-            two = Array(list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
+            one = Array(
+                lambda: list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4
+            )
+            two = Array(
+                lambda: list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3
+            )
             one.group_appear(self, two)
             self.wait(0.5)
 
@@ -365,7 +373,7 @@ class Example_array(mn.Scene):
                 "align_left=one\nalign_bottom=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            array = Array(arr, align_left=one, align_bottom=two)
+            array = Array(lambda: arr, align_left=one, align_bottom=two)
             array.group_appear(self, top_text)
             self.wait(pause)
             self.remove(array, top_text)
@@ -374,7 +382,7 @@ class Example_array(mn.Scene):
                 "align_left=one\nalign_top=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            array = Array(arr, align_left=one, align_top=two)
+            array = Array(lambda: arr, align_left=one, align_top=two)
             array.group_appear(self, top_text)
             self.wait(pause)
             update_text = RelativeText(
@@ -385,13 +393,17 @@ class Example_array(mn.Scene):
             )
             update_text.first_appear(self)
 
-            array.update_value(self, [1, 2, 3])
+            arr = [1, 2, 3]
+            array.update_value(self)
             self.wait(0.5)
-            array.update_value(self, [1])
+            arr = [1]
+            array.update_value(self)
             self.wait(0.5)
-            array.update_value(self, [])
+            arr = []
+            array.update_value(self)
             self.wait(0.5)
-            array.update_value(self, [1, 2])
+            arr = [1, 2]
+            array.update_value(self)
             self.wait(0.5)
 
             self.remove(array, top_text, update_text)
@@ -400,7 +412,7 @@ class Example_array(mn.Scene):
                 "align_right=one\nalign_top=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            array = Array(arr, align_right=one, align_top=two)
+            array = Array(lambda: arr, align_right=one, align_top=two)
             array.group_appear(self, top_text)
             self.wait(pause)
 
@@ -412,13 +424,17 @@ class Example_array(mn.Scene):
             )
             update_text.first_appear(self)
 
-            array.update_value(self, [1, 2, 3])
+            arr = [1, 2, 3]
+            array.update_value(self)
             self.wait(0.5)
-            array.update_value(self, [1])
+            arr = [1]
+            array.update_value(self)
             self.wait(0.5)
-            array.update_value(self, [])
+            arr = []
+            array.update_value(self)
             self.wait(0.5)
-            array.update_value(self, [1, 2])
+            arr = [1, 2]
+            array.update_value(self)
             self.wait(0.5)
 
             self.remove(array, top_text, update_text)
@@ -427,7 +443,7 @@ class Example_array(mn.Scene):
                 "align_right=one\nalign_bottom=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            array = Array(arr, align_right=one, align_bottom=two)
+            array = Array(lambda: arr, align_right=one, align_bottom=two)
             array.group_appear(self, top_text)
             self.wait(pause)
             self.remove(array, top_text)
@@ -437,7 +453,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 0.7 + mn.RIGHT * 2,
             )
             array = Array(
-                arr,
+                lambda: arr,
                 align_left=one,
                 align_bottom=two,
                 vector=mn.UP * 1 + mn.RIGHT * 1,
@@ -448,7 +464,7 @@ class Example_array(mn.Scene):
 
         def updatevalue(self):
             pause = 0.5
-            center = Array(list("mob_center"), font_size=50)
+            center = Array(lambda: list("mob_center"), font_size=50)
             text_title = RelativeText(
                 "update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
@@ -457,22 +473,24 @@ class Example_array(mn.Scene):
             )
             center.group_appear(self, text_title)
 
+            arr = [1, 2, 3]
+
             arr_1 = Array(
-                [1, 2, 3],
+                lambda: arr,
                 mob_center=center,
                 vector=mn.UP * 1.5,
                 anchor=None,
                 pointers=False,
             )
             arr_2 = Array(
-                [1, 2, 3],
+                lambda: arr,
                 mob_center=arr_1,
                 vector=mn.UP * 0.7,
                 anchor=mn.RIGHT,
                 pointers=False,
             )
             arr_3 = Array(
-                [1, 2, 3],
+                lambda: arr,
                 mob_center=arr_2,
                 vector=mn.UP * 0.7,
                 anchor=mn.LEFT,
@@ -493,13 +511,13 @@ class Example_array(mn.Scene):
             )
 
             arr_4 = Array(
-                [1, 2, 3],
+                lambda: arr,
                 align_left=center,
                 vector=mn.DOWN * 1.5,
                 pointers=False,
             )
             arr_5 = Array(
-                [1, 2, 3],
+                lambda: arr,
                 align_right=center,
                 vector=mn.DOWN * 1.5,
                 pointers=False,
@@ -541,59 +559,59 @@ class Example_array(mn.Scene):
             self.wait(pause)
 
             arr = [1, 2]
-            arr_1.update_value(self, arr)
-            arr_2.update_value(self, arr)
-            arr_3.update_value(self, arr)
-            arr_4.update_value(self, arr)
-            arr_5.update_value(self, arr)
+            arr_1.update_value(self)
+            arr_2.update_value(self)
+            arr_3.update_value(self)
+            arr_4.update_value(self)
+            arr_5.update_value(self)
             self.wait(pause)
 
             arr = [1]
-            arr_1.update_value(self, arr)
-            arr_2.update_value(self, arr)
-            arr_3.update_value(self, arr)
-            arr_4.update_value(self, arr)
-            arr_5.update_value(self, arr)
+            arr_1.update_value(self)
+            arr_2.update_value(self)
+            arr_3.update_value(self)
+            arr_4.update_value(self)
+            arr_5.update_value(self)
             self.wait(pause)
 
             arr = []
-            arr_1.update_value(self, arr)
-            arr_2.update_value(self, arr)
-            arr_3.update_value(self, arr)
-            arr_4.update_value(self, arr)
-            arr_5.update_value(self, arr)
+            arr_1.update_value(self)
+            arr_2.update_value(self)
+            arr_3.update_value(self)
+            arr_4.update_value(self)
+            arr_5.update_value(self)
             self.wait(pause)
 
             arr = [1]
-            arr_1.update_value(self, arr)
-            arr_2.update_value(self, arr)
-            arr_3.update_value(self, arr)
-            arr_4.update_value(self, arr)
-            arr_5.update_value(self, arr)
+            arr_1.update_value(self)
+            arr_2.update_value(self)
+            arr_3.update_value(self)
+            arr_4.update_value(self)
+            arr_5.update_value(self)
             self.wait(pause)
 
             arr = [1, 2]
-            arr_1.update_value(self, arr)
-            arr_2.update_value(self, arr)
-            arr_3.update_value(self, arr)
-            arr_4.update_value(self, arr)
-            arr_5.update_value(self, arr)
+            arr_1.update_value(self)
+            arr_2.update_value(self)
+            arr_3.update_value(self)
+            arr_4.update_value(self)
+            arr_5.update_value(self)
             self.wait(pause)
 
             arr = [1, 2, 3]
-            arr_1.update_value(self, arr)
-            arr_2.update_value(self, arr)
-            arr_3.update_value(self, arr)
-            arr_4.update_value(self, arr)
-            arr_5.update_value(self, arr)
+            arr_1.update_value(self)
+            arr_2.update_value(self)
+            arr_3.update_value(self)
+            arr_4.update_value(self)
+            arr_5.update_value(self)
             self.wait(pause)
 
             arr = [1, 2, 3, 4]
-            arr_1.update_value(self, arr)
-            arr_2.update_value(self, arr)
-            arr_3.update_value(self, arr)
-            arr_4.update_value(self, arr)
-            arr_5.update_value(self, arr)
+            arr_1.update_value(self)
+            arr_2.update_value(self)
+            arr_3.update_value(self)
+            arr_4.update_value(self)
+            arr_5.update_value(self)
             self.wait(pause)
 
             self.clear()
@@ -601,7 +619,7 @@ class Example_array(mn.Scene):
         def highlights_1to3(self):
             pause = 0.5
 
-            array = Array([10, 2, 3000, 2, 100, 1, 40])
+            array = Array(lambda: [10, 2, 3000, 2, 100, 1, 40])
             top_text = RelativeText(
                 "pointers()   highlight_containers_1to3()",
                 vector=mn.UP * 2,
@@ -647,7 +665,7 @@ class Example_array(mn.Scene):
 
         def monocolor(self):
             pause = 0.5
-            array = Array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+            array = Array(lambda: [1, 2, 3, 4, 5, 6, 7, 8, 9])
             top_text = RelativeText(
                 "highlight_containers_monocolor()",
                 vector=mn.UP * 2,
@@ -668,7 +686,8 @@ class Example_array(mn.Scene):
 
         def highlight_on_value(self):
             pause = 0.5
-            array = Array([10, 2, 3000, 2, 100, 1, 40])
+            arr = [10, 2, 3000, 2, 100, 1, 40]
+            array = Array(lambda: arr)
             top_text = RelativeText(
                 "highlight_containers_with_value()   pointers_on_value()",
                 vector=mn.UP * 2,
@@ -679,31 +698,38 @@ class Example_array(mn.Scene):
             array.highlight_containers_with_value(0)
             array.pointers_on_value(0)
             self.wait(pause)
-            array.update_value(self, [22, 0, 22, 0, 22, 0])
+            arr = [22, 0, 22, 0, 22, 0]
+            array.update_value(self)
             array.highlight_containers_with_value(0)
             array.pointers_on_value(0)
             self.wait(pause)
-            array.update_value(self, [0, 22, 0, 22, 0, 22])
+            arr = [0, 22, 0, 22, 0, 22]
+            array.update_value(self)
             array.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
             array.pointers_on_value(0, color=mn.LIGHT_BROWN)
             self.wait(pause)
-            array.update_value(self, [22, 0, 22, 0, 22, 0])
+            arr = [22, 0, 22, 0, 22, 0]
+            array.update_value(self)
             array.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
             array.pointers_on_value(0, color=mn.LIGHT_BROWN)
             self.wait(pause)
-            array.update_value(self, [0, 22, 0, 22, 0, 22])
+            arr = [0, 22, 0, 22, 0, 22]
+            array.update_value(self)
             array.highlight_containers_with_value(0, color=mn.PURPLE)
             array.pointers_on_value(0, color=mn.PURPLE)
             self.wait(pause)
-            array.update_value(self, [22, 0, 22, 0, 22])
+            arr = [22, 0, 22, 0, 22]
+            array.update_value(self)
             array.highlight_containers_with_value(0, color=mn.PURPLE)
             array.pointers_on_value(0, color=mn.PURPLE)
             self.wait(pause)
-            array.update_value(self, [0, 22, 0, 22, 0, 22])
+            arr = [0, 22, 0, 22, 0, 22]
+            array.update_value(self)
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
-            array.update_value(self, [22, 0, 22, 0, 22])
+            arr = [22, 0, 22, 0, 22]
+            array.update_value(self)
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(1)
@@ -713,7 +739,8 @@ class Example_array(mn.Scene):
 
         def mix(self):
             pause = 0.5
-            array = Array([0, 1, 22, 333, 4444, 55555])
+            arr = [0, 1, 22, 333, 4444, 55555]
+            array = Array(lambda: arr)
             top_text = RelativeText(
                 "mix",
                 vector=mn.UP * 2,
@@ -726,69 +753,81 @@ class Example_array(mn.Scene):
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [1, 0, 55555, 333])
+            arr = [1, 0, 55555, 333]
+            array.update_value(self)
             array.clear_pointers_highlights(0)
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [0, 333, 0])
+            arr = [0, 333, 0]
+            array.update_value(self)
             array.highlight_containers_1to3(0, 2, 4)
             array.pointers(0, 2, 4)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [0, 0])
+            arr = [0, 0]
+            array.update_value(self)
             array.clear_pointers_highlights(0)
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [0])
+            arr = [0]
+            array.update_value(self)
             array.highlight_containers_1to3(0, 2, 4)
             array.pointers(0, 2, 4)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [], animate=True)
+            arr = []
+            array.update_value(self, animate=True)
             array.highlight_containers_1to3(0, 2, 4)
             array.pointers(0, 2, 4)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [0, 0, 0, 0], animate=True)
+            arr = [0, 0, 0, 0]
+            array.update_value(self, animate=True)
             self.wait(pause)
 
-            array.update_value(self, [1, 0, 22, 0, 333, 0], animate=True)
+            arr = [1, 0, 22, 0, 333, 0]
+            array.update_value(self, animate=True)
             array.clear_pointers_highlights(0)
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [0, 22, 0, 333, 0], animate=True)
+            arr = [0, 22, 0, 333, 0]
+            array.update_value(self, animate=True)
             array.clear_pointers_highlights(1)
             array.highlight_containers_1to3(1, 1, 2)
             array.pointers(1, 1, 2)
             self.wait(pause)
 
-            array.update_value(self, [1, 0, 22, 0, 333, 0, 22], animate=True)
+            arr = [1, 0, 22, 0, 333, 0, 22]
+            array.update_value(self, animate=True)
             array.clear_pointers_highlights(0)
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(pause)
 
-            array.update_value(self, [0, 22, 0, 333, 0, 55555], animate=True)
+            arr = [0, 22, 0, 333, 0, 55555]
+            array.update_value(self, animate=True)
             array.clear_pointers_highlights(1)
             array.highlight_containers_1to3(3, 5, 3)
             array.pointers(3, 5, 3)
             self.wait(pause)
 
-            array.update_value(self, [1, 0], animate=True)
+            arr = [1, 0]
+            array.update_value(self, animate=True)
             array.highlight_containers_1to3(0, 0, 0)
             array.pointers(0, 0, 0)
             self.wait(pause)
 
-            array.update_value(self, [0, 0, 0, 0, 0, 0], animate=True)
+            arr = [0, 0, 0, 0, 0, 0]
+            array.update_value(self, animate=True)
             array.clear_pointers_highlights(0)
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
@@ -807,7 +846,7 @@ class Example_array(mn.Scene):
         # ========== finish ==============
 
         self.wait(1)
-        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
 
 
 class Example_string(mn.Scene):
@@ -1497,7 +1536,7 @@ class Example_string(mn.Scene):
         # ========== finish ==============
 
         self.wait(1)
-        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
 
 
 class Example_linked_list(mn.Scene):
@@ -1509,7 +1548,7 @@ class Example_linked_list(mn.Scene):
         def positioning(self):
             pause = 1
 
-            center = Array(list("mob_center"), font_size=40)
+            center = Array(lambda: list("mob_center"), font_size=40)
             center.first_appear(self)
 
             top_text = RelativeText(
@@ -1556,8 +1595,12 @@ class Example_linked_list(mn.Scene):
 
             self.clear()
 
-            one = Array(list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
-            two = Array(list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3)
+            one = Array(
+                lambda: list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4
+            )
+            two = Array(
+                lambda: list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3
+            )
             one.group_appear(self, two)
             self.wait(0.5)
 
@@ -1633,7 +1676,7 @@ class Example_linked_list(mn.Scene):
             pause = 0.3
             cll = LinkedList.create_linked_list
 
-            mob_center = Array(list("mob_center"), vector=mn.UP * 3)
+            mob_center = Array(lambda: list("mob_center"), vector=mn.UP * 3)
             mob_center.first_appear(self)
 
             ll = LinkedList(
@@ -2095,7 +2138,7 @@ class Example_linked_list(mn.Scene):
         # ========== finish ==============
 
         self.wait(1)
-        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
 
 
 class Example_code_block(mn.Scene):
@@ -2178,7 +2221,7 @@ It is impossible to highlight empty lines. # 13
         # ========== FINISH ==============
 
         self.wait(pause)
-        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
 
 
 class Example_code_block_lense(mn.Scene):
@@ -2289,4 +2332,4 @@ As in CodeBlock, # 25
         # ========== FINISH ==============
 
         self.wait(pause)
-        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
