@@ -339,33 +339,14 @@ class Array(RectangleCellsStructure):
                         buff=self._bottom_buff,
                     )
 
-    def update_value(
-        self,
-        scene: mn.Scene,
-        # new_value: list[Any],
-        animate: bool = True,
-        run_time: float = 0.2,
-    ) -> None:
-        """Replace the array visualization with updated values from the callable.
+    def _create_new_instance(self) -> "Array":
+        """Create a new Array instance with current parameters and updated data.
 
-        This method creates a new `Array` instance by calling the stored callable,
-        then either animates a smooth transformation or performs an instantaneous
-        update. Highlight states (container and pointer colors) are preserved.
-
-        Args:
-            scene: The Manim scene in which the animation or update will be played.
-            animate: If True, animates the transition using a Transform.
-                     If False, updates the object instantly.
-            run_time: Duration (in seconds) of the animation if `animate=True`.
-                     Has no effect if `animate=False`.
+        Returns:
+            New Array instance with the same configuration and fresh data from callable.
         """
-
-        # checks
-        if not self._data and not self._callable():
-            return
-
-        # new group
-        new_group = Array(
+        # create new instance
+        new_instance = Array(
             self._callable,
             # ---- pointers ----
             pointers=self._pointers,
@@ -399,22 +380,68 @@ class Array(RectangleCellsStructure):
             **self._parent_kwargs,
         )
 
+        # copy anchor alignment
         if self._anchor is not None:
             if np.array_equal(self._anchor, mn.LEFT):
-                new_group.align_to(self.get_left(), mn.LEFT)
+                new_instance.align_to(self.get_left(), mn.LEFT)
             else:
-                new_group.align_to(self.get_right(), mn.RIGHT)
+                new_instance.align_to(self.get_right(), mn.RIGHT)
 
-        # save old group status
+        # preserve highlights
         highlight_status = self._save_highlights_states()
-        # restore colors
-        self._preserve_highlights_states(new_group, highlight_status)
+        self._preserve_highlights_states(new_instance, highlight_status)
+
+        return new_instance
+
+    def _set_new_value(self) -> None:
+        """Update internal data from callable without scene animation.
+
+        Replaces the current instance with a newly created one if the data has changed.
+        Preserves highlights and alignment. Does not add to scene.
+        """
+
+        new_data = self._callable()
+        if new_data == self._data:
+            return
+
+        new_instance = self._create_new_instance()
+
+        # replace self
+        self.become(new_instance)
+        self._update_internal_state(self._callable(), new_instance)
+
+    def update_value(
+        self,
+        scene: mn.Scene,
+        animate: bool = True,
+        run_time: float = 0.2,
+    ) -> None:
+        """Replace the array visualization with updated values from the callable.
+
+        This method creates a new `Array` instance by calling the stored callable,
+        then either animates a smooth transformation or performs an instantaneous
+        update. Highlight states (container and pointer colors) are preserved.
+
+        Args:
+            scene: The Manim scene in which the animation or update will be played.
+            animate: If True, animates the transition using a Transform.
+                     If False, updates the object instantly.
+            run_time: Duration (in seconds) of the animation if `animate=True`.
+                     Has no effect if `animate=False`.
+        """
+
+        # checks
+        if not self._data and not self._callable():
+            return
+
+        # new group
+        new_instance = self._create_new_instance()
 
         # add
         if animate:
-            scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(self._callable(), new_group)
+            scene.play(mn.Transform(self, new_instance), run_time=run_time)
+            self._update_internal_state(self._callable(), new_instance)
         else:
             scene.remove(self)
-            self._update_internal_state(self._callable(), new_group)
+            self._update_internal_state(self._callable(), new_instance)
             scene.add(self)
