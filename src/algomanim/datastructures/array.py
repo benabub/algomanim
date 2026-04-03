@@ -213,7 +213,16 @@ class Array(RectangleCellsStructure):
         self._position()
 
         self._empty_value_mob.move_to(self._containers_mob.get_center())
-        self._empty_value_mob.align_to(self._containers_mob, mn.LEFT)
+
+        if self._align_left or (
+            self._anchor is not None and np.array_equal(self._anchor, mn.LEFT)
+        ):
+            self._empty_value_mob.align_to(self._containers_mob, mn.LEFT)
+        elif self._align_right or (
+            self._anchor is not None and np.array_equal(self._anchor, mn.RIGHT)
+        ):
+            self._empty_value_mob.align_to(self._containers_mob, mn.RIGHT)
+
         self.add(self._empty_value_mob)
 
     def _create_values_mob(self):
@@ -352,7 +361,7 @@ class Array(RectangleCellsStructure):
         """
 
         # checks
-        if not self._data:
+        if not self._data and not self._callable():
             return
 
         # new group
@@ -369,6 +378,7 @@ class Array(RectangleCellsStructure):
             align_bottom=self._align_bottom,
             align_screen=self._align_screen,
             screen_buff=self._screen_buff,
+            anchor=self._anchor,
             # -- font --
             font=self._font,
             font_size=self._font_size,
