@@ -320,6 +320,69 @@ class Example_array(mn.Scene):
                 array_50,
             )
 
+        def first_appear(self):
+            pause = 0.5
+            arr = [1, 2, 3]
+
+            title = RelativeText(
+                "first_appear() + remove()",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            array = Array(
+                lambda: arr,
+                font_size=40,
+            )
+            top_text = RelativeTextValue(
+                ("arr", lambda: arr, mn.WHITE),
+                mob_center=array,
+                vector=mn.UP * 1.5,
+                font_size=30,
+            )
+
+            top_text.first_appear(self)
+            self.wait(pause)
+            array.first_appear(self)
+            self.wait(pause)
+            self.remove(array)
+            self.wait(pause)
+
+            arr = [1, 2]
+            top_text.update_value(self)
+            self.wait(pause)
+            array.first_appear(self)
+            self.wait(pause)
+            self.remove(array)
+            self.wait(pause)
+
+            arr = [1]
+            top_text.update_value(self)
+            self.wait(pause)
+            array.first_appear(self)
+            self.wait(pause)
+            self.remove(array)
+            self.wait(pause)
+
+            arr = []
+            top_text.update_value(self)
+            self.wait(pause)
+            array.first_appear(self)
+            self.wait(pause)
+            self.remove(array)
+            self.wait(pause)
+
+            arr = [1]
+            top_text.update_value(self)
+            self.wait(pause)
+            array.first_appear(self)
+            self.wait(1)
+
+            self.clear()
+
         def positioning(self):
             pause = 1
             arr = list("arr")
@@ -915,6 +978,7 @@ class Example_array(mn.Scene):
         # ========== calls ==============
 
         pyramid(self)
+        first_appear(self)
         positioning(self)
         updatevalue(self)
         highlights_1to3(self)
