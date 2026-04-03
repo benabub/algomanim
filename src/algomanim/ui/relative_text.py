@@ -71,6 +71,7 @@ class RelativeTextValue(AlgoManimBase):
         )
 
         self._vars = vars
+        self._data = [tpl[1]() for tpl in vars]
         # --- font ---
         self._font = font
         self._font_size = font_size
@@ -108,17 +109,14 @@ class RelativeTextValue(AlgoManimBase):
 
         self._position()
 
-    def update_value(self, scene: mn.Scene, time=0.1, animate: bool = True):
-        """Update text values with current variable values.
+    def _create_new_instance(self) -> "RelativeTextValue":
+        """Create a new RelativeTextValue instance with current variable values.
 
-        Args:
-            scene: The scene to play animations in.
-            time: Duration of animation if animate=True.
-            animate: Whether to animate the update.
+        Returns:
+            New RelativeTextValue instance with the same configuration and fresh data.
         """
-
-        # create a new object with the same parameters
-        new_group = RelativeTextValue(
+        # create new instance
+        new_instance = RelativeTextValue(
             *self._vars,
             # --- position ---
             mob_center=self._mob_center,
@@ -129,6 +127,7 @@ class RelativeTextValue(AlgoManimBase):
             align_bottom=self._align_bottom,
             align_screen=self._align_screen,
             screen_buff=self._screen_buff,
+            anchor=self._anchor,
             # --- font ---
             font=self._font,
             font_size=self._font_size,
@@ -139,17 +138,47 @@ class RelativeTextValue(AlgoManimBase):
             items_align_edge=self._items_align_edge,
         )
 
+        # copy anchor alignment
         if self._anchor is not None:
             if np.array_equal(self._anchor, mn.LEFT):
-                new_group.align_to(self.get_left(), mn.LEFT)
+                new_instance.align_to(self.get_left(), mn.LEFT)
             else:
-                new_group.align_to(self.get_right(), mn.RIGHT)
+                new_instance.align_to(self.get_right(), mn.RIGHT)
+
+        return new_instance
+
+    def _set_new_value(self) -> None:
+        """Update internal data from callables without scene animation.
+
+        Replaces the current instance with a newly created one if any value has changed.
+        Does not add to scene.
+        """
+
+        new_data = [tpl[1]() for tpl in self._vars]
+        if new_data == self._data:
+            return
+
+        new_instance = self._create_new_instance()
+
+        # replace self
+        self.become(new_instance)
+
+    def update_value(self, scene: mn.Scene, time=0.1, animate: bool = True):
+        """Update text values with current variable values.
+
+        Args:
+            scene: The scene to play animations in.
+            time: Duration of animation if animate=True.
+            animate: Whether to animate the update.
+        """
+
+        new_instance = self._create_new_instance()
 
         if animate:
-            scene.play(mn.Transform(self, new_group), run_time=time)
+            scene.play(mn.Transform(self, new_instance), run_time=time)
         else:
             scene.remove(self)
-            self.become(new_group)
+            self.become(new_instance)
             scene.add(self)
 
 
