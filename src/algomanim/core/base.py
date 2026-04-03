@@ -89,12 +89,10 @@ class AlgoManimBase(mn.VGroup):
         self._align_screen = align_screen
         self._screen_buff = screen_buff
 
-    # TODO: make mobs already updated to their values
     def first_appear(
         self,
         scene: mn.Scene,
         time=0.5,
-        new_value: Any = None,
     ):
         """Animate the initial appearance in scene.
 
@@ -103,8 +101,8 @@ class AlgoManimBase(mn.VGroup):
             time: Duration of the fade-in animation.
         """
 
-        if new_value:
-            self._set_new_value(new_value)
+        if hasattr(self, "_set_new_value"):
+            self._set_new_value()
 
         scene.play(mn.FadeIn(self), run_time=time)
 
