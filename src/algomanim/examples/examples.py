@@ -171,6 +171,84 @@ return arr
         self.renderer.file_writer.output_file = f"media/{self.__class__.__name__}.mp4"  # type: ignore
 
 
+class Example_text(mn.Scene):
+    def construct(self):
+        self.camera.background_color = mn.GREY  # type: ignore
+
+        def first_appear(self):
+            pause = 0.5
+            s = "abc"
+
+            title = RelativeText(
+                "first_appear() + remove()",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            text = RelativeTextValue(
+                ("text", lambda: s, mn.WHITE),
+                font_size=40,
+            )
+
+            top_text = RelativeTextValue(
+                ("text", lambda: s, mn.WHITE),
+                mob_center=text,
+                vector=mn.UP * 1.5,
+                font_size=30,
+            )
+
+            top_text.first_appear(self)
+            self.wait(pause)
+            text.first_appear(self)
+            self.wait(pause)
+            self.remove(text)
+            self.wait(pause)
+
+            s = "ab"
+            top_text.update_value(self)
+            self.wait(pause)
+            text.first_appear(self)
+            self.wait(pause)
+            self.remove(text)
+            self.wait(pause)
+
+            s = "a"
+            top_text.update_value(self)
+            self.wait(pause)
+            text.first_appear(self)
+            self.wait(pause)
+            self.remove(text)
+            self.wait(pause)
+
+            s = ""
+            top_text.update_value(self)
+            self.wait(pause)
+            text.first_appear(self)
+            self.wait(pause)
+            self.remove(text)
+            self.wait(pause)
+
+            s = "a"
+            top_text.update_value(self)
+            self.wait(pause)
+            text.first_appear(self)
+            self.wait(1)
+
+            self.clear()
+
+        # ========== calls ==============
+
+        first_appear(self)
+
+        # ========== finish ==============
+
+        self.wait(1)
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
+
+
 class Example_array(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
