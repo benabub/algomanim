@@ -239,9 +239,85 @@ class Example_text(mn.Scene):
 
             self.clear()
 
+        def group_appear(self):
+            pause = 0.5
+            s = "abc"
+
+            title = RelativeText(
+                "first_appear() + remove()",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            text_1 = RelativeTextValue(
+                ("text", lambda: s, mn.RED),
+                font_size=40,
+                vector=mn.UP,
+            )
+            text_2 = RelativeTextValue(
+                ("text", lambda: s, mn.BLUE),
+                font_size=40,
+            )
+            text_3 = RelativeTextValue(
+                ("text", lambda: s, mn.GREEN),
+                ("text", lambda: s, mn.GREEN),
+                vector=mn.DOWN,
+                font_size=40,
+            )
+
+            top_text = RelativeTextValue(
+                ("text", lambda: s, mn.BLACK),
+                font_size=40,
+                align_screen=mn.UP,
+                screen_buff=1,
+            )
+
+            top_text.first_appear(self)
+            self.wait(pause)
+            text_1.group_appear(self, text_2, text_3)
+            self.wait(pause)
+            self.remove(text_1, text_2, text_3)
+            self.wait(pause)
+
+            s = "ab"
+            top_text.update_value(self)
+            self.wait(pause)
+            text_1.group_appear(self, text_2, text_3)
+            self.wait(pause)
+            self.remove(text_1, text_2, text_3)
+            self.wait(pause)
+
+            s = "a"
+            top_text.update_value(self)
+            self.wait(pause)
+            text_1.group_appear(self, text_2, text_3)
+            self.wait(pause)
+            self.remove(text_1, text_2, text_3)
+            self.wait(pause)
+
+            s = ""
+            top_text.update_value(self)
+            self.wait(pause)
+            text_1.group_appear(self, text_2, text_3)
+            self.wait(pause)
+            self.remove(text_1, text_2, text_3)
+            self.wait(pause)
+
+            s = "a"
+            top_text.update_value(self)
+            self.wait(pause)
+            text_1.group_appear(self, text_2, text_3)
+            self.wait(1)
+
+            self.clear()
+
         # ========== calls ==============
 
         first_appear(self)
+        group_appear(self)
 
         # ========== finish ==============
 
