@@ -154,10 +154,6 @@ class RelativeTextValue(AlgoManimBase):
         Does not add to scene.
         """
 
-        new_data = [tpl[1]() for tpl in self._vars]
-        if new_data == self._data:
-            return
-
         new_instance = self._create_new_instance()
 
         # replace self
