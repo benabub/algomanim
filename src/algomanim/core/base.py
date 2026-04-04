@@ -10,7 +10,6 @@ Manim use notes:
     for unknown reason (artifacts are located in mn.ORIGIN)
 """
 
-from typing import Any
 import numpy as np
 import manim as mn
 

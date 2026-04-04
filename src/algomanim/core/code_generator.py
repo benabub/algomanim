@@ -276,25 +276,30 @@ class CodeGenerator:
         indent: str,
         sound: str,
         scene_arg: str,
-        line_number: int,
         is_last: bool,
+        *line_numbers: int,
     ) -> str:
-        """Generate a code block for highlighting a line in CodeBlock.
+        """Generate a code block for highlighting lines in CodeBlock.
 
         Args:
             indent: Indentation string for the block.
             sound: Sound type ('step', 'cycle', etc.).
             scene_arg: Scene argument string (empty or "self, ").
-            line_number: Line number to highlight.
             is_last: Whether this is the last highlight in a sequence.
+            *line_numbers: Line numbers to highlight (one or more).
 
         Returns:
             Formatted string containing the highlight block.
         """
+
         with_line = indent + f"with sound({sound}{Config.suffix_map[is_last]}"
+        line_numbers_str = ", ".join(map(str, line_numbers))
         code_line = (
-            indent + Config.tab + f"code_block.highlight({scene_arg}{line_number})\n"
+            indent
+            + Config.tab
+            + f"code_block.highlight({scene_arg}{line_numbers_str})\n"
         )
+
         return with_line + code_line
 
     def _if_highlight_pair(
@@ -425,6 +430,7 @@ class CodeGenerator:
         line_number = 0
 
         add_block_list = ["\n"]
+        line_numbers_list = []
 
         # --------- main iterating -------------
 
@@ -437,6 +443,12 @@ class CodeGenerator:
             # --------- line analyse -------------
 
             if not line or line.startswith("#"):
+                line_number += 1
+                continue
+
+            if line.endswith("=i"):
+                add_block_list.append(edge_indent + line[:-3] + "\n")
+                line_numbers_list.append(line_number)
                 line_number += 1
                 continue
 
@@ -503,8 +515,8 @@ class CodeGenerator:
                         edge_indent + tab,
                         "cycle",
                         scene_arg,
-                        line_number,
                         not inline_commands,
+                        line_number,
                     )
                     add_block_list.append(highlight_pair)
 
@@ -518,8 +530,8 @@ class CodeGenerator:
                         edge_indent,
                         "step",
                         scene_arg,
-                        line_number,
                         not inline_commands,
+                        line_number,
                     )
                     add_block_list.append(highlight_pair)
 
@@ -535,8 +547,8 @@ class CodeGenerator:
                         edge_indent + tab,
                         "cycle",
                         scene_arg,
-                        line_number,
                         not inline_commands,
+                        line_number,
                     )
                     add_block_list.append(highlight_pair)
 
@@ -552,8 +564,8 @@ class CodeGenerator:
                         edge_indent + tab,
                         "cycle",
                         scene_arg,
-                        line_number,
                         False,
+                        line_number,
                     )
                     add_block_list.append(highlight_pair)
 
@@ -572,8 +584,8 @@ class CodeGenerator:
                         edge_indent,
                         "step",
                         scene_arg,
-                        line_number,
                         False,
+                        line_number,
                     )
                     add_block_list.append(highlight_pair)
 
@@ -586,15 +598,30 @@ class CodeGenerator:
 
             else:  # if not statement_line -> start of block
                 add_block_list.append(edge_indent + line + "\n")
-                add_block_list.append(
-                    self._get_highlight_pair(
-                        edge_indent,
-                        "step",
-                        scene_arg,
-                        line_number,
-                        not inline_commands,
+
+                if not line_numbers_list:
+                    add_block_list.append(
+                        self._get_highlight_pair(
+                            edge_indent,
+                            "step",
+                            scene_arg,
+                            not inline_commands,
+                            line_number,
+                        )
                     )
-                )
+                else:
+                    line_numbers_list.append(line_number)
+                    add_block_list.append(
+                        self._get_highlight_pair(
+                            edge_indent,
+                            "step",
+                            scene_arg,
+                            not inline_commands,
+                            *line_numbers_list,
+                        )
+                    )
+                    line_numbers_list = []
+
                 if not inline_commands:
                     add_block_list.append("\n")
 
