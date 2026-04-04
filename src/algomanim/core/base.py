@@ -116,6 +116,13 @@ class AlgoManimBase(mn.VGroup):
             time: Duration of the fade-in animation for all objects.
         """
 
+        if hasattr(self, "_set_new_value"):
+            self._set_new_value()
+
+        for mob in mobjects:
+            if hasattr(mob, "_set_new_value"):
+                mob._set_new_value()
+
         animations = [mn.FadeIn(self)] + [mn.FadeIn(mob) for mob in mobjects]
         scene.play(*animations, run_time=time)
 
