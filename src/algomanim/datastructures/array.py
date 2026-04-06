@@ -200,14 +200,16 @@ class Array(RectangleCellsStructure):
 
         self._empty_value_mob = mn.Text("[]", **self._text_config())
 
-        self._containers_mob = mn.Rectangle(
-            height=self._cell_height,
-            width=self._get_cell_width(
-                self._empty_value_mob, self._top_bottom_buff, self._cell_height
-            ),
-            color=self._bg_color,
-            fill_color=self._fill_color,
-            fill_opacity=1.0,
+        self._containers_mob = mn.VGroup(
+            mn.Rectangle(
+                height=self._cell_height,
+                width=self._get_cell_width(
+                    self._empty_value_mob, self._top_bottom_buff, self._cell_height
+                ),
+                color=self._bg_color,
+                fill_color=self._fill_color,
+                fill_opacity=1.0,
+            )
         )
         self.add(self._containers_mob)
         self._position()

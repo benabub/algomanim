@@ -528,7 +528,7 @@ class CodeGenerator:
                 ):
                     highlight_pair = self._get_highlight_pair(
                         edge_indent,
-                        "step",
+                        "fail",
                         scene_arg,
                         not inline_commands,
                         line_number,
