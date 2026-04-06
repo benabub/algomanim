@@ -723,7 +723,7 @@ class Example_array(mn.Scene):
             self.wait(pause)
             self.clear()
 
-        def updatevalue(self):
+        def update_value(self):
             pause = 0.5
             center = Array(lambda: list("mob_center"), font_size=50)
             text_title = RelativeText(
@@ -895,6 +895,86 @@ class Example_array(mn.Scene):
             self.wait(pause)
 
             self.clear()
+
+        def frame_import(self):
+            pause = 0.5
+
+            title = RelativeText(
+                "frame_from import",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=1,
+            )
+            self.add(title)
+
+            base_list = [100, 100, 100, 100, 100]
+            base = Array(
+                lambda: base_list,
+                font_size=35,
+                vector=mn.UP * 1 + mn.RIGHT * 1,
+            )
+            base_text = RelativeText("base array", font_size=30, mob_center=base)
+            base_text.next_to(base, mn.LEFT, buff=0.5)
+            base.group_appear(self, base_text)
+            self.wait(pause)
+
+            donor_list = [0, 0, 0, 0, 0]
+            donor = Array(
+                lambda: donor_list,
+                font_size=35,
+                mob_center=base,
+                align_left=base,
+                vector=mn.DOWN * 2,
+                frame_from=base,
+            )
+            donor_text = RelativeText(
+                "frame donor array", font_size=30, mob_center=base
+            )
+            donor_text.next_to(donor, mn.LEFT, buff=0.5)
+            donor.group_appear(self, donor_text)
+            self.wait(pause)
+
+            func_text = RelativeText(
+                "update_value()",
+                font_size=40,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            self.add(func_text)
+            self.wait(pause)
+
+            donor_list = [10, 10, 10, 10, 10]
+            donor.update_value(self)
+            self.wait(pause)
+
+            donor_list = [100, 100, 100, 100, 100]
+            donor.update_value(self)
+            self.wait(pause)
+
+            donor_list = [1000, 1000, 1000, 1000, 1000]
+            donor.update_value(self)
+            self.wait(pause)
+
+            donor_list = [0, 0, 0, 0, 0]
+            donor.update_value(self)
+            self.wait(pause)
+
+            base_list = [10, 10, 10, 10, 10]
+            base.update_value(self)
+            donor.update_value(self)
+            self.wait(pause)
+
+            base_list = [1, 1, 1, 1, 1]
+            base.update_value(self)
+            donor.update_value(self)
+            self.wait(pause)
+
+            base_list = [10, 10, 10, 10, 10]
+            base.update_value(self)
+            donor.update_value(self)
+            self.wait(pause)
 
         def highlights_1to3(self):
             pause = 0.5
@@ -1131,14 +1211,15 @@ class Example_array(mn.Scene):
 
         # ========== calls ==============
 
-        pyramid(self)
-        first_appear(self)
-        positioning(self)
-        updatevalue(self)
-        highlights_1to3(self)
-        monocolor(self)
-        highlight_on_value(self)
-        mix(self)
+        # pyramid(self)
+        # first_appear(self)
+        # positioning(self)
+        # update_value(self)
+        frame_import(self)
+        # highlights_1to3(self)
+        # monocolor(self)
+        # highlight_on_value(self)
+        # mix(self)
 
         # ========== finish ==============
 
