@@ -913,6 +913,8 @@ class Example_array(mn.Scene):
                 lambda: base_list,
                 font_size=35,
                 vector=mn.UP * 1 + mn.RIGHT * 1,
+                container_color=mn.BLUE,
+                fill_color=mn.PINK,
             )
             base_text = RelativeText("base array", font_size=30, mob_center=base)
             base_text.next_to(base, mn.LEFT, buff=0.5)
@@ -927,6 +929,7 @@ class Example_array(mn.Scene):
                 align_left=base,
                 vector=mn.DOWN * 2,
                 frame_from=base,
+                fill_color=mn.DARK_BROWN,
             )
             donor_text = RelativeText(
                 "frame donor array", font_size=30, mob_center=base

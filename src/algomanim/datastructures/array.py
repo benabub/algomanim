@@ -8,11 +8,13 @@ from algomanim.core.rectangle_cells import RectangleCellsStructure
 
 
 class Array(RectangleCellsStructure):
+    # TODO:
     """Array visualization as a VGroup of cells with values and pointers.
 
     Args:
         value: Callable that returns a list of values to visualize.
         pointers: Whether to create and display pointers.
+        frame_from: Optional Array instance to copy container frames from.
         vector: Position offset from mob_center.
         font: Font family for text elements.
         font_size: Font size for text, scales the whole mobject.
@@ -50,6 +52,8 @@ class Array(RectangleCellsStructure):
         value: Callable[[], list],
         # ---- pointers ----
         pointers: bool = True,
+        # ---- frame ----
+        frame_from: "Array | None " = None,
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -109,6 +113,7 @@ class Array(RectangleCellsStructure):
         self._callable = value
         self._data = value().copy()
         self._pointers = pointers
+        self._frame_from = frame_from
         # -- position --
         self._vector = vector
         self._mob_center = mob_center
@@ -157,13 +162,8 @@ class Array(RectangleCellsStructure):
             return
 
         self._values_mob = self._create_values_mob()
-        self._containers_mob = self._create_containers_mob()
 
-        # arrange cells in a row
-        self._containers_mob.arrange(mn.RIGHT, buff=0.1)
-
-        self.add(self._containers_mob)
-        self._position()
+        self._set_containers_mob()
 
         # move text mobjects in containers
         self._position_values_in_containers()
@@ -238,6 +238,42 @@ class Array(RectangleCellsStructure):
             *[mn.Text(str(val), **self._text_config()) for val in self._data]
         )
 
+    def _set_containers_mob(self) -> None:
+        """Create or import container mobjects for array cells.
+
+        If frame_from is provided, imports containers from another Array instance.
+        Otherwise creates new containers. Adds to scene and applies positioning.
+        """
+        if self._frame_from:
+            self._import_frame()
+        else:
+            self._containers_mob = self._create_containers_mob()
+
+        self.add(self._containers_mob)
+        self._position()
+
+    def _import_frame(self) -> None:
+        """Import container frames from another Array instance.
+
+        Copies containers from frame_from, validates length, and applies
+        current container and fill colors to all cells.
+        """
+        if self._frame_from:
+            import_frame = self._frame_from._containers_mob.copy()
+
+            if len(import_frame) != len(self._data):
+                raise ValueError("Lenght of base Array for frame import is not equal")
+
+            if import_frame[0].color != self._container_color:
+                for cell in import_frame:
+                    cell.color = self._container_color  # type: ignore
+
+            if import_frame[0].fill_color != self._fill_color:
+                for cell in import_frame:
+                    cell.fill_color = self._fill_color  # type: ignore
+
+            self._containers_mob = import_frame
+
     def _create_containers_mob(self):
         """Create rectangle mobjects for array cells.
 
@@ -258,7 +294,12 @@ class Array(RectangleCellsStructure):
             )
             cells_mobs_list.append(cell_mob)
 
-        return mn.VGroup(*cells_mobs_list)
+        mob_group = mn.VGroup(*cells_mobs_list)
+
+        # arrange cells in a row
+        mob_group.arrange(mn.RIGHT, buff=0.1)
+
+        return mob_group
 
     def _position_values_in_containers(
         self,
@@ -352,6 +393,8 @@ class Array(RectangleCellsStructure):
             self._callable,
             # ---- pointers ----
             pointers=self._pointers,
+            # ---- frame ----
+            frame_from=self._frame_from,
             # -- position --
             vector=self._vector,
             mob_center=self._mob_center,
