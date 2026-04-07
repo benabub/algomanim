@@ -8,7 +8,6 @@ from algomanim.core.rectangle_cells import RectangleCellsStructure
 
 
 class Array(RectangleCellsStructure):
-    # TODO:
     """Array visualization as a VGroup of cells with values and pointers.
 
     Args:
@@ -444,10 +443,6 @@ class Array(RectangleCellsStructure):
         Replaces the current instance with a newly created one if the data has changed.
         Preserves highlights and alignment. Does not add to scene.
         """
-
-        new_data = self._callable()
-        if new_data == self._data:
-            return
 
         new_instance = self._create_new_instance()
 
