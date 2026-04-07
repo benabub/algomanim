@@ -116,6 +116,8 @@ class String(RectangleCellsStructure):
         self._align_right = align_right
         self._align_top = align_top
         self._align_bottom = align_bottom
+        self._align_screen = align_screen
+        self._screen_buff = screen_buff
         # -- font --
         self._font = font
         self._font_size = font_size
@@ -333,33 +335,13 @@ class String(RectangleCellsStructure):
                     buff=self._bottom_buff,
                 )
 
-    def update_value(
-        self,
-        scene: mn.Scene,
-        animate: bool = True,
-        run_time: float = 0.2,
-    ) -> None:
-        """Replace the string visualization with a new string value.
+    def _create_new_instance(self) -> "String":
+        """Create a new String instance with current parameters and updated data.
 
-        This method creates a new `String` instance with `new_value` and either
-        animates a smooth transformation from the old to the new state, or performs
-        an instantaneous update. Highlight states (container and pointer colors)
-        are preserved across the update. The left edge alignment of quotes and
-        character cells is maintained if `left_aligned=True`.
-
-        Args:
-            scene: The Manim scene in which the animation or update will be played.
-            animate: If True, animates the transition using a Transform.
-                     If False, updates the object instantly.
-            run_time: Duration (in seconds) of the animation if `animate=True`.
-                     Has no effect if `animate=False`.
+        Returns:
+            New String instance with the same configuration and fresh data from callable.
         """
-
-        # checks
-        if not self._data and not self._callable():
-            return
-
-        new_group = String(
+        new_instance = String(
             self._callable,
             # ---- pointers ----
             pointers=self._pointers,
@@ -372,6 +354,7 @@ class String(RectangleCellsStructure):
             align_bottom=self._align_bottom,
             align_screen=self._align_screen,
             screen_buff=self._screen_buff,
+            anchor=self._anchor,
             # -- font --
             font=self._font,
             font_size=self._font_size,
@@ -395,35 +378,75 @@ class String(RectangleCellsStructure):
         if self._anchor is not None:
             if np.array_equal(self._anchor, mn.LEFT):
                 if self._data and self._callable():
-                    new_group.align_to(self.get_left(), mn.LEFT)
+                    new_instance.align_to(self.get_left(), mn.LEFT)
                 elif self._data and not self._callable():
-                    new_group.align_to(self._containers_mob.get_left(), mn.LEFT)
+                    new_instance.align_to(self._containers_mob.get_left(), mn.LEFT)
                 elif not self._data and self._callable():
                     target = (
                         self._containers_mob.get_left() + mn.LEFT * self._cell_height
                     )
-                    new_group.align_to(target, mn.LEFT)
+                    new_instance.align_to(target, mn.LEFT)
             elif np.array_equal(self._anchor, mn.RIGHT):
                 if self._data and self._callable():
-                    new_group.align_to(self.get_right(), mn.RIGHT)
+                    new_instance.align_to(self.get_right(), mn.RIGHT)
                 elif self._data and not self._callable():
-                    new_group.align_to(self._containers_mob.get_right(), mn.RIGHT)
+                    new_instance.align_to(self._containers_mob.get_right(), mn.RIGHT)
                 elif not self._data and self._callable():
                     target = (
                         self._containers_mob.get_right() + mn.RIGHT * self._cell_height
                     )
-                    new_group.align_to(target, mn.RIGHT)
+                    new_instance.align_to(target, mn.RIGHT)
 
         # save old group status
         highlight_status = self._save_highlights_states()
         # restore colors
-        self._preserve_highlights_states(new_group, highlight_status)
+        self._preserve_highlights_states(new_instance, highlight_status)
+
+        return new_instance
+
+    def _set_new_value(self) -> None:
+        """Update internal data from callable without scene animation.
+
+        Replaces the current instance with a newly created one.
+        Preserves highlights and alignment. Does not add to scene.
+        """
+        new_instance = self._create_new_instance()
+
+        # replace self
+        self.become(new_instance)
+        self._update_internal_state(self._callable(), new_instance)
+
+    def update_value(
+        self,
+        scene: mn.Scene,
+        animate: bool = True,
+        run_time: float = 0.2,
+    ) -> None:
+        """Replace the string visualization with updated value from the callable.
+
+        This method creates a new `String` instance by calling the stored callable,
+        then either animates a smooth transformation or performs an instantaneous
+        update. Highlight states (container and pointer colors) are preserved.
+
+        Args:
+            scene: The Manim scene in which the animation or update will be played.
+            animate: If True, animates the transition using a Transform.
+                     If False, updates the object instantly.
+            run_time: Duration of the animation if `animate=True`.
+        """
+
+        # checks
+        if not self._data and not self._callable():
+            return
+
+        # new group
+        new_instance = self._create_new_instance()
 
         # add
         if animate:
-            scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(self._callable(), new_group)
+            scene.play(mn.Transform(self, new_instance), run_time=run_time)
+            self._update_internal_state(self._callable(), new_instance)
         else:
             scene.remove(self)
-            self._update_internal_state(self._callable(), new_group)
+            self._update_internal_state(self._callable(), new_instance)
             scene.add(self)

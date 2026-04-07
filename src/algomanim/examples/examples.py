@@ -2000,14 +2000,14 @@ class Example_string(mn.Scene):
 
         # ========== calls ==============
 
-        # pyramid(self)
+        pyramid(self)
         first_appear(self)
-        # positioning(self)
-        # updatevalue(self)
-        # highlights_1to3(self)
-        # highlights_monocolor(self)
-        # highlight_on_value(self)
-        # mix(self)
+        positioning(self)
+        updatevalue(self)
+        highlights_1to3(self)
+        highlights_monocolor(self)
+        highlight_on_value(self)
+        mix(self)
 
         # ========== finish ==============
 
