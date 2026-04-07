@@ -1371,6 +1371,69 @@ class Example_string(mn.Scene):
             self.wait(1)
             self.clear()
 
+        def first_appear(self):
+            pause = 0.5
+            s = "abc"
+
+            title = RelativeText(
+                "first_appear() + remove()",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            string = String(
+                lambda: s,
+                font_size=40,
+            )
+            top_text = RelativeTextValue(
+                ("string", lambda: s, mn.WHITE),
+                mob_center=string,
+                vector=mn.UP * 1.5,
+                font_size=30,
+            )
+
+            top_text.first_appear(self)
+            self.wait(pause)
+            string.first_appear(self)
+            self.wait(pause)
+            self.remove(string)
+            self.wait(pause)
+
+            s = "ab"
+            top_text.update_value(self)
+            self.wait(pause)
+            string.first_appear(self)
+            self.wait(pause)
+            self.remove(string)
+            self.wait(pause)
+
+            s = "a"
+            top_text.update_value(self)
+            self.wait(pause)
+            string.first_appear(self)
+            self.wait(pause)
+            self.remove(string)
+            self.wait(pause)
+
+            s = ""
+            top_text.update_value(self)
+            self.wait(pause)
+            string.first_appear(self)
+            self.wait(pause)
+            self.remove(string)
+            self.wait(pause)
+
+            s = "a"
+            top_text.update_value(self)
+            self.wait(pause)
+            string.first_appear(self)
+            self.wait(1)
+
+            self.clear()
+
         def positioning(self):
             pause = 1
             string = "str"
@@ -1937,13 +2000,14 @@ class Example_string(mn.Scene):
 
         # ========== calls ==============
 
-        pyramid(self)
-        positioning(self)
-        updatevalue(self)
-        highlights_1to3(self)
-        highlights_monocolor(self)
-        highlight_on_value(self)
-        mix(self)
+        # pyramid(self)
+        first_appear(self)
+        # positioning(self)
+        # updatevalue(self)
+        # highlights_1to3(self)
+        # highlights_monocolor(self)
+        # highlight_on_value(self)
+        # mix(self)
 
         # ========== finish ==============
 
