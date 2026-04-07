@@ -1,3 +1,4 @@
+from typing import Callable
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -9,7 +10,7 @@ class String(RectangleCellsStructure):
     """String visualization as a VGroup of character cells with quotes.
 
     Args:
-        string: Text string to visualize.
+        value: Callable that returns a string to visualize.
         pointers: Whether to create and display pointers.
         vector: Position offset from mob_center.
         font: Font family for text elements.
@@ -46,7 +47,7 @@ class String(RectangleCellsStructure):
 
     def __init__(
         self,
-        string: str,
+        value: Callable[[], str],
         # ---- pointers ----
         pointers: bool = True,
         # ---- position ----
@@ -105,7 +106,8 @@ class String(RectangleCellsStructure):
         )
 
         # create class instance fields
-        self._data = string
+        self._callable = value
+        self._data = value()
         self._pointers = pointers
         # -- position --
         self._vector = vector
@@ -334,7 +336,6 @@ class String(RectangleCellsStructure):
     def update_value(
         self,
         scene: mn.Scene,
-        new_value: str,
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
@@ -348,7 +349,6 @@ class String(RectangleCellsStructure):
 
         Args:
             scene: The Manim scene in which the animation or update will be played.
-            new_value: The new string value to display.
             animate: If True, animates the transition using a Transform.
                      If False, updates the object instantly.
             run_time: Duration (in seconds) of the animation if `animate=True`.
@@ -356,11 +356,11 @@ class String(RectangleCellsStructure):
         """
 
         # checks
-        if not self._data and not new_value:
+        if not self._data and not self._callable():
             return
 
         new_group = String(
-            new_value,
+            self._callable,
             # ---- pointers ----
             pointers=self._pointers,
             # -- position --
@@ -394,21 +394,21 @@ class String(RectangleCellsStructure):
 
         if self._anchor is not None:
             if np.array_equal(self._anchor, mn.LEFT):
-                if self._data and new_value:
+                if self._data and self._callable():
                     new_group.align_to(self.get_left(), mn.LEFT)
-                elif self._data and not new_value:
+                elif self._data and not self._callable():
                     new_group.align_to(self._containers_mob.get_left(), mn.LEFT)
-                elif not self._data and new_value:
+                elif not self._data and self._callable():
                     target = (
                         self._containers_mob.get_left() + mn.LEFT * self._cell_height
                     )
                     new_group.align_to(target, mn.LEFT)
             elif np.array_equal(self._anchor, mn.RIGHT):
-                if self._data and new_value:
+                if self._data and self._callable():
                     new_group.align_to(self.get_right(), mn.RIGHT)
-                elif self._data and not new_value:
+                elif self._data and not self._callable():
                     new_group.align_to(self._containers_mob.get_right(), mn.RIGHT)
-                elif not self._data and new_value:
+                elif not self._data and self._callable():
                     target = (
                         self._containers_mob.get_right() + mn.RIGHT * self._cell_height
                     )
@@ -422,8 +422,8 @@ class String(RectangleCellsStructure):
         # add
         if animate:
             scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(new_value, new_group)
+            self._update_internal_state(self._callable(), new_group)
         else:
             scene.remove(self)
-            self._update_internal_state(new_value, new_group)
+            self._update_internal_state(self._callable(), new_group)
             scene.add(self)
