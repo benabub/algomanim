@@ -537,6 +537,135 @@ class Example_array(mn.Scene):
 
             self.clear()
 
+        def direction(self):
+
+            pause = 0.5
+            arr = [1, 2, 3]
+
+            title = RelativeText(
+                "direction param",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            arr_text = RelativeTextValue(
+                ("arr", lambda: arr, mn.WHITE),
+                font_size=30,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            arr_text.first_appear(self)
+            self.wait(pause)
+
+            array1 = Array(
+                lambda: arr,
+                font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            text1 = RelativeText(
+                "mn.RIGHT",
+                font_size=30,
+                mob_center=array1,
+                align_left=array1,
+                vector=mn.UP * 2,
+            )
+            array1.group_appear(self, text1)
+            self.wait(pause)
+
+            array2 = Array(
+                lambda: arr,
+                direction=mn.UP,
+                font_size=40,
+                vector=mn.LEFT * 1,
+            )
+            text2 = RelativeText(
+                "mn.UP",
+                font_size=30,
+                align_bottom=text1,
+                align_left=array2,
+            )
+            array2.group_appear(self, text2)
+            self.wait(pause)
+
+            array3 = Array(
+                lambda: arr,
+                direction=mn.DOWN,
+                font_size=40,
+                vector=mn.RIGHT * 3,
+            )
+            text3 = RelativeText(
+                "mn.DOWN",
+                font_size=30,
+                align_bottom=text1,
+                align_left=array3,
+            )
+            array3.group_appear(self, text3)
+            self.wait(pause)
+
+            update_text = RelativeText(
+                "update_value()",
+                font_size=30,
+                text_color=mn.BLACK,
+                mob_center=title,
+                vector=mn.DOWN,
+            )
+            update_text.first_appear(self)
+            self.wait(pause)
+
+            arr = [1, 2]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            self.wait(pause)
+
+            arr = [1]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            self.wait(pause)
+
+            arr = []
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            self.wait(pause)
+
+            arr = [1]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            self.wait(1)
+
+            arr = [1, 2]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            self.wait(1)
+
+            arr = [1, 2, 3]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            self.wait(1)
+
+            self.clear()
+
         def positioning(self):
             pause = 1
             arr = list("arr")
@@ -748,7 +877,7 @@ class Example_array(mn.Scene):
                 lambda: arr,
                 mob_center=arr_1,
                 vector=mn.UP * 0.7,
-                anchor=mn.RIGHT,
+                anchor="end",
                 pointers=False,
                 font_size=35,
             )
@@ -756,7 +885,7 @@ class Example_array(mn.Scene):
                 lambda: arr,
                 mob_center=arr_2,
                 vector=mn.UP * 0.7,
-                anchor=mn.LEFT,
+                anchor="start",
                 pointers=False,
                 font_size=35,
             )
@@ -1214,15 +1343,16 @@ class Example_array(mn.Scene):
 
         # ========== calls ==============
 
-        pyramid(self)
-        first_appear(self)
-        positioning(self)
-        update_value(self)
-        frame_import(self)
-        highlights_1to3(self)
-        monocolor(self)
-        highlight_on_value(self)
-        mix(self)
+        # pyramid(self)
+        # first_appear(self)
+        direction(self)
+        # positioning(self)
+        # update_value(self)
+        # frame_import(self)
+        # highlights_1to3(self)
+        # monocolor(self)
+        # highlight_on_value(self)
+        # mix(self)
 
         # ========== finish ==============
 
