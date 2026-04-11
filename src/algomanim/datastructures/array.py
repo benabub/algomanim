@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Literal
 
 import numpy as np
 import manim as mn
@@ -12,6 +12,7 @@ class Array(RectangleCellsStructure):
 
     Args:
         value: Callable that returns a list of values to visualize.
+        direction: Direction vector for array orientation.
         pointers: Whether to create and display pointers.
         frame_from: Optional Array instance to copy container frames from.
         vector: Position offset from mob_center.
@@ -38,6 +39,10 @@ class Array(RectangleCellsStructure):
         bottom_buff: Bottom alignment buffer for most characters.
         deep_bottom_buff: Deep bottom alignment for descending characters.
 
+    Raises:
+        ValueError: If direction is not RIGHT, UP, or DOWN.
+        ValueError: If anchor is not "start", "end", or None.
+
     Note:
         Character alignment is automatically handled based on typography:
         - Top: Quotes and accents (", ', ^, `)
@@ -49,6 +54,8 @@ class Array(RectangleCellsStructure):
     def __init__(
         self,
         value: Callable[[], list],
+        # ---- direction ----
+        direction: np.ndarray = mn.RIGHT,
         # ---- pointers ----
         pointers: bool = True,
         # ---- frame ----
@@ -62,7 +69,8 @@ class Array(RectangleCellsStructure):
         align_bottom: mn.Mobject | None = None,
         align_screen: np.ndarray | None = None,
         screen_buff: float = 0.2,
-        anchor: np.ndarray | None = mn.LEFT,
+        # anchor: np.ndarray | None = mn.LEFT,
+        anchor: Literal["start", "end"] | None = "start",
         # ---- font ----
         font="",
         font_size: float = 29.5,
@@ -146,14 +154,32 @@ class Array(RectangleCellsStructure):
             self._bottom_buff = bottom_buff
             self._deep_bottom_buff = deep_bottom_buff
         # ---- anchor ----
+
+        # TODO:
+        # if not (align_left or align_right) and anchor is not None:
+        #     if not (
+        #         np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
+        #     ):
+        #         raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+        #     self._anchor = anchor
+        # else:
+        #     self._anchor = None
+
         if not (align_left or align_right) and anchor is not None:
-            if not (
-                np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
-            ):
-                raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+            if anchor not in ["start", "end"]:
+                raise ValueError("anchor must be 'start', 'end' or None")
             self._anchor = anchor
         else:
-            self._anchor = None
+            self._anchor: Literal["start", "end"] | None = None
+
+        # ---- direction ----
+        if not (
+            np.array_equal(direction, mn.RIGHT)
+            or np.array_equal(direction, mn.UP)
+            or np.array_equal(direction, mn.DOWN)
+        ):
+            raise ValueError("direction must be mn.RIGHT or mn.UP or mn.DOWN")
+        self._direction = direction
 
         # empty value
         if not self._data:
@@ -180,6 +206,24 @@ class Array(RectangleCellsStructure):
                 self._pointers_top,
                 self._pointers_bottom,
             )
+
+    def _empty_value_alignment(self):
+        """Align the empty array text "[]" within its container.
+
+        Skips alignment for vertical directions (UP/DOWN).
+        For horizontal direction, aligns based on anchor or edge alignment.
+        """
+        self._empty_value_mob.move_to(self._containers_mob.get_center())
+
+        if np.array_equal(self._direction, mn.UP) or np.array_equal(
+            self._direction, mn.DOWN
+        ):
+            return
+
+        if self._align_left or self._anchor == "start":
+            self._empty_value_mob.align_to(self._containers_mob, mn.LEFT)
+        elif self._align_right or self._anchor == "end":
+            self._empty_value_mob.align_to(self._containers_mob, mn.RIGHT)
 
     def _create_empty_array(self):
         """Create visualization for empty array.
@@ -211,18 +255,10 @@ class Array(RectangleCellsStructure):
             )
         )
         self.add(self._containers_mob)
+
         self._position()
 
-        self._empty_value_mob.move_to(self._containers_mob.get_center())
-
-        if self._align_left or (
-            self._anchor is not None and np.array_equal(self._anchor, mn.LEFT)
-        ):
-            self._empty_value_mob.align_to(self._containers_mob, mn.LEFT)
-        elif self._align_right or (
-            self._anchor is not None and np.array_equal(self._anchor, mn.RIGHT)
-        ):
-            self._empty_value_mob.align_to(self._containers_mob, mn.RIGHT)
+        self._empty_value_alignment()
 
         self.add(self._empty_value_mob)
 
@@ -296,7 +332,7 @@ class Array(RectangleCellsStructure):
         mob_group = mn.VGroup(*cells_mobs_list)
 
         # arrange cells in a row
-        mob_group.arrange(mn.RIGHT, buff=0.1)
+        mob_group.arrange(self._direction, buff=0.1)
 
         return mob_group
 
@@ -390,6 +426,7 @@ class Array(RectangleCellsStructure):
         # create new instance
         new_instance = Array(
             self._callable,
+            direction=self._direction,
             # ---- pointers ----
             pointers=self._pointers,
             # ---- frame ----
@@ -426,10 +463,21 @@ class Array(RectangleCellsStructure):
 
         # copy anchor alignment
         if self._anchor is not None:
-            if np.array_equal(self._anchor, mn.LEFT):
-                new_instance.align_to(self.get_left(), mn.LEFT)
-            else:
-                new_instance.align_to(self.get_right(), mn.RIGHT)
+            if np.array_equal(self._direction, mn.RIGHT):
+                if self._anchor == "start":
+                    new_instance.align_to(self.get_left(), mn.LEFT)
+                else:
+                    new_instance.align_to(self.get_right(), mn.RIGHT)
+            elif np.array_equal(self._direction, mn.UP):
+                if self._anchor == "start":
+                    new_instance.align_to(self.get_bottom(), mn.DOWN)
+                else:
+                    new_instance.align_to(self.get_top(), mn.UP)
+            elif np.array_equal(self._direction, mn.DOWN):
+                if self._anchor == "start":
+                    new_instance.align_to(self.get_top(), mn.UP)
+                else:
+                    new_instance.align_to(self.get_bottom(), mn.DOWN)
 
         # preserve highlights
         highlight_status = self._save_highlights_states()

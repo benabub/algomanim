@@ -6,6 +6,7 @@ from manim import ManimColor
 from algomanim.core.rectangle_cells import RectangleCellsStructure
 
 
+# TODO: add frame_from param, sync with Array
 class String(RectangleCellsStructure):
     """String visualization as a VGroup of character cells with quotes.
 
