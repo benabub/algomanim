@@ -57,7 +57,7 @@ class Array(RectangleCellsStructure):
         # ---- direction ----
         direction: np.ndarray = mn.RIGHT,
         # ---- pointers ----
-        pointers: bool = True,
+        pointers: Literal["top", "bottom", "both"] | None = "both",
         # ---- frame ----
         frame_from: "Array | None " = None,
         # ---- position ----
@@ -119,7 +119,19 @@ class Array(RectangleCellsStructure):
         # create class instance fields
         self._callable = value
         self._data = value().copy()
-        self._pointers = pointers
+        # ---- direction ----
+        if not (
+            np.array_equal(direction, mn.RIGHT)
+            or np.array_equal(direction, mn.UP)
+            or np.array_equal(direction, mn.DOWN)
+        ):
+            raise ValueError("direction must be mn.RIGHT or mn.UP or mn.DOWN")
+        self._direction = direction
+        # ---- pointers ----
+        if pointers not in ["top", "bottom", "both", None]:
+            raise ValueError("pointers must be 'top' | 'bottom' | 'both' | None")
+        self._pointers: Literal["top", "bottom", "both"] | None = pointers
+        # ---- frame ----
         self._frame_from = frame_from
         # -- position --
         self._vector = vector
@@ -154,32 +166,12 @@ class Array(RectangleCellsStructure):
             self._bottom_buff = bottom_buff
             self._deep_bottom_buff = deep_bottom_buff
         # ---- anchor ----
-
-        # TODO:
-        # if not (align_left or align_right) and anchor is not None:
-        #     if not (
-        #         np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
-        #     ):
-        #         raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
-        #     self._anchor = anchor
-        # else:
-        #     self._anchor = None
-
         if not (align_left or align_right) and anchor is not None:
             if anchor not in ["start", "end"]:
                 raise ValueError("anchor must be 'start', 'end' or None")
             self._anchor = anchor
         else:
             self._anchor: Literal["start", "end"] | None = None
-
-        # ---- direction ----
-        if not (
-            np.array_equal(direction, mn.RIGHT)
-            or np.array_equal(direction, mn.UP)
-            or np.array_equal(direction, mn.DOWN)
-        ):
-            raise ValueError("direction must be mn.RIGHT or mn.UP or mn.DOWN")
-        self._direction = direction
 
         # empty value
         if not self._data:
@@ -197,15 +189,11 @@ class Array(RectangleCellsStructure):
             self._values_mob,
         )
 
-        # pointers
-        if self._pointers:
-            self._pointers_top, self._pointers_bottom = self.create_pointers(
-                direction=self._direction
-            )
-            self.add(
-                self._pointers_top,
-                self._pointers_bottom,
-            )
+        self.set_pointers(
+            self._containers_mob,
+            self._direction,
+            self._pointers,
+        )
 
     def _empty_value_alignment(self):
         """Align the empty array text "[]" within its container.
