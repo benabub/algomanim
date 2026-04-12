@@ -200,7 +200,7 @@ class Array(RectangleCellsStructure):
         # pointers
         if self._pointers:
             self._pointers_top, self._pointers_bottom = self.create_pointers(
-                self._containers_mob
+                direction=self._direction
             )
             self.add(
                 self._pointers_top,
