@@ -896,22 +896,22 @@ class Example_array(mn.Scene):
                 vector=mn.LEFT * 4.6,
                 font_size=30,
             )
+            text_arr_3 = RelativeText(
+                "anchor='start'",
+                mob_center=arr_3,
+                vector=mn.RIGHT * 4.4,
+                font_size=30,
+            )
             text_arr_1 = RelativeText(
                 "anchor=None",
                 mob_center=arr_1,
-                vector=mn.RIGHT * 4.0,
+                align_left=text_arr_3,
                 font_size=30,
             )
             text_arr_2 = RelativeText(
-                "anchor=mn.RIGHT",
+                "anchor='end'",
                 mob_center=arr_2,
-                vector=mn.RIGHT * 4.6,
-                font_size=30,
-            )
-            text_arr_3 = RelativeText(
-                "anchor=mn.LEFT",
-                mob_center=arr_3,
-                vector=mn.RIGHT * 4.4,
+                align_left=text_arr_3,
                 font_size=30,
             )
 
@@ -1106,7 +1106,9 @@ class Example_array(mn.Scene):
             base_list = [10, 10, 10, 10, 10]
             base.update_value(self)
             donor.update_value(self)
-            self.wait(pause)
+            self.wait(1)
+
+            self.clear()
 
         def highlights_1to3(self):
             pause = 0.5
@@ -1343,16 +1345,16 @@ class Example_array(mn.Scene):
 
         # ========== calls ==============
 
-        # pyramid(self)
-        # first_appear(self)
+        pyramid(self)
+        first_appear(self)
         direction(self)
-        # positioning(self)
-        # update_value(self)
-        # frame_import(self)
-        # highlights_1to3(self)
-        # monocolor(self)
-        # highlight_on_value(self)
-        # mix(self)
+        positioning(self)
+        update_value(self)
+        frame_import(self)
+        highlights_1to3(self)
+        monocolor(self)
+        highlight_on_value(self)
+        mix(self)
 
         # ========== finish ==============
 
