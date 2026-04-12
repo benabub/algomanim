@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -183,10 +183,14 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- asserts --------
         if pos == 0:
+            if not self._pointers_top:
+                return
             pointers = self._pointers_top
             colors_dict = self._top_pointers_colors
 
         elif pos == 1:
+            if not self._pointers_bottom:
+                return
             pointers = self._pointers_bottom
             colors_dict = self._bottom_pointers_colors
 
@@ -235,44 +239,68 @@ class LinearContainerStructure(AlgoManimBase):
         new_group._apply_pointers_colors(0)
         new_group._apply_pointers_colors(1)
 
-    def create_pointers(
+    def set_pointers(
         self,
-        direction: np.ndarray = mn.RIGHT,
-    ) -> tuple[mn.VGroup, mn.VGroup]:
-        """Create pointer triangles above and below each cell in the group.
-
-        For non-horizontal directions, rotates the pointer groups around their
-        respective cells to align with the specified direction vector.
+        cell_mob: mn.VGroup,
+        direction: np.ndarray,
+        pointers: Literal["top", "bottom", "both"] | None,
+    ) -> None:
+        """Create and attach pointer triangles to cells based on direction and side.
 
         Args:
-            direction: Direction vector for pointer orientation (default: RIGHT).
-
-        Returns:
-            Tuple of (top_pointers, bottom_pointers) VGroups where each contains
-            triple triangle groups for every cell | node.
+            cell_mob: VGroup of cells to attach pointers to.
+            direction: Direction vector for pointer orientation.
+            pointers: Which pointers to create.
+                - "top": Only above/before cells.
+                - "bottom": Only below/after cells.
+                - "both": Both sides.
+                - None: No pointers.
         """
-        cell_mob = self._containers_mob
+        # -------------- checks --------------
+        if not pointers:
+            self._pointers_top = None
+            self._pointers_bottom = None
+            return
 
-        if np.allclose(direction, mn.RIGHT):
-            return self._create_horizontal_pointers(cell_mob)
+        # -------------- create pointers --------------
+        if np.allclose(direction, mn.RIGHT):  # horizontal pointers
+            pointers_top, pointers_bottom = self._create_horizontal_pointers(cell_mob)
 
-        angle = mn.angle_of_vector(direction)
+        else:  # rotate pointers
+            angle = mn.angle_of_vector(direction)
 
-        # swich top/bottom pointers
-        if direction[0] < 0:
-            extra_rotation = mn.PI
-        else:
-            extra_rotation = 0
+            # swich top/bottom pointers
+            if direction[0] < 0:
+                extra_rotation = mn.PI
+            else:
+                extra_rotation = 0
 
-        pointers_top, pointers_bottom = self._create_horizontal_pointers(cell_mob)
+            pointers_top, pointers_bottom = self._create_horizontal_pointers(cell_mob)
 
-        for i, cell in enumerate(cell_mob):
-            center = cell.get_center()
-            total_angle = angle + extra_rotation
-            pointers_top[i].rotate(total_angle, about_point=center)
-            pointers_bottom[i].rotate(total_angle, about_point=center)
+            # pointers rotation
+            for i, cell in enumerate(cell_mob):
+                center = cell.get_center()
+                total_angle = angle + extra_rotation
+                pointers_top[i].rotate(total_angle, about_point=center)
+                pointers_bottom[i].rotate(total_angle, about_point=center)
 
-        return pointers_top, pointers_bottom
+        # -------------- set pointers --------------
+        if pointers == "both":
+            self._pointers_top, self._pointers_bottom = pointers_top, pointers_bottom
+            self.add(
+                self._pointers_top,
+                self._pointers_bottom,
+            )
+        elif pointers == "top":
+            self._pointers_top, self._pointers_bottom = pointers_top, None
+            self.add(
+                self._pointers_top,
+            )
+        elif pointers == "bottom":
+            self._pointers_top, self._pointers_bottom = None, pointers_bottom
+            self.add(
+                self._pointers_bottom,
+            )
 
     def _create_horizontal_pointers(self, cell_mob: mn.VGroup):
         """Create pointer triangles for horizontal direction (direction = RIGHT).
