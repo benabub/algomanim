@@ -666,6 +666,234 @@ class Example_array(mn.Scene):
 
             self.clear()
 
+        def pointers(self):
+
+            pause = 0.5
+            arr = [1, 2, 3]
+
+            title = RelativeText(
+                "pointers param",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            s = "both"
+            p_text = RelativeTextValue(
+                ("pointers", lambda: s, mn.WHITE),
+                font_size=30,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            p_text.first_appear(self)
+            self.wait(pause)
+
+            array1 = Array(
+                lambda: arr,
+                font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            text1 = RelativeText(
+                "direction=mn.RIGHT",
+                font_size=30,
+                mob_center=array1,
+                align_left=array1,
+                vector=mn.UP * 2,
+            )
+            array1.group_appear(self, text1)
+            self.wait(pause)
+
+            array2 = Array(
+                lambda: arr,
+                direction=mn.UP,
+                font_size=40,
+                vector=mn.LEFT * 1,
+            )
+            text2 = RelativeText(
+                "direction=mn.UP",
+                font_size=30,
+                align_bottom=text1,
+                align_left=array2,
+            )
+            array2.group_appear(self, text2)
+            self.wait(pause)
+
+            array3 = Array(
+                lambda: arr,
+                direction=mn.DOWN,
+                font_size=40,
+                vector=mn.RIGHT * 3,
+            )
+            text3 = RelativeText(
+                "direction=mn.DOWN",
+                font_size=30,
+                align_bottom=text1,
+                align_left=array3,
+            )
+            array3.group_appear(self, text3)
+            self.wait(pause)
+
+            array1.pointers(0, 1, 2)
+            array1.pointers(1, pos=1, color_1=mn.PINK)
+            array2.pointers(0, 1, 2)
+            array2.pointers(1, pos=1, color_1=mn.PINK)
+            array3.pointers(0, 1, 2)
+            array3.pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.remove(
+                array1,
+                array2,
+                array3,
+            )
+            self.wait(pause)
+
+            s = "top"
+            p_text.update_value(self)
+            self.wait(pause)
+
+            array1 = Array(
+                lambda: arr,
+                pointers="top",
+                font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            array1.first_appear(self)
+            self.wait(pause)
+
+            array2 = Array(
+                lambda: arr,
+                pointers="top",
+                direction=mn.UP,
+                font_size=40,
+                vector=mn.LEFT * 1,
+            )
+            array2.first_appear(self)
+            self.wait(pause)
+
+            array3 = Array(
+                lambda: arr,
+                pointers="top",
+                direction=mn.DOWN,
+                font_size=40,
+                vector=mn.RIGHT * 3,
+            )
+            array3.first_appear(self)
+            self.wait(pause)
+
+            array1.pointers(0, 1, 2)
+            array1.pointers(1, pos=1, color_1=mn.PINK)
+            array2.pointers(0, 1, 2)
+            array2.pointers(1, pos=1, color_1=mn.PINK)
+            array3.pointers(0, 1, 2)
+            array3.pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.remove(
+                array1,
+                array2,
+                array3,
+            )
+            self.wait(pause)
+
+            s = "bottom"
+            p_text.update_value(self)
+            self.wait(pause)
+
+            array1 = Array(
+                lambda: arr,
+                pointers="bottom",
+                font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            array1.first_appear(self)
+            self.wait(pause)
+
+            array2 = Array(
+                lambda: arr,
+                pointers="bottom",
+                direction=mn.UP,
+                font_size=40,
+                vector=mn.LEFT * 1,
+            )
+            array2.first_appear(self)
+            self.wait(pause)
+
+            array3 = Array(
+                lambda: arr,
+                pointers="bottom",
+                direction=mn.DOWN,
+                font_size=40,
+                vector=mn.RIGHT * 3,
+            )
+            array3.first_appear(self)
+            self.wait(pause)
+
+            array1.pointers(0, 1, 2)
+            array1.pointers(1, pos=1, color_1=mn.PINK)
+            array2.pointers(0, 1, 2)
+            array2.pointers(1, pos=1, color_1=mn.PINK)
+            array3.pointers(0, 1, 2)
+            array3.pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.remove(
+                array1,
+                array2,
+                array3,
+            )
+            self.wait(pause)
+
+            s = "None"
+            p_text.update_value(self)
+            self.wait(pause)
+
+            array1 = Array(
+                lambda: arr,
+                pointers=None,
+                font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            array1.first_appear(self)
+            self.wait(pause)
+
+            array2 = Array(
+                lambda: arr,
+                pointers=None,
+                direction=mn.UP,
+                font_size=40,
+                vector=mn.LEFT * 1,
+            )
+            array2.first_appear(self)
+            self.wait(pause)
+
+            array3 = Array(
+                lambda: arr,
+                pointers=None,
+                direction=mn.DOWN,
+                font_size=40,
+                vector=mn.RIGHT * 3,
+            )
+            array3.first_appear(self)
+            self.wait(pause)
+
+            array1.pointers(0, 1, 2)
+            array1.pointers(1, pos=1, color_1=mn.PINK)
+            array2.pointers(0, 1, 2)
+            array2.pointers(1, pos=1, color_1=mn.PINK)
+            array3.pointers(0, 1, 2)
+            array3.pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.wait(1)
+            self.clear()
+
         def positioning(self):
             pause = 1
             arr = list("arr")
@@ -870,7 +1098,7 @@ class Example_array(mn.Scene):
                 mob_center=center,
                 vector=mn.UP * 1.5,
                 anchor=None,
-                pointers=False,
+                pointers=None,
                 font_size=35,
             )
             arr_2 = Array(
@@ -878,7 +1106,7 @@ class Example_array(mn.Scene):
                 mob_center=arr_1,
                 vector=mn.UP * 0.7,
                 anchor="end",
-                pointers=False,
+                pointers=None,
                 font_size=35,
             )
             arr_3 = Array(
@@ -886,7 +1114,7 @@ class Example_array(mn.Scene):
                 mob_center=arr_2,
                 vector=mn.UP * 0.7,
                 anchor="start",
-                pointers=False,
+                pointers=None,
                 font_size=35,
             )
 
@@ -919,14 +1147,14 @@ class Example_array(mn.Scene):
                 lambda: arr,
                 align_left=center,
                 vector=mn.DOWN * 1.5,
-                pointers=False,
+                pointers=None,
                 font_size=35,
             )
             arr_5 = Array(
                 lambda: arr,
                 align_right=center,
                 vector=mn.DOWN * 1.5,
-                pointers=False,
+                pointers=None,
                 font_size=35,
             )
 
@@ -1348,6 +1576,7 @@ class Example_array(mn.Scene):
         pyramid(self)
         first_appear(self)
         direction(self)
+        pointers(self)
         positioning(self)
         update_value(self)
         frame_import(self)
