@@ -237,7 +237,6 @@ class LinearContainerStructure(AlgoManimBase):
 
     def create_pointers(
         self,
-        cell_mob: mn.VGroup,
         direction: np.ndarray = mn.RIGHT,
     ) -> tuple[mn.VGroup, mn.VGroup]:
         """Create pointer triangles above and below each cell in the group.
@@ -246,13 +245,14 @@ class LinearContainerStructure(AlgoManimBase):
         respective cells to align with the specified direction vector.
 
         Args:
-            cell_mob: VGroup of cells to attach pointers to.
             direction: Direction vector for pointer orientation (default: RIGHT).
 
         Returns:
             Tuple of (top_pointers, bottom_pointers) VGroups where each contains
             triple triangle groups for every cell | node.
         """
+        cell_mob = self._containers_mob
+
         if np.allclose(direction, mn.RIGHT):
             return self._create_horizontal_pointers(cell_mob)
 
