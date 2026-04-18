@@ -32,6 +32,9 @@ class Array(RectangleCellsStructure):
         container_color: Border color for cells.
         bg_color: Background color for cells and default pointer color.
         fill_color: Fill color for cells.
+        lock_width: Whether to lock cell width to cell height.
+            If True, cells become square and text scales to fit.
+            If False, cell width adjusts to text content.
         cell_params_auto: Whether to auto-calculate cell parameters.
         cell_height: Manual cell height when auto-calculation disabled.
         top_bottom_buff: Internal top/bottom padding within cells.
@@ -69,7 +72,6 @@ class Array(RectangleCellsStructure):
         align_bottom: mn.Mobject | None = None,
         align_screen: np.ndarray | None = None,
         screen_buff: float = 0.2,
-        # anchor: np.ndarray | None = mn.LEFT,
         anchor: Literal["start", "end"] | None = "start",
         # ---- font ----
         font="",
@@ -81,7 +83,8 @@ class Array(RectangleCellsStructure):
         bg_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.DARK_GRAY,
         # ---- cell params ----
-        cell_params_auto=True,
+        lock_width: bool = False,
+        cell_params_auto: bool = True,
         cell_height=0.65625,
         top_bottom_buff=0.15,
         top_buff=0.09,
@@ -152,6 +155,7 @@ class Array(RectangleCellsStructure):
         self._bg_color = bg_color
         self._fill_color = fill_color
         # ---- cell params ----
+        self._lock_width = lock_width
         if cell_params_auto:
             params = self._get_cell_params(font_size, font, weight)
             self._cell_height = params["cell_height"]
@@ -235,7 +239,10 @@ class Array(RectangleCellsStructure):
             mn.Rectangle(
                 height=self._cell_height,
                 width=self._get_cell_width(
-                    self._empty_value_mob, self._top_bottom_buff, self._cell_height
+                    self._empty_value_mob,
+                    self._top_bottom_buff,
+                    self._cell_height,
+                    self._lock_width,
                 ),
                 color=self._bg_color,
                 fill_color=self._fill_color,
@@ -256,10 +263,20 @@ class Array(RectangleCellsStructure):
         Returns:
             mn.VGroup: Group of value text mobjects.
         """
-
-        return mn.VGroup(
+        values_mob = mn.VGroup(
             *[mn.Text(str(val), **self._text_config()) for val in self._data]
         )
+
+        if not self._lock_width:
+            return values_mob
+        else:
+            width_limit = self._cell_height - self._top_bottom_buff
+            for mob in values_mob:
+                if mob.width <= width_limit:
+                    continue
+                else:
+                    mob.scale_to_fit_width(width_limit)
+            return values_mob
 
     def _set_containers_mob(self) -> None:
         """Create or import container mobjects for array cells.
@@ -309,7 +326,10 @@ class Array(RectangleCellsStructure):
             cell_mob = mn.Rectangle(
                 height=self._cell_height,
                 width=self._get_cell_width(
-                    text_mob, self._top_bottom_buff, self._cell_height
+                    text_mob,
+                    self._top_bottom_buff,
+                    self._cell_height,
+                    self._lock_width,
                 ),
                 color=self._container_color,
                 fill_color=self._fill_color,
@@ -439,6 +459,7 @@ class Array(RectangleCellsStructure):
             bg_color=self._bg_color,
             fill_color=self._fill_color,
             # ---- cell params ----
+            lock_width=self._lock_width,
             cell_params_auto=False,
             cell_height=self._cell_height,
             top_bottom_buff=self._top_bottom_buff,

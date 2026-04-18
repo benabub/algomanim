@@ -103,6 +103,7 @@ class RectangleCellsStructure(LinearContainerStructure):
         text_mob: mn.Mobject,
         inter_buff: float,
         cell_height: float,
+        lock_width: bool,
     ) -> float:
         """Calculate cell width based on text content and constraints.
 
@@ -114,9 +115,12 @@ class RectangleCellsStructure(LinearContainerStructure):
         Returns:
             float: Cell width ensuring consistent visual proportions.
         """
-        text_mob_height = text_mob.width
-        res = inter_buff * self.CELL_CONFIG.inter_buff_factor + text_mob_height
-        if cell_height >= res:
-            return cell_height
+        if not lock_width:
+            text_mob_height = text_mob.width
+            res = inter_buff * self.CELL_CONFIG.inter_buff_factor + text_mob_height
+            if cell_height >= res:
+                return cell_height
+            else:
+                return res
         else:
-            return res
+            return cell_height
