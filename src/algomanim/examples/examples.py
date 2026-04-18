@@ -666,6 +666,117 @@ class Example_array(mn.Scene):
 
             self.clear()
 
+        def lockwidth(self):
+            pause = 0.5
+            arr = [1, 2, 3]
+
+            title = RelativeText(
+                "lock_width param",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            arr_text = RelativeTextValue(
+                ("arr", lambda: arr, mn.WHITE),
+                font_size=30,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            arr_text.first_appear(self)
+            self.wait(pause)
+
+            array1 = Array(
+                lambda: arr,
+                pointers=None,
+                font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=1.5,
+                direction=mn.UP,
+            )
+            array2 = Array(
+                lambda: arr,
+                pointers=None,
+                font_size=40,
+                mob_center=array1,
+                vector=mn.RIGHT * 2.8,
+            )
+            text1 = RelativeText(
+                "lock_width = False",
+                font_size=30,
+                vector=mn.UP * 2,
+                align_left=array1,
+            )
+            text1.group_appear(self, array1, array2)
+            self.wait(pause)
+
+            array3 = Array(
+                lambda: arr,
+                pointers=None,
+                font_size=40,
+                align_screen=mn.RIGHT,
+                screen_buff=1.5,
+                direction=mn.UP,
+                lock_width=True,
+            )
+            array4 = Array(
+                lambda: arr,
+                pointers=None,
+                font_size=40,
+                mob_center=array3,
+                vector=mn.LEFT * 2.8,
+                lock_width=True,
+            )
+            text2 = RelativeText(
+                "lock_width = True",
+                font_size=30,
+                vector=mn.UP * 2,
+                align_right=array3,
+            )
+            text2.group_appear(self, array3, array4)
+            self.wait(pause)
+
+            update_text = RelativeText(
+                "update_value()",
+                font_size=30,
+                text_color=mn.BLACK,
+                mob_center=title,
+                vector=mn.DOWN,
+            )
+            update_text.first_appear(self)
+            self.wait(pause)
+
+            arr = [1, 22, 333]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            array4.update_value(self)
+            self.wait(pause)
+
+            arr = [1111, 22, 333]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            array4.update_value(self)
+            self.wait(pause)
+
+            arr = [1, 2, 3]
+            arr_text.update_value(self)
+            self.wait(pause)
+            array1.update_value(self)
+            array2.update_value(self)
+            array3.update_value(self)
+            array4.update_value(self)
+            self.wait(1)
+
+            self.clear()
+
         def pointers(self):
 
             pause = 0.5
@@ -1576,6 +1687,7 @@ class Example_array(mn.Scene):
         pyramid(self)
         first_appear(self)
         direction(self)
+        lockwidth(self)
         pointers(self)
         positioning(self)
         update_value(self)
