@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Literal
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -7,11 +7,13 @@ from algomanim.core.rectangle_cells import RectangleCellsStructure
 
 
 # TODO: add frame_from param, sync with Array
+# TODO: anchor -> start, end
 class String(RectangleCellsStructure):
     """String visualization as a VGroup of character cells with quotes.
 
     Args:
         value: Callable that returns a string to visualize.
+        direction: Direction vector for string orientation.
         pointers: Whether to create and display pointers.
         vector: Position offset from mob_center.
         font: Font family for text elements.
@@ -49,8 +51,10 @@ class String(RectangleCellsStructure):
     def __init__(
         self,
         value: Callable[[], str],
+        # ---- direction ----
+        direction: np.ndarray = mn.RIGHT,
         # ---- pointers ----
-        pointers: bool = True,
+        pointers: Literal["top", "bottom", "both"] | None = "both",
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -109,7 +113,18 @@ class String(RectangleCellsStructure):
         # create class instance fields
         self._callable = value
         self._data = value()
-        self._pointers = pointers
+        # ---- direction ----
+        if not (
+            np.array_equal(direction, mn.RIGHT)
+            or np.array_equal(direction, mn.UP)
+            or np.array_equal(direction, mn.DOWN)
+        ):
+            raise ValueError("direction must be mn.RIGHT or mn.UP or mn.DOWN")
+        self._direction = direction
+        # ---- pointers ----
+        if pointers not in ["top", "bottom", "both", None]:
+            raise ValueError("pointers must be 'top' | 'bottom' | 'both' | None")
+        self._pointers: Literal["top", "bottom", "both"] | None = pointers
         # -- position --
         self._vector = vector
         self._mob_center = mob_center
@@ -189,15 +204,11 @@ class String(RectangleCellsStructure):
             self._quotes_mob,
         )
 
-        # pointers
-        if self._pointers:
-            self._pointers_top, self._pointers_bottom = self.create_pointers(
-                self._containers_mob
-            )
-            self.add(
-                self._pointers_top,
-                self._pointers_bottom,
-            )
+        self.set_pointers(
+            self._containers_mob,
+            self._direction,
+            self._pointers,
+        )
 
     def _containers_cell_config(self):
         """Get configuration for character cell containers.
@@ -344,6 +355,8 @@ class String(RectangleCellsStructure):
         """
         new_instance = String(
             self._callable,
+            # ---- direction ----
+            direction=self._direction,
             # ---- pointers ----
             pointers=self._pointers,
             # -- position --
