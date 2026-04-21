@@ -415,8 +415,20 @@ class CodeGenerator:
                 for CodeBlockLense compatibility. Defaults to False.
 
         Raises:
-            ValueError: If an unknown command (not a, u, U, p, s) is found in
+            ValueError: If an unknown command (not a, u, U, p, s, c, i) is found in
                 a line ending with '=.' pattern.
+
+        Inline commands map:
+            =a -> Appear
+            =u -> Update with values comparison
+            =U -> Update
+            =p -> point (highlight node or pointer)
+            =s -> slide (move node pointer or highlight)
+            =c -> condition. Examples:
+                =c -> if i==0: a,p; else U,s
+                =c[flag:a,p|u,s] -> if flag: a,p; else: u,s
+            =i -> ignore line for code_block highlighting
+                + collect line number for it
         """
 
         tab = Config.tab
