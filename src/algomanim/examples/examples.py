@@ -2066,21 +2066,21 @@ class Example_string(mn.Scene):
                 mob_center=center,
                 vector=mn.UP * 1.5,
                 anchor=None,
-                pointers=False,
+                pointers=None,
             )
             str_2 = String(
                 lambda: string,
                 mob_center=str_1,
                 vector=mn.UP * 0.7,
                 anchor=mn.RIGHT,
-                pointers=False,
+                pointers=None,
             )
             str_3 = String(
                 lambda: string,
                 mob_center=str_2,
                 vector=mn.UP * 0.7,
                 anchor=mn.LEFT,
-                pointers=False,
+                pointers=None,
             )
 
             text_no_align = RelativeText(
@@ -2100,13 +2100,13 @@ class Example_string(mn.Scene):
                 lambda: string,
                 align_left=center,
                 vector=mn.DOWN * 1.5,
-                pointers=False,
+                pointers=None,
             )
             str_5 = String(
                 lambda: string,
                 align_right=center,
                 vector=mn.DOWN * 1.5,
-                pointers=False,
+                pointers=None,
             )
 
             text_str_4 = RelativeText(
@@ -2215,33 +2215,33 @@ class Example_string(mn.Scene):
                 mob_center=center,
                 vector=mn.UP * 1.5,
                 anchor=None,
-                pointers=False,
+                pointers=None,
             )
             str_2 = String(
                 lambda: string,
                 mob_center=str_1,
                 vector=mn.UP * 0.7,
                 anchor=mn.RIGHT,
-                pointers=False,
+                pointers=None,
             )
             str_3 = String(
                 lambda: string,
                 mob_center=str_2,
                 vector=mn.UP * 0.7,
                 anchor=mn.LEFT,
-                pointers=False,
+                pointers=None,
             )
             str_4 = String(
                 lambda: string,
                 align_left=center,
                 vector=mn.DOWN * 1.5,
-                pointers=False,
+                pointers=None,
             )
             str_5 = String(
                 lambda: string,
                 align_right=center,
                 vector=mn.DOWN * 1.5,
-                pointers=False,
+                pointers=None,
             )
             str_1.highlight_containers_1to3(0, 1, 2)
             str_2.highlight_containers_1to3(0, 1, 2)
