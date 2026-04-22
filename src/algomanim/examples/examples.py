@@ -3179,58 +3179,62 @@ the old highlight clears.  # 11
 It is impossible to highlight empty lines. # 13
 """
 
-        # ======== main mob ============
+        def main(self):
 
-        # Construction code_block
-        cb = CodeBlock(
-            code,
-            vector=mn.RIGHT * 3,
-            font_size=25,
-        )
-        # Animation code_block
-        cb.first_appear(self)
+            # Construction code_block
+            cb = CodeBlock(
+                code,
+                vector=mn.RIGHT * 3,
+                font_size=25,
+            )
+            # Animation code_block
+            cb.first_appear(self)
 
-        # ======== highlight() ============
-
-        title = RelativeText(
-            "highlight(0)",
-            vector=mn.UP * 3.2 + mn.LEFT * 5.5,
-            font_size=30,
-        )
-        title.first_appear(self)
-
-        def highlight_with_title(
-            self: mn.Scene,
-            code_block: CodeBlock,
-            old_title: mn.Mobject,
-            *indices: int,
-            pause=2,
-        ):
-            code_block.highlight(*indices)
-
-            left_point = old_title.get_left()
-            self.remove(old_title)
-
-            args_str = f"({', '.join(map(str, indices))})"
-
-            new_title = RelativeText(
-                f"highlight{args_str}",
+            title = RelativeText(
+                "highlight(0)",
+                vector=mn.UP * 3.2 + mn.LEFT * 5.5,
                 font_size=30,
             )
-            vector = left_point - new_title.get_left()
-            new_title.shift(vector)
-            new_title.appear(self)
-            self.wait(pause)
-            return new_title
+            title.first_appear(self)
 
-        title = highlight_with_title(self, cb, title, 0)
-        title = highlight_with_title(self, cb, title, 1)
-        title = highlight_with_title(self, cb, title, 2)
-        title = highlight_with_title(self, cb, title, 3, 5, 7, pause=2)
-        title = highlight_with_title(self, cb, title, 9, 10, 11, pause=2)
-        title = highlight_with_title(self, cb, title, 13)
-        title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, 12)
-        title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11, 13)
+            def highlight_with_title(
+                self: mn.Scene,
+                code_block: CodeBlock,
+                old_title: mn.Mobject,
+                *indices: int,
+                pause=2,
+            ):
+                code_block.highlight(*indices)
+
+                left_point = old_title.get_left()
+                self.remove(old_title)
+
+                args_str = f"({', '.join(map(str, indices))})"
+
+                new_title = RelativeText(
+                    f"highlight{args_str}",
+                    font_size=30,
+                )
+                vector = left_point - new_title.get_left()
+                new_title.shift(vector)
+                new_title.appear(self)
+                self.wait(pause)
+                return new_title
+
+            title = highlight_with_title(self, cb, title, 0)
+            title = highlight_with_title(self, cb, title, 1)
+            title = highlight_with_title(self, cb, title, 2)
+            title = highlight_with_title(self, cb, title, 3, 5, 7, pause=2)
+            title = highlight_with_title(self, cb, title, 9, 10, 11, pause=2)
+            title = highlight_with_title(self, cb, title, 13)
+            title = highlight_with_title(self, cb, title, 0, 2, 4, 6, 8, 10, 12)
+            title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11, 13)
+
+            self.remove(cb)
+
+        # ========== calls ==============
+
+        main(self)
 
         # ========== FINISH ==============
 
@@ -3276,72 +3280,76 @@ As in CodeBlock, # 25
         are not highlighted. # 27
 """
 
-        # ========== construction ==============
+        def main(self):
 
-        cb = CodeBlockLense(
-            code,
-            vector=mn.DOWN * 0.3 + mn.RIGHT * 2.0,
-            font="Monospace",
-        )
-        cb.first_appear(self)
-        self.wait(pause)
+            cb = CodeBlockLense(
+                code,
+                vector=mn.DOWN * 0.3 + mn.RIGHT * 2.0,
+                font="Monospace",
+            )
+            cb.first_appear(self)
+            self.wait(pause)
 
-        # ======== highlight() ============
-
-        title = RelativeText(
-            "highlight(0)",
-            vector=mn.UP * 3.2 + mn.LEFT * 5.5,
-            font_size=30,
-        )
-        title.first_appear(self)
-
-        def highlight_with_title(
-            self: mn.Scene,
-            code_block: CodeBlockLense,
-            old_title: mn.Mobject,
-            *indices: int,
-            pause=1,
-        ):
-            code_block.highlight(self, *indices)
-
-            left_point = old_title.get_left()
-            self.remove(old_title)
-
-            args_str = f"(mn.scene, {', '.join(map(str, indices))})"
-
-            new_title = RelativeText(
-                f"highlight{args_str}",
+            title = RelativeText(
+                "highlight(0)",
+                vector=mn.UP * 3.2 + mn.LEFT * 5.5,
                 font_size=30,
             )
-            vector = left_point - new_title.get_left()
-            new_title.shift(vector)
-            new_title.appear(self)
-            self.wait(pause)
-            return new_title
+            title.first_appear(self)
 
-        title = highlight_with_title(self, cb, title, 0)
+            def highlight_with_title(
+                self: mn.Scene,
+                code_block: CodeBlockLense,
+                old_title: mn.Mobject,
+                *indices: int,
+                pause=1,
+            ):
+                code_block.highlight(self, *indices)
 
-        title = highlight_with_title(self, cb, title, 2)
-        title = highlight_with_title(self, cb, title, 3)
-        title = highlight_with_title(self, cb, title, 4)
-        title = highlight_with_title(self, cb, title, 5)
-        title = highlight_with_title(self, cb, title, 6)
+                left_point = old_title.get_left()
+                self.remove(old_title)
 
-        title = highlight_with_title(self, cb, title, 8)
-        title = highlight_with_title(self, cb, title, 9)
-        title = highlight_with_title(self, cb, title, 10)
+                args_str = f"(mn.scene, {', '.join(map(str, indices))})"
 
-        title = highlight_with_title(self, cb, title, 12, 13)
-        title = highlight_with_title(self, cb, title, 14)
-        title = highlight_with_title(self, cb, title, 15)
-        title = highlight_with_title(self, cb, title, 16)
+                new_title = RelativeText(
+                    f"highlight{args_str}",
+                    font_size=30,
+                )
+                vector = left_point - new_title.get_left()
+                new_title.shift(vector)
+                new_title.appear(self)
+                self.wait(pause)
+                return new_title
 
-        title = highlight_with_title(self, cb, title, 18, 19, 20)
-        title = highlight_with_title(self, cb, title, 21, 22)
-        title = highlight_with_title(self, cb, title, 23)
+            title = highlight_with_title(self, cb, title, 0)
 
-        title = highlight_with_title(self, cb, title, 24, 25)
-        title = highlight_with_title(self, cb, title, 26, 27)
+            title = highlight_with_title(self, cb, title, 2)
+            title = highlight_with_title(self, cb, title, 3)
+            title = highlight_with_title(self, cb, title, 4)
+            title = highlight_with_title(self, cb, title, 5)
+            title = highlight_with_title(self, cb, title, 6)
+
+            title = highlight_with_title(self, cb, title, 8)
+            title = highlight_with_title(self, cb, title, 9)
+            title = highlight_with_title(self, cb, title, 10)
+
+            title = highlight_with_title(self, cb, title, 12, 13)
+            title = highlight_with_title(self, cb, title, 14)
+            title = highlight_with_title(self, cb, title, 15)
+            title = highlight_with_title(self, cb, title, 16)
+
+            title = highlight_with_title(self, cb, title, 18, 19, 20)
+            title = highlight_with_title(self, cb, title, 21, 22)
+            title = highlight_with_title(self, cb, title, 23)
+
+            title = highlight_with_title(self, cb, title, 24, 25)
+            title = highlight_with_title(self, cb, title, 26, 27)
+
+            self.remove(cb)
+
+        # ========== calls ==============
+
+        main(self)
 
         # ========== FINISH ==============
 
