@@ -88,7 +88,7 @@ class CodeBlock(CodeBlockBase):
         )
 
         # --- highlights ---
-        self._highlighted_indices: set[int] = set()
+        self._highlighted_indices = set()
 
         self._text_mobs = self._create_text_mobs()
         self._rect_mobs = self._create_rect_mobs(self._text_mobs)
@@ -104,9 +104,9 @@ class CodeBlock(CodeBlockBase):
         )
 
         self._bg_rect = self._create_bg_rect(
-            self._code_vgroup.width, self._code_vgroup.height
+            self._code_vgroup.width,
+            self._code_vgroup.height,
         )
-
         self.add(self._bg_rect)
         self._position()
 
@@ -202,7 +202,6 @@ class CodeBlockLense(CodeBlockBase):
         bg_rect_stroke_width: float = 4,
         bg_rect_stroke_color: ManimColor | str = "#151515",
         bg_rect_corner_radius: float = 0.1,
-        # bg_rect_buff: float = 0.5,
         bg_rect_buff: float = 0.3,
         # --- highlights ---
         bg_highlight_color: ManimColor | str = mn.BLACK,
@@ -392,7 +391,6 @@ class CodeBlockLense(CodeBlockBase):
 
     def highlight(
         self,
-        scene: mn.Scene,
         *indices: int,
     ) -> None:
         """Highlight lines and scroll viewport to center them.
@@ -417,8 +415,9 @@ class CodeBlockLense(CodeBlockBase):
 
         # --- calculate new viewport ---
         start_idx = self._get_code_index_for_highlight(*indices)
-        new_code_vgroup = self._create_code_vgroup(start_idx)
         dim_indices = self._get_dim_indices_for_highlight(*indices)
+
+        new_code_vgroup = self._create_code_vgroup(start_idx)
 
         # --- clear old dim ---
         for i in range(len(self._code_vgroup)):
@@ -444,6 +443,6 @@ class CodeBlockLense(CodeBlockBase):
         self._highlighted_indices = set(indices)
         self._position_code_vgroup(new_code_vgroup)
 
-        scene.remove(self._code_vgroup)
+        self.remove(self._code_vgroup)
         self._code_vgroup = new_code_vgroup
-        scene.add(self._code_vgroup)
+        self.add(self._code_vgroup)
