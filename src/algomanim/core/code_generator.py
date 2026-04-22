@@ -85,7 +85,6 @@ class CodeGenerator:
 
     def generate_with_no_sound(
         self,
-        scene_param: bool = False,
     ) -> None:
         """Generate a silent animation template without sound effects.
 
@@ -94,16 +93,7 @@ class CodeGenerator:
 
         Important:
             The CodeBlock instance in the scene must be named `code_block`.
-
-        Args:
-            scene_param: If True, prepends 'self, ' to highlight() arguments
-                for CodeBlockLense compatibility. Defaults to False.
         """
-
-        if scene_param:
-            scene_arg = "self, "
-        else:
-            scene_arg = ""
 
         code_lines = self._code.strip().split("\n")
         res = ""
@@ -123,7 +113,7 @@ class CodeGenerator:
                 or line_lstrip.startswith("break")
                 or line_lstrip.startswith("continue")
             ):
-                line_1 = base_tab + indent + f"code_block.highlight({scene_arg}{i})\n"
+                line_1 = base_tab + indent + f"code_block.highlight({i})\n"
                 line_2 = base_tab + indent + "self.wait(pause)\n"
                 line_3 = base_tab + line + "\n"
                 line_4 = base_tab + indent + tab + "#\n"
@@ -135,20 +125,18 @@ class CodeGenerator:
                 or line_lstrip.startswith("while ")
             ):
                 line_1 = base_tab + line + "\n"
-                line_2 = (
-                    base_tab + indent + tab + f"code_block.highlight({scene_arg}{i})\n"
-                )
+                line_2 = base_tab + indent + tab + f"code_block.highlight({i})\n"
                 line_3 = base_tab + indent + tab + "self.wait(pause)\n"
                 line_4 = base_tab + indent + tab + "#\n"
                 add_block = line_1 + line_2 + line_3 + line_4
             elif line_lstrip.startswith("return "):  # return lines only - same indent
                 line_1 = base_tab + indent + "# " + line_lstrip + "\n"
-                line_2 = base_tab + indent + f"code_block.highlight({scene_arg}{i})\n"
+                line_2 = base_tab + indent + f"code_block.highlight({i})\n"
                 line_3 = "\n"
                 add_block = line_1 + line_2 + line_3
             else:
                 line_1 = base_tab + line + "\n"
-                line_2 = base_tab + indent + f"code_block.highlight({scene_arg}{i})\n"
+                line_2 = base_tab + indent + f"code_block.highlight({i})\n"
                 line_3 = base_tab + indent + "self.wait(pause)\n"
                 line_4 = "\n"
                 add_block = line_1 + line_2 + line_3 + line_4
@@ -275,7 +263,6 @@ class CodeGenerator:
         self,
         indent: str,
         sound: str,
-        scene_arg: str,
         is_last: bool,
         *line_numbers: int,
     ) -> str:
@@ -284,7 +271,6 @@ class CodeGenerator:
         Args:
             indent: Indentation string for the block.
             sound: Sound type ('step', 'cycle', etc.).
-            scene_arg: Scene argument string (empty or "self, ").
             is_last: Whether this is the last highlight in a sequence.
             *line_numbers: Line numbers to highlight (one or more).
 
@@ -294,11 +280,7 @@ class CodeGenerator:
 
         with_line = indent + f"with sound({sound}{Config.suffix_map[is_last]}"
         line_numbers_str = ", ".join(map(str, line_numbers))
-        code_line = (
-            indent
-            + Config.tab
-            + f"code_block.highlight({scene_arg}{line_numbers_str})\n"
-        )
+        code_line = indent + Config.tab + f"code_block.highlight({line_numbers_str})\n"
 
         return with_line + code_line
 
@@ -306,7 +288,6 @@ class CodeGenerator:
         self,
         line: str,
         indent: str,
-        scene_arg: str,
         line_number: int,
         is_last: bool,
     ) -> str:
@@ -318,7 +299,6 @@ class CodeGenerator:
         Args:
             line: Source code line starting with 'if' or 'while'.
             indent: Indentation string for the block.
-            scene_arg: Scene argument string (empty or "self, ").
             line_number: Line number to highlight.
             is_last: Whether this is the last highlight in a sequence.
 
@@ -336,9 +316,7 @@ class CodeGenerator:
         with_line = (
             indent + f"with sound(sound_chk({condition}){Config.suffix_map[is_last]}"
         )
-        code_line = (
-            indent + Config.tab + f"code_block.highlight({scene_arg}{line_number})\n"
-        )
+        code_line = indent + Config.tab + f"code_block.highlight({line_number})\n"
         return with_line + code_line
 
     def _pre_while_line(
@@ -389,7 +367,6 @@ class CodeGenerator:
 
     def generate(
         self,
-        scene_param: bool = False,
     ) -> None:
         """Generate an animation template with sound effects blocks.
 
@@ -410,10 +387,6 @@ class CodeGenerator:
                - point (pointers appear)
                - rtn (return mobject appear)
 
-        Args:
-            scene_param: If True, prepends 'self, ' to highlight() arguments
-                for CodeBlockLense compatibility. Defaults to False.
-
         Raises:
             ValueError: If an unknown command (not a, u, U, p, s, c, i) is found in
                 a line ending with '=.' pattern.
@@ -432,11 +405,6 @@ class CodeGenerator:
         """
 
         tab = Config.tab
-
-        if scene_param:
-            scene_arg = "self, "
-        else:
-            scene_arg = ""
 
         code_lines = code_to_lines(self._code)
         line_number = 0
@@ -505,7 +473,6 @@ class CodeGenerator:
                     highlight_pair = self._if_highlight_pair(
                         line,
                         edge_indent,
-                        scene_arg,
                         line_number,
                         not inline_commands,
                     )
@@ -526,7 +493,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
                         "cycle",
-                        scene_arg,
                         not inline_commands,
                         line_number,
                     )
@@ -541,7 +507,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent,
                         "fail",
-                        scene_arg,
                         not inline_commands,
                         line_number,
                     )
@@ -558,7 +523,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
                         "cycle",
-                        scene_arg,
                         not inline_commands,
                         line_number,
                     )
@@ -575,7 +539,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent + tab,
                         "cycle",
-                        scene_arg,
                         False,
                         line_number,
                     )
@@ -595,7 +558,6 @@ class CodeGenerator:
                     highlight_pair = self._get_highlight_pair(
                         edge_indent,
                         "step",
-                        scene_arg,
                         False,
                         line_number,
                     )
@@ -616,7 +578,6 @@ class CodeGenerator:
                         self._get_highlight_pair(
                             edge_indent,
                             "step",
-                            scene_arg,
                             not inline_commands,
                             line_number,
                         )
@@ -627,7 +588,6 @@ class CodeGenerator:
                         self._get_highlight_pair(
                             edge_indent,
                             "step",
-                            scene_arg,
                             not inline_commands,
                             *line_numbers_list,
                         )
