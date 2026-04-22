@@ -3231,6 +3231,8 @@ It is impossible to highlight empty lines. # 13
             title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11, 13)
 
             self.remove(cb)
+            self.wait(pause)
+            self.clear()
 
         # ========== calls ==============
 
@@ -3304,7 +3306,7 @@ As in CodeBlock, # 25
                 *indices: int,
                 pause=1,
             ):
-                code_block.highlight(self, *indices)
+                code_block.highlight(*indices)
 
                 left_point = old_title.get_left()
                 self.remove(old_title)
@@ -3346,6 +3348,8 @@ As in CodeBlock, # 25
             title = highlight_with_title(self, cb, title, 26, 27)
 
             self.remove(cb)
+            self.wait(pause)
+            self.clear()
 
         # ========== calls ==============
 
