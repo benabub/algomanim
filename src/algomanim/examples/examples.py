@@ -3359,3 +3359,165 @@ As in CodeBlock, # 25
 
         self.wait(pause)
         self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
+
+
+class Example_semi_rounded_rectangle(mn.Scene):
+    def construct(self):
+        self.camera.background_color = mn.DARK_GREY  # type: ignore
+        pause = 1
+
+        def default(self):
+
+            title = RelativeText(
+                "default SemiRoundedRectangle",
+                font_size=50,
+                text_color=mn.WHITE,
+                align_screen=mn.UP,
+            )
+            params = RelativeText(
+                "width=3\nheight=2",
+                font_size=40,
+                text_color=mn.WHITE,
+                align_screen=mn.DOWN,
+                screen_buff=1.3,
+            )
+            title.group_appear(self, params)
+
+            rect = SemiRoundedRectangle(
+                width=3,
+                height=2,
+            )
+
+            self.add(rect)
+
+            self.wait(2)
+
+            self.clear()
+            self.wait(0.5)
+
+        def non_default(self):
+
+            font_size = 30
+
+            title = RelativeText(
+                "non-default SemiRoundedRectangle",
+                font_size=50,
+                text_color=mn.WHITE,
+                align_screen=mn.UP,
+            )
+
+            params = RelativeText(
+                "width=3\nheight=2\ncorner_radius=1\nfill_color = mn.GRAY_BROWN\nstroke_color = mn.PINK\nstroke_width = 10",
+                font_size=25,
+                text_color=mn.WHITE,
+                vector=mn.UP * 1.5,
+            )
+            title.group_appear(self, params)
+
+            corner_radius = 1
+            fill_color = mn.GRAY_BROWN
+            stroke_color = mn.PINK
+            stroke_width = 10
+
+            side = 4.5
+            up = 1.5
+            down = 1.5
+            text_vector = mn.DOWN * 1.5
+
+            rect1 = SemiRoundedRectangle(
+                width=3,
+                height=2,
+                direction=mn.UP,
+                corner_radius=corner_radius,
+                fill_color=fill_color,
+                stroke_color=stroke_color,
+                stroke_width=stroke_width,
+            )
+            rect1.move_to(mn.LEFT * side + mn.UP * up)
+            text1 = RelativeText(
+                "direction=mn.UP",
+                font_size=font_size,
+                text_color=mn.WHITE,
+                mob_center=rect1,
+                vector=text_vector,
+            )
+
+            rect2 = SemiRoundedRectangle(
+                width=3,
+                height=2,
+                direction=mn.DOWN,
+                corner_radius=corner_radius,
+                fill_color=fill_color,
+                stroke_color=stroke_color,
+                stroke_width=stroke_width,
+            )
+            rect2.move_to(mn.LEFT * side + mn.DOWN * down)
+            text2 = RelativeText(
+                "direction=mn.DOWN",
+                font_size=font_size,
+                text_color=mn.WHITE,
+                mob_center=rect2,
+                vector=text_vector,
+            )
+
+            rect3 = SemiRoundedRectangle(
+                width=3,
+                height=2,
+                direction=mn.LEFT,
+                corner_radius=corner_radius,
+                fill_color=fill_color,
+                stroke_color=stroke_color,
+                stroke_width=stroke_width,
+            )
+            rect3.move_to(mn.RIGHT * side + mn.UP * up)
+            text3 = RelativeText(
+                "direction=mn.LEFT",
+                font_size=font_size,
+                text_color=mn.WHITE,
+                mob_center=rect3,
+                vector=text_vector,
+            )
+
+            rect4 = SemiRoundedRectangle(
+                width=3,
+                height=2,
+                direction=mn.RIGHT,
+                corner_radius=corner_radius,
+                fill_color=fill_color,
+                stroke_color=stroke_color,
+                stroke_width=stroke_width,
+            )
+            rect4.move_to(mn.RIGHT * side + mn.DOWN * down)
+            text4 = RelativeText(
+                "direction=mn.RIGHT",
+                font_size=font_size,
+                text_color=mn.WHITE,
+                mob_center=rect4,
+                vector=text_vector,
+            )
+
+            self.add(
+                rect1,
+                rect2,
+                rect3,
+                rect4,
+                text1,
+                text2,
+                text3,
+                text4,
+            )
+
+            self.wait(2)
+
+            self.clear()
+            self.wait(0.5)
+
+        # ========== calls ==============
+
+        default(self)
+        non_default(self)
+
+        # ========== FINISH ==============
+
+        self.wait(pause)
+        self.renderer.file_writer.output_file = f"./{self.__class__.__name__}.mp4"  # type: ignore
