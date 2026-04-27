@@ -56,8 +56,8 @@ class CodeBlockBase(AlgoManimBase):
         code_text_color_regular: ManimColor | str = "WHITE",
         code_text_color_highlight: ManimColor | str = "YELLOW",
         # --- head block ---
-        head_fill_color: ManimColor | str = mn.GRAY_BROWN,
-        head_text_color: ManimColor | str = mn.PURPLE,
+        head_fill_color: ManimColor | str = "#f4d7ab",
+        head_text_color: ManimColor | str = "#151515",
         # --- kwargs ---
         **kwargs,
     ):
@@ -65,7 +65,10 @@ class CodeBlockBase(AlgoManimBase):
 
         # --- texts ---
         self._code_lines = self._format_code_lines(code)
-        self._head_code_lines = self._format_code_lines(head)
+        if head:
+            self._head_code_lines = self._format_code_lines(head)
+        else:
+            self._head_code_lines = []
         # --- common font ---
         self._font_size = font_size
         self._font = font
