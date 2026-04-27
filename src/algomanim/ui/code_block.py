@@ -399,6 +399,18 @@ class CodeBlockLense(CodeBlockBase):
         else:
             return first_idx - middle + 1
 
+    def _clear_highlights(self) -> None:
+        """Clear all currently highlighted lines.
+
+        Resets text colors to regular and rectangle fills to default,
+        then empties the set of highlighted indices.
+        """
+        for idx in self._highlighted_indices:
+            self._code_text_mobs[idx].set_color(self._code_text_color_regular)
+            self._code_rect_mobs[idx].set_fill_color(self._code_rect_fill_color)
+
+        self._highlighted_indices = set()
+
     def highlight(
         self,
         *indices: int,
@@ -414,6 +426,7 @@ class CodeBlockLense(CodeBlockBase):
 
         # --- checks ---
         if not indices:
+            self._clear_highlights()
             return
         if not list(indices) == list(range(min(indices), max(indices) + 1)):
             raise ValueError("indices must be consecutive integers")
