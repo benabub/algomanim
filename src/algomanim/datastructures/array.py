@@ -28,7 +28,7 @@ class Array(RectangleCellsStructure):
         align_screen (np.ndarray | None): Direction vector for screen edge alignment
         screen_buff (float): Buffer distance from screen edge when using align_screen.
         anchor: Optional alignment anchor when neither align_left nor align_right
-            is specified. Must be mn.LEFT or mn.RIGHT. Defaults to mn.LEFT.
+            is specified. Must be `start`, `end` or None.
         container_color: Border color for cells.
         bg_color: Background color for cells and default pointer color.
         fill_color: Fill color for cells.

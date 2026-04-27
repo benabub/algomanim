@@ -7,7 +7,7 @@ from algomanim.core.rectangle_cells import RectangleCellsStructure
 
 
 # TODO: add frame_from param, sync with Array
-# TODO: anchor -> start, end
+# TODO: direction
 class String(RectangleCellsStructure):
     """String visualization as a VGroup of character cells with quotes.
 
@@ -28,7 +28,7 @@ class String(RectangleCellsStructure):
         align_screen (np.ndarray | None): Direction vector for screen edge alignment
         screen_buff (float): Buffer distance from screen edge when using align_screen.
         anchor: Optional alignment anchor when neither align_left nor align_right
-            is specified. Must be mn.LEFT or mn.RIGHT. Defaults to mn.LEFT.
+            is specified. Must be `start`, `end` or None.
         container_color: Border color for cells.
         fill_color: Fill color for character cells.
         bg_color: Background color for quote cells and default pointer color.
@@ -64,12 +64,12 @@ class String(RectangleCellsStructure):
         align_bottom: mn.Mobject | None = None,
         align_screen: np.ndarray | None = None,
         screen_buff: float = 0.4,
-        anchor: np.ndarray | None = mn.LEFT,
+        anchor: Literal["start", "end"] | None = "start",
         # ---- font ----
         font="",
         font_size: float = 35,
         text_color: ManimColor | str = mn.WHITE,
-        weight: str = "NORMAL",
+        weight: str = "BOLD",
         # ---- cell colors ----
         container_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
@@ -159,13 +159,11 @@ class String(RectangleCellsStructure):
             self._deep_bottom_buff = deep_bottom_buff
         # ---- anchor ----
         if not (align_left or align_right) and anchor is not None:
-            if not (
-                np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
-            ):
-                raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+            if anchor not in ["start", "end"]:
+                raise ValueError("anchor must be 'start', 'end' or None")
             self._anchor = anchor
         else:
-            self._anchor = None
+            self._anchor: Literal["start", "end"] | None = None
 
         # empty value
         if not self._data:
@@ -389,8 +387,9 @@ class String(RectangleCellsStructure):
             **self._parent_kwargs,
         )
 
+        # copy anchor alignment
         if self._anchor is not None:
-            if np.array_equal(self._anchor, mn.LEFT):
+            if self._anchor == "start":
                 if self._data and self._callable():
                     new_instance.align_to(self.get_left(), mn.LEFT)
                 elif self._data and not self._callable():
@@ -400,7 +399,7 @@ class String(RectangleCellsStructure):
                         self._containers_mob.get_left() + mn.LEFT * self._cell_height
                     )
                     new_instance.align_to(target, mn.LEFT)
-            elif np.array_equal(self._anchor, mn.RIGHT):
+            elif self._anchor == "end":
                 if self._data and self._callable():
                     new_instance.align_to(self.get_right(), mn.RIGHT)
                 elif self._data and not self._callable():
