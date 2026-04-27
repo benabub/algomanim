@@ -3243,7 +3243,7 @@ class Example_code_block(mn.Scene):
                 screen_buff=0.5,
             )
             title.first_appear(self)
-            self.wait(1)
+            self.wait(0.5)
 
             head1 = """
             def function(
@@ -3317,38 +3317,38 @@ class Example_code_block_lense(mn.Scene):
         # ========== INPUTS ==============
         pause = 1
 
-        code = """
-This is CodeBlockLense # 0
-
-It is needed for displaying # 2
-    large code blocks # 3
-        that do not fit # 4
-    entirely in screen height, # 5
-and need scrolling. # 6
-
-The limit parameter determines # 8
-    how many lines are displayed # 9
-        in the block. # 10
-
-There is a restriction on limit: # 12
-    7 lines. # 13
-If your code is shorter - # 14
-    scrolling makes no sense, # 15
-        use CodeBlock. # 16
-
-Unlike CodeBlock, # 18
-    CodeBlockLense # 19
-has restrictions on highlighting: # 20
-    - only consecutive lines # 21
-        can be highlighted # 22
-    - no more than three at once. # 23
-
-As in CodeBlock, # 25
-    empty lines # 26
-        are not highlighted. # 27
-"""
-
         def main(self):
+
+            code = """
+            This is CodeBlockLense # 0
+
+            It is needed for displaying # 2
+                large code blocks # 3
+                    that do not fit # 4
+                entirely in screen height, # 5
+            and need scrolling. # 6
+
+            The limit parameter determines # 8
+                how many lines are displayed # 9
+                    in the block. # 10
+
+            There is a restriction on limit: # 12
+                7 lines. # 13
+            If your code is shorter - # 14
+                scrolling makes no sense, # 15
+                    use CodeBlock. # 16
+
+            Unlike CodeBlock, # 18
+                CodeBlockLense # 19
+            has restrictions on highlighting: # 20
+                - only consecutive lines # 21
+                    can be highlighted # 22
+                - no more than three at once. # 23
+
+            As in CodeBlock, # 25
+                empty lines # 26
+                    are not highlighted. # 27
+            """
 
             cb = CodeBlockLense(
                 code,
@@ -3414,12 +3414,91 @@ As in CodeBlock, # 25
             title = highlight_with_title(self, cb, title, 26, 27)
 
             self.remove(cb)
+            self.wait(0.5)
+            self.clear()
             self.wait(pause)
+
+        def head(self):
+
+            title = RelativeText(
+                "head param",
+                font_size=50,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            title.first_appear(self)
+            self.wait(0.5)
+
+            head1 = """
+            def function(
+                ---- dominant width ----
+            ):
+            """
+            code1 = """
+            0
+            1
+            2
+            3
+            4
+            5
+            6
+            7
+            8
+            """
+
+            head2 = """
+            def func():
+            """
+            code2 = """
+            0
+            1
+            2 ---- dominant width ----
+            3
+            4
+            5
+            6
+            7
+            8
+            """
+
+            cb1 = CodeBlockLense(
+                code1,
+                limit=8,
+                head=head1,
+                vector=mn.LEFT * 3,
+            )
+            cb2 = CodeBlockLense(
+                code2,
+                limit=8,
+                head=head2,
+                vector=mn.RIGHT * 3,
+                align_bottom=cb1,
+            )
+            cb1.group_appear(self, cb2)
+            self.wait(0.5)
+
+            def highlight(*indices: int):
+                cb1.highlight(*indices)
+                cb2.highlight(*indices)
+                self.wait(1)
+
+            highlight(0, 1, 2)
+            highlight(3, 4, 5)
+            highlight(7)
+            highlight(8)
+            highlight(7)
+            highlight(1)
+            highlight()
+            highlight(1)
+
+            self.remove(cb1, cb2)
+            self.wait(0.5)
             self.clear()
 
         # ========== calls ==============
 
         main(self)
+        head(self)
 
         # ========== FINISH ==============
 
