@@ -9,7 +9,8 @@ class CodeBlock(CodeBlockBase):
     """Code block visualization with syntax highlighting capabilities.
 
     Args:
-        code_lines: code lines to display.
+        code: Multiline string of code (first line must be empty).
+        head: Multiline string of head block text (first line must be empty).
         vector: Position offset from mob_center for positioning.
         mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
@@ -18,22 +19,26 @@ class CodeBlock(CodeBlockBase):
         align_bottom: Reference mobject to align bottom edge with.
         align_screen (np.ndarray | None): Direction vector for screen edge alignment
         screen_buff (float): Buffer distance from screen edge when using align_screen.
-        font_size: Font size for the code text.
-        font: Font family for the code text. Defaults to system default.
-        text_color_regular: Color for regular (non-highlighted) text.
-        text_color_highlight: Color for highlighted text.
-        code_buff: Vertical buffer between code lines.
-        bg_rect_fill_color: Background fill color for the code block container.
-        bg_rect_stroke_width: Stroke width for the code block container.
-        bg_rect_stroke_color: Stroke color for the code block container.
-        bg_rect_corner_radius: Corner radius for the rounded rectangle container.
-        bg_rect_buff: Padding around the code text within the background container.
-        bg_highlight_color: Background color for highlighted lines.
+        font_size: Common font size for all the text.
+        font: Common Font family for all the text. Defaults to system default.
+        code_buff: Common vertical buffer between codelines vgroups.
+        rect_stroke_width: Stroke width for the code block container.
+        rect_stroke_color: Stroke color for the code block container.
+        rect_corner_radius: Corner radius for the rounded rectangle container.
+        rect_buff: Padding around the code text within the background container.
+        code_rect_fill_color: Background fill color for the code block container.
+        code_highlight_color: Background color for highlighted lines.
+        code_text_color_regular: Color for regular (non-highlighted) text.
+        code_text_color_highlight: Color for highlighted text.
+        head_fill_color: Background fill color for the head block.
+        head_text_color: Text color for the head block.
     """
 
     def __init__(
         self,
+        # --- texts ---
         code: str,
+        head: str = "",
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -43,24 +48,29 @@ class CodeBlock(CodeBlockBase):
         align_bottom: mn.Mobject | None = None,
         align_screen: np.ndarray | None = None,
         screen_buff: float = 0.2,
-        # --- font ---
+        # --- common font ---
         font_size: int = 20,
         font: str = "",
-        text_color_regular: ManimColor | str = "WHITE",
-        text_color_highlight: ManimColor | str = "YELLOW",
-        # --- buffs ---
+        # --- common buffs ---
         code_buff: float = 0.05,
-        # --- bg_rect ---
-        bg_rect_fill_color: ManimColor | str = "#545454",
-        bg_rect_stroke_width: float = 4,
-        bg_rect_stroke_color: ManimColor | str = "#151515",
-        bg_rect_corner_radius: float = 0.1,
-        bg_rect_buff: float = 0.2,
-        # --- highlights ---
-        bg_highlight_color: ManimColor | str = mn.BLACK,
+        # --- common rect ---
+        rect_stroke_width: float = 4,
+        rect_stroke_color: ManimColor | str = "#151515",
+        rect_corner_radius: float = 0.1,
+        rect_buff: float = 0.2,
+        # --- code block ---
+        code_rect_fill_color: ManimColor | str = "#545454",
+        code_rect_highlight_color: ManimColor | str = mn.BLACK,
+        code_text_color_regular: ManimColor | str = "WHITE",
+        code_text_color_highlight: ManimColor | str = "YELLOW",
+        # --- head block ---
+        head_fill_color: ManimColor | str = mn.PINK,
+        head_text_color: ManimColor | str = mn.BLUE,
     ):
         super().__init__(
+            # --- texts ---
             code=code,
+            head=head,
             # --- position ---
             vector=vector,
             mob_center=mob_center,
@@ -70,48 +80,45 @@ class CodeBlock(CodeBlockBase):
             align_bottom=align_bottom,
             align_screen=align_screen,
             screen_buff=screen_buff,
-            # --- font ---
+            # --- common font ---
             font_size=font_size,
             font=font,
-            text_color_regular=text_color_regular,
-            text_color_highlight=text_color_highlight,
             # --- buffs ---
             code_buff=code_buff,
-            # --- bg_rect ---
-            bg_rect_fill_color=bg_rect_fill_color,
-            bg_rect_stroke_width=bg_rect_stroke_width,
-            bg_rect_stroke_color=bg_rect_stroke_color,
-            bg_rect_corner_radius=bg_rect_corner_radius,
-            bg_rect_buff=bg_rect_buff,
-            # --- highlights ---
-            bg_highlight_color=bg_highlight_color,
+            # --- common rect ---
+            rect_stroke_width=rect_stroke_width,
+            rect_stroke_color=rect_stroke_color,
+            rect_corner_radius=rect_corner_radius,
+            rect_buff=rect_buff,
+            # --- code block ---
+            code_rect_fill_color=code_rect_fill_color,
+            code_rect_highlight_color=code_rect_highlight_color,
+            code_text_color_regular=code_text_color_regular,
+            code_text_color_highlight=code_text_color_highlight,
+            # --- head block ---
+            head_fill_color=head_fill_color,
+            head_text_color=head_text_color,
         )
 
         # --- highlights ---
         self._highlighted_indices = set()
 
-        self._text_mobs = self._create_text_mobs()
-        self._rect_mobs = self._create_rect_mobs(self._text_mobs)
-        self._line_vgroups = self._create_line_vgroups(
-            self._rect_mobs,
-            self._text_mobs,
-        )
+        self._code_vgroup = self._create_code_vgroup()
+        self._align_code_vgroup(self._code_vgroup, self._code_rect)
 
-        self._code_vgroup = mn.VGroup(*self._line_vgroups).arrange(
+        self.add(self._code_vgroup)
+
+    def _create_code_vgroup(self) -> mn.VGroup:
+        """Create a VGroup containing all code lines arranged vertically.
+
+        Returns:
+            VGroup of line VGroups arranged in a column.
+        """
+        return mn.VGroup(*self._code_line_vgroups).arrange(
             mn.DOWN,
             aligned_edge=mn.LEFT,
             buff=0,
         )
-
-        self._bg_rect = self._create_bg_rect(
-            self._code_vgroup.width,
-            self._code_vgroup.height,
-        )
-        self.add(self._bg_rect)
-        self._position()
-
-        self._code_vgroup.move_to(self._bg_rect)
-        self.add(self._code_vgroup)
 
     def highlight(self, *indices: int):
         """Highlight specified lines by changing text and rectangle colors.
@@ -129,15 +136,17 @@ class CodeBlock(CodeBlockBase):
 
         # Clear old highlights
         for idx in self._highlighted_indices - new_highlighted:
-            if self._text_mobs[idx]:
-                self._text_mobs[idx].set_color(self._text_color_regular)
-                self._rect_mobs[idx].set_fill_color(self._bg_rect_fill_color)
+            if self._code_text_mobs[idx]:
+                self._code_text_mobs[idx].set_color(self._code_text_color_regular)
+                self._code_rect_mobs[idx].set_fill_color(self._code_rect_fill_color)
 
         # Apply new highlights
         for idx in new_highlighted - self._highlighted_indices:
-            if self._text_mobs[idx]:
-                self._text_mobs[idx].set_color(self._text_color_highlight)
-                self._rect_mobs[idx].set_fill_color(self._bg_highlight_color)
+            if self._code_text_mobs[idx]:
+                self._code_text_mobs[idx].set_color(self._code_text_color_highlight)
+                self._code_rect_mobs[idx].set_fill_color(
+                    self._code_rect_highlight_color
+                )
 
         self._highlighted_indices = new_highlighted
 
