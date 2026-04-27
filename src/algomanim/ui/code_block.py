@@ -64,8 +64,8 @@ class CodeBlock(CodeBlockBase):
         code_text_color_regular: ManimColor | str = "WHITE",
         code_text_color_highlight: ManimColor | str = "YELLOW",
         # --- head block ---
-        head_fill_color: ManimColor | str = mn.PINK,
-        head_text_color: ManimColor | str = mn.BLUE,
+        head_fill_color: ManimColor | str = "#f4d7ab",
+        head_text_color: ManimColor | str = "#151515",
     ):
         super().__init__(
             # --- texts ---
@@ -221,8 +221,8 @@ class CodeBlockLense(CodeBlockBase):
         code_text_color_regular: ManimColor | str = "WHITE",
         code_text_color_highlight: ManimColor | str = "YELLOW",
         # --- head block ---
-        head_fill_color: ManimColor | str = mn.GRAY_BROWN,
-        head_text_color: ManimColor | str = mn.PURPLE,
+        head_fill_color: ManimColor | str = "#f4d7ab",
+        head_text_color: ManimColor | str = "#151515",
         # --- highlights ---
         dim_high: float = 0.3,
         dim_low: float = 0.7,
