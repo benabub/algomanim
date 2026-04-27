@@ -2073,14 +2073,14 @@ class Example_string(mn.Scene):
                 lambda: string,
                 mob_center=str_1,
                 vector=mn.UP * 0.7,
-                anchor=mn.RIGHT,
+                anchor="end",
                 pointers=None,
             )
             str_3 = String(
                 lambda: string,
                 mob_center=str_2,
                 vector=mn.UP * 0.7,
-                anchor=mn.LEFT,
+                anchor="start",
                 pointers=None,
             )
 
@@ -2091,10 +2091,10 @@ class Example_string(mn.Scene):
                 "anchor=None", mob_center=str_1, vector=mn.RIGHT * 4.0
             )
             text_str_2 = RelativeText(
-                "anchor=mn.RIGHT", mob_center=str_2, vector=mn.RIGHT * 4.6
+                'anchor="end"', mob_center=str_2, vector=mn.RIGHT * 4.6
             )
             text_str_3 = RelativeText(
-                "anchor=mn.LEFT", mob_center=str_3, vector=mn.RIGHT * 4.4
+                'anchor="start"', mob_center=str_3, vector=mn.RIGHT * 4.4
             )
 
             str_4 = String(
@@ -2222,14 +2222,14 @@ class Example_string(mn.Scene):
                 lambda: string,
                 mob_center=str_1,
                 vector=mn.UP * 0.7,
-                anchor=mn.RIGHT,
+                anchor="end",
                 pointers=None,
             )
             str_3 = String(
                 lambda: string,
                 mob_center=str_2,
                 vector=mn.UP * 0.7,
-                anchor=mn.LEFT,
+                anchor="start",
                 pointers=None,
             )
             str_4 = String(
