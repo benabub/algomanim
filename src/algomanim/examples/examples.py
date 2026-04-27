@@ -22,6 +22,7 @@ from algomanim import (
     CodeBlockLense,
     TitleText,
     LinkedList,
+    SemiRoundedRectangle,
 )
 
 
@@ -3160,26 +3161,24 @@ class Example_code_block(mn.Scene):
         self.camera.background_color = mn.DARK_GREY  # type: ignore
         pause = 1
 
-        # ======== INPUTS ============
-
-        code = """
-This is code_lines.  # 0
-It is possible to highlight them  # 1
-one by one,  # 2
-or  # 3
-
-several  # 5
-
-at once.  # 7 
-
-When highlight(...) calls,  # 9
-or calls without args,  # 10
-the old highlight clears.  # 11
-
-It is impossible to highlight empty lines. # 13
-"""
-
         def main(self):
+
+            code = """
+            This is code_lines.  # 0
+            It is possible to highlight them  # 1
+            one by one,  # 2
+            or  # 3
+
+            several  # 5
+
+            at once.  # 7 
+
+            When highlight(...) calls,  # 9
+            or calls without args,  # 10
+            the old highlight clears.  # 11
+
+            It is impossible to highlight empty lines. # 13
+            """
 
             # Construction code_block
             cb = CodeBlock(
@@ -3231,12 +3230,79 @@ It is impossible to highlight empty lines. # 13
             title = highlight_with_title(self, cb, title, 1, 3, 5, 7, 9, 11, 13)
 
             self.remove(cb)
-            self.wait(pause)
+            self.wait(0.5)
+            self.clear()
+            self.wait(1)
+
+        def head(self):
+
+            title = RelativeText(
+                "head param",
+                font_size=50,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            head1 = """
+            def function(
+                ---- dominant width ----
+            ):
+            """
+            code1 = """
+            0
+            1
+            2
+            3
+            4
+            """
+
+            head2 = """
+            def func():
+            """
+            code2 = """
+            0
+            1
+            2 ---- dominant width ----
+            3
+            4
+            """
+
+            cb1 = CodeBlock(
+                code1,
+                head=head1,
+                vector=mn.LEFT * 3,
+            )
+            cb2 = CodeBlock(
+                code2,
+                head=head2,
+                vector=mn.RIGHT * 3,
+                align_bottom=cb1,
+            )
+            cb1.group_appear(self, cb2)
+            self.wait(0.5)
+
+            def highlight(*indices: int):
+                cb1.highlight(*indices)
+                cb2.highlight(*indices)
+                self.wait(1)
+
+            highlight(0)
+            highlight(2)
+            highlight(4)
+            highlight(1, 3)
+            highlight(0, 2, 4)
+            highlight()
+
+            self.remove(cb1, cb2)
+            self.wait(0.5)
             self.clear()
 
         # ========== calls ==============
 
         main(self)
+        head(self)
 
         # ========== FINISH ==============
 
