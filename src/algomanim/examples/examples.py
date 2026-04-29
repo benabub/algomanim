@@ -1876,7 +1876,7 @@ class Example_string(mn.Scene):
             self.remove(string)
             self.wait(pause)
 
-            s = "ab"
+            s = '"ab"'
             top_text.update_value(self)
             self.wait(pause)
             string.first_appear(self)
@@ -1884,7 +1884,7 @@ class Example_string(mn.Scene):
             self.remove(string)
             self.wait(pause)
 
-            s = "a"
+            s = '"a"'
             top_text.update_value(self)
             self.wait(pause)
             string.first_appear(self)
@@ -1892,7 +1892,7 @@ class Example_string(mn.Scene):
             self.remove(string)
             self.wait(pause)
 
-            s = ""
+            s = '""'
             top_text.update_value(self)
             self.wait(pause)
             string.first_appear(self)
@@ -1900,7 +1900,7 @@ class Example_string(mn.Scene):
             self.remove(string)
             self.wait(pause)
 
-            s = "a"
+            s = '"a"'
             top_text.update_value(self)
             self.wait(pause)
             string.first_appear(self)
@@ -2048,6 +2048,100 @@ class Example_string(mn.Scene):
             )
             s.group_appear(self, top_text)
             self.wait(pause)
+            self.clear()
+
+        def pointers(self):
+
+            s = "abc"
+
+            title = RelativeText(
+                "pointers param",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            string1 = String(
+                lambda: s,
+                # font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=0.7,
+            )
+            text1 = RelativeText(
+                'pointers="both"',
+                font_size=30,
+                mob_center=string1,
+                # align_left=string1,
+                vector=mn.UP * 1,
+            )
+
+            string2 = String(
+                lambda: s,
+                pointers="top",
+                # font_size=40,
+                vector=mn.LEFT * 1.8,
+            )
+            text2 = RelativeText(
+                'pointers="top"',
+                font_size=30,
+                mob_center=string2,
+                # align_left=string2,
+                vector=mn.DOWN * 1,
+            )
+
+            string3 = String(
+                lambda: s,
+                pointers="bottom",
+                # font_size=40,
+                vector=mn.RIGHT * 1.8,
+            )
+            text3 = RelativeText(
+                'pointers="bottom"',
+                font_size=30,
+                mob_center=string3,
+                # align_left=string3,
+                vector=mn.UP * 1,
+            )
+
+            string4 = String(
+                lambda: s,
+                pointers=None,
+                # font_size=40,
+                align_screen=mn.RIGHT,
+                screen_buff=0.7,
+            )
+            text4 = RelativeText(
+                "pointers=None",
+                font_size=30,
+                mob_center=string4,
+                # align_left=string4,
+                vector=mn.DOWN * 1,
+            )
+
+            string1.group_appear(
+                self,
+                string2,
+                string3,
+                string4,
+                text1,
+                text2,
+                text3,
+                text4,
+            )
+            self.wait(1)
+
+            string1.pointers(0, 1, 2)
+            string1.pointers(1, pos=1, color_1=mn.PINK)
+            string2.pointers(0, 1, 2)
+            string2.pointers(1, pos=1, color_1=mn.PINK)
+            string3.pointers(0, 1, 2)
+            string3.pointers(1, pos=1, color_1=mn.PINK)
+            string4.pointers(0, 1, 2)
+            string4.pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
             self.clear()
 
         def updatevalue(self):
@@ -2477,6 +2571,7 @@ class Example_string(mn.Scene):
         pyramid(self)
         first_appear(self)
         positioning(self)
+        pointers(self)
         updatevalue(self)
         highlights_1to3(self)
         highlights_monocolor(self)
