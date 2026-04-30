@@ -1,10 +1,13 @@
-from typing import Callable, Literal
+from typing import Callable, Literal, TYPE_CHECKING
 
 import numpy as np
 import manim as mn
 from manim import ManimColor
 
 from algomanim.core.rectangle_cells import RectangleCellsStructure
+
+if TYPE_CHECKING:
+    from algomanim.datastructures.string import String
 
 
 class Array(RectangleCellsStructure):
@@ -14,7 +17,7 @@ class Array(RectangleCellsStructure):
         value: Callable that returns a list of values to visualize.
         direction: Direction vector for array orientation.
         pointers: Whether to create and display pointers.
-        frame_from: Optional Array instance to copy container frames from.
+        frame_from: Optional Array or String instance to copy container frames from.
         vector: Position offset from mob_center.
         font: Font family for text elements.
         font_size: Font size for text, scales the whole mobject.
@@ -62,7 +65,7 @@ class Array(RectangleCellsStructure):
         # ---- pointers ----
         pointers: Literal["top", "bottom", "both"] | None = "both",
         # ---- frame ----
-        frame_from: "Array | None " = None,
+        frame_from: "Array | String |  None" = None,
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -97,6 +100,10 @@ class Array(RectangleCellsStructure):
         self._parent_kwargs = kwargs.copy()
 
         super().__init__(
+            # ---- data_len ----
+            data_len=len(value()),
+            # ---- frame ----
+            frame_from=frame_from,
             # ---- position ----
             vector=vector,
             mob_center=mob_center,
@@ -195,8 +202,8 @@ class Array(RectangleCellsStructure):
 
         self.set_pointers(
             self._containers_mob,
-            self._direction,
             self._pointers,
+            self._direction,
         )
 
     def _empty_value_alignment(self):
@@ -277,42 +284,6 @@ class Array(RectangleCellsStructure):
                 else:
                     mob.scale_to_fit_width(width_limit)
             return values_mob
-
-    def _set_containers_mob(self) -> None:
-        """Create or import container mobjects for array cells.
-
-        If frame_from is provided, imports containers from another Array instance.
-        Otherwise creates new containers. Adds to scene and applies positioning.
-        """
-        if self._frame_from:
-            self._import_frame()
-        else:
-            self._containers_mob = self._create_containers_mob()
-
-        self.add(self._containers_mob)
-        self._position()
-
-    def _import_frame(self) -> None:
-        """Import container frames from another Array instance.
-
-        Copies containers from frame_from, validates length, and applies
-        current container and fill colors to all cells.
-        """
-        if self._frame_from:
-            import_frame = self._frame_from._containers_mob.copy()
-
-            if len(import_frame) != len(self._data):
-                raise ValueError("Lenght of base Array for frame import is not equal")
-
-            if import_frame[0].color != self._container_color:
-                for cell in import_frame:
-                    cell.color = self._container_color  # type: ignore
-
-            if import_frame[0].fill_color != self._fill_color:
-                for cell in import_frame:
-                    cell.fill_color = self._fill_color  # type: ignore
-
-            self._containers_mob = import_frame
 
     def _create_containers_mob(self):
         """Create rectangle mobjects for array cells.

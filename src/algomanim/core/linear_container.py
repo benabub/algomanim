@@ -242,8 +242,8 @@ class LinearContainerStructure(AlgoManimBase):
     def set_pointers(
         self,
         cell_mob: mn.VGroup,
-        direction: np.ndarray,
         pointers: Literal["top", "bottom", "both"] | None,
+        direction: np.ndarray,
     ) -> None:
         """Create and attach pointer triangles to cells based on direction and side.
 

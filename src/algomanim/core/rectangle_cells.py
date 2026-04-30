@@ -1,8 +1,14 @@
 from dataclasses import dataclass
+from abc import abstractmethod
+from typing import TYPE_CHECKING
 
 import manim as mn
 
 from .linear_container import LinearContainerStructure
+
+if TYPE_CHECKING:
+    from algomanim.datastructures.string import String
+    from algomanim.datastructures.array import Array
 
 
 @dataclass(frozen=True)
@@ -39,6 +45,11 @@ class RectangleCellsStructure(LinearContainerStructure):
 
     def __init__(
         self,
+        # ---- data ----
+        data_len: int,
+        # ---- frame ----
+        frame_from: "Array | String |  None " = None,
+        # ---- cell params ----
         cell_params_auto=True,
         cell_height=CELL_CONFIG.cell_height,
         top_bottom_buff=CELL_CONFIG.top_bottom_buff,
@@ -52,6 +63,8 @@ class RectangleCellsStructure(LinearContainerStructure):
                 "RectangleCellsStructure is base class only, cannot be instantiated directly."
             )
         super().__init__(**kwargs)
+        self._data_len = data_len
+        self._frame_from = frame_from
         self._cell_params_auto = cell_params_auto
         self._cell_height = cell_height
         self._top_bottom_buff = top_bottom_buff
@@ -124,3 +137,44 @@ class RectangleCellsStructure(LinearContainerStructure):
                 return res
         else:
             return cell_height
+
+    @abstractmethod
+    def _create_containers_mob(self) -> mn.VGroup:
+        """Create container mobjects for cells. Must be implemented by child classes."""
+        raise NotImplementedError
+
+    def _import_frame(self) -> None:
+        """Import container frames from another Array instance.
+
+        Copies containers from frame_from, validates length, and applies
+        current container and fill colors to all cells.
+        """
+        if self._frame_from:
+            import_frame = self._frame_from._containers_mob.copy()
+
+            if len(import_frame) != self._data_len:
+                raise ValueError("Lenght of base Array for frame import is not equal")
+
+            if import_frame[0].color != self._container_color:
+                for cell in import_frame:
+                    cell.color = self._container_color  # type: ignore
+
+            if import_frame[0].fill_color != self._fill_color:
+                for cell in import_frame:
+                    cell.fill_color = self._fill_color  # type: ignore
+
+            self._containers_mob = import_frame
+
+    def _set_containers_mob(self) -> None:
+        """Create or import container mobjects for data cells.
+
+        If frame_from is provided, imports containers from another Array or String instance.
+        Otherwise creates new containers. Adds to scene and applies positioning.
+        """
+        if self._frame_from:
+            self._import_frame()
+        else:
+            self._containers_mob = self._create_containers_mob()
+
+        self.add(self._containers_mob)
+        self._position()
