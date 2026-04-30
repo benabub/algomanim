@@ -32,12 +32,14 @@ class RectangleCellsStructure(LinearContainerStructure):
         This is base class only, cannot be instantiated directly.
 
     Args:
-        cell_params_auto (bool): Whether to auto-calculate cell parameters.
-        cell_height (float): Manual cell height when auto-calculation disabled.
-        top_bottom_buff (float): Internal top/bottom padding within cells.
-        top_buff (float): Top alignment buffer for specific characters.
-        bottom_buff (float): Bottom alignment buffer for most characters.
-        deep_bottom_buff (float): Deep bottom alignment for descending characters.
+        data_len: Number of cells to create.
+        frame_from: Optional Array or String instance to copy container frames from.
+        cell_params_auto: Whether to auto-calculate cell parameters.
+        cell_height: Manual cell height when auto-calculation disabled.
+        top_bottom_buff: Internal top/bottom padding within cells.
+        top_buff: Top alignment buffer for specific characters.
+        bottom_buff: Bottom alignment buffer for most characters.
+        deep_bottom_buff: Deep bottom alignment for descending characters.
         **kwargs: Additional keyword arguments passed to parent class.
     """
 
@@ -157,7 +159,7 @@ class RectangleCellsStructure(LinearContainerStructure):
         raise NotImplementedError
 
     def _import_frame(self) -> None:
-        """Import container frames from another Array instance.
+        """Import container frames from Array or String instance.
 
         Copies containers from frame_from, validates length, and applies
         current container and fill colors to all cells.
@@ -174,7 +176,7 @@ class RectangleCellsStructure(LinearContainerStructure):
 
             if import_frame[0].fill_color != self._fill_color:
                 for cell in import_frame:
-                    cell.fill_color = self._fill_color  # type: ignore
+                    cell.fill_color = self._fill_color
 
             self._containers_mob = import_frame
 

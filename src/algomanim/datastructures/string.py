@@ -14,7 +14,6 @@ class String(RectangleCellsStructure):
 
     Args:
         value: Callable that returns a string to visualize.
-        direction: Direction vector for string orientation.
         pointers: Whether to create and display pointers.
         frame_from: Optional Array or String instance to copy container frames from.
         vector: Position offset from mob_center.
