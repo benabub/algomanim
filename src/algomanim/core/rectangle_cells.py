@@ -193,3 +193,24 @@ class RectangleCellsStructure(LinearContainerStructure):
 
         self.add(self._containers_mob)
         self._position()
+
+    def _fit_text_to_cells(
+        self,
+        values_mob: mn.VGroup,
+        containers_mob: mn.VGroup,
+        top_bottom_buff: float,
+    ) -> None:
+        """Scale text mobjects to fit within their container widths.
+
+        Args:
+            values_mob: VGroup of text mobjects to scale.
+            containers_mob: VGroup of container rectangles.
+            top_bottom_buff: Internal padding within cells.
+        """
+        width_limits = [cell.width - top_bottom_buff for cell in containers_mob]
+
+        for mob, width_limit in zip(values_mob, width_limits):
+            if mob.width <= width_limit:
+                continue
+            else:
+                mob.scale_to_fit_width(width_limit)

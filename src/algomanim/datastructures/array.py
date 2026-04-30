@@ -196,6 +196,14 @@ class Array(RectangleCellsStructure):
 
         self._set_containers_mob()
 
+        # resize text mobs if necessary
+        if self._lock_width or self._frame_from:
+            self._fit_text_to_cells(
+                self._values_mob,
+                self._containers_mob,
+                self._top_bottom_buff,
+            )
+
         # move text mobjects in containers
         self._position_values_in_containers()
 
@@ -276,17 +284,7 @@ class Array(RectangleCellsStructure):
         values_mob = mn.VGroup(
             *[mn.Text(str(val), **self._text_config()) for val in self._data]
         )
-
-        if not self._lock_width:
-            return values_mob
-        else:
-            width_limit = self._cell_height - self._top_bottom_buff
-            for mob in values_mob:
-                if mob.width <= width_limit:
-                    continue
-                else:
-                    mob.scale_to_fit_width(width_limit)
-            return values_mob
+        return values_mob
 
     def _create_containers_mob(self):
         """Create rectangle mobjects for array cells.

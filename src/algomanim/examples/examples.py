@@ -1427,6 +1427,10 @@ class Example_array(mn.Scene):
             recipient.update_value(self)
             self.wait(pause)
 
+            rec_val = [10000, 10000, 10000, 10000, 10000]
+            recipient.update_value(self)
+            self.wait(pause)
+
             rec_val = [0, 0, 0, 0, 0]
             recipient.update_value(self)
             self.wait(pause)
@@ -1756,18 +1760,18 @@ class Example_array(mn.Scene):
 
         # ========== calls ==============
 
-        # pyramid(self)
-        # first_appear(self)
-        # direction(self)
-        # lockwidth(self)
-        # pointers(self)
-        # positioning(self)
-        # update_value(self)
+        pyramid(self)
+        first_appear(self)
+        direction(self)
+        lockwidth(self)
+        pointers(self)
+        positioning(self)
+        update_value(self)
         frame_import(self)
-        # highlights_1to3(self)
-        # monocolor(self)
-        # highlight_on_value(self)
-        # mix(self)
+        highlights_1to3(self)
+        monocolor(self)
+        highlight_on_value(self)
+        mix(self)
 
         # ========== finish ==============
 
@@ -2761,16 +2765,16 @@ class Example_string(mn.Scene):
 
         # ========== calls ==============
 
-        # pyramid(self)
-        # first_appear(self)
-        # pointers(self)
-        # positioning(self)
-        # updatevalue(self)
+        pyramid(self)
+        first_appear(self)
+        pointers(self)
+        positioning(self)
+        updatevalue(self)
         frame_import(self)
-        # highlights_1to3(self)
-        # highlights_monocolor(self)
-        # highlight_on_value(self)
-        # mix(self)
+        highlights_1to3(self)
+        highlights_monocolor(self)
+        highlight_on_value(self)
+        mix(self)
 
         # ========== finish ==============
 
