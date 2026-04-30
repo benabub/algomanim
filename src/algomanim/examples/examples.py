@@ -1756,18 +1756,18 @@ class Example_array(mn.Scene):
 
         # ========== calls ==============
 
-        pyramid(self)
-        first_appear(self)
-        direction(self)
-        lockwidth(self)
-        pointers(self)
-        positioning(self)
-        update_value(self)
+        # pyramid(self)
+        # first_appear(self)
+        # direction(self)
+        # lockwidth(self)
+        # pointers(self)
+        # positioning(self)
+        # update_value(self)
         frame_import(self)
-        highlights_1to3(self)
-        monocolor(self)
-        highlight_on_value(self)
-        mix(self)
+        # highlights_1to3(self)
+        # monocolor(self)
+        # highlight_on_value(self)
+        # mix(self)
 
         # ========== finish ==============
 
@@ -1979,6 +1979,100 @@ class Example_string(mn.Scene):
 
             self.clear()
 
+        def pointers(self):
+
+            s = "abc"
+
+            title = RelativeText(
+                "pointers param",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            string1 = String(
+                lambda: s,
+                # font_size=40,
+                align_screen=mn.LEFT,
+                screen_buff=0.7,
+            )
+            text1 = RelativeText(
+                'pointers="both"',
+                font_size=30,
+                mob_center=string1,
+                # align_left=string1,
+                vector=mn.UP * 1,
+            )
+
+            string2 = String(
+                lambda: s,
+                pointers="top",
+                # font_size=40,
+                vector=mn.LEFT * 1.8,
+            )
+            text2 = RelativeText(
+                'pointers="top"',
+                font_size=30,
+                mob_center=string2,
+                # align_left=string2,
+                vector=mn.DOWN * 1,
+            )
+
+            string3 = String(
+                lambda: s,
+                pointers="bottom",
+                # font_size=40,
+                vector=mn.RIGHT * 1.8,
+            )
+            text3 = RelativeText(
+                'pointers="bottom"',
+                font_size=30,
+                mob_center=string3,
+                # align_left=string3,
+                vector=mn.UP * 1,
+            )
+
+            string4 = String(
+                lambda: s,
+                pointers=None,
+                # font_size=40,
+                align_screen=mn.RIGHT,
+                screen_buff=0.7,
+            )
+            text4 = RelativeText(
+                "pointers=None",
+                font_size=30,
+                mob_center=string4,
+                # align_left=string4,
+                vector=mn.DOWN * 1,
+            )
+
+            string1.group_appear(
+                self,
+                string2,
+                string3,
+                string4,
+                text1,
+                text2,
+                text3,
+                text4,
+            )
+            self.wait(1)
+
+            string1.pointers(0, 1, 2)
+            string1.pointers(1, pos=1, color_1=mn.PINK)
+            string2.pointers(0, 1, 2)
+            string2.pointers(1, pos=1, color_1=mn.PINK)
+            string3.pointers(0, 1, 2)
+            string3.pointers(1, pos=1, color_1=mn.PINK)
+            string4.pointers(0, 1, 2)
+            string4.pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.clear()
+
         def positioning(self):
             pause = 1
             string = "str"
@@ -2119,100 +2213,6 @@ class Example_string(mn.Scene):
             )
             s.group_appear(self, top_text)
             self.wait(pause)
-            self.clear()
-
-        def pointers(self):
-
-            s = "abc"
-
-            title = RelativeText(
-                "pointers param",
-                font_size=50,
-                text_color=mn.BLACK,
-                align_screen=mn.DOWN,
-                screen_buff=1,
-            )
-            title.first_appear(self)
-
-            string1 = String(
-                lambda: s,
-                # font_size=40,
-                align_screen=mn.LEFT,
-                screen_buff=0.7,
-            )
-            text1 = RelativeText(
-                'pointers="both"',
-                font_size=30,
-                mob_center=string1,
-                # align_left=string1,
-                vector=mn.UP * 1,
-            )
-
-            string2 = String(
-                lambda: s,
-                pointers="top",
-                # font_size=40,
-                vector=mn.LEFT * 1.8,
-            )
-            text2 = RelativeText(
-                'pointers="top"',
-                font_size=30,
-                mob_center=string2,
-                # align_left=string2,
-                vector=mn.DOWN * 1,
-            )
-
-            string3 = String(
-                lambda: s,
-                pointers="bottom",
-                # font_size=40,
-                vector=mn.RIGHT * 1.8,
-            )
-            text3 = RelativeText(
-                'pointers="bottom"',
-                font_size=30,
-                mob_center=string3,
-                # align_left=string3,
-                vector=mn.UP * 1,
-            )
-
-            string4 = String(
-                lambda: s,
-                pointers=None,
-                # font_size=40,
-                align_screen=mn.RIGHT,
-                screen_buff=0.7,
-            )
-            text4 = RelativeText(
-                "pointers=None",
-                font_size=30,
-                mob_center=string4,
-                # align_left=string4,
-                vector=mn.DOWN * 1,
-            )
-
-            string1.group_appear(
-                self,
-                string2,
-                string3,
-                string4,
-                text1,
-                text2,
-                text3,
-                text4,
-            )
-            self.wait(1)
-
-            string1.pointers(0, 1, 2)
-            string1.pointers(1, pos=1, color_1=mn.PINK)
-            string2.pointers(0, 1, 2)
-            string2.pointers(1, pos=1, color_1=mn.PINK)
-            string3.pointers(0, 1, 2)
-            string3.pointers(1, pos=1, color_1=mn.PINK)
-            string4.pointers(0, 1, 2)
-            string4.pointers(1, pos=1, color_1=mn.PINK)
-            self.wait(1)
-
             self.clear()
 
         def updatevalue(self):
@@ -2457,6 +2457,128 @@ class Example_string(mn.Scene):
 
             self.clear()
 
+        def frame_import(self):
+            pause = 0.5
+
+            title = RelativeText(
+                "frame_from import",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=1,
+            )
+            self.add(title)
+
+            donor_val = [100, 100, 100, 100, 100]
+            donor = Array(
+                lambda: donor_val,  # type: ignore
+                font_size=35,
+                vector=mn.UP * 1 + mn.RIGHT * 1,
+                container_color=mn.BLUE,
+                fill_color=mn.PINK,
+            )
+            donor_text = RelativeText(
+                "donor Array",
+                font_size=30,
+                mob_center=donor,
+            )
+            donor_text.next_to(donor, mn.LEFT, buff=0.5)
+            donor.group_appear(self, donor_text)
+            self.wait(pause)
+
+            rec_val = "AAAAA"
+            recipient = String(
+                lambda: rec_val,
+                font_size=25,
+                mob_center=donor,
+                align_left=donor,
+                vector=mn.DOWN * 2,
+                frame_from=donor,
+                fill_color=mn.DARK_BROWN,
+            )
+            rec_text = RelativeText(
+                "recipient String",
+                font_size=30,
+                mob_center=donor,
+            )
+            rec_text.next_to(recipient, mn.LEFT, buff=0.5)
+            recipient.group_appear(self, rec_text)
+            self.wait(pause)
+
+            func_text = RelativeText(
+                "update_value()",
+                font_size=40,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            self.add(func_text)
+            self.wait(pause)
+
+            donor_val = [10, 10, 10, 10, 10]
+            donor.update_value(self)
+            recipient.update_value(self)
+            self.wait(pause)
+
+            donor_val = [1, 1, 1, 1, 1]
+            donor.update_value(self)
+            recipient.update_value(self)
+            self.wait(pause)
+
+            donor_val = [10, 10, 10, 10, 10]
+            donor.update_value(self)
+            recipient.update_value(self)
+            self.wait(1)
+
+            self.remove(
+                donor,
+                recipient,
+                func_text,
+                donor_text,
+                rec_text,
+            )
+            self.wait(1)
+
+            # -------------------
+
+            donor_val = "AAAAA"
+            donor = String(
+                lambda: donor_val,
+                font_size=40,
+                vector=mn.UP * 1 + mn.RIGHT * 1,
+                container_color=mn.BLUE,
+                fill_color=mn.PINK,
+            )
+            donor_text = RelativeText(
+                "donor String",
+                font_size=30,
+                mob_center=donor,
+            )
+            donor_text.next_to(donor, mn.LEFT, buff=0.5)
+            donor.group_appear(self, donor_text)
+            self.wait(pause)
+
+            rec_val = "AAAAA"
+            recipient = String(
+                lambda: rec_val,
+                font_size=25,
+                mob_center=donor,
+                align_left=donor,
+                vector=mn.DOWN * 2,
+                frame_from=donor,
+                fill_color=mn.DARK_BROWN,
+            )
+            rec_text = RelativeText(
+                "recipient String",
+                font_size=30,
+                mob_center=donor,
+            )
+            rec_text.next_to(recipient, mn.LEFT, buff=0.5)
+            recipient.group_appear(self, rec_text)
+            self.wait(1)
+
+            self.clear()
+
         def highlights_1to3(self):
             pause = 0.5
             string = String(lambda: "follow the rabbit")
@@ -2639,15 +2761,16 @@ class Example_string(mn.Scene):
 
         # ========== calls ==============
 
-        pyramid(self)
-        first_appear(self)
-        positioning(self)
-        pointers(self)
-        updatevalue(self)
-        highlights_1to3(self)
-        highlights_monocolor(self)
-        highlight_on_value(self)
-        mix(self)
+        # pyramid(self)
+        # first_appear(self)
+        # pointers(self)
+        # positioning(self)
+        # updatevalue(self)
+        frame_import(self)
+        # highlights_1to3(self)
+        # highlights_monocolor(self)
+        # highlight_on_value(self)
+        # mix(self)
 
         # ========== finish ==============
 
