@@ -154,7 +154,10 @@ class Array(RectangleCellsStructure):
         self._screen_buff = screen_buff
         # -- font --
         self._font = font
-        self._font_size = font_size
+        if frame_from:
+            self._font_size = frame_from._font_size
+        else:
+            self._font_size = font_size
         self._text_color = text_color
         self._weight = weight
         # ---- cell colors ----

@@ -91,18 +91,31 @@ class RectangleCellsStructure(LinearContainerStructure):
             dict: Dictionary containing cell layout parameters.
         """
 
-        zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
-
-        zero_mob_height = zero_mob.height
-
-        top_bottom_buff = zero_mob_height / self.CELL_CONFIG.top_bottom_buff_div
-        cell_height = top_bottom_buff * 2 + zero_mob_height
-        top_buff = zero_mob_height / self.CELL_CONFIG.top_buff_div
-        bottom_buff = (
-            zero_mob_height / self.CELL_CONFIG.bottom_buff_div + top_bottom_buff
-        )
-        deep_bottom_buff = zero_mob_height / self.CELL_CONFIG.deep_bottom_buff_div
-
+        if not self._frame_from:
+            zero_mob = mn.Text(test_sign, font=font, font_size=font_size, weight=weight)
+            zero_mob_height = zero_mob.height
+            top_bottom_buff = zero_mob_height / self.CELL_CONFIG.top_bottom_buff_div
+            cell_height = top_bottom_buff * 2 + zero_mob_height
+            top_buff = zero_mob_height / self.CELL_CONFIG.top_buff_div
+            bottom_buff = (
+                zero_mob_height / self.CELL_CONFIG.bottom_buff_div + top_bottom_buff
+            )
+            deep_bottom_buff = zero_mob_height / self.CELL_CONFIG.deep_bottom_buff_div
+        else:
+            zero_mob = mn.Text(
+                test_sign,
+                font=self._frame_from._font,
+                font_size=self._frame_from._font_size,
+                weight=self._frame_from._weight,
+            )
+            zero_mob_height = zero_mob.height
+            top_bottom_buff = zero_mob_height / self.CELL_CONFIG.top_bottom_buff_div
+            cell_height = self._frame_from._cell_height
+            top_buff = zero_mob_height / self.CELL_CONFIG.top_buff_div
+            bottom_buff = (
+                zero_mob_height / self.CELL_CONFIG.bottom_buff_div + top_bottom_buff
+            )
+            deep_bottom_buff = zero_mob_height / self.CELL_CONFIG.deep_bottom_buff_div
         return {
             "top_bottom_buff": top_bottom_buff,
             "cell_height": cell_height,

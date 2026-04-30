@@ -9,7 +9,6 @@ if TYPE_CHECKING:
     from algomanim.datastructures.array import Array
 
 
-# TODO: add frame_from param, sync with Array
 class String(RectangleCellsStructure):
     """String visualization as a VGroup of character cells with quotes.
 
@@ -137,12 +136,12 @@ class String(RectangleCellsStructure):
         self._screen_buff = screen_buff
         # -- font --
         self._font = font
-        self._text_color = text_color
-        self._weight = weight
         if frame_from:
             self._font_size = frame_from._font_size
         else:
             self._font_size = font_size
+        self._text_color = text_color
+        self._weight = weight
         # ---- cell colors ----
         self._container_color = container_color
         self._bg_color = bg_color
