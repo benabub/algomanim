@@ -1377,34 +1377,32 @@ class Example_array(mn.Scene):
             )
             self.add(title)
 
-            base_list = [100, 100, 100, 100, 100]
-            base = Array(
-                lambda: base_list,
+            donor_val = [100, 100, 100, 100, 100]
+            donor = Array(
+                lambda: donor_val,  # type: ignore
                 font_size=35,
                 vector=mn.UP * 1 + mn.RIGHT * 1,
                 container_color=mn.BLUE,
                 fill_color=mn.PINK,
             )
-            base_text = RelativeText("base array", font_size=30, mob_center=base)
-            base_text.next_to(base, mn.LEFT, buff=0.5)
-            base.group_appear(self, base_text)
-            self.wait(pause)
-
-            donor_list = [0, 0, 0, 0, 0]
-            donor = Array(
-                lambda: donor_list,
-                font_size=35,
-                mob_center=base,
-                align_left=base,
-                vector=mn.DOWN * 2,
-                frame_from=base,
-                fill_color=mn.DARK_BROWN,
-            )
-            donor_text = RelativeText(
-                "frame donor array", font_size=30, mob_center=base
-            )
+            donor_text = RelativeText("donor Array", font_size=30, mob_center=donor)
             donor_text.next_to(donor, mn.LEFT, buff=0.5)
             donor.group_appear(self, donor_text)
+            self.wait(pause)
+
+            rec_val = [0, 0, 0, 0, 0]
+            recipient = Array(
+                lambda: rec_val,
+                font_size=25,
+                mob_center=donor,
+                align_left=donor,
+                vector=mn.DOWN * 2,
+                frame_from=donor,
+                fill_color=mn.DARK_BROWN,
+            )
+            rec_text = RelativeText("recipient Array", font_size=30, mob_center=donor)
+            rec_text.next_to(recipient, mn.LEFT, buff=0.5)
+            recipient.group_appear(self, rec_text)
             self.wait(pause)
 
             func_text = RelativeText(
@@ -1417,35 +1415,108 @@ class Example_array(mn.Scene):
             self.add(func_text)
             self.wait(pause)
 
-            donor_list = [10, 10, 10, 10, 10]
-            donor.update_value(self)
+            rec_val = [10, 10, 10, 10, 10]
+            recipient.update_value(self)
             self.wait(pause)
 
-            donor_list = [100, 100, 100, 100, 100]
-            donor.update_value(self)
+            rec_val = [100, 100, 100, 100, 100]
+            recipient.update_value(self)
             self.wait(pause)
 
-            donor_list = [1000, 1000, 1000, 1000, 1000]
-            donor.update_value(self)
+            rec_val = [1000, 1000, 1000, 1000, 1000]
+            recipient.update_value(self)
             self.wait(pause)
 
-            donor_list = [0, 0, 0, 0, 0]
-            donor.update_value(self)
+            rec_val = [0, 0, 0, 0, 0]
+            recipient.update_value(self)
             self.wait(pause)
 
-            base_list = [10, 10, 10, 10, 10]
-            base.update_value(self)
+            donor_val = [10, 10, 10, 10, 10]
             donor.update_value(self)
+            recipient.update_value(self)
             self.wait(pause)
 
-            base_list = [1, 1, 1, 1, 1]
-            base.update_value(self)
+            donor_val = [1, 1, 1, 1, 1]
             donor.update_value(self)
+            recipient.update_value(self)
             self.wait(pause)
 
-            base_list = [10, 10, 10, 10, 10]
-            base.update_value(self)
+            donor_val = [10, 10, 10, 10, 10]
             donor.update_value(self)
+            recipient.update_value(self)
+            self.wait(1)
+
+            self.remove(
+                donor,
+                recipient,
+                func_text,
+                donor_text,
+                rec_text,
+            )
+            self.wait(1)
+
+            # ---------------------------
+
+            donor_val = "AAAAA"
+            donor = String(
+                lambda: donor_val,  # type: ignore
+                font_size=35,
+                vector=mn.UP * 1 + mn.RIGHT * 1,
+                container_color=mn.BLUE,
+                fill_color=mn.PINK,
+            )
+            donor_text = RelativeText(
+                "donor String",
+                font_size=30,
+                mob_center=donor,
+            )
+            donor_text.next_to(donor, mn.LEFT, buff=0.5)
+            donor.group_appear(self, donor_text)
+            self.wait(pause)
+
+            rec_val = [0, 0, 0, 0, 0]
+            recipient = Array(
+                lambda: rec_val,
+                font_size=25,
+                mob_center=donor,
+                align_left=donor,
+                vector=mn.DOWN * 2,
+                frame_from=donor,
+                fill_color=mn.DARK_BROWN,
+            )
+            rec_text = RelativeText(
+                "recipient Array",
+                font_size=30,
+                mob_center=donor,
+            )
+            rec_text.next_to(recipient, mn.LEFT, buff=0.5)
+            recipient.group_appear(self, rec_text)
+            self.wait(pause)
+
+            func_text = RelativeText(
+                "update_value()",
+                font_size=40,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            self.add(func_text)
+            self.wait(pause)
+
+            rec_val = [10, 10, 10, 10, 10]
+            recipient.update_value(self)
+            self.wait(pause)
+
+            rec_val = [100, 100, 100, 100, 100]
+            recipient.update_value(self)
+            self.wait(pause)
+
+            rec_val = [1000, 1000, 1000, 1000, 1000]
+            recipient.update_value(self)
+            self.wait(pause)
+
+            rec_val = [0, 0, 0, 0, 0]
+            recipient.update_value(self)
             self.wait(1)
 
             self.clear()
