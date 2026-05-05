@@ -1601,7 +1601,7 @@ class Example_array(mn.Scene):
 
             self.clear()
 
-        def highlight_on_value(self):
+        def highlight_containers_with_value(self):
             pause = 0.5
             arr = [10, 2, 3000, 2, 100, 1, 40]
             array = Array(
@@ -1654,6 +1654,72 @@ class Example_array(mn.Scene):
             array.highlight_containers_with_value(0, color=mn.PINK)
             array.pointers_on_value(0, color=mn.PINK)
             self.wait(1)
+            self.remove(top_text)
+
+            self.clear()
+
+        def highlight_containers_with_values(self):
+            pause = 0.5
+            arr = [0, 1, 2, 0, 1, 2]
+
+            cont_mapp = {
+                0: "#FF0000",
+                1: "#FFFFFF",
+                2: "#0000FF",
+            }
+            text_mapp = {
+                # 0: "#FF0000",
+                1: "#000000",
+                2: mn.YELLOW,
+            }
+
+            array = Array(
+                lambda: arr,
+                font_size=35,
+                weight="BOLD",
+            )
+            top_text = RelativeText(
+                "highlight_containers_with_values()\ntext_color_with_values()",
+                vector=mn.UP * 2,
+                font_size=30,
+            )
+            array.group_appear(self, top_text)
+            self.wait(1)
+
+            array.highlight_containers_with_values(cont_mapp)
+            array.text_color_with_values(text_mapp)
+            self.wait(pause)
+
+            arr = [2, 2, 1, 1, 0, 0]
+            array.update_value(self)
+            array.highlight_containers_with_values(cont_mapp)
+            array.text_color_with_values(text_mapp)
+            self.wait(pause)
+
+            arr = [0, 0, 1, 1, 2, 2]
+            array.update_value(self)
+            array.highlight_containers_with_values(cont_mapp)
+            array.text_color_with_values(text_mapp)
+            self.wait(1)
+
+            arr = [0, 1, 2, 0, 1, 2]
+            array.update_value(self, animate=False)
+            array.highlight_containers_with_values(cont_mapp)
+            array.text_color_with_values(text_mapp)
+            self.wait(pause)
+
+            arr = [2, 2, 1, 1, 0, 0]
+            array.update_value(self, animate=False)
+            array.highlight_containers_with_values(cont_mapp)
+            array.text_color_with_values(text_mapp)
+            self.wait(pause)
+
+            arr = [0, 0, 1, 1, 2, 2]
+            array.update_value(self, animate=False)
+            array.highlight_containers_with_values(cont_mapp)
+            array.text_color_with_values(text_mapp)
+            self.wait(1)
+
             self.remove(top_text)
 
             self.clear()
@@ -1770,7 +1836,8 @@ class Example_array(mn.Scene):
         frame_import(self)
         highlights_1to3(self)
         monocolor(self)
-        highlight_on_value(self)
+        highlight_containers_with_value(self)
+        highlight_containers_with_values(self)
         mix(self)
 
         # ========== finish ==============
