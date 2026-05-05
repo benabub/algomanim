@@ -680,3 +680,33 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- apply --------
         self._apply_containers_colors()
+
+    def text_color_with_values(
+        self,
+        mapping: Mapping[Any, ManimColor | str],
+    ) -> None:
+        """Set text color based on cell values.
+
+        Args:
+            mapping: Dictionary mapping values to text colors.
+                Cells with values not in mapping keep default text color.
+
+        Raises:
+            ValueError: If mapping is empty or data is not initialized.
+        """
+        # ------- checks --------
+        if not self._data:
+            return
+        if not mapping:
+            raise ValueError("Mapping cannot be empty")
+
+        # ------- fill store --------
+
+        for idx in range(len(self._data)):
+            if self._data[idx] in mapping:
+                self._values_mob[idx].set_color(mapping[self._data[idx]])
+            else:
+                self._values_mob[idx].set_color(self._text_color)
+
+        # ------- apply --------
+        self._apply_containers_colors()
