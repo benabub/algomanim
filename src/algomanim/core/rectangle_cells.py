@@ -32,7 +32,6 @@ class RectangleCellsStructure(LinearContainerStructure):
         This is base class only, cannot be instantiated directly.
 
     Args:
-        data_len: Number of cells to create.
         frame_from: Optional Array or String instance to copy container frames from.
         cell_params_auto: Whether to auto-calculate cell parameters.
         cell_height: Manual cell height when auto-calculation disabled.
@@ -47,8 +46,6 @@ class RectangleCellsStructure(LinearContainerStructure):
 
     def __init__(
         self,
-        # ---- data ----
-        data_len: int,
         # ---- frame ----
         frame_from: "Array | String |  None " = None,
         # ---- cell params ----
@@ -65,7 +62,6 @@ class RectangleCellsStructure(LinearContainerStructure):
                 "RectangleCellsStructure is base class only, cannot be instantiated directly."
             )
         super().__init__(**kwargs)
-        self._data_len = data_len
         self._frame_from = frame_from
         self._cell_params_auto = cell_params_auto
         self._cell_height = cell_height
@@ -167,7 +163,7 @@ class RectangleCellsStructure(LinearContainerStructure):
         if self._frame_from:
             import_frame = self._frame_from._containers_mob.copy()
 
-            if len(import_frame) != self._data_len:
+            if self._data is not None and len(import_frame) != len(self._data):
                 raise ValueError("Lenght of base Array for frame import is not equal")
 
             if import_frame[0].color != self._container_color:

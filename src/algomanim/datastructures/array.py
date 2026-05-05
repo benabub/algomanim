@@ -100,8 +100,6 @@ class Array(RectangleCellsStructure):
         self._parent_kwargs = kwargs.copy()
 
         super().__init__(
-            # ---- data_len ----
-            data_len=len(value()),
             # ---- frame ----
             frame_from=frame_from,
             # ---- position ----
