@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Any, Literal, Mapping
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -653,32 +653,30 @@ class LinearContainerStructure(AlgoManimBase):
 
     def highlight_containers_with_values(
         self,
-        values: tuple[Any, ...],
-        colors: tuple[ManimColor, ...],
-    ):
-        """Highlight cells whose values match any of the provided values.
+        mapping: Mapping[Any, ManimColor | str],
+    ) -> None:
+        """Highlight cells whose values match keys in the mapping.
 
         Args:
-            values: Tuple of values to match.
-            colors: Tuple of colors corresponding to each value.
+            mapping: Dictionary mapping values to highlight colors.
 
         Raises:
-            ValueError: If number of values differs from number of colors.
+            ValueError: If mapping is empty or data is not initialized.
         """
         # ------- checks --------
         if not self._data:
             return
-        if len(values) != len(colors):
-            raise ValueError("Number of values is not equal to number of colors")
+        if not mapping:
+            raise ValueError("Mapping cannot be empty")
 
         # ------- clean --------
         self._containers_colors = {}
 
         # ------- fill store --------
-        for val, color in zip(values, colors):
-            for idx in range(len(self._data)):
-                if self._data[idx] == val:
-                    self._containers_colors[idx] = color
+
+        for idx in range(len(self._data)):
+            if self._data[idx] in mapping:
+                self._containers_colors[idx] = mapping[self._data[idx]]
 
         # ------- apply --------
         self._apply_containers_colors()
