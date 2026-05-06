@@ -92,16 +92,20 @@ class AlgoManimBase(mn.VGroup):
         self,
         scene: mn.Scene,
         time=0.5,
+        update: bool = True,
     ):
         """Animate the initial appearance in scene.
 
         Args:
             scene: The scene to play the animation in.
             time: Duration of the fade-in animation.
+            update: If True, calls _set_new_value() before appearing.
+                Set to False if you have manually configured the object
+                (e.g., applied highlights or text colors) before adding to scene.
         """
-
-        if hasattr(self, "_set_new_value"):
-            self._set_new_value()
+        if update:
+            if hasattr(self, "_set_new_value"):
+                self._set_new_value()
 
         scene.play(mn.FadeIn(self), run_time=time)
 
