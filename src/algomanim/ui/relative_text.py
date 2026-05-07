@@ -31,6 +31,7 @@ class RelativeTextValue(AlgoManimBase):
         font (str): Text font family.
         font_size (float): Text font size.
         weight (str): Font weight (NORMAL, BOLD, etc.).
+        spaces(bool): Whether to add spaces around the equals sign.
         buff (float): Spacing between text elements.
         equal_sign (bool): Whether to use equals sign between name and value.
         items_align_edge (np.ndarray): Alignment edge for text items within the group.
@@ -55,6 +56,7 @@ class RelativeTextValue(AlgoManimBase):
         font_size: float = 25,
         weight: str = "NORMAL",
         # --- other ---
+        spaces: bool = False,
         buff=0.5,
         equal_sign: bool = True,
         items_align_edge: np.ndarray = mn.UP,
@@ -77,6 +79,7 @@ class RelativeTextValue(AlgoManimBase):
         self._font_size = font_size
         self._weight = weight
         # --- other ---
+        self._spaces = spaces
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
@@ -91,16 +94,26 @@ class RelativeTextValue(AlgoManimBase):
             self._anchor = None
 
         self.submobjects: List = []
-        parts = [
-            mn.Text(
-                f"{name} = {value()}" if equal_sign else f"{name} {value()}",
-                font=self._font,
-                font_size=self._font_size,
-                weight=self._weight,
-                color=color,
+
+        parts = []
+        for name, value, color in self._vars:
+            if self._equal_sign:
+                if self._spaces:
+                    text = f"{name} = {value()}"
+                else:
+                    text = f"{name}={value()}"
+            else:
+                text = f"{name} {value()}"
+            parts.append(
+                mn.Text(
+                    text,
+                    font=self._font,
+                    font_size=self._font_size,
+                    weight=self._weight,
+                    color=color,
+                )
             )
-            for name, value, color in self._vars
-        ]
+
         self._text_mob = mn.VGroup(*parts).arrange(
             mn.RIGHT, buff=self._buff, aligned_edge=self._items_align_edge
         )
@@ -133,6 +146,7 @@ class RelativeTextValue(AlgoManimBase):
             font_size=self._font_size,
             weight=self._weight,
             # --- other ---
+            spaces=self._spaces,
             buff=self._buff,
             equal_sign=self._equal_sign,
             items_align_edge=self._items_align_edge,
