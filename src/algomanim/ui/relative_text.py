@@ -56,7 +56,7 @@ class RelativeTextValue(AlgoManimBase):
         font_size: float = 25,
         weight: str = "NORMAL",
         # --- other ---
-        spaces: bool = False,
+        spaces: bool = True,
         buff=0.5,
         equal_sign: bool = True,
         items_align_edge: np.ndarray = mn.UP,

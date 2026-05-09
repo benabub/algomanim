@@ -1,4 +1,5 @@
 from typing import Any, Literal, Mapping
+from collections.abc import Collection
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -439,7 +440,7 @@ class LinearContainerStructure(AlgoManimBase):
 
     def pointers_on_value(
         self,
-        val: int | str,
+        value: int | str,
         pos: int = 1,
         color: ManimColor | str | None = None,
     ):
@@ -451,7 +452,7 @@ class LinearContainerStructure(AlgoManimBase):
         and finally applies the new state to the visual objects if data exists.
 
         Args:
-            val: The value to compare with array elements.
+            value: The value to compare with array elements.
             pos: 0 for top pointers, 1 for bottom pointers.
             color: Color for the highlighted pointer.
         """
@@ -482,7 +483,57 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- fill store --------
         for idx in range(len(self._data)):
-            if self._data[idx] == val:
+            if self._data[idx] == value:
+                colors_store[idx] = [self._bg_color, color, self._bg_color]
+
+        # ------- apply --------
+        self._apply_pointers_colors(pos)
+
+    def pointers_on_values(
+        self,
+        values: Collection[int | str],
+        pos: int = 1,
+        color: ManimColor | str | None = None,
+    ):
+        """Highlight middle pointers on all cells whose values are in the given set.
+
+        First, this function clears the existing pointer highlight state for the specified position,
+        then sets the new highlight state based on the provided values and color,
+        and finally applies the new state to the visual objects if data exists.
+
+        Args:
+            values: Set of values to match against array elements.
+            pos: 0 for top pointers, 1 for bottom pointers. Defaults to 1.
+            color: Color for the highlighted pointer. If None, uses color_containers_with_value.
+        """
+
+        # ------- checks --------
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        # ------- asserts --------
+        if not color:
+            color = self._color_containers_with_value
+
+        if pos == 0:
+            self._top_pointers_colors = {}
+            colors_store = self._top_pointers_colors
+
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_store = self._bottom_pointers_colors
+
+        # ------- checks --------
+        if not self._data:
+            return
+
+        # ------- fill store --------
+        for idx in range(len(self._data)):
+            if self._data[idx] in values:
                 colors_store[idx] = [self._bg_color, color, self._bg_color]
 
         # ------- apply --------
