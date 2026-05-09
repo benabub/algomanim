@@ -2799,6 +2799,58 @@ class Example_string(mn.Scene):
             self.wait(1)
             self.clear()
 
+        def pointers_on_values(self):
+            pause = 0.5
+            s = "A0B1C2D"
+            st = {"0", "1", "2"}
+
+            string = String(
+                lambda: s,
+                font_size=35,
+                weight="BOLD",
+            )
+            title = RelativeText(
+                "pointers_on_values()",
+                text_color=mn.BLACK,
+                font_size=50,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            string.group_appear(self, title)
+            self.wait(1)
+
+            set_text = RelativeTextValue(
+                ("collection", lambda: st, mn.BLACK),
+                font_size=30,
+                mob_center=title,
+                vector=mn.DOWN * 1,
+            )
+            set_text.first_appear(self)
+            self.wait(1)
+
+            string.pointers_on_values(st, 1, mn.ORANGE)
+            self.wait(1)
+
+            string.highlight_containers_1to3(0, 2, 4)
+            string.pointers(0, 2, 4)
+            self.wait(pause)
+
+            s = "0B1C2D"
+            string.update_value(self)
+            self.wait(pause)
+
+            s = "B1C2D"
+            string.update_value(self)
+            self.wait(pause)
+
+            s = "ABCD"
+            string.update_value(self)
+            self.wait(1)
+
+            self.remove(string)
+
+            self.clear()
+
         def mix(self):
             pause = 0.5
             s = "follow the rabbit"
@@ -2894,6 +2946,7 @@ class Example_string(mn.Scene):
         highlights_1to3(self)
         highlights_monocolor(self)
         highlight_on_value(self)
+        pointers_on_values(self)
         mix(self)
 
         # ========== finish ==============
