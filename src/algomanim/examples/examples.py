@@ -1668,7 +1668,6 @@ class Example_array(mn.Scene):
                 2: "#0000FF",
             }
             text_mapp = {
-                # 0: "#FF0000",
                 1: "#000000",
                 2: mn.YELLOW,
             }
@@ -1721,6 +1720,58 @@ class Example_array(mn.Scene):
             self.wait(1)
 
             self.remove(top_text)
+
+            self.clear()
+
+        def pointers_on_values(self):
+            pause = 0.5
+            arr = ["A", 0, "B", 1, "C", 2, "D"]
+            st = {0, 1, 2}
+
+            array = Array(
+                lambda: arr,
+                font_size=35,
+                weight="BOLD",
+            )
+            title = RelativeText(
+                "pointers_on_values()",
+                text_color=mn.BLACK,
+                font_size=50,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            array.group_appear(self, title)
+            self.wait(1)
+
+            set_text = RelativeTextValue(
+                ("collection", lambda: st, mn.BLACK),
+                font_size=30,
+                mob_center=title,
+                vector=mn.DOWN * 1,
+            )
+            set_text.first_appear(self)
+            self.wait(1)
+
+            array.pointers_on_values(st, 1, mn.ORANGE)
+            self.wait(1)
+
+            array.highlight_containers_1to3(0, 2, 4)
+            array.pointers(0, 2, 4)
+            self.wait(pause)
+
+            arr = [0, "B", 1, "C", 2, "D"]
+            array.update_value(self)
+            self.wait(pause)
+
+            arr = ["B", 1, "C", 2, "D"]
+            array.update_value(self)
+            self.wait(pause)
+
+            arr = ["A", "B", "C", "D"]
+            array.update_value(self)
+            self.wait(1)
+
+            self.remove(array)
 
             self.clear()
 
@@ -1838,6 +1889,8 @@ class Example_array(mn.Scene):
         monocolor(self)
         highlight_containers_with_value(self)
         highlight_containers_with_values(self)
+        highlight_containers_with_values(self)
+        pointers_on_values(self)
         mix(self)
 
         # ========== finish ==============
