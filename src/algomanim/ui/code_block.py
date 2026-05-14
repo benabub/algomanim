@@ -206,7 +206,7 @@ class CodeBlockLense(CodeBlockBase):
         align_screen: np.ndarray | None = None,
         screen_buff: float = 0.2,
         # --- common font ---
-        font_size: int = 20,
+        font_size: int = 19,
         font: str = "",
         # --- common buffs ---
         code_buff: float = 0.05,
