@@ -53,7 +53,7 @@ class String(RectangleCellsStructure):
         self,
         value: Callable[[], str],
         # ---- pointers ----
-        pointers: Literal["top", "bottom", "both"] | None = "both",
+        pointers: Literal["top", "bottom", "both"] | None = "top",
         # ---- frame ----
         frame_from: "Array | String |  None " = None,
         # ---- position ----

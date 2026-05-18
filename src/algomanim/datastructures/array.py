@@ -63,7 +63,7 @@ class Array(RectangleCellsStructure):
         # ---- direction ----
         direction: np.ndarray = mn.RIGHT,
         # ---- pointers ----
-        pointers: Literal["top", "bottom", "both"] | None = "both",
+        pointers: Literal["top", "bottom", "both"] | None = "top",
         # ---- frame ----
         frame_from: "Array | String |  None" = None,
         # ---- position ----
