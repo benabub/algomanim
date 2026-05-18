@@ -320,7 +320,9 @@ class Array(RectangleCellsStructure):
         """Position value text mobjects within their respective cells with proper alignment."""
 
         for i in range(len(self._data)):
-            if not isinstance(self._data[i], str):  # center alignment
+            if (
+                not isinstance(self._data[i], str) or len(self._data[i]) > 1
+            ):  # center alignment
                 self._values_mob[i].move_to(self._containers_mob[i])
             else:
                 val_set = set(self._data[i])
