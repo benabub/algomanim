@@ -450,6 +450,8 @@ class CodeGenerator:
                 or line.startswith("elif")
                 or line.startswith("continue")
                 or line.startswith("break")
+                or line.startswith("try")
+                or line.startswith("except")
             ):
                 statement_line = True
             else:
@@ -498,6 +500,34 @@ class CodeGenerator:
                     )
                     add_block_list.append(highlight_pair)
 
+                    if not inline_commands:
+                        add_block_list.append("\n")
+
+                elif (  # pre-highlight line - edge_indent
+                    line.startswith("try")
+                ):
+                    # Highlight try line before entering block
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent,
+                        "cycle",
+                        not inline_commands,
+                        line_number,
+                    )
+                    add_block_list.append(highlight_pair)
+                    add_block_list.append(edge_indent + line + "\n")
+                    add_block_list.append(edge_indent + tab + "#\n")
+
+                elif (  # after-highlight line - edge_indent plus tab
+                    line.startswith("except")
+                ):
+                    add_block_list.append(edge_indent + line + "\n")
+                    highlight_pair = self._get_highlight_pair(
+                        edge_indent + tab,
+                        "false",
+                        not inline_commands,
+                        line_number,
+                    )
+                    add_block_list.append(highlight_pair)
                     if not inline_commands:
                         add_block_list.append("\n")
 
