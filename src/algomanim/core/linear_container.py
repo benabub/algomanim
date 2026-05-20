@@ -347,7 +347,7 @@ class LinearContainerStructure(AlgoManimBase):
 
         return pointers_top, pointers_bottom
 
-    def pointers(
+    def pointers_1to3(
         self,
         *indices: int,
         pos: int = 0,
