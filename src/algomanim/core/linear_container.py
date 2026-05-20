@@ -347,6 +347,57 @@ class LinearContainerStructure(AlgoManimBase):
 
         return pointers_top, pointers_bottom
 
+    def pointers(
+        self,
+        indices: Collection[int],
+        pos: int = 1,
+        color: ManimColor | str | None = mn.ORANGE,
+    ):
+        """Highlight pointers at specified indices with a single color.
+
+        Clears existing pointer highlights for the given position, then applies
+        new highlights to all indices in the collection.
+
+        Args:
+            indices: Collection of indices to highlight.
+            pos: 0 for top pointers, 1 for bottom pointers. Defaults to 1.
+            color: Color for the highlighted pointers. Defaults to ORANGE.
+                If None, uses color_containers_with_value.
+
+        Raises:
+            ValueError: If pos is not 0 or 1.
+        """
+        # ------- checks --------
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        # ------- asserts --------
+        if not color:
+            color = self._color_containers_with_value
+
+        if pos == 0:
+            self._top_pointers_colors = {}
+            colors_store = self._top_pointers_colors
+
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_store = self._bottom_pointers_colors
+
+        # ------- checks --------
+        if not self._data:
+            return
+
+        # ------- fill store --------
+        for idx in indices:
+            colors_store[idx] = [self._bg_color, color, self._bg_color]
+
+        # ------- apply --------
+        self._apply_pointers_colors(pos)
+
     def pointers_1to3(
         self,
         *indices: int,
