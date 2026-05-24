@@ -375,6 +375,12 @@ class LinearContainerStructure(AlgoManimBase):
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
+        if pos == 0 and self._pointers not in ("both", "top"):
+            raise ValueError("Top pointers were not initialized for highlight.")
+
+        if pos == 1 and self._pointers not in ("both", "bottom"):
+            raise ValueError("Bottom pointers were not initialized for highlight.")
+
         # ------- asserts --------
         if not color:
             color = self._color_containers_with_value
