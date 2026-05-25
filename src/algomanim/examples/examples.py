@@ -3809,7 +3809,7 @@ class Example_code_block_lense(mn.Scene):
             has restrictions on highlighting: # 20
                 - only consecutive lines # 21
                     can be highlighted # 22
-                - no more than three at once. # 23
+                - bounded area, depending on the lines limit. #23
 
             As in CodeBlock, # 25
                 empty lines # 26
