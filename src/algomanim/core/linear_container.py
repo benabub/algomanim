@@ -74,26 +74,6 @@ class LinearContainerStructure(AlgoManimBase):
         color_mix_4: ManimColor | str = COLORS.color_mix_4,
         color_mix_5: ManimColor | str = COLORS.color_mix_5,
         color_mix_6: ManimColor | str = COLORS.color_mix_6,
-        color_red_blue: ManimColor | str = COLORS.color_red_blue,
-        color_red_green: ManimColor | str = COLORS.color_red_green,
-        color_red_pink: ManimColor | str = COLORS.color_red_pink,
-        color_red_purple: ManimColor | str = COLORS.color_red_purple,
-        color_red_teal: ManimColor | str = COLORS.color_red_teal,
-        color_blue_green: ManimColor | str = COLORS.color_blue_green,
-        color_blue_pink: ManimColor | str = COLORS.color_blue_pink,
-        color_blue_purple: ManimColor | str = COLORS.color_blue_purple,
-        color_blue_teal: ManimColor | str = COLORS.color_blue_teal,
-        color_green_pink: ManimColor | str = COLORS.color_green_pink,
-        color_green_purple: ManimColor | str = COLORS.color_green_purple,
-        color_green_teal: ManimColor | str = COLORS.color_green_teal,
-        color_pink_purple: ManimColor | str = COLORS.color_pink_purple,
-        color_pink_teal: ManimColor | str = COLORS.color_pink_teal,
-        color_purple_teal: ManimColor | str = COLORS.color_purple_teal,
-        # ---- highlight containers colors legacy ----
-        color_123: ManimColor | str = mn.BLACK,
-        color_12: ManimColor | str = mn.PURPLE,
-        color_13: ManimColor | str = mn.YELLOW_E,
-        color_23: ManimColor | str = mn.TEAL,
         # ---- kwargs ----
         **kwargs,
     ):
@@ -135,10 +115,6 @@ class LinearContainerStructure(AlgoManimBase):
         self._color_4 = color_4
         self._color_5 = color_5
         self._color_6 = color_6
-        self._color_123 = color_123
-        self._color_12 = color_12
-        self._color_13 = color_13
-        self._color_23 = color_23
         self._color_mix_3 = color_mix_3
         self._color_mix_4 = color_mix_4
         self._color_mix_5 = color_mix_5
@@ -792,102 +768,6 @@ class LinearContainerStructure(AlgoManimBase):
             return
 
         # --- apply colors ---
-        self._apply_containers_colors()
-
-    def highlight_containers_1to3(
-        self,
-        *indices: int,
-        color_1: ManimColor | str | None = None,
-        color_2: ManimColor | str | None = None,
-        color_3: ManimColor | str | None = None,
-        color_123: ManimColor | str | None = None,
-        color_12: ManimColor | str | None = None,
-        color_13: ManimColor | str | None = None,
-        color_23: ManimColor | str | None = None,
-    ):
-        """Highlight cells in the array visualization.
-
-        First, this function clears the existing container highlight state,
-        then sets the new highlight state based on the provided indices and colors,
-        and finally applies the new state to the visual objects if data exists.
-
-        Note:
-            Cell coloring methods are mutually exclusive - the last called
-            method determines the final appearance.
-
-        Args:
-            *indices: Positional arguments for indices to highlight (1-3 elements).
-            color_1: Color for the idx_list[0].
-            color_2: Color for the idx_list[1].
-            color_3: Color for the idx_list[2].
-            color_123: Color if all three indices are the same.
-            color_12: Color if idx_list[0] == idx_list[1].
-            color_13: Color if idx_list[0] == idx_list[2].
-            color_23: Color if idx_list[1] == idx_list[2].
-
-        Raises:
-            ValueError: if indices has invalid length.
-        """
-
-        # ------- checks --------
-        if not 1 <= len(indices) <= 3:
-            raise ValueError("indices must contain between 1 and 3 elements")
-
-        # ------- asserts --------
-        if not color_1:
-            color_1 = self._color_1
-        if not color_2:
-            color_2 = self._color_2
-        if not color_3:
-            color_3 = self._color_3
-        if not color_123:
-            color_123 = self._color_123
-        if not color_12:
-            color_12 = self._color_12
-        if not color_13:
-            color_13 = self._color_13
-        if not color_23:
-            color_23 = self._color_23
-
-        # clear self._containers_color
-        self._containers_colors = {}
-
-        # ------- fill self._containers_colors --------
-
-        if len(indices) == 1:
-            i = indices[0]
-            self._containers_colors[i] = color_1
-
-        elif len(indices) == 2:
-            i, j = indices[0], indices[1]
-            if i == j:
-                self._containers_colors[i] = color_12
-            else:
-                self._containers_colors[i] = color_1
-                self._containers_colors[j] = color_2
-
-        elif len(indices) == 3:
-            i, j, k = indices[0], indices[1], indices[2]
-
-            if i == j == k:
-                self._containers_colors[i] = color_123
-            elif i == j:
-                self._containers_colors[i] = color_12
-                self._containers_colors[k] = color_3
-            elif i == k:
-                self._containers_colors[i] = color_13
-                self._containers_colors[j] = color_2
-            elif j == k:
-                self._containers_colors[i] = color_1
-                self._containers_colors[j] = color_23
-            else:
-                self._containers_colors[i] = color_1
-                self._containers_colors[j] = color_2
-                self._containers_colors[k] = color_3
-
-        if not self._data:
-            return
-
         self._apply_containers_colors()
 
     def highlight_containers_monocolor(
