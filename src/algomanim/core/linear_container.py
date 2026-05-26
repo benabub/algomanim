@@ -1,10 +1,42 @@
 from typing import Any, Literal, Mapping
 from collections.abc import Collection
+from dataclasses import dataclass
 import numpy as np
 import manim as mn
 from manim import ManimColor
 
 from .base import AlgoManimBase
+
+
+@dataclass(frozen=True)
+class Colors:
+    color_1: ManimColor | str = mn.RED
+    color_2: ManimColor | str = mn.BLUE
+    color_3: ManimColor | str = mn.GREEN
+    color_4: ManimColor | str = mn.PINK
+    color_5: ManimColor | str = mn.PURPLE
+    color_6: ManimColor | str = mn.TEAL
+
+    color_mix_3: ManimColor | str = mn.TEAL
+    color_mix_4: ManimColor | str = mn.TEAL
+    color_mix_5: ManimColor | str = mn.TEAL
+    color_mix_6: ManimColor | str = mn.TEAL
+
+    color_red_blue: ManimColor | str = mn.TEAL
+    color_red_green: ManimColor | str = mn.TEAL
+    color_red_pink: ManimColor | str = mn.TEAL
+    color_red_purple: ManimColor | str = mn.TEAL
+    color_red_teal: ManimColor | str = mn.TEAL
+    color_blue_green: ManimColor | str = mn.TEAL
+    color_blue_pink: ManimColor | str = mn.TEAL
+    color_blue_purple: ManimColor | str = mn.TEAL
+    color_blue_teal: ManimColor | str = mn.TEAL
+    color_green_pink: ManimColor | str = mn.TEAL
+    color_green_purple: ManimColor | str = mn.TEAL
+    color_green_teal: ManimColor | str = mn.TEAL
+    color_pink_purple: ManimColor | str = mn.TEAL
+    color_pink_teal: ManimColor | str = mn.TEAL
+    color_purple_teal: ManimColor | str = mn.TEAL
 
 
 class LinearContainerStructure(AlgoManimBase):
@@ -32,6 +64,8 @@ class LinearContainerStructure(AlgoManimBase):
         **kwargs: Additional keyword arguments passed to VGroup.
     """
 
+    COLORS = Colors()
+
     def __init__(
         self,
         # ---- font ----
@@ -44,14 +78,37 @@ class LinearContainerStructure(AlgoManimBase):
         fill_color: ManimColor | str = mn.GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         # ---- highlight containers colors ----
-        color_1: ManimColor | str = mn.RED,
-        color_2: ManimColor | str = mn.BLUE,
-        color_3: ManimColor | str = mn.GREEN,
+        color_containers_with_value: ManimColor | str = mn.BLACK,
+        color_1: ManimColor | str = COLORS.color_1,
+        color_2: ManimColor | str = COLORS.color_2,
+        color_3: ManimColor | str = COLORS.color_3,
+        color_4: ManimColor | str = COLORS.color_4,
+        color_5: ManimColor | str = COLORS.color_5,
+        color_6: ManimColor | str = COLORS.color_6,
+        color_mix_3: ManimColor | str = COLORS.color_mix_3,
+        color_mix_4: ManimColor | str = COLORS.color_mix_4,
+        color_mix_5: ManimColor | str = COLORS.color_mix_5,
+        color_mix_6: ManimColor | str = COLORS.color_mix_6,
+        color_red_blue: ManimColor | str = COLORS.color_red_blue,
+        color_red_green: ManimColor | str = COLORS.color_red_green,
+        color_red_pink: ManimColor | str = COLORS.color_red_pink,
+        color_red_purple: ManimColor | str = COLORS.color_red_purple,
+        color_red_teal: ManimColor | str = COLORS.color_red_teal,
+        color_blue_green: ManimColor | str = COLORS.color_blue_green,
+        color_blue_pink: ManimColor | str = COLORS.color_blue_pink,
+        color_blue_purple: ManimColor | str = COLORS.color_blue_purple,
+        color_blue_teal: ManimColor | str = COLORS.color_blue_teal,
+        color_green_pink: ManimColor | str = COLORS.color_green_pink,
+        color_green_purple: ManimColor | str = COLORS.color_green_purple,
+        color_green_teal: ManimColor | str = COLORS.color_green_teal,
+        color_pink_purple: ManimColor | str = COLORS.color_pink_purple,
+        color_pink_teal: ManimColor | str = COLORS.color_pink_teal,
+        color_purple_teal: ManimColor | str = COLORS.color_purple_teal,
+        # ---- highlight containers colors legacy ----
         color_123: ManimColor | str = mn.BLACK,
         color_12: ManimColor | str = mn.PURPLE,
         color_13: ManimColor | str = mn.YELLOW_E,
         color_23: ManimColor | str = mn.TEAL,
-        color_containers_with_value: ManimColor | str = mn.BLACK,
         # ---- kwargs ----
         **kwargs,
     ):
