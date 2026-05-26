@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import numpy as np
 import manim as mn
 from manim import ManimColor
+import math
 
 from .base import AlgoManimBase
 
@@ -142,21 +143,6 @@ class LinearContainerStructure(AlgoManimBase):
         self._color_mix_4 = color_mix_4
         self._color_mix_5 = color_mix_5
         self._color_mix_6 = color_mix_6
-        self._color_red_blue = color_red_blue
-        self._color_red_green = color_red_green
-        self._color_red_pink = color_red_pink
-        self._color_red_purple = color_red_purple
-        self._color_red_teal = color_red_teal
-        self._color_blue_green = color_blue_green
-        self._color_blue_pink = color_blue_pink
-        self._color_blue_purple = color_blue_purple
-        self._color_blue_teal = color_blue_teal
-        self._color_green_pink = color_green_pink
-        self._color_green_purple = color_green_purple
-        self._color_green_teal = color_green_teal
-        self._color_pink_purple = color_pink_purple
-        self._color_pink_teal = color_pink_teal
-        self._color_purple_teal = color_purple_teal
 
     def _get_position(self):
         """Return containers mobject for positioning purposes."""
@@ -682,31 +668,23 @@ class LinearContainerStructure(AlgoManimBase):
             int(strip_hex[4:6], 16),
         )
 
-    def _blend_colors_advanced(self, *colors: str | ManimColor) -> str:
-        """Blend multiple colors using a subtractive-like algorithm.
-
-        The algorithm:
-        1. Convert colors to RGB and invert each channel (255 - value).
-        2. For each channel, take the maximum value among all colors.
-        3. Calculate the average of the remaining values (excluding the maximum).
-        4. Compute darkening percentage = average / 255.
-        5. Divide darkening percentage by the number of colors.
-        6. Increase the maximum value by this factor.
-        7. Clamp to 255 and invert back.
+    @staticmethod
+    def _blend_colors_algo(*colors: str | ManimColor) -> str:
+        """Blend multiple colors using RGB channel averaging with ceiling.
 
         Args:
             *colors: Variable number of colors as hex strings or ManimColor objects.
 
         Returns:
-            Blended color as hex string.
+            Blended color as uppercase hex string.
         """
-        rgb_list = [self._color_to_rgb(c) for c in colors]
+        rgb_list = [LinearContainerStructure._color_to_rgb(c) for c in colors]
         n = len(rgb_list)
 
-        # reverse transform and find maximum per channel
-        rev_r = [255 - v[0] for v in rgb_list]
-        rev_g = [255 - v[1] for v in rgb_list]
-        rev_b = [255 - v[2] for v in rgb_list]
+        r = int(math.ceil(sum(v[0] for v in rgb_list) / n))
+        g = int(math.ceil(sum(v[1] for v in rgb_list) / n))
+        b = int(math.ceil(sum(v[2] for v in rgb_list) / n))
+
 
         max_r = max(rev_r)
         max_g = max(rev_g)
