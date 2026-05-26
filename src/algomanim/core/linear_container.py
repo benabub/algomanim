@@ -596,18 +596,29 @@ class LinearContainerStructure(AlgoManimBase):
         # ------- apply --------
         self._apply_pointers_colors(pos)
 
-    def _blend_colors(self, *colors: str | ManimColor) -> str:
-        def to_hex(c: str | ManimColor) -> str:
-            if isinstance(c, ManimColor):
-                return c.to_hex()
-            return c.lstrip("#")
+    @staticmethod
+    def _color_to_rgb(color: str | ManimColor) -> tuple[int, int, int]:
+        """Convert a color to RGB tuple.
 
-        def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
-            hex_color = hex_color.lstrip("#")
-            return (
-                int(hex_color[0:2], 16),
-                int(hex_color[2:4], 16),
-                int(hex_color[4:6], 16),
+        Args:
+            color: Color as hex string or ManimColor object.
+
+        Returns:
+            Tuple of (red, green, blue) integers in range 0-255.
+        """
+        if isinstance(color, ManimColor):
+            hex = color.to_hex()
+        else:
+            hex = color
+
+        strip_hex = hex.lstrip("#")
+
+        return (
+            int(strip_hex[0:2], 16),
+            int(strip_hex[2:4], 16),
+            int(strip_hex[4:6], 16),
+        )
+
             )
 
         hex_colors = [to_hex(c) for c in colors]
