@@ -10,33 +10,17 @@ from .base import AlgoManimBase
 
 @dataclass(frozen=True)
 class Colors:
-    color_1: ManimColor | str = mn.RED
-    color_2: ManimColor | str = mn.BLUE
-    color_3: ManimColor | str = mn.GREEN
-    color_4: ManimColor | str = mn.PINK
-    color_5: ManimColor | str = mn.PURPLE
-    color_6: ManimColor | str = mn.TEAL
+    color_1: ManimColor | str = mn.RED  # #FC6255
+    color_2: ManimColor | str = mn.BLUE  # #58C4DD
+    color_3: ManimColor | str = mn.GREEN  # #83C167
+    color_4: ManimColor | str = mn.PINK  # #D147BD
+    color_5: ManimColor | str = mn.LOGO_BLUE  # #525893
+    color_6: ManimColor | str = mn.GREEN_E  # #699C52
 
-    color_mix_3: ManimColor | str = mn.TEAL
-    color_mix_4: ManimColor | str = mn.TEAL
-    color_mix_5: ManimColor | str = mn.TEAL
-    color_mix_6: ManimColor | str = mn.TEAL
-
-    color_red_blue: ManimColor | str = mn.TEAL
-    color_red_green: ManimColor | str = mn.TEAL
-    color_red_pink: ManimColor | str = mn.TEAL
-    color_red_purple: ManimColor | str = mn.TEAL
-    color_red_teal: ManimColor | str = mn.TEAL
-    color_blue_green: ManimColor | str = mn.TEAL
-    color_blue_pink: ManimColor | str = mn.TEAL
-    color_blue_purple: ManimColor | str = mn.TEAL
-    color_blue_teal: ManimColor | str = mn.TEAL
-    color_green_pink: ManimColor | str = mn.TEAL
-    color_green_purple: ManimColor | str = mn.TEAL
-    color_green_teal: ManimColor | str = mn.TEAL
-    color_pink_purple: ManimColor | str = mn.TEAL
-    color_pink_teal: ManimColor | str = mn.TEAL
-    color_purple_teal: ManimColor | str = mn.TEAL
+    color_mix_3: ManimColor | str = mn.GOLD_E
+    color_mix_4: ManimColor | str = mn.ORANGE
+    color_mix_5: ManimColor | str = mn.DARK_BROWN
+    color_mix_6: ManimColor | str = mn.BLACK
 
 
 class LinearContainerStructure(AlgoManimBase):
