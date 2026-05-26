@@ -720,168 +720,78 @@ class LinearContainerStructure(AlgoManimBase):
 
         raise ValueError("colors must contain between 2 and 6 elements")
 
-        g_new = min(g_new, 255)
-        b_new = min(b_new, 255)
-
-        # reverse transform back
-        r_final = 255 - r_new
-        g_final = 255 - g_new
-        b_final = 255 - b_new
-
-        return f"#{r_final:02x}{g_final:02x}{b_final:02x}"
-
-        hex_colors = [to_hex(c) for c in colors]
-        rgb_list = [hex_to_rgb(h) for h in hex_colors]
-
-        r = sum(v[0] for v in rgb_list) // len(rgb_list)
-        g = sum(v[1] for v in rgb_list) // len(rgb_list)
-        b = sum(v[2] for v in rgb_list) // len(rgb_list)
-
-        return f"#{r:02x}{g:02x}{b:02x}"
-
-    # def _blend_colors(self, *colors: ManimColor | str) -> ManimColor:
-    #     """Blend multiple colors by averaging their RGB components.
-    #
-    #     Args:
-    #         *colors: Variable number of colors (ManimColor or hex strings).
-    #
-    #     Returns:
-    #         Blended color as ManimColor.
-    #     """
-    #     # Convert hex strings to ManimColor if needed
-    #     color_objects = []
-    #     for c in colors:
-    #         if isinstance(c, ManimColor):
-    #             color_objects.append(c)
-    #         else:
-    #             color_objects.append(ManimColor(c))
-    #
-    #     # If only one color, return it directly
-    #     if len(color_objects) == 1:
-    #         return color_objects[0]
-    #
-    #     r = sum(c[0] for c in color_objects)
-    #     g = sum(c[1] for c in color_objects)
-    #     b = sum(c[2] for c in color_objects)
-    #     return ManimColor((r, g, b))
-
-    # # Average RGB components
-    # r = sum(c[0] for c in color_objects) / len(color_objects)
-    # g = sum(c[1] for c in color_objects) / len(color_objects)
-    # b = sum(c[2] for c in color_objects) / len(color_objects)
-    # return ManimColor((r, g, b))
-
-    # # Convert to RGB, sum, clamp, average
-    # r = sum(c[0] for c in color_objects)
-    # g = sum(c[1] for c in color_objects)
-    # b = sum(c[2] for c in color_objects)
-    # total = len(color_objects)
-    # return ManimColor(
-    #     (min(1.0, r / total), min(1.0, g / total), min(1.0, b / total))
-    # )
-
-    def highlight_containers_mix(
+    def highlight_containers(
         self,
         *indices: int,
         color_1: ManimColor | str | None = None,
         color_2: ManimColor | str | None = None,
         color_3: ManimColor | str | None = None,
-        # color_123: ManimColor | str | None = None,
-        # color_12: ManimColor | str | None = None,
-        # color_13: ManimColor | str | None = None,
-        # color_23: ManimColor | str | None = None,
+        color_4: ManimColor | str | None = None,
+        color_5: ManimColor | str | None = None,
+        color_6: ManimColor | str | None = None,
     ):
-        """Highlight cells in the array visualization.
+        """Highlight containers at specified indices with color blending for duplicates.
 
-        First, this function clears the existing container highlight state,
-        then sets the new highlight state based on the provided indices and colors,
-        and finally applies the new state to the visual objects if data exists.
-
-        Note:
-            Cell coloring methods are mutually exclusive - the last called
-            method determines the final appearance.
+        If the same index appears multiple times, the corresponding colors are blended.
+        Supports up to 6 indices.
 
         Args:
-            *indices: Positional arguments for indices to highlight (1-3 elements).
-            color_1: Color for the idx_list[0].
-            color_2: Color for the idx_list[1].
-            color_3: Color for the idx_list[2].
-            color_123: Color if all three indices are the same.
-            color_12: Color if idx_list[0] == idx_list[1].
-            color_13: Color if idx_list[0] == idx_list[2].
-            color_23: Color if idx_list[1] == idx_list[2].
+            *indices: Container indices to highlight (1-6 elements).
+            color_1: Color for first index position. If None, uses default color_1.
+            color_2: Color for second index position.
+            color_3: Color for third index position.
+            color_4: Color for fourth index position.
+            color_5: Color for fifth index position.
+            color_6: Color for sixth index position.
 
         Raises:
-            ValueError: if indices has invalid length.
+            ValueError: If number of indices is not between 1 and 6.
         """
 
         # ------- checks --------
-        if not 1 <= len(indices) <= 3:
-            raise ValueError("indices must contain between 1 and 3 elements")
+        if not 1 <= len(indices) <= 6:
+            raise ValueError("indices must contain between 1 and 6 elements")
 
         # ------- asserts --------
-        if not color_1:
+        if color_1 is None:
             color_1 = self._color_1
-        if not color_2:
+        if color_2 is None:
             color_2 = self._color_2
-        if not color_3:
+        if color_3 is None:
             color_3 = self._color_3
+        if color_4 is None:
+            color_4 = self._color_4
+        if color_5 is None:
+            color_5 = self._color_5
+        if color_6 is None:
+            color_6 = self._color_6
 
-        # if not color_123:
-        #     color_123 = self._color_123
-        # if not color_12:
-        #     color_12 = self._color_12
-        # if not color_13:
-        #     color_13 = self._color_13
-        # if not color_23:
-        #     color_23 = self._color_23
-
-        # clear self._containers_color
+        # --- clear previous highlights ---
         self._containers_colors = {}
 
-        # ------- fill self._containers_colors --------
+        # --- map colors to their positions ---
+        colors = [color_1, color_2, color_3, color_4, color_5, color_6]
 
-        if len(indices) == 1:
-            i = indices[0]
-            self._containers_colors[i] = color_1
+        # --- group color indices by target container index ---
+        # Example: indices = [1, 1, 2] -> groups = {1: [0, 1], 2: [2]}
+        groups = {}
+        for idx, color_pos in zip(indices, range(len(indices))):
+            if idx not in groups:
+                groups[idx] = []
+            groups[idx].append(colors[color_pos])
 
-        elif len(indices) == 2:
-            i, j = indices[0], indices[1]
-            if i == j:
-                # self._containers_colors[i] = color_12
-                self._containers_colors[i] = self._blend_colors(color_1, color_2)
+        # --- for each container, assign color or blend multiple colors ---
+        for idx, color_list in groups.items():
+            if len(color_list) == 1:
+                self._containers_colors[idx] = color_list[0]
             else:
-                self._containers_colors[i] = color_1
-                self._containers_colors[j] = color_2
+                self._containers_colors[idx] = self._blend_colors(*color_list)
 
-        elif len(indices) == 3:
-            i, j, k = indices[0], indices[1], indices[2]
-
-            if i == j == k:
-                # self._containers_colors[i] = color_123
-                self._containers_colors[i] = self._blend_colors(
-                    color_1, color_2, color_3
-                )
-            elif i == j:
-                # self._containers_colors[i] = color_12
-                self._containers_colors[i] = self._blend_colors(color_1, color_2)
-                self._containers_colors[k] = color_3
-            elif i == k:
-                # self._containers_colors[i] = color_13
-                self._containers_colors[i] = self._blend_colors(color_1, color_3)
-                self._containers_colors[j] = color_2
-            elif j == k:
-                self._containers_colors[i] = color_1
-                # self._containers_colors[j] = color_23
-                self._containers_colors[j] = self._blend_colors(color_3, color_2)
-            else:
-                self._containers_colors[i] = color_1
-                self._containers_colors[j] = color_2
-                self._containers_colors[k] = color_3
-
+        # --- skip if no data ---
         if not self._data:
             return
 
+        # --- apply colors ---
         self._apply_containers_colors()
 
     def highlight_containers_1to3(
