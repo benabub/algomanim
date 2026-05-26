@@ -685,41 +685,41 @@ class LinearContainerStructure(AlgoManimBase):
         g = int(math.ceil(sum(v[1] for v in rgb_list) / n))
         b = int(math.ceil(sum(v[2] for v in rgb_list) / n))
 
+        return f"#{r:02x}{g:02x}{b:02x}".upper()
 
-        max_r = max(rev_r)
-        max_g = max(rev_g)
-        max_b = max(rev_b)
+    def _blend_colors(self, *colors: str | ManimColor) -> str | ManimColor:
+        """Blend colors with predefined rules for 3-6 colors.
 
-        def avg_except_max(values):
-            if len(values) == 1:
-                return values[0]
-            sorted_vals = sorted(values)
-            without_max = (
-                sorted_vals[:-1] if sorted_vals[-1] == max(values) else sorted_vals
-            )
-            return sum(without_max) // len(without_max) if without_max else 0
+        For 1 color: returns the color itself.
+        For 2 colors: uses algorithmic blending.
+        For 3-6 colors: returns predefined palette color (mix_3 to mix_6).
 
-        avg_r = avg_except_max(rev_r)
-        avg_g = avg_except_max(rev_g)
-        avg_b = avg_except_max(rev_b)
+        Args:
+            *colors: Variable number of colors to blend.
 
-        # darkening percentage of the average
-        dark_pct_r = avg_r / 255 if avg_r else 0
-        dark_pct_g = avg_g / 255 if avg_g else 0
-        dark_pct_b = avg_b / 255 if avg_b else 0
+        Returns:
+            Blended color as hex string or ManimColor.
 
-        # divide by number of colors
-        factor_r = dark_pct_r / n
-        factor_g = dark_pct_g / n
-        factor_b = dark_pct_b / n
+        Raises:
+            ValueError: If number of colors is not between 1 and 6.
+        """
+        if len(colors) == 1:
+            return colors[0]
 
-        # increase the maximum
-        r_new = int(max_r + max_r * factor_r)
-        g_new = int(max_g + max_g * factor_g)
-        b_new = int(max_b + max_b * factor_b)
+        if len(colors) == 2:
+            return self._blend_colors_algo(*colors)
 
-        # clamp to 255
-        r_new = min(r_new, 255)
+        if 3 <= len(colors) <= 6:
+            mix_map = {
+                3: self._color_mix_3,
+                4: self._color_mix_4,
+                5: self._color_mix_5,
+                6: self._color_mix_6,
+            }
+            return mix_map[len(colors)]
+
+        raise ValueError("colors must contain between 2 and 6 elements")
+
         g_new = min(g_new, 255)
         b_new = min(b_new, 255)
 
