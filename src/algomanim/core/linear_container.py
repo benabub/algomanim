@@ -619,7 +619,75 @@ class LinearContainerStructure(AlgoManimBase):
             int(strip_hex[4:6], 16),
         )
 
+    def _blend_colors_advanced(self, *colors: str | ManimColor) -> str:
+        """Blend multiple colors using a subtractive-like algorithm.
+
+        The algorithm:
+        1. Convert colors to RGB and invert each channel (255 - value).
+        2. For each channel, take the maximum value among all colors.
+        3. Calculate the average of the remaining values (excluding the maximum).
+        4. Compute darkening percentage = average / 255.
+        5. Divide darkening percentage by the number of colors.
+        6. Increase the maximum value by this factor.
+        7. Clamp to 255 and invert back.
+
+        Args:
+            *colors: Variable number of colors as hex strings or ManimColor objects.
+
+        Returns:
+            Blended color as hex string.
+        """
+        rgb_list = [self._color_to_rgb(c) for c in colors]
+        n = len(rgb_list)
+
+        # reverse transform and find maximum per channel
+        rev_r = [255 - v[0] for v in rgb_list]
+        rev_g = [255 - v[1] for v in rgb_list]
+        rev_b = [255 - v[2] for v in rgb_list]
+
+        max_r = max(rev_r)
+        max_g = max(rev_g)
+        max_b = max(rev_b)
+
+        def avg_except_max(values):
+            if len(values) == 1:
+                return values[0]
+            sorted_vals = sorted(values)
+            without_max = (
+                sorted_vals[:-1] if sorted_vals[-1] == max(values) else sorted_vals
             )
+            return sum(without_max) // len(without_max) if without_max else 0
+
+        avg_r = avg_except_max(rev_r)
+        avg_g = avg_except_max(rev_g)
+        avg_b = avg_except_max(rev_b)
+
+        # darkening percentage of the average
+        dark_pct_r = avg_r / 255 if avg_r else 0
+        dark_pct_g = avg_g / 255 if avg_g else 0
+        dark_pct_b = avg_b / 255 if avg_b else 0
+
+        # divide by number of colors
+        factor_r = dark_pct_r / n
+        factor_g = dark_pct_g / n
+        factor_b = dark_pct_b / n
+
+        # increase the maximum
+        r_new = int(max_r + max_r * factor_r)
+        g_new = int(max_g + max_g * factor_g)
+        b_new = int(max_b + max_b * factor_b)
+
+        # clamp to 255
+        r_new = min(r_new, 255)
+        g_new = min(g_new, 255)
+        b_new = min(b_new, 255)
+
+        # reverse transform back
+        r_final = 255 - r_new
+        g_final = 255 - g_new
+        b_final = 255 - b_new
+
+        return f"#{r_final:02x}{g_final:02x}{b_final:02x}"
 
         hex_colors = [to_hex(c) for c in colors]
         rgb_list = [hex_to_rgb(h) for h in hex_colors]
