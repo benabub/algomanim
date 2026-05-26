@@ -143,14 +143,36 @@ class LinearContainerStructure(AlgoManimBase):
         self._bg_color = bg_color
 
         # ---- highlight containers colors ----
+        self._color_containers_with_value = color_containers_with_value
         self._color_1 = color_1
         self._color_2 = color_2
         self._color_3 = color_3
+        self._color_4 = color_4
+        self._color_5 = color_5
+        self._color_6 = color_6
         self._color_123 = color_123
         self._color_12 = color_12
         self._color_13 = color_13
         self._color_23 = color_23
-        self._color_containers_with_value = color_containers_with_value
+        self._color_mix_3 = color_mix_3
+        self._color_mix_4 = color_mix_4
+        self._color_mix_5 = color_mix_5
+        self._color_mix_6 = color_mix_6
+        self._color_red_blue = color_red_blue
+        self._color_red_green = color_red_green
+        self._color_red_pink = color_red_pink
+        self._color_red_purple = color_red_purple
+        self._color_red_teal = color_red_teal
+        self._color_blue_green = color_blue_green
+        self._color_blue_pink = color_blue_pink
+        self._color_blue_purple = color_blue_purple
+        self._color_blue_teal = color_blue_teal
+        self._color_green_pink = color_green_pink
+        self._color_green_purple = color_green_purple
+        self._color_green_teal = color_green_teal
+        self._color_pink_purple = color_pink_purple
+        self._color_pink_teal = color_pink_teal
+        self._color_purple_teal = color_purple_teal
 
     def _get_position(self):
         """Return containers mobject for positioning purposes."""
