@@ -20,11 +20,11 @@ class Config:
         },
         "p": {  # point
             "with_line": "with sound(point",
-            "code_line": "# .highlight_containers_1to3()\n",
+            "code_line": "# .highlight_containers()\n",
         },
         "s": {  # slide
             "with_line": "with sound(slide",
-            "code_line": "# .highlight_containers_1to3()\n",
+            "code_line": "# .highlight_containers()\n",
         },
     }
     condition_default = [
@@ -33,14 +33,14 @@ class Config:
         "        # .first_appear(self)\n",
         "        ...\n",
         "    with sound(point, pause):\n",
-        "        # .highlight_containers_1to3()\n",
+        "        # .highlight_containers()\n",
         "        ...\n",
         "else:\n",
         "    with sound(update):\n",
         "        # .update_value(self)\n",
         "        ...\n",
         "    with sound(slide, pause):\n",
-        "        # .highlight_containers_1to3()\n",
+        "        # .highlight_containers()\n",
         "        ...\n",
     ]
     suffix_map = {
@@ -587,7 +587,7 @@ class CodeGenerator:
 
                     highlight_pair = self._get_highlight_pair(
                         edge_indent,
-                        "step",
+                        "stp",
                         False,
                         line_number,
                     )
@@ -607,7 +607,7 @@ class CodeGenerator:
                     add_block_list.append(
                         self._get_highlight_pair(
                             edge_indent,
-                            "step",
+                            "stp",
                             not inline_commands,
                             line_number,
                         )
@@ -617,7 +617,7 @@ class CodeGenerator:
                     add_block_list.append(
                         self._get_highlight_pair(
                             edge_indent,
-                            "step",
+                            "stp",
                             not inline_commands,
                             *line_numbers_list,
                         )
