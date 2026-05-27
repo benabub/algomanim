@@ -372,255 +372,6 @@ class LinearContainerStructure(AlgoManimBase):
 
         return pointers_top, pointers_bottom
 
-    def pointers(
-        self,
-        indices: Collection[int],
-        pos: int = 1,
-        color: ManimColor | str | None = mn.ORANGE,
-    ):
-        """Highlight pointers at specified indices with a single color.
-
-        Clears existing pointer highlights for the given position, then applies
-        new highlights to all indices in the collection.
-
-        Args:
-            indices: Collection of indices to highlight.
-            pos: 0 for top pointers, 1 for bottom pointers. Defaults to 1.
-            color: Color for the highlighted pointers. Defaults to ORANGE.
-                If None, uses color_containers_with_value.
-
-        Raises:
-            ValueError: If pos is not 0 or 1.
-        """
-        # ------- checks --------
-
-        if hasattr(self, "_pointers") and not self._pointers:
-            return
-
-        if pos not in (0, 1):
-            raise ValueError("pos must be 0 (top) or 1 (bottom)")
-
-        if pos == 0 and self._pointers not in ("both", "top"):
-            raise ValueError("Top pointers were not initialized for highlight.")
-
-        if pos == 1 and self._pointers not in ("both", "bottom"):
-            raise ValueError("Bottom pointers were not initialized for highlight.")
-
-        # ------- asserts --------
-        if not color:
-            color = self._color_containers_with_value
-
-        if pos == 0:
-            self._top_pointers_colors = {}
-            colors_store = self._top_pointers_colors
-
-        elif pos == 1:
-            self._bottom_pointers_colors = {}
-            colors_store = self._bottom_pointers_colors
-
-        # ------- checks --------
-        if not self._data:
-            return
-
-        # ------- fill store --------
-        for idx in indices:
-            colors_store[idx] = [self._bg_color, color, self._bg_color]
-
-        # ------- apply --------
-        self._apply_pointers_colors(pos)
-
-    def highlight_pointers_1to3(
-        self,
-        *indices: int,
-        pos: int = 0,
-        color_1: ManimColor | str = mn.RED,
-        color_2: ManimColor | str = mn.BLUE,
-        color_3: ManimColor | str = mn.GREEN,
-    ):
-        """Highlight pointers at one side (top | bottom) in array.
-
-        First, this function clears the existing pointer highlight state for the specified position,
-        then sets the new highlight state based on the provided indices and colors,
-        and finally applies the new state to the visual objects if data exists.
-
-        Args:
-            *indices: Positional arguments for indices to highlight (1-3 elements).
-            pos: 0 for top side, 1 for bottom.
-            color_1: idx_list[0] highlighted pointer color.
-            color_2: idx_list[1] highlighted pointer color.
-            color_3: idx_list[2] highlighted pointer color.
-
-        Raises:
-            ValueError: if indices has invalid length.
-        """
-
-        # ------- checks --------
-
-        if hasattr(self, "_pointers") and not self._pointers:
-            return
-
-        if not 1 <= len(indices) <= 3:
-            raise ValueError("indices must contain between 1 and 3 elements")
-
-        if pos not in (0, 1):
-            raise ValueError("pos must be 0 (top) or 1 (bottom)")
-
-        # ------- asserts --------
-
-        if pos == 0:
-            self._top_pointers_colors = {}
-            colors_dict = self._top_pointers_colors
-        elif pos == 1:
-            self._bottom_pointers_colors = {}
-            colors_dict = self._bottom_pointers_colors
-
-        # ------- fill store --------
-
-        if len(indices) == 1:
-            i = indices[0]
-            colors_dict[i] = [self._bg_color, color_1, self._bg_color]
-
-        elif len(indices) == 2:
-            i = indices[0]
-            j = indices[1]
-
-            for idx, _ in enumerate(self._containers_mob):
-                if idx == i == j:
-                    colors_dict[idx] = [color_1, self._bg_color, color_2]
-                elif idx == i:
-                    colors_dict[idx] = [self._bg_color, color_1, self._bg_color]
-                elif idx == j:
-                    colors_dict[idx] = [self._bg_color, color_2, self._bg_color]
-
-        elif len(indices) == 3:
-            i = indices[0]
-            j = indices[1]
-            k = indices[2]
-
-            for idx, _ in enumerate(self._containers_mob):
-                if idx == i == j == k:
-                    colors_dict[idx] = [color_1, color_2, color_3]
-                elif idx == i == j:
-                    colors_dict[idx] = [color_1, self._bg_color, color_2]
-                elif idx == i == k:
-                    colors_dict[idx] = [color_1, self._bg_color, color_3]
-                elif idx == k == j:
-                    colors_dict[idx] = [color_2, self._bg_color, color_3]
-                elif idx == i:
-                    colors_dict[idx] = [self._bg_color, color_1, self._bg_color]
-                elif idx == j:
-                    colors_dict[idx] = [self._bg_color, color_2, self._bg_color]
-                elif idx == k:
-                    colors_dict[idx] = [self._bg_color, color_3, self._bg_color]
-
-        # ------- apply --------
-
-        if not self._data:
-            return
-
-        self._apply_pointers_colors(pos)
-
-    def pointers_on_value(
-        self,
-        value: int | str,
-        pos: int = 1,
-        color: ManimColor | str | None = None,
-    ):
-        """Highlight middle pointers on all cells whose values
-        equal the provided value.
-
-        First, this function clears the existing pointer highlight state for the specified position,
-        then sets the new highlight state based on the provided value and color,
-        and finally applies the new state to the visual objects if data exists.
-
-        Args:
-            value: The value to compare with array elements.
-            pos: 0 for top pointers, 1 for bottom pointers.
-            color: Color for the highlighted pointer.
-        """
-
-        # ------- checks --------
-
-        if hasattr(self, "_pointers") and not self._pointers:
-            return
-
-        if pos not in (0, 1):
-            raise ValueError("pos must be 0 (top) or 1 (bottom)")
-
-        # ------- asserts --------
-        if not color:
-            color = self._color_containers_with_value
-
-        if pos == 0:
-            self._top_pointers_colors = {}
-            colors_store = self._top_pointers_colors
-
-        elif pos == 1:
-            self._bottom_pointers_colors = {}
-            colors_store = self._bottom_pointers_colors
-
-        # ------- checks --------
-        if not self._data:
-            return
-
-        # ------- fill store --------
-        for idx in range(len(self._data)):
-            if self._data[idx] == value:
-                colors_store[idx] = [self._bg_color, color, self._bg_color]
-
-        # ------- apply --------
-        self._apply_pointers_colors(pos)
-
-    def pointers_on_values(
-        self,
-        values: Collection[int | str],
-        pos: int = 1,
-        color: ManimColor | str | None = None,
-    ):
-        """Highlight middle pointers on all cells whose values are in the given set.
-
-        First, this function clears the existing pointer highlight state for the specified position,
-        then sets the new highlight state based on the provided values and color,
-        and finally applies the new state to the visual objects if data exists.
-
-        Args:
-            values: Set of values to match against array elements.
-            pos: 0 for top pointers, 1 for bottom pointers. Defaults to 1.
-            color: Color for the highlighted pointer. If None, uses color_containers_with_value.
-        """
-
-        # ------- checks --------
-
-        if hasattr(self, "_pointers") and not self._pointers:
-            return
-
-        if pos not in (0, 1):
-            raise ValueError("pos must be 0 (top) or 1 (bottom)")
-
-        # ------- asserts --------
-        if not color:
-            color = self._color_containers_with_value
-
-        if pos == 0:
-            self._top_pointers_colors = {}
-            colors_store = self._top_pointers_colors
-
-        elif pos == 1:
-            self._bottom_pointers_colors = {}
-            colors_store = self._bottom_pointers_colors
-
-        # ------- checks --------
-        if not self._data:
-            return
-
-        # ------- fill store --------
-        for idx in range(len(self._data)):
-            if self._data[idx] in values:
-                colors_store[idx] = [self._bg_color, color, self._bg_color]
-
-        # ------- apply --------
-        self._apply_pointers_colors(pos)
-
     @staticmethod
     def _color_to_rgb(color: str | ManimColor) -> tuple[int, int, int]:
         """Convert a color to RGB tuple.
@@ -770,6 +521,97 @@ class LinearContainerStructure(AlgoManimBase):
         # --- apply colors ---
         self._apply_containers_colors()
 
+    def highlight_pointers_1to3(
+        self,
+        *indices: int,
+        pos: int = 0,
+        color_1: ManimColor | str = mn.RED,
+        color_2: ManimColor | str = mn.BLUE,
+        color_3: ManimColor | str = mn.GREEN,
+    ):
+        """Highlight pointers at one side (top | bottom) in array.
+
+        First, this function clears the existing pointer highlight state for the specified position,
+        then sets the new highlight state based on the provided indices and colors,
+        and finally applies the new state to the visual objects if data exists.
+
+        Args:
+            *indices: Positional arguments for indices to highlight (1-3 elements).
+            pos: 0 for top side, 1 for bottom.
+            color_1: idx_list[0] highlighted pointer color.
+            color_2: idx_list[1] highlighted pointer color.
+            color_3: idx_list[2] highlighted pointer color.
+
+        Raises:
+            ValueError: if indices has invalid length.
+        """
+
+        # ------- checks --------
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
+        if not 1 <= len(indices) <= 3:
+            raise ValueError("indices must contain between 1 and 3 elements")
+
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        # ------- asserts --------
+
+        if pos == 0:
+            self._top_pointers_colors = {}
+            colors_dict = self._top_pointers_colors
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_dict = self._bottom_pointers_colors
+
+        # ------- fill store --------
+
+        if len(indices) == 1:
+            i = indices[0]
+            colors_dict[i] = [self._bg_color, color_1, self._bg_color]
+
+        elif len(indices) == 2:
+            i = indices[0]
+            j = indices[1]
+
+            for idx, _ in enumerate(self._containers_mob):
+                if idx == i == j:
+                    colors_dict[idx] = [color_1, self._bg_color, color_2]
+                elif idx == i:
+                    colors_dict[idx] = [self._bg_color, color_1, self._bg_color]
+                elif idx == j:
+                    colors_dict[idx] = [self._bg_color, color_2, self._bg_color]
+
+        elif len(indices) == 3:
+            i = indices[0]
+            j = indices[1]
+            k = indices[2]
+
+            for idx, _ in enumerate(self._containers_mob):
+                if idx == i == j == k:
+                    colors_dict[idx] = [color_1, color_2, color_3]
+                elif idx == i == j:
+                    colors_dict[idx] = [color_1, self._bg_color, color_2]
+                elif idx == i == k:
+                    colors_dict[idx] = [color_1, self._bg_color, color_3]
+                elif idx == k == j:
+                    colors_dict[idx] = [color_2, self._bg_color, color_3]
+                elif idx == i:
+                    colors_dict[idx] = [self._bg_color, color_1, self._bg_color]
+                elif idx == j:
+                    colors_dict[idx] = [self._bg_color, color_2, self._bg_color]
+                elif idx == k:
+                    colors_dict[idx] = [self._bg_color, color_3, self._bg_color]
+
+        # ------- apply --------
+
+        if not self._data:
+            return
+
+        self._apply_pointers_colors(pos)
+
     def highlight_containers_monocolor(
         self,
         idx_list: list[int],
@@ -797,6 +639,63 @@ class LinearContainerStructure(AlgoManimBase):
 
         # apply
         self._apply_containers_colors()
+
+    def highlight_pointers_monocolor(
+        self,
+        indices: Collection[int],
+        pos: int = 1,
+        color: ManimColor | str | None = mn.ORANGE,
+    ):
+        """Highlight pointers at specified indices with a single color.
+
+        Clears existing pointer highlights for the given position, then applies
+        new highlights to all indices in the collection.
+
+        Args:
+            indices: Collection of indices to highlight.
+            pos: 0 for top pointers, 1 for bottom pointers. Defaults to 1.
+            color: Color for the highlighted pointers. Defaults to ORANGE.
+                If None, uses color_containers_with_value.
+
+        Raises:
+            ValueError: If pos is not 0 or 1.
+        """
+        # ------- checks --------
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        if pos == 0 and self._pointers not in ("both", "top"):
+            raise ValueError("Top pointers were not initialized for highlight.")
+
+        if pos == 1 and self._pointers not in ("both", "bottom"):
+            raise ValueError("Bottom pointers were not initialized for highlight.")
+
+        # ------- asserts --------
+        if not color:
+            color = self._color_containers_with_value
+
+        if pos == 0:
+            self._top_pointers_colors = {}
+            colors_store = self._top_pointers_colors
+
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_store = self._bottom_pointers_colors
+
+        # ------- checks --------
+        if not self._data:
+            return
+
+        # ------- fill store --------
+        for idx in indices:
+            colors_store[idx] = [self._bg_color, color, self._bg_color]
+
+        # ------- apply --------
+        self._apply_pointers_colors(pos)
 
     def highlight_containers_with_value(
         self,
@@ -836,6 +735,57 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- apply --------
         self._apply_containers_colors()
+
+    def highlight_pointers_above_value(
+        self,
+        value: int | str,
+        pos: int = 1,
+        color: ManimColor | str | None = None,
+    ):
+        """Highlight middle pointers on all cells whose values
+        equal the provided value.
+
+        First, this function clears the existing pointer highlight state for the specified position,
+        then sets the new highlight state based on the provided value and color,
+        and finally applies the new state to the visual objects if data exists.
+
+        Args:
+            value: The value to compare with array elements.
+            pos: 0 for top pointers, 1 for bottom pointers.
+            color: Color for the highlighted pointer.
+        """
+
+        # ------- checks --------
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        # ------- asserts --------
+        if not color:
+            color = self._color_containers_with_value
+
+        if pos == 0:
+            self._top_pointers_colors = {}
+            colors_store = self._top_pointers_colors
+
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_store = self._bottom_pointers_colors
+
+        # ------- checks --------
+        if not self._data:
+            return
+
+        # ------- fill store --------
+        for idx in range(len(self._data)):
+            if self._data[idx] == value:
+                colors_store[idx] = [self._bg_color, color, self._bg_color]
+
+        # ------- apply --------
+        self._apply_pointers_colors(pos)
 
     def highlight_containers_with_values(
         self,
@@ -896,3 +846,53 @@ class LinearContainerStructure(AlgoManimBase):
 
         # ------- apply --------
         self._apply_containers_colors()
+
+    def highlight_pointers_above_values(
+        self,
+        values: Collection[int | str],
+        pos: int = 1,
+        color: ManimColor | str | None = None,
+    ):
+        """Highlight middle pointers on all cells whose values are in the given set.
+
+        First, this function clears the existing pointer highlight state for the specified position,
+        then sets the new highlight state based on the provided values and color,
+        and finally applies the new state to the visual objects if data exists.
+
+        Args:
+            values: Set of values to match against array elements.
+            pos: 0 for top pointers, 1 for bottom pointers. Defaults to 1.
+            color: Color for the highlighted pointer. If None, uses color_containers_with_value.
+        """
+
+        # ------- checks --------
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        # ------- asserts --------
+        if not color:
+            color = self._color_containers_with_value
+
+        if pos == 0:
+            self._top_pointers_colors = {}
+            colors_store = self._top_pointers_colors
+
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_store = self._bottom_pointers_colors
+
+        # ------- checks --------
+        if not self._data:
+            return
+
+        # ------- fill store --------
+        for idx in range(len(self._data)):
+            if self._data[idx] in values:
+                colors_store[idx] = [self._bg_color, color, self._bg_color]
+
+        # ------- apply --------
+        self._apply_pointers_colors(pos)
