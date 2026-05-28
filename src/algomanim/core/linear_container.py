@@ -31,21 +31,26 @@ class LinearContainerStructure(AlgoManimBase):
         This is base class only, cannot be instantiated directly.
 
     Args:
-        font (str): Font family for text elements.
-        font_size (float): Font size for text elements.
-        text_color (ManimColor | str): Color for text elements.
-        weight (str): Font weight (NORMAL, BOLD, etc.).
-        container_color (ManimColor | str): Border color for containers.
-        fill_color (ManimColor | str): Fill color for containers.
-        bg_color (ManimColor | str): Background color for pointers.
-        color_1 (ManimColor | str): Highlight color for first index.
-        color_2 (ManimColor | str): Highlight color for second index.
-        color_3 (ManimColor | str): Highlight color for third index.
-        color_123 (ManimColor | str): Highlight color when all three indices match.
-        color_12 (ManimColor | str): Highlight color when first two indices match.
-        color_13 (ManimColor | str): Highlight color when first and third indices match.
-        color_23 (ManimColor | str): Highlight color when second and third indices match.
-        color_containers_with_value (ManimColor | str): Color for containers with specific value.
+        pointers: Which pointers to create. "top", "bottom", "both", or None.
+        pointers_mode: Number of pointer triangles per cell. 3 or 5.
+        font: Font family for text elements.
+        font_size: Font size for text elements.
+        text_color: Color for text elements.
+        weight: Font weight (NORMAL, BOLD, etc.).
+        container_color: Border color for containers.
+        fill_color: Fill color for containers.
+        bg_color: Background color for pointers.
+        color_containers_with_value: Color for containers with specific value.
+        color_1: Highlight color for first index.
+        color_2: Highlight color for second index.
+        color_3: Highlight color for third index.
+        color_4: Highlight color for fourth index.
+        color_5: Highlight color for fifth index.
+        color_6: Highlight color for sixth index.
+        color_mix_3: Blend color for 3 colors.
+        color_mix_4: Blend color for 4 colors.
+        color_mix_5: Blend color for 5 colors.
+        color_mix_6: Blend color for 6 colors.
         **kwargs: Additional keyword arguments passed to VGroup.
     """
 
@@ -214,7 +219,7 @@ class LinearContainerStructure(AlgoManimBase):
             ValueError: If pos is not 0 or 1.
         """
 
-        # ------- checks --------
+        # ------- validation --------
         if pos not in (0, 1):
             raise ValueError("pos must be 0 (top) or 1 (bottom)")
 
@@ -275,6 +280,47 @@ class LinearContainerStructure(AlgoManimBase):
         new_group._apply_containers_colors()
         new_group._apply_pointers_colors(0)
         new_group._apply_pointers_colors(1)
+
+    def _create_horizontal_top_pointers(self, cell_mob: mn.VGroup):
+        """Create top pointer triangles for each cell.
+
+        Returns:
+            VGroup of pointer triangles positioned above cells.
+        """
+
+        pointers_top = mn.VGroup()
+
+        if self._pointers_mode == 3:
+            top_triangle = (
+                mn.Triangle(color=self._bg_color)
+                .stretch_to_fit_width(0.7)
+                .scale(0.1)
+                .rotate(mn.PI)
+            )
+            for cell in cell_mob:
+                # create top triangles (3 per cell)
+                top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
+                # arrange top triangles horizontally above the cell
+                top_triple_group.arrange(mn.RIGHT, buff=0.08)
+                top_triple_group.next_to(cell, mn.UP, buff=0.15)
+                pointers_top.add(top_triple_group)
+
+        elif self._pointers_mode == 5:
+            top_triangle = (
+                mn.Triangle(color=self._bg_color)
+                .stretch_to_fit_width(0.5)
+                .scale(0.1)
+                .rotate(mn.PI)
+            )
+            for cell in cell_mob:
+                # create top triangles (5 per cell)
+                top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(5)])
+                # arrange top triangles horizontally above the cell
+                top_triple_group.arrange(mn.RIGHT, buff=0.05)
+                top_triple_group.next_to(cell, mn.UP, buff=0.15)
+                pointers_top.add(top_triple_group)
+
+        return pointers_top
 
     def set_pointers(
         self,
@@ -486,7 +532,7 @@ class LinearContainerStructure(AlgoManimBase):
             ValueError: If number of indices is not between 1 and 6.
         """
 
-        # ------- checks --------
+        # ------- validation --------
         if not 1 <= len(indices) <= 6:
             raise ValueError("indices must contain between 1 and 6 elements")
 
@@ -557,7 +603,7 @@ class LinearContainerStructure(AlgoManimBase):
             ValueError: if indices has invalid length.
         """
 
-        # ------- checks --------
+        # ------- validation --------
 
         if hasattr(self, "_pointers") and not self._pointers:
             return
@@ -637,7 +683,7 @@ class LinearContainerStructure(AlgoManimBase):
             idx_list: List of indices to highlight (any number of elements).
             color: Color to apply to all highlighted cells. Default is RED.
         """
-        # checks
+        # validation
         if not self._data:
             return
 
@@ -671,7 +717,7 @@ class LinearContainerStructure(AlgoManimBase):
         Raises:
             ValueError: If pos is not 0 or 1.
         """
-        # ------- checks --------
+        # ------- validation --------
 
         if hasattr(self, "_pointers") and not self._pointers:
             return
@@ -697,7 +743,7 @@ class LinearContainerStructure(AlgoManimBase):
             self._bottom_pointers_colors = {}
             colors_store = self._bottom_pointers_colors
 
-        # ------- checks --------
+        # ------- validation --------
         if not self._data:
             return
 
@@ -735,7 +781,7 @@ class LinearContainerStructure(AlgoManimBase):
 
         self._containers_colors = {}
 
-        # ------- checks --------
+        # ------- validation --------
         if not self._data:
             return
 
@@ -766,7 +812,7 @@ class LinearContainerStructure(AlgoManimBase):
             color: Color for the highlighted pointer.
         """
 
-        # ------- checks --------
+        # ------- validation --------
 
         if hasattr(self, "_pointers") and not self._pointers:
             return
@@ -786,7 +832,7 @@ class LinearContainerStructure(AlgoManimBase):
             self._bottom_pointers_colors = {}
             colors_store = self._bottom_pointers_colors
 
-        # ------- checks --------
+        # ------- validation --------
         if not self._data:
             return
 
@@ -810,7 +856,7 @@ class LinearContainerStructure(AlgoManimBase):
         Raises:
             ValueError: If mapping is empty or data is not initialized.
         """
-        # ------- checks --------
+        # ------- validation --------
         if not self._data:
             return
         if not mapping:
@@ -841,7 +887,7 @@ class LinearContainerStructure(AlgoManimBase):
         Raises:
             ValueError: If mapping is empty or data is not initialized.
         """
-        # ------- checks --------
+        # ------- validation --------
         if not self._data:
             return
         if not mapping:
