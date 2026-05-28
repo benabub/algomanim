@@ -1576,6 +1576,116 @@ class Example_array(mn.Scene):
 
             self.clear()
 
+        def highlights(self):
+            pause = 1
+
+            title = RelativeText(
+                "pointers()   highlight_containers()   higlight_pointers()",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            command_text = RelativeText(
+                "pointers_mode = 3",
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.2,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            array = Array(
+                lambda: [0, 0, 0, 0, 0],
+                font_size=45,
+            )
+            array.first_appear(self)
+            self.wait(1)
+
+            indices = []
+
+            param_text = RelativeTextValue(
+                ("indices_param", lambda: indices, mn.WHITE),
+                font_size=35,
+                mob_center=array,
+                align_left=array,
+                vector=mn.DOWN * 1.5,
+            )
+            param_text.first_appear(self)
+            self.wait(1)
+
+            def cycle(
+                scene: mn.Scene,
+                array: Array,
+                text: RelativeTextValue,
+                new_indices,
+            ):
+                nonlocal indices
+                indices = new_indices
+                text.update_value(scene)
+                array.highlight_containers(*new_indices)
+                array.highlight_pointers(*new_indices)
+                self.wait(pause)
+
+            cycle(self, array, param_text, (0, 1, 2))
+            cycle(self, array, param_text, (0, 0, 2))
+            cycle(self, array, param_text, (0, 2, 2))
+            cycle(self, array, param_text, (1, 2, 1))
+            cycle(self, array, param_text, (1, 1, 1))
+
+            indices = []
+            param_text.update_value(self)
+            array.clear_containers_highlights()
+            array.clear_pointers_highlights()
+            self.remove(command_text, array, param_text)
+            self.wait(1)
+
+            command_text = RelativeText(
+                "pointers_mode = 5",
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.2,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            array = Array(
+                lambda: [0, 0, 0, 0, 0],
+                font_size=45,
+                pointers_mode=5,
+            )
+            array.first_appear(self)
+            self.wait(1)
+
+            param_text.first_appear(self)
+
+            cycle(self, array, param_text, (0, 1, 2, 3, 4))
+            cycle(self, array, param_text, (0, 0, 2, 2, 5))
+            cycle(self, array, param_text, (0, 0, 0, 2, 2))
+            cycle(self, array, param_text, (0, 0, 0, 0))
+            cycle(self, array, param_text, (0, 0, 0, 0, 0))
+            cycle(self, array, param_text, (0, 0, 2, 3, 4))
+            cycle(self, array, param_text, (0, 1, 0, 3, 4))
+            cycle(self, array, param_text, (0, 1, 2, 0, 4))
+            cycle(self, array, param_text, (0, 1, 2, 3, 0))
+            cycle(self, array, param_text, (0, 1, 1, 3, 4))
+            cycle(self, array, param_text, (0, 1, 2, 1, 4))
+            cycle(self, array, param_text, (0, 1, 2, 3, 1))
+            cycle(self, array, param_text, (0, 1, 2, 2, 4))
+            cycle(self, array, param_text, (0, 1, 2, 3, 2))
+            cycle(self, array, param_text, (0, 1, 2, 3, 3))
+            cycle(self, array, param_text, (0, 1, 2, 3, 4))
+
+            self.wait(1)
+            self.remove(title)
+            array.clear_pointers_highlights(0)
+            array.clear_containers_highlights()
+
+            self.clear()
+
         def monocolor(self):
             pause = 0.5
             array = Array(
