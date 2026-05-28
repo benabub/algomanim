@@ -585,6 +585,116 @@ class LinearContainerStructure(AlgoManimBase):
         # --- apply colors ---
         self._apply_containers_colors()
 
+    def highlight_pointers(
+        self,
+        *indices: int,
+        pos: int = 0,
+        color_1: ManimColor | str | None = None,
+        color_2: ManimColor | str | None = None,
+        color_3: ManimColor | str | None = None,
+        color_4: ManimColor | str | None = None,
+        color_5: ManimColor | str | None = None,
+    ):
+        """
+        Highlight pointer triangles at specified indices.
+
+        For pointers_mode=3: 3 triangles per cell (left, center, right)
+        For pointers_mode=5: 5 triangles per cell
+        Colors are assigned based on how many times an index appears in `indices`.
+
+        Args:
+            *indices: Container indices to highlight (repetitions indicate blending).
+            pos: 0 for top pointers, 1 for bottom pointers.
+            color_1..color_5: Colors for each position in the input order.
+        """
+        # --- validation ---
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+
+        max_idx_count = 3 if self._pointers_mode == 3 else 5
+        if not 1 <= len(indices) <= max_idx_count:
+            raise ValueError(f"indices count must be between 1 and {max_idx_count}")
+
+        if pos not in (0, 1):
+            raise ValueError("pos must be 0 (top) or 1 (bottom)")
+
+        # --- select colors dictionary ---
+        if pos == 0:
+            self._top_pointers_colors = {}
+            colors_dict = self._top_pointers_colors
+        elif pos == 1:
+            self._bottom_pointers_colors = {}
+            colors_dict = self._bottom_pointers_colors
+
+        # --- apply default colors if not provided ---
+        colors = [color_1, color_2, color_3, color_4, color_5]
+        for i in range(len(indices)):
+            if colors[i] is None:
+                colors[i] = getattr(self, f"_color_{i + 1}")
+
+        bg = self._bg_color
+
+        # group indices in dict: each unique index gets a list of colors assigned to it
+        # example: indices = [0,0,1] → groups = {0: [color_1, color_2], 1: [color_3]}
+        groups = {}
+        for idx, color in zip(indices, colors):
+            if idx not in groups:
+                groups[idx] = []
+            groups[idx].append(color)
+
+        # for each container index, generate pointer color pattern
+        for idx_cont in range(len(self._containers_mob)):
+            if idx_cont not in groups:
+                continue
+
+            color_list = groups[idx_cont]
+            count = len(color_list)
+
+            if self._pointers_mode == 3:
+                # 3-triangle patterns
+                if count == 1:
+                    pattern = [bg, color_list[0], bg]
+                elif count == 2:
+                    pattern = [color_list[0], bg, color_list[1]]
+                elif count == 3:
+                    pattern = [color_list[0], color_list[1], color_list[2]]
+                else:
+                    continue
+
+            else:  # mode 5
+                # 5-triangle patterns
+                if count == 1:
+                    pattern = [bg, bg, color_list[0], bg, bg]
+                elif count == 2:
+                    pattern = [bg, color_list[0], bg, color_list[1], bg]
+                elif count == 3:
+                    pattern = [bg, color_list[0], color_list[1], color_list[2], bg]
+                elif count == 4:
+                    pattern = [
+                        color_list[0],
+                        color_list[1],
+                        bg,
+                        color_list[2],
+                        color_list[3],
+                    ]
+                elif count == 5:
+                    pattern = [
+                        color_list[0],
+                        color_list[1],
+                        color_list[2],
+                        color_list[3],
+                        color_list[4],
+                    ]
+                else:
+                    continue
+
+            colors_dict[idx_cont] = pattern
+
+        if not self._data:
+            return
+
+        self._apply_pointers_colors(pos)
+
     def highlight_pointers_1to3(
         self,
         *indices: int,
