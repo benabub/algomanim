@@ -322,6 +322,43 @@ class LinearContainerStructure(AlgoManimBase):
 
         return pointers_top
 
+    def _create_horizontal_bottom_pointers(self, cell_mob: mn.VGroup):
+        """Create bottom pointer triangles for each cell.
+
+        Returns:
+            VGroup of pointer triangles positioned below cells.
+        """
+
+        pointers_bottom = mn.VGroup()
+
+        if self._pointers_mode == 3:
+            bottom_triangle = (
+                mn.Triangle(color=self._bg_color).stretch_to_fit_width(0.7).scale(0.1)
+            )
+
+            for cell in cell_mob:
+                # create bottom triangles (3 per cell)
+                bottom_triple_group = mn.VGroup(
+                    *[bottom_triangle.copy() for _ in range(3)]
+                )
+                bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
+                bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
+                pointers_bottom.add(bottom_triple_group)
+        elif self._pointers_mode == 5:
+            bottom_triangle = (
+                mn.Triangle(color=self._bg_color).stretch_to_fit_width(0.5).scale(0.1)
+            )
+            for cell in cell_mob:
+                # create bottom triangles (5 per cell)
+                bottom_triple_group = mn.VGroup(
+                    *[bottom_triangle.copy() for _ in range(5)]
+                )
+                bottom_triple_group.arrange(mn.RIGHT, buff=0.05)
+                bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
+                pointers_bottom.add(bottom_triple_group)
+
+        return pointers_bottom
+
     def set_pointers(
         self,
         cell_mob: mn.VGroup,
