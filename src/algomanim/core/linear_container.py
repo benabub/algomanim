@@ -359,7 +359,6 @@ class LinearContainerStructure(AlgoManimBase):
 
         return pointers_bottom
 
-
     def _rotate_pointers(
         self,
         pointers: mn.VGroup,
