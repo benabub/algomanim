@@ -359,6 +359,34 @@ class LinearContainerStructure(AlgoManimBase):
 
         return pointers_bottom
 
+
+    def _rotate_pointers(
+        self,
+        pointers: mn.VGroup,
+        direction: np.ndarray,
+        cell_mob: mn.VGroup,
+    ):
+        """Rotate pointer groups to match the given direction.
+
+        Args:
+            pointers: VGroup of pointer triangles to rotate.
+            direction: Target direction vector.
+            cell_mob: VGroup of cells to use as rotation centers.
+        """
+        angle = mn.angle_of_vector(direction)
+
+        # swich top/bottom pointers
+        if direction[0] < 0:
+            extra_rotation = mn.PI
+        else:
+            extra_rotation = 0
+
+        # pointers rotation
+        for i, cell in enumerate(cell_mob):
+            center = cell.get_center()
+            total_angle = angle + extra_rotation
+            pointers[i].rotate(total_angle, about_point=center)
+
     def set_pointers(
         self,
         cell_mob: mn.VGroup,
