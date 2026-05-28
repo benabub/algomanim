@@ -1527,64 +1527,10 @@ class Example_array(mn.Scene):
 
         def highlights_1to3(self):
             pause = 0.5
-
-            array = Array(
-                lambda: [10, 2, 3000, 2, 100, 1, 40],
-                font_size=35,
-            )
+            string = String(lambda: "follow the rabbit")
             top_text = RelativeText(
-                "pointers()   highlight_containers_1to3()",
+                "pointers()   highlight_containers()",
                 vector=mn.UP * 2,
-                font_size=30,
-            )
-            array.group_appear(self, top_text)
-            self.wait(1)
-
-            array.highlight_pointers_1to3(0, 3, 6)
-            array.highlight_containers_1to3(0, 3, 6)
-            self.wait(pause)
-            array.highlight_pointers_1to3(1, 3, 5)
-            array.highlight_containers_1to3(1, 3, 5)
-            self.wait(pause)
-            array.highlight_pointers_1to3(2, 3, 4)
-            array.highlight_containers_1to3(2, 3, 4)
-            self.wait(pause)
-            array.highlight_pointers_1to3(3, 3, 3)
-            array.highlight_containers_1to3(3, 3, 3)
-            self.wait(pause)
-            array.highlight_pointers_1to3(2, 3, 4)
-            array.highlight_containers_1to3(2, 3, 4)
-            self.wait(pause)
-            array.highlight_pointers_1to3(2, 2, 4)
-            array.highlight_containers_1to3(2, 2, 4)
-            self.wait(pause)
-            array.highlight_pointers_1to3(2, 3, 4)
-            array.highlight_containers_1to3(2, 3, 4)
-            self.wait(pause)
-            array.highlight_pointers_1to3(2, 4, 4)
-            array.highlight_containers_1to3(2, 4, 4)
-            self.wait(pause)
-            array.highlight_pointers_1to3(2, 4, 3)
-            array.highlight_containers_1to3(2, 4, 3)
-            self.wait(pause)
-            array.highlight_pointers_1to3(2, 4, 2)
-            array.highlight_containers_1to3(2, 4, 2)
-            self.wait(1)
-            self.remove(top_text)
-            array.clear_pointers_highlights(0)
-            array.clear_containers_highlights()
-
-            self.clear()
-
-        def highlights(self):
-            pause = 1
-
-            title = RelativeText(
-                "pointers()   highlight_containers()   higlight_pointers()",
-                font_size=35,
-                text_color=mn.BLACK,
-                align_screen=mn.UP,
-                screen_buff=0.7,
             )
             title.first_appear(self)
             self.wait(1)
@@ -2813,7 +2759,7 @@ class Example_string(mn.Scene):
 
             self.clear()
 
-        def highlights_1to3(self):
+
             pause = 0.5
             string = String(lambda: "follow the rabbit")
             top_text = RelativeText(
