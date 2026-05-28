@@ -548,30 +548,20 @@ class LinearContainerStructure(AlgoManimBase):
         Raises:
             ValueError: If number of indices is not between 1 and 6.
         """
-
         # ------- validation --------
         if not 1 <= len(indices) <= 6:
             raise ValueError("indices must contain between 1 and 6 elements")
 
-        # ------- asserts --------
-        if color_1 is None:
-            color_1 = self._color_1
-        if color_2 is None:
-            color_2 = self._color_2
-        if color_3 is None:
-            color_3 = self._color_3
-        if color_4 is None:
-            color_4 = self._color_4
-        if color_5 is None:
-            color_5 = self._color_5
-        if color_6 is None:
-            color_6 = self._color_6
+        # --- map colors to their positions ---
+        colors = [color_1, color_2, color_3, color_4, color_5, color_6]
+
+        # --- apply default colors if not provided ---
+        for i in range(len(indices)):
+            if colors[i] is None:
+                colors[i] = getattr(self, f"_color_{i + 1}")
 
         # --- clear previous highlights ---
         self._containers_colors = {}
-
-        # --- map colors to their positions ---
-        colors = [color_1, color_2, color_3, color_4, color_5, color_6]
 
         # --- group color indices by target container index ---
         # Example: indices = [1, 1, 2] -> groups = {1: [0, 1], 2: [2]}
