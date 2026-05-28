@@ -53,6 +53,9 @@ class LinearContainerStructure(AlgoManimBase):
 
     def __init__(
         self,
+        # ---- pointers ----
+        pointers: Literal["top", "bottom", "both"] | None = "top",
+        pointers_mode: Literal[3, 5] = 3,
         # ---- font ----
         font="",
         font_size: float = 35,
@@ -84,6 +87,14 @@ class LinearContainerStructure(AlgoManimBase):
         super().__init__(**kwargs)
 
         self._data = None
+
+        # ---- pointers ----
+        if pointers not in ["top", "bottom", "both", None]:
+            raise ValueError("pointers must be 'top' | 'bottom' | 'both' | None")
+        self._pointers: Literal["top", "bottom", "both"] | None = pointers
+        if pointers_mode not in [3, 5]:
+            raise ValueError("pointers_mode must be 3 or 5")
+        self._pointers_mode = pointers_mode
 
         # --- mobjects ---
         self._containers_mob = mn.VGroup()
@@ -865,7 +876,7 @@ class LinearContainerStructure(AlgoManimBase):
             color: Color for the highlighted pointer. If None, uses color_containers_with_value.
         """
 
-        # ------- checks --------
+        # ------- validation --------
 
         if hasattr(self, "_pointers") and not self._pointers:
             return
@@ -885,7 +896,7 @@ class LinearContainerStructure(AlgoManimBase):
             self._bottom_pointers_colors = {}
             colors_store = self._bottom_pointers_colors
 
-        # ------- checks --------
+        # ------- validation --------
         if not self._data:
             return
 

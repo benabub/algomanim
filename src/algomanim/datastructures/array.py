@@ -64,6 +64,7 @@ class Array(RectangleCellsStructure):
         direction: np.ndarray = mn.RIGHT,
         # ---- pointers ----
         pointers: Literal["top", "bottom", "both"] | None = "top",
+        pointers_mode: Literal[3, 5] = 3,
         # ---- frame ----
         frame_from: "Array | String |  None" = None,
         # ---- position ----
@@ -102,6 +103,9 @@ class Array(RectangleCellsStructure):
         super().__init__(
             # ---- frame ----
             frame_from=frame_from,
+            # ---- pointers ----
+            pointers=pointers,
+            pointers_mode=pointers_mode,
             # ---- position ----
             vector=vector,
             mob_center=mob_center,
@@ -136,9 +140,8 @@ class Array(RectangleCellsStructure):
             raise ValueError("direction must be mn.RIGHT or mn.UP or mn.DOWN")
         self._direction = direction
         # ---- pointers ----
-        if pointers not in ["top", "bottom", "both", None]:
-            raise ValueError("pointers must be 'top' | 'bottom' | 'both' | None")
-        self._pointers: Literal["top", "bottom", "both"] | None = pointers
+        self._pointers = pointers
+        self._pointers_mode: Literal[3, 5] = pointers_mode
         # ---- frame ----
         self._frame_from = frame_from
         # -- position --
@@ -211,7 +214,6 @@ class Array(RectangleCellsStructure):
 
         self.set_pointers(
             self._containers_mob,
-            self._pointers,
             self._direction,
         )
 
@@ -409,6 +411,7 @@ class Array(RectangleCellsStructure):
             direction=self._direction,
             # ---- pointers ----
             pointers=self._pointers,
+            pointers_mode=self._pointers_mode,
             # ---- frame ----
             frame_from=self._frame_from,
             # -- position --
@@ -499,7 +502,7 @@ class Array(RectangleCellsStructure):
                      Has no effect if `animate=False`.
         """
 
-        # checks
+        # validation
         if not self._data and not self._callable():
             return
 

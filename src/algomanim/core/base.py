@@ -51,7 +51,7 @@ class AlgoManimBase(mn.VGroup):
         screen_buff: float = 0.2,
         **kwargs,
     ):
-        # ------ checks -------
+        # ------ validation -------
         if align_left and align_right:
             raise ValueError("Cannot use align_left and align_right together")
         if align_top and align_bottom:

@@ -54,6 +54,7 @@ class String(RectangleCellsStructure):
         value: Callable[[], str],
         # ---- pointers ----
         pointers: Literal["top", "bottom", "both"] | None = "top",
+        pointers_mode: Literal[3, 5] = 3,
         # ---- frame ----
         frame_from: "Array | String |  None " = None,
         # ---- position ----
@@ -89,6 +90,9 @@ class String(RectangleCellsStructure):
         self._parent_kwargs = kwargs.copy()
 
         super().__init__(
+            # ---- pointers ----
+            pointers=pointers,
+            pointers_mode=pointers_mode,
             # ---- frame ----
             frame_from=frame_from,
             # ---- position ----
@@ -117,9 +121,8 @@ class String(RectangleCellsStructure):
         self._callable = value
         self._data = value()
         # ---- pointers ----
-        if pointers not in ["top", "bottom", "both", None]:
-            raise ValueError("pointers must be 'top' | 'bottom' | 'both' | None")
-        self._pointers: Literal["top", "bottom", "both"] | None = pointers
+        self._pointers = pointers
+        self._pointers_mode: Literal[3, 5] = pointers_mode
         # ---- frame ----
         self._frame_from = frame_from
         # -- position --
@@ -197,7 +200,6 @@ class String(RectangleCellsStructure):
 
         self.set_pointers(
             self._containers_mob,
-            self._pointers,
             mn.RIGHT,
         )
 
@@ -354,6 +356,7 @@ class String(RectangleCellsStructure):
             self._callable,
             # ---- pointers ----
             pointers=self._pointers,
+            pointers_mode=self._pointers_mode,
             # ---- frame ----
             frame_from=self._frame_from,
             # -- position --
@@ -447,7 +450,7 @@ class String(RectangleCellsStructure):
             run_time: Duration of the animation if `animate=True`.
         """
 
-        # checks
+        # validation
         if not self._data and not self._callable():
             return
 

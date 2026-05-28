@@ -262,7 +262,7 @@ class CodeBlockLense(CodeBlockBase):
         )
 
         # --- limit ---
-        # checks
+        # validation
         if limit < 7:
             raise ValueError("limit must be at least 7")
 
@@ -424,7 +424,7 @@ class CodeBlockLense(CodeBlockBase):
             ValueError: If indices are not consecutive or exceed limit//2.
         """
 
-        # --- checks ---
+        # --- validation ---
         if not indices:
             self._clear_highlights()
             return
