@@ -241,13 +241,13 @@ class LinearContainerStructure(AlgoManimBase):
             if i in colors_dict:
                 stored_group = colors_dict[i]
                 if self._data:
-                    for j in range(3):
+                    for j in range(self._pointers_mode):
                         pointers_group[j].set_color(stored_group[j])
                 else:
-                    for j in range(3):
+                    for j in range(self._pointers_mode):
                         pointers_group[j].set_color(self._bg_color)
             else:
-                for j in range(3):
+                for j in range(self._pointers_mode):
                     pointers_group[j].set_color(self._bg_color)
 
     def _save_highlights_states(self):
