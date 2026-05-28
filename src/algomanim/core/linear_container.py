@@ -390,7 +390,6 @@ class LinearContainerStructure(AlgoManimBase):
     def set_pointers(
         self,
         cell_mob: mn.VGroup,
-        pointers: Literal["top", "bottom", "both"] | None,
         direction: np.ndarray,
     ) -> None:
         """Create and attach pointer triangles to cells based on direction and side.
@@ -404,95 +403,49 @@ class LinearContainerStructure(AlgoManimBase):
                 - "both": Both sides.
                 - None: No pointers.
         """
-        # -------------- checks --------------
-        if not pointers:
+        # -------------- validation --------------
+        if not self._pointers:
             self._pointers_top = None
             self._pointers_bottom = None
             return
 
-        # -------------- create pointers --------------
-        if np.allclose(direction, mn.RIGHT):  # horizontal pointers
-            pointers_top, pointers_bottom = self._create_horizontal_pointers(cell_mob)
+        # -------------- create & set pointers --------------
 
-        else:  # rotate pointers
-            angle = mn.angle_of_vector(direction)
+        if self._pointers == "top":
+            pointers_top = self._create_horizontal_top_pointers(cell_mob)
 
-            # swich top/bottom pointers
-            if direction[0] < 0:
-                extra_rotation = mn.PI
-            else:
-                extra_rotation = 0
+            if not np.allclose(direction, mn.RIGHT):  # rotate pointers
+                self._rotate_pointers(pointers_top, direction, cell_mob)
 
-            pointers_top, pointers_bottom = self._create_horizontal_pointers(cell_mob)
+            self._pointers_top, self._pointers_bottom = pointers_top, None
+            self.add(
+                self._pointers_top,
+            )
 
-            # pointers rotation
-            for i, cell in enumerate(cell_mob):
-                center = cell.get_center()
-                total_angle = angle + extra_rotation
-                pointers_top[i].rotate(total_angle, about_point=center)
-                pointers_bottom[i].rotate(total_angle, about_point=center)
+        elif self._pointers == "both":
+            pointers_top = self._create_horizontal_top_pointers(cell_mob)
+            pointers_bottom = self._create_horizontal_bottom_pointers(cell_mob)
 
-        # -------------- set pointers --------------
-        if pointers == "both":
+            if not np.allclose(direction, mn.RIGHT):  # rotate pointers
+                self._rotate_pointers(pointers_top, direction, cell_mob)
+                self._rotate_pointers(pointers_bottom, direction, cell_mob)
+
             self._pointers_top, self._pointers_bottom = pointers_top, pointers_bottom
             self.add(
                 self._pointers_top,
                 self._pointers_bottom,
             )
-        elif pointers == "top":
-            self._pointers_top, self._pointers_bottom = pointers_top, None
-            self.add(
-                self._pointers_top,
-            )
-        elif pointers == "bottom":
+
+        elif self._pointers == "bottom":
+            pointers_bottom = self._create_horizontal_bottom_pointers(cell_mob)
+
+            if not np.allclose(direction, mn.RIGHT):  # rotate pointers
+                self._rotate_pointers(pointers_bottom, direction, cell_mob)
+
             self._pointers_top, self._pointers_bottom = None, pointers_bottom
             self.add(
                 self._pointers_bottom,
             )
-
-    def _create_horizontal_pointers(self, cell_mob: mn.VGroup):
-        """Create pointer triangles for horizontal direction (direction = RIGHT).
-
-        Args:
-            cell_mob: VGroup of cells to attach pointers to.
-
-        Returns:
-            Tuple of (top_pointers, bottom_pointers) VGroups where each contains
-            triple triangle groups for every cell | node.
-
-        Note:
-            Each cell gets 3 triangles above and 3 below, arranged horizontally.
-            Triangle groups are positioned with fixed buffering from cells.
-        """
-
-        top_triangle = (
-            mn.Triangle(color=self._bg_color)
-            .stretch_to_fit_width(0.7)
-            .scale(0.1)
-            .rotate(mn.PI)
-        )
-        bottom_triangle = (
-            mn.Triangle(color=self._bg_color).stretch_to_fit_width(0.7).scale(0.1)
-        )
-
-        pointers_top = mn.VGroup()
-        pointers_bottom = mn.VGroup()
-
-        for cell in cell_mob:
-            # create top triangles (3 per cell)
-            top_triple_group = mn.VGroup(*[top_triangle.copy() for _ in range(3)])
-            # arrange top triangles horizontally above the cell
-            top_triple_group.arrange(mn.RIGHT, buff=0.08)
-            top_triple_group.next_to(cell, mn.UP, buff=0.15)
-            pointers_top.add(top_triple_group)
-
-            # create bottom triangles (3 per cell)
-            bottom_triple_group = mn.VGroup(*[bottom_triangle.copy() for _ in range(3)])
-            bottom_triple_group.arrange(mn.RIGHT, buff=0.08)
-            bottom_triple_group.next_to(cell, mn.DOWN, buff=0.15)
-            pointers_bottom.add(bottom_triple_group)
-
-        return pointers_top, pointers_bottom
 
     @staticmethod
     def _color_to_rgb(color: str | ManimColor) -> tuple[int, int, int]:
