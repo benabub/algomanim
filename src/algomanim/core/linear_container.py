@@ -508,6 +508,8 @@ class LinearContainerStructure(AlgoManimBase):
             return colors[0]
 
         if len(colors) == 2:
+            if set(colors) == {mn.RED, mn.BLUE}:
+                return mn.PURPLE.to_hex()
             return self._blend_colors_algo(*colors)
 
         if 3 <= len(colors) <= 6:
