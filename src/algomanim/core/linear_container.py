@@ -670,22 +670,22 @@ class LinearContainerStructure(AlgoManimBase):
                 elif count == 2:
                     pattern = [bg, color_list[0], bg, color_list[1], bg]
                 elif count == 3:
-                    pattern = [bg, color_list[0], color_list[1], color_list[2], bg]
+                    pattern = [bg, color_list[0], color_list[2], color_list[1], bg]
                 elif count == 4:
                     pattern = [
                         color_list[0],
-                        color_list[1],
-                        bg,
                         color_list[2],
+                        bg,
+                        color_list[1],
                         color_list[3],
                     ]
                 elif count == 5:
                     pattern = [
                         color_list[0],
-                        color_list[1],
                         color_list[2],
-                        color_list[3],
                         color_list[4],
+                        color_list[1],
+                        color_list[3],
                     ]
                 else:
                     continue
