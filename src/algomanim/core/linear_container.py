@@ -15,8 +15,8 @@ class Colors:
     color_2: ManimColor | str = mn.BLUE  # #58C4DD
     color_3: ManimColor | str = mn.GREEN  # #83C167
     color_4: ManimColor | str = mn.PINK  # #D147BD
-    color_5: ManimColor | str = mn.LOGO_BLUE  # #525893
-    color_6: ManimColor | str = mn.GREEN_E  # #699C52
+    color_5: ManimColor | str = "#7c83b4"
+    color_6: ManimColor | str = mn.TEAL_E  # #49A88F
 
     color_mix_3: ManimColor | str = mn.GOLD_E
     color_mix_4: ManimColor | str = mn.ORANGE
