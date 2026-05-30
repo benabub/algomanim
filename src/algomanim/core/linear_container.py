@@ -17,6 +17,8 @@ class Colors:
     color_4: ManimColor | str = mn.PINK  # #D147BD
     color_5: ManimColor | str = "#7c83b4"
     color_6: ManimColor | str = mn.TEAL_E  # #49A88F
+    color_7: ManimColor | str = mn.YELLOW_E
+    color_8: ManimColor | str = mn.LIGHT_BROWN
 
     color_mix_3: ManimColor | str = mn.GOLD_E
     color_mix_4: ManimColor | str = mn.ORANGE
