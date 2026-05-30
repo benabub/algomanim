@@ -41,17 +41,17 @@ class Example_selection_sort(mn.Scene):
         k = i + 1
 
         code = """
-length = len(arr)
+        length = len(arr)
 
-for i in range(length - 1):
-    min_index = i
-    for k in range(i + 1, length):
-        if arr[min_index] > arr[k]:
-            min_index = k
-    if min_index != i:
-        arr[i], arr[min_index] = arr[min_index], arr[i]
-return arr
-"""
+        for i in range(length - 1):
+            min_index = i
+            for k in range(i + 1, length):
+                if arr[min_index] > arr[k]:
+                    min_index = k
+            if min_index != i:
+                arr[i], arr[min_index] = arr[min_index], arr[i]
+        return arr
+        """
 
         # ======== MOBJECTS CONSTRUCTION ============
 
@@ -804,6 +804,7 @@ class Example_array(mn.Scene):
 
             array1 = Array(
                 lambda: arr,
+                pointers="both",
                 font_size=40,
                 align_screen=mn.LEFT,
                 screen_buff=0.5,
@@ -820,6 +821,7 @@ class Example_array(mn.Scene):
 
             array2 = Array(
                 lambda: arr,
+                pointers="both",
                 direction=mn.UP,
                 font_size=40,
                 vector=mn.LEFT * 1,
@@ -835,6 +837,7 @@ class Example_array(mn.Scene):
 
             array3 = Array(
                 lambda: arr,
+                pointers="both",
                 direction=mn.DOWN,
                 font_size=40,
                 vector=mn.RIGHT * 3,
@@ -1006,8 +1009,121 @@ class Example_array(mn.Scene):
             self.wait(1)
             self.clear()
 
+        def highlights(self):
+            pause = 1
+
+            title = RelativeText(
+                "pointers_mode param; highlight_containers(); higlight_pointers()",
+                font_size=30,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            command_text = RelativeText(
+                "pointers_mode = 3",
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.2,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            array = Array(
+                lambda: [0, 0, 0, 0, 0],
+                font_size=45,
+            )
+            array.first_appear(self)
+            self.wait(1)
+
+            indices = ()
+
+            param_text = RelativeTextValue(
+                ("indices_param", lambda: indices, mn.WHITE),
+                font_size=35,
+                mob_center=array,
+                align_left=array,
+                vector=mn.DOWN * 1.5,
+            )
+
+            def cycle(
+                scene: mn.Scene,
+                array: Array,
+                text: RelativeTextValue,
+                new_indices,
+            ):
+                nonlocal indices
+                indices = new_indices
+                text.update_value(scene, animate=False)
+                array.highlight_containers(*new_indices)
+                array.highlight_pointers(*new_indices)
+                self.wait(pause)
+
+            cycle(self, array, param_text, (0, 1, 2))
+            cycle(self, array, param_text, (0, 0, 2))
+            cycle(self, array, param_text, (0, 2, 2))
+            cycle(self, array, param_text, (1, 2, 1))
+            cycle(self, array, param_text, (1, 1, 1))
+
+            array.clear_containers_highlights()
+            array.clear_pointers_highlights()
+            self.remove(command_text, array, param_text)
+            self.wait(1)
+
+            command_text = RelativeText(
+                "pointers_mode = 5",
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.2,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            array = Array(
+                lambda: [0, 0, 0, 0, 0],
+                font_size=45,
+                pointers_mode=5,
+            )
+            array.first_appear(self)
+            self.wait(1)
+
+            cycle(self, array, param_text, (0, 1, 2, 3, 4))
+            cycle(self, array, param_text, (0, 0, 2, 2, 5))
+            cycle(self, array, param_text, (0, 0, 0, 2, 2))
+            cycle(self, array, param_text, (0, 0, 0, 0))
+            cycle(self, array, param_text, (0, 0, 0, 0, 0))
+            cycle(self, array, param_text, (0, 0, 2, 3, 4))
+            cycle(self, array, param_text, (0, 1, 0, 3, 4))
+            cycle(self, array, param_text, (0, 1, 2, 0, 4))
+            cycle(self, array, param_text, (0, 1, 2, 3, 0))
+            cycle(self, array, param_text, (0, 1, 1, 3, 4))
+            cycle(self, array, param_text, (0, 1, 2, 1, 4))
+            cycle(self, array, param_text, (0, 1, 2, 3, 1))
+            cycle(self, array, param_text, (0, 1, 2, 2, 4))
+            cycle(self, array, param_text, (0, 1, 2, 3, 2))
+            cycle(self, array, param_text, (0, 1, 2, 3, 3))
+            cycle(self, array, param_text, (0, 1, 2, 3, 4))
+
+            self.wait(1)
+            self.remove(title)
+            array.clear_pointers_highlights(0)
+            array.clear_containers_highlights()
+
+            self.clear()
+
         def positioning(self):
             pause = 1
+
+            title = RelativeText(
+                "positioning",
+                font_size=40,
+                text_color=mn.BLACK,
+                align_screen=mn.UP + mn.RIGHT,
+            )
+            title.first_appear(self)
+
             arr = list("arr")
 
             center = Array(lambda: list("mob_center"), font_size=40)
@@ -1062,6 +1178,7 @@ class Example_array(mn.Scene):
             self.wait(pause)
 
             self.clear()
+            self.add(title)
 
             one = Array(
                 lambda: list("one"),
@@ -1300,11 +1417,11 @@ class Example_array(mn.Scene):
             )
             self.wait(2)
 
-            arr_1.highlight_containers(0, 1, 2)
-            arr_2.highlight_containers(0, 1, 2)
-            arr_3.highlight_containers(0, 1, 2)
-            arr_4.highlight_containers(0, 1, 2)
-            arr_5.highlight_containers(0, 1, 2)
+            arr_1.highlight_containers(0, 1, 2, 3)
+            arr_2.highlight_containers(0, 1, 2, 3)
+            arr_3.highlight_containers(0, 1, 2, 3)
+            arr_4.highlight_containers(0, 1, 2, 3)
+            arr_5.highlight_containers(0, 1, 2, 3)
             self.wait(pause)
 
             arr = [1, 2]
@@ -1369,7 +1486,7 @@ class Example_array(mn.Scene):
             pause = 0.5
 
             title = RelativeText(
-                "frame_from import",
+                "frame_from param",
                 font_size=50,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
@@ -1525,11 +1642,11 @@ class Example_array(mn.Scene):
 
             self.clear()
 
-        def highlights(self):
+        def monocolor(self):
             pause = 1
 
             title = RelativeText(
-                "pointers()   highlight_containers()   higlight_pointers()",
+                "highlight_containers_monocolor()",
                 font_size=35,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
@@ -1538,18 +1655,9 @@ class Example_array(mn.Scene):
             title.first_appear(self)
             self.wait(1)
 
-            command_text = RelativeText(
-                "pointers_mode = 3",
-                font_size=35,
-                mob_center=title,
-                vector=mn.DOWN * 1.2,
-            )
-            command_text.first_appear(self)
-            self.wait(1)
-
             array = Array(
-                lambda: [0, 0, 0, 0, 0],
-                font_size=45,
+                lambda: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                font_size=35,
             )
             array.first_appear(self)
             self.wait(1)
@@ -1573,83 +1681,14 @@ class Example_array(mn.Scene):
                 nonlocal indices
                 indices = new_indices
                 text.update_value(scene, animate=False)
-                array.highlight_containers(*new_indices)
-                array.highlight_pointers(*new_indices)
+                array.highlight_containers_monocolor(new_indices)
                 self.wait(pause)
 
-            cycle(self, array, param_text, (0, 1, 2))
-            cycle(self, array, param_text, (0, 0, 2))
-            cycle(self, array, param_text, (0, 2, 2))
-            cycle(self, array, param_text, (1, 2, 1))
-            cycle(self, array, param_text, (1, 1, 1))
-
-            array.clear_containers_highlights()
-            array.clear_pointers_highlights()
-            self.remove(command_text, array, param_text)
-            self.wait(1)
-
-            command_text = RelativeText(
-                "pointers_mode = 5",
-                font_size=35,
-                mob_center=title,
-                vector=mn.DOWN * 1.2,
-            )
-            command_text.first_appear(self)
-            self.wait(1)
-
-            array = Array(
-                lambda: [0, 0, 0, 0, 0],
-                font_size=45,
-                pointers_mode=5,
-            )
-            array.first_appear(self)
-            self.wait(1)
-
+            cycle(self, array, param_text, (0, 2, 4, 6, 8))
             cycle(self, array, param_text, (0, 1, 2, 3, 4))
-            cycle(self, array, param_text, (0, 0, 2, 2, 5))
-            cycle(self, array, param_text, (0, 0, 0, 2, 2))
-            cycle(self, array, param_text, (0, 0, 0, 0))
-            cycle(self, array, param_text, (0, 0, 0, 0, 0))
-            cycle(self, array, param_text, (0, 0, 2, 3, 4))
-            cycle(self, array, param_text, (0, 1, 0, 3, 4))
-            cycle(self, array, param_text, (0, 1, 2, 0, 4))
-            cycle(self, array, param_text, (0, 1, 2, 3, 0))
-            cycle(self, array, param_text, (0, 1, 1, 3, 4))
-            cycle(self, array, param_text, (0, 1, 2, 1, 4))
-            cycle(self, array, param_text, (0, 1, 2, 3, 1))
-            cycle(self, array, param_text, (0, 1, 2, 2, 4))
-            cycle(self, array, param_text, (0, 1, 2, 3, 2))
-            cycle(self, array, param_text, (0, 1, 2, 3, 3))
-            cycle(self, array, param_text, (0, 1, 2, 3, 4))
+            cycle(self, array, param_text, (5, 6, 7, 8))
 
-            self.wait(1)
             self.remove(title)
-            array.clear_pointers_highlights(0)
-            array.clear_containers_highlights()
-
-            self.clear()
-
-        def monocolor(self):
-            pause = 0.5
-            array = Array(
-                lambda: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                font_size=35,
-            )
-            top_text = RelativeText(
-                "highlight_containers_monocolor()",
-                vector=mn.UP * 2,
-                font_size=30,
-            )
-            array.group_appear(self, top_text)
-            self.wait(1)
-
-            array.highlight_containers_monocolor([0, 2, 4, 6, 8])
-            self.wait(pause)
-            array.highlight_containers_monocolor([0, 1, 2, 3, 4])
-            self.wait(pause)
-            array.highlight_containers_monocolor([5, 6, 7, 8])
-            self.wait(pause)
-            self.remove(top_text)
             array.clear_containers_highlights()
 
             self.clear()
@@ -1657,62 +1696,62 @@ class Example_array(mn.Scene):
         def highlight_containers_with_value(self):
             pause = 0.5
             arr = [10, 2, 3000, 2, 100, 1, 40]
+
+            title = RelativeText(
+                "highlight_containers_with_value()   pointers_on_value()",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
             array = Array(
                 lambda: arr,
                 font_size=35,
             )
-            top_text = RelativeText(
-                "highlight_containers_with_value()   pointers_on_value()",
-                vector=mn.UP * 2,
-                font_size=30,
-            )
-            array.group_appear(self, top_text)
+            array.first_appear(self)
             self.wait(1)
 
-            array.highlight_containers_with_value(0)
-            array.highlight_pointers_above_value(0)
-            self.wait(pause)
-            arr = [22, 0, 22, 0, 22, 0]
-            array.update_value(self)
-            array.highlight_containers_with_value(0)
-            array.highlight_pointers_above_value(0)
-            self.wait(pause)
-            arr = [0, 22, 0, 22, 0, 22]
-            array.update_value(self)
-            array.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-            array.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN)
-            self.wait(pause)
-            arr = [22, 0, 22, 0, 22, 0]
-            array.update_value(self)
-            array.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-            array.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN)
-            self.wait(pause)
-            arr = [0, 22, 0, 22, 0, 22]
-            array.update_value(self)
-            array.highlight_containers_with_value(0, color=mn.PURPLE)
-            array.highlight_pointers_above_value(0, color=mn.PURPLE)
-            self.wait(pause)
-            arr = [22, 0, 22, 0, 22]
-            array.update_value(self)
-            array.highlight_containers_with_value(0, color=mn.PURPLE)
-            array.highlight_pointers_above_value(0, color=mn.PURPLE)
-            self.wait(pause)
-            arr = [0, 22, 0, 22, 0, 22]
-            array.update_value(self)
-            array.highlight_containers_with_value(0, color=mn.PINK)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-            arr = [22, 0, 22, 0, 22]
-            array.update_value(self)
-            array.highlight_containers_with_value(0, color=mn.PINK)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(1)
-            self.remove(top_text)
+            def cycle(
+                scene: mn.Scene,
+                array_mob: Array,
+                array: list,
+                color=None,
+            ):
+                nonlocal arr
+                arr = array
+                array_mob.update_value(scene)
+                array_mob.highlight_containers_with_value(0, color=color)
+                array_mob.highlight_pointers_above_value(0, 0, color)
+                self.wait(pause)
+
+            cycle(self, array, [22, 0, 22, 0, 22, 0])
+            cycle(self, array, [0, 22, 0, 22, 0, 22], mn.LIGHT_BROWN)
+            cycle(self, array, [22, 0, 22, 0, 22, 0], mn.LIGHT_BROWN)
+            cycle(self, array, [0, 22, 0, 22, 0, 22], mn.PURPLE)
+            cycle(self, array, [22, 0, 22, 0, 22], mn.PURPLE)
+            cycle(self, array, [0, 22, 0, 22, 0, 22], mn.PINK)
+            cycle(self, array, [22, 0, 22, 0, 22], mn.PINK)
+
+            self.remove(title)
 
             self.clear()
 
         def highlight_containers_with_values(self):
             pause = 0.5
+
+            title = RelativeText(
+                "highlight_containers_with_values();  text_color_with_values()",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
             arr = [0, 1, 2, 0, 1, 2]
 
             cont_mapp = {
@@ -1730,12 +1769,7 @@ class Example_array(mn.Scene):
                 font_size=35,
                 weight="BOLD",
             )
-            top_text = RelativeText(
-                "highlight_containers_with_values()\ntext_color_with_values()",
-                vector=mn.UP * 2,
-                font_size=30,
-            )
-            array.group_appear(self, top_text)
+            array.first_appear(self)
             self.wait(1)
 
             array.highlight_containers_with_values(cont_mapp)
@@ -1772,28 +1806,31 @@ class Example_array(mn.Scene):
             array.text_color_with_values(text_mapp)
             self.wait(1)
 
-            self.remove(top_text)
+            self.remove(title)
 
             self.clear()
 
         def pointers_on_values(self):
             pause = 0.5
             arr = ["A", 0, "B", 1, "C", 2, "D"]
-            st = {0, 1, 2}
+            st = [0, 1, 2]
+
+            title = RelativeText(
+                "pointers_on_values()",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
 
             array = Array(
                 lambda: arr,
                 font_size=35,
                 weight="BOLD",
             )
-            title = RelativeText(
-                "pointers_on_values()",
-                text_color=mn.BLACK,
-                font_size=50,
-                align_screen=mn.UP,
-                screen_buff=0.5,
-            )
-            array.group_appear(self, title)
+            array.first_appear(self)
             self.wait(1)
 
             set_text = RelativeTextValue(
@@ -1828,106 +1865,6 @@ class Example_array(mn.Scene):
 
             self.clear()
 
-        def mix(self):
-            pause = 0.5
-            arr = [0, 1, 22, 333, 4444, 55555]
-            array = Array(
-                lambda: arr,
-                font_size=35,
-            )
-            top_text = RelativeText(
-                "mix",
-                vector=mn.UP * 2,
-                font_size=30,
-            )
-            array.group_appear(self, top_text)
-            self.wait(1)
-
-            array.highlight_containers(0, 2, 4)
-            array.highlight_pointers(0, 2, 4)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = [1, 0, 55555, 333]
-            array.update_value(self)
-            array.clear_pointers_highlights(0)
-            array.highlight_containers_with_value(0, color=mn.PINK)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = [0, 333, 0]
-            array.update_value(self)
-            array.highlight_containers(0, 2, 4)
-            array.highlight_pointers(0, 2, 4)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = [0, 0]
-            array.update_value(self)
-            array.clear_pointers_highlights(0)
-            array.highlight_containers_with_value(0, color=mn.PINK)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = [0]
-            array.update_value(self)
-            array.highlight_containers(0, 2, 4)
-            array.highlight_pointers(0, 2, 4)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = []
-            array.update_value(self, animate=True)
-            array.highlight_containers(0, 2, 4)
-            array.highlight_pointers(0, 2, 4)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = [0, 0, 0, 0]
-            array.update_value(self, animate=True)
-            self.wait(pause)
-
-            arr = [1, 0, 22, 0, 333, 0]
-            array.update_value(self, animate=True)
-            array.clear_pointers_highlights(0)
-            array.highlight_containers_with_value(0, color=mn.PINK)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = [0, 22, 0, 333, 0]
-            array.update_value(self, animate=True)
-            array.clear_pointers_highlights(1)
-            array.highlight_containers(1, 1, 2)
-            array.highlight_pointers(1, 1, 2)
-            self.wait(pause)
-
-            arr = [1, 0, 22, 0, 333, 0, 22]
-            array.update_value(self, animate=True)
-            array.clear_pointers_highlights(0)
-            array.highlight_containers_with_value(0, color=mn.PINK)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(pause)
-
-            arr = [0, 22, 0, 333, 0, 55555]
-            array.update_value(self, animate=True)
-            array.clear_pointers_highlights(1)
-            array.highlight_containers(3, 5, 3)
-            array.highlight_pointers(3, 5, 3)
-            self.wait(pause)
-
-            arr = [1, 0]
-            array.update_value(self, animate=True)
-            array.highlight_containers(0, 0, 0)
-            array.highlight_pointers(0, 0, 0)
-            self.wait(pause)
-
-            arr = [0, 0, 0, 0, 0, 0]
-            array.update_value(self, animate=True)
-            array.clear_pointers_highlights(0)
-            array.highlight_containers_with_value(0, color=mn.PINK)
-            array.highlight_pointers_above_value(0, color=mn.PINK)
-            self.wait(1)
-
         # ========== calls ==============
 
         pyramid(self)
@@ -1935,16 +1872,14 @@ class Example_array(mn.Scene):
         direction(self)
         lockwidth(self)
         pointers(self)
+        highlights(self)
         positioning(self)
         update_value(self)
         frame_import(self)
-        highlights(self)
         monocolor(self)
         highlight_containers_with_value(self)
         highlight_containers_with_values(self)
-        highlight_containers_with_values(self)
         pointers_on_values(self)
-        mix(self)
 
         # ========== finish ==============
 
