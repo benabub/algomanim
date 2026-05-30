@@ -316,88 +316,43 @@ class Array(RectangleCellsStructure):
 
         return mob_group
 
-    def _position_values_in_containers(
-        self,
-    ):
+    def _position_values_in_containers(self):
         """Position value text mobjects within their respective cells with proper alignment."""
+        # predefine character sets
+        top_chars = set("\"'^`")
+        deep_bottom_chars = set("ypgj")
+        bottom_chars = set("wertuioasdfhklzxcvbnm,.:;_")
 
         for i in range(len(self._data)):
-            if (
-                not isinstance(self._data[i], str) or len(self._data[i]) > 1
-            ):  # center alignment
-                self._values_mob[i].move_to(self._containers_mob[i])
+            val = self._data[i]
+            text_mob = self._values_mob[i]
+            container = self._containers_mob[i]
+
+            # Non-string -> center
+            if not isinstance(val, str):
+                text_mob.move_to(container)
+                continue
+
+            val_set = set(val)
+
+            # deep bottom
+            if val_set & deep_bottom_chars:
+                text_mob.next_to(
+                    container.get_bottom(), direction=mn.UP, buff=self._deep_bottom_buff
+                )
+            # top
+            elif val_set.issubset(top_chars):
+                text_mob.next_to(
+                    container.get_top(), direction=mn.DOWN, buff=self._top_buff
+                )
+            # bottom
+            elif val_set.issubset(bottom_chars):
+                text_mob.next_to(
+                    container.get_bottom(), direction=mn.UP, buff=self._bottom_buff
+                )
+            # center
             else:
-                val_set = set(self._data[i])
-                if not {
-                    "\\",
-                    "/",
-                    "|",
-                    "(",
-                    ")",
-                    "[",
-                    "]",
-                    "{",
-                    "}",
-                    "&",
-                    "$",
-                }.isdisjoint(val_set) or val_set.issubset(
-                    {
-                        ":",
-                        "*",
-                        "-",
-                        "+",
-                        "=",
-                        "#",
-                        "~",
-                        "%",
-                        "0",
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
-                        "8",
-                        "9",
-                    }
-                ):  # center alignment
-                    self._values_mob[i].move_to(self._containers_mob[i])
-                elif val_set.issubset(
-                    {
-                        '"',
-                        "'",
-                        "^",
-                        "`",
-                    }
-                ):  # top alignment
-                    self._values_mob[i].next_to(
-                        self._containers_mob[i].get_top(),
-                        direction=mn.DOWN,
-                        buff=self._top_buff,
-                    )
-
-                elif val_set.issubset(
-                    {
-                        "q",
-                        "y",
-                        "p",
-                        "g",
-                        "j",
-                    }
-                ):  # deep bottom alignment
-                    self._values_mob[i].next_to(
-                        self._containers_mob[i].get_bottom(),
-                        direction=mn.UP,
-                        buff=self._deep_bottom_buff,
-                    )
-
-                else:  # bottom alignment
-                    self._values_mob[i].next_to(
-                        self._containers_mob[i].get_bottom(),
-                        direction=mn.UP,
-                        buff=self._bottom_buff,
-                    )
+                text_mob.move_to(container)
 
     def _create_new_instance(self) -> "Array":
         """Create a new Array instance with current parameters and updated data.
