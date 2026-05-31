@@ -11,7 +11,7 @@ from .datastructures.string import String
 from .datastructures.linked_list import LinkedList
 
 from .ui.code_block import CodeBlock, CodeBlockLense
-from .ui.relative_text import RelativeText, RelativeTextValue
+from .ui.relative_text import RelativeText, RelativeTextValue, RelativeTextActive
 from .ui.titles import TitleText, TitleLogo
 
 __all__ = [
@@ -28,6 +28,7 @@ __all__ = [
     "CodeBlockLense",
     "RelativeText",
     "RelativeTextValue",
+    "RelativeTextActive",
     "TitleText",
     "TitleLogo",
     "SemiRoundedRectangle",
