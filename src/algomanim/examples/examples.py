@@ -17,6 +17,7 @@ from algomanim import (
     Array,
     String,
     RelativeTextValue,
+    RelativeTextActive,
     RelativeText,
     CodeBlock,
     CodeBlockLense,
@@ -315,10 +316,61 @@ class Example_text(mn.Scene):
 
             self.clear()
 
+        def active(self):
+
+            pause = 1
+
+            title = RelativeText(
+                "RelativeTextActive",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            val = "value"
+
+            p_text = RelativeTextValue(
+                ("input callable", lambda: val, mn.BLACK),
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.0,
+            )
+            p_text.first_appear(self)
+            self.wait(pause)
+
+            text = RelativeTextActive(
+                lambda: val,
+                font_size=40,
+            )
+            text.first_appear(self)
+            self.wait(pause)
+
+            def cycle(
+                scene: mn.Scene,
+                text_mob: RelativeTextActive,
+                text_param: RelativeTextValue,
+                new_val,
+            ):
+                nonlocal val
+                val = new_val
+                text_param.update_value(scene, animate=False)
+                text_mob.update_value(scene)
+                self.wait(pause)
+
+            cycle(self, text, p_text, [[1, 2], [3, 4]])
+            cycle(self, text, p_text, {"a": 1, "b": 2})
+            cycle(self, text, p_text, [1, 2, 3, 4])
+
+            self.wait(1)
+            self.clear()
+
         # ========== calls ==============
 
         first_appear(self)
         group_appear(self)
+        active(self)
 
         # ========== finish ==============
 
