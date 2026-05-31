@@ -3833,7 +3833,7 @@ class Example_code_block_lense(mn.Scene):
         # ========== INPUTS ==============
         pause = 1
 
-        def main(self):
+        def main(scene):
 
             code = """
             This is CodeBlockLense # 0
@@ -3859,11 +3859,17 @@ class Example_code_block_lense(mn.Scene):
             has restrictions on highlighting: # 20
                 - only consecutive lines # 21
                     can be highlighted # 22
-                - bounded area, depending on the lines limit. #23
+                - a bounded area, depending on the lines limit. #23
 
             As in CodeBlock, # 25
                 empty lines # 26
                     are not highlighted. # 27
+
+            As in CodeBlock, # 29
+            passing no indices will clear highlighting. # 30
+            Like in this one. # 31
+            Or in this. # 32
+            And back again. # 33
             """
 
             cb = CodeBlockLense(
@@ -3871,68 +3877,65 @@ class Example_code_block_lense(mn.Scene):
                 vector=mn.DOWN * 0.3 + mn.RIGHT * 2.0,
                 font="Monospace",
             )
-            cb.first_appear(self)
-            self.wait(pause)
+            cb.first_appear(scene)
+            scene.wait(pause)
 
-            title = RelativeText(
-                "highlight(0)",
+            param = "highlight(0)"
+
+            title = RelativeTextActive(
+                lambda: param,
                 vector=mn.UP * 3.2 + mn.LEFT * 5.5,
                 font_size=30,
             )
-            title.first_appear(self)
+            title.first_appear(scene)
 
-            def highlight_with_title(
-                self: mn.Scene,
+            def cycle(
+                scene: mn.Scene,
                 code_block: CodeBlockLense,
-                old_title: mn.Mobject,
+                title: mn.Mobject,
                 *indices: int,
-                pause=1,
             ):
+                nonlocal param
+                new_param = f"highlight({', '.join(map(str, indices))})"
+                param = new_param
+                title.update_value(scene, animate=False)
                 code_block.highlight(*indices)
+                scene.wait(1)
 
-                left_point = old_title.get_left()
-                self.remove(old_title)
+            cycle(scene, cb, title, 0)
 
-                args_str = f"(mn.scene, {', '.join(map(str, indices))})"
+            cycle(scene, cb, title, 2)
+            cycle(scene, cb, title, 3)
+            cycle(scene, cb, title, 4)
+            cycle(scene, cb, title, 5)
+            cycle(scene, cb, title, 6)
 
-                new_title = RelativeText(
-                    f"highlight{args_str}",
-                    font_size=30,
-                )
-                vector = left_point - new_title.get_left()
-                new_title.shift(vector)
-                new_title.appear(self)
-                self.wait(pause)
-                return new_title
+            cycle(scene, cb, title, 8)
+            cycle(scene, cb, title, 9)
+            cycle(scene, cb, title, 10)
 
-            title = highlight_with_title(self, cb, title, 0)
+            cycle(scene, cb, title, 12, 13)
+            cycle(scene, cb, title, 14)
+            cycle(scene, cb, title, 15)
+            cycle(scene, cb, title, 16)
 
-            title = highlight_with_title(self, cb, title, 2)
-            title = highlight_with_title(self, cb, title, 3)
-            title = highlight_with_title(self, cb, title, 4)
-            title = highlight_with_title(self, cb, title, 5)
-            title = highlight_with_title(self, cb, title, 6)
+            cycle(scene, cb, title, 18, 19, 20)
+            cycle(scene, cb, title, 21, 22)
+            cycle(scene, cb, title, 23)
 
-            title = highlight_with_title(self, cb, title, 8)
-            title = highlight_with_title(self, cb, title, 9)
-            title = highlight_with_title(self, cb, title, 10)
+            cycle(scene, cb, title, 24, 25)
+            cycle(scene, cb, title, 26, 27)
 
-            title = highlight_with_title(self, cb, title, 12, 13)
-            title = highlight_with_title(self, cb, title, 14)
-            title = highlight_with_title(self, cb, title, 15)
-            title = highlight_with_title(self, cb, title, 16)
+            cycle(scene, cb, title, 29)
+            cycle(scene, cb, title, 30)
+            cycle(scene, cb, title)
+            cycle(scene, cb, title)
+            cycle(scene, cb, title, 33)
 
-            title = highlight_with_title(self, cb, title, 18, 19, 20)
-            title = highlight_with_title(self, cb, title, 21, 22)
-            title = highlight_with_title(self, cb, title, 23)
-
-            title = highlight_with_title(self, cb, title, 24, 25)
-            title = highlight_with_title(self, cb, title, 26, 27)
-
-            self.remove(cb)
-            self.wait(0.5)
-            self.clear()
-            self.wait(pause)
+            scene.remove(cb)
+            scene.wait(0.5)
+            scene.clear()
+            scene.wait(pause)
 
         def head(self):
 
