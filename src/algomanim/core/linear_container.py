@@ -701,7 +701,7 @@ class LinearContainerStructure(AlgoManimBase):
 
     def highlight_containers_monocolor(
         self,
-        idx_list: list[int],
+        indices: Collection[int],
         color: ManimColor | str = mn.RED,
     ):
         """Highlight multiple cells with a single color.
@@ -721,7 +721,7 @@ class LinearContainerStructure(AlgoManimBase):
         self._containers_colors = {}
 
         # fill store
-        for idx in idx_list:
+        for idx in indices:
             self._containers_colors[idx] = color
 
         # apply
