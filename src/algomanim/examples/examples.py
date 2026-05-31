@@ -178,14 +178,14 @@ class Example_text(mn.Scene):
         self.camera.background_color = mn.GREY  # type: ignore
 
         def first_appear(self):
-            pause = 0.5
+            pause = 1
             s = "abc"
 
             title = RelativeText(
                 "first_appear() + remove()",
                 font_size=50,
                 text_color=mn.BLACK,
-                align_screen=mn.DOWN,
+                align_screen=mn.UP,
                 screen_buff=1,
             )
             title.first_appear(self)
@@ -195,14 +195,14 @@ class Example_text(mn.Scene):
                 font_size=40,
             )
 
-            top_text = RelativeTextValue(
-                ("text", lambda: s, mn.WHITE),
-                mob_center=text,
-                vector=mn.UP * 1.5,
-                font_size=30,
+            p_text = RelativeTextValue(
+                ("text", lambda: s, mn.BLACK),
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.0,
             )
 
-            top_text.first_appear(self)
+            p_text.first_appear(self)
             self.wait(pause)
             text.first_appear(self)
             self.wait(pause)
@@ -210,7 +210,7 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             s = "ab"
-            top_text.update_value(self)
+            p_text.update_value(self)
             self.wait(pause)
             text.first_appear(self)
             self.wait(pause)
@@ -218,7 +218,7 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             s = "a"
-            top_text.update_value(self)
+            p_text.update_value(self)
             self.wait(pause)
             text.first_appear(self)
             self.wait(pause)
@@ -226,7 +226,7 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             s = ""
-            top_text.update_value(self)
+            p_text.update_value(self)
             self.wait(pause)
             text.first_appear(self)
             self.wait(pause)
@@ -234,7 +234,7 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             s = "a"
-            top_text.update_value(self)
+            p_text.update_value(self)
             self.wait(pause)
             text.first_appear(self)
             self.wait(1)
@@ -242,77 +242,69 @@ class Example_text(mn.Scene):
             self.clear()
 
         def group_appear(self):
-            pause = 0.5
+            pause = 1
             s = "abc"
 
             title = RelativeText(
                 "first_appear() + remove()",
                 font_size=50,
                 text_color=mn.BLACK,
-                align_screen=mn.DOWN,
+                align_screen=mn.UP,
                 screen_buff=1,
             )
             title.first_appear(self)
 
+            p_text = RelativeTextValue(
+                ("text", lambda: s, mn.BLACK),
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.0,
+            )
+            p_text.first_appear(self)
+            self.wait(pause)
+
             text_1 = RelativeTextValue(
                 ("text", lambda: s, mn.RED),
                 font_size=40,
-                vector=mn.UP,
             )
             text_2 = RelativeTextValue(
                 ("text", lambda: s, mn.BLUE),
                 font_size=40,
+                vector=mn.DOWN,
             )
             text_3 = RelativeTextValue(
                 ("text", lambda: s, mn.GREEN),
-                ("text", lambda: s, mn.GREEN),
-                vector=mn.DOWN,
+                ("text", lambda: s, mn.PINK),
+                vector=mn.DOWN * 2,
                 font_size=40,
             )
 
-            top_text = RelativeTextValue(
-                ("text", lambda: s, mn.BLACK),
-                font_size=40,
-                align_screen=mn.UP,
-                screen_buff=1,
-            )
-
-            top_text.first_appear(self)
-            self.wait(pause)
             text_1.group_appear(self, text_2, text_3)
             self.wait(pause)
             self.remove(text_1, text_2, text_3)
             self.wait(pause)
 
-            s = "ab"
-            top_text.update_value(self)
-            self.wait(pause)
-            text_1.group_appear(self, text_2, text_3)
-            self.wait(pause)
-            self.remove(text_1, text_2, text_3)
-            self.wait(pause)
+            def cycle(
+                scene: mn.Scene,
+                new_val: str,
+                param_text: mn.Mobject,
+                t1: mn.Mobject,
+                t2: mn.Mobject,
+                t3: mn.Mobject,
+            ):
+                nonlocal s
+                s = new_val
+                param_text.update_value(scene)
+                scene.wait(pause)
+                t1.group_appear(scene, t2, t3)
+                scene.wait(pause)
+                scene.remove(t1, t2, t3)
+                scene.wait(pause)
 
-            s = "a"
-            top_text.update_value(self)
-            self.wait(pause)
-            text_1.group_appear(self, text_2, text_3)
-            self.wait(pause)
-            self.remove(text_1, text_2, text_3)
-            self.wait(pause)
-
-            s = ""
-            top_text.update_value(self)
-            self.wait(pause)
-            text_1.group_appear(self, text_2, text_3)
-            self.wait(pause)
-            self.remove(text_1, text_2, text_3)
-            self.wait(pause)
-
-            s = "a"
-            top_text.update_value(self)
-            self.wait(pause)
-            text_1.group_appear(self, text_2, text_3)
-            self.wait(1)
+            cycle(self, "ab", p_text, text_1, text_2, text_3)
+            cycle(self, "a", p_text, text_1, text_2, text_3)
+            cycle(self, "", p_text, text_1, text_2, text_3)
+            cycle(self, "a", p_text, text_1, text_2, text_3)
 
             self.clear()
 
