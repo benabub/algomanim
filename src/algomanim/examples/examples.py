@@ -3912,8 +3912,11 @@ class Example_code_block_lense(mn.Scene):
             As in CodeBlock, # 29
             passing no indices will clear highlighting. # 30
             Like in this one. # 31
-            Or in this. # 32
-            And back again. # 33
+            And back again. # 32
+
+            Also, there is a `pre` param in highlight(). # 34
+            It helps when you need to add mobs to the scene # 35
+            that are not directly provided by the code. # 36
             """
 
             cb = CodeBlockLense(
@@ -3938,12 +3941,19 @@ class Example_code_block_lense(mn.Scene):
                 code_block: CodeBlockLense,
                 title: mn.Mobject,
                 *indices: int,
+                pre: bool = False,
             ):
                 nonlocal param
-                new_param = f"highlight({', '.join(map(str, indices))})"
+                if not pre:
+                    new_param = f"highlight({', '.join(map(str, indices))})"
+                else:
+                    new_param = f"highlight({', '.join(map(str, indices))}, pre=True)"
                 param = new_param
                 title.update_value(scene, animate=False)
-                code_block.highlight(*indices)
+                if not pre:
+                    code_block.highlight(*indices)
+                else:
+                    code_block.highlight(*indices, pre=True)
                 scene.wait(1)
 
             cycle(scene, cb, title, 0)
@@ -3973,8 +3983,11 @@ class Example_code_block_lense(mn.Scene):
             cycle(scene, cb, title, 29)
             cycle(scene, cb, title, 30)
             cycle(scene, cb, title)
-            cycle(scene, cb, title)
-            cycle(scene, cb, title, 33)
+            cycle(scene, cb, title, 32)
+
+            cycle(scene, cb, title, 34, pre=True)
+            cycle(scene, cb, title, 35, 36, pre=True)
+            cycle(scene, cb, title, 35, 36)
 
             scene.remove(cb)
             scene.wait(0.5)
