@@ -17,19 +17,21 @@ class CodeBlock(CodeBlockBase):
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
-        align_screen (np.ndarray | None): Direction vector for screen edge alignment
-        screen_buff (float): Buffer distance from screen edge when using align_screen.
+        align_screen: Direction vector for screen edge alignment.
+        screen_buff: Buffer distance from screen edge when using align_screen.
         font_size: Common font size for all the text.
-        font: Common Font family for all the text. Defaults to system default.
-        code_buff: Common vertical buffer between codelines vgroups.
+        font: Common Font family for all the text.
+        code_buff: Common vertical buffer between code lines VGroups.
         rect_stroke_width: Stroke width for the code block container.
         rect_stroke_color: Stroke color for the code block container.
         rect_corner_radius: Corner radius for the rounded rectangle container.
         rect_buff: Padding around the code text within the background container.
         code_rect_fill_color: Background fill color for the code block container.
-        code_highlight_color: Background color for highlighted lines.
-        code_text_color_regular: Color for regular (non-highlighted) text.
-        code_text_color_highlight: Color for highlighted text.
+        code_rect_highlight_color: Background color for highlighted lines.
+        code_rect_prehighlight_color: Background color for pre-highlighted lines.
+        code_text_regular_color: Color for regular (non-highlighted) text.
+        code_text_highlight_color: Color for highlighted text.
+        code_text_prehighlight_color: Color for pre-highlighted text.
         head_fill_color: Background fill color for the head block.
         head_text_color: Text color for the head block.
     """
@@ -58,11 +60,14 @@ class CodeBlock(CodeBlockBase):
         rect_stroke_color: ManimColor | str = "#151515",
         rect_corner_radius: float = 0.1,
         rect_buff: float = 0.2,
-        # --- code block ---
+        # --- code block rect ---
         code_rect_fill_color: ManimColor | str = "#545454",
         code_rect_highlight_color: ManimColor | str = mn.BLACK,
-        code_text_color_regular: ManimColor | str = "WHITE",
-        code_text_color_highlight: ManimColor | str = "YELLOW",
+        code_rect_prehighlight_color: ManimColor | str = mn.LOGO_BLACK,
+        # --- code block text ---
+        code_text_regular_color: ManimColor | str = mn.WHITE,
+        code_text_highlight_color: ManimColor | str = mn.YELLOW_C,
+        code_text_prehighlight_color: ManimColor | str = mn.YELLOW_A,
         # --- head block ---
         head_fill_color: ManimColor | str = "#f4d7ab",
         head_text_color: ManimColor | str = "#151515",
@@ -90,11 +95,14 @@ class CodeBlock(CodeBlockBase):
             rect_stroke_color=rect_stroke_color,
             rect_corner_radius=rect_corner_radius,
             rect_buff=rect_buff,
-            # --- code block ---
+            # --- code block rect ---
             code_rect_fill_color=code_rect_fill_color,
             code_rect_highlight_color=code_rect_highlight_color,
-            code_text_color_regular=code_text_color_regular,
-            code_text_color_highlight=code_text_color_highlight,
+            code_rect_prehighlight_color=code_rect_prehighlight_color,
+            # --- code block text ---
+            code_text_regular_color=code_text_regular_color,
+            code_text_highlight_color=code_text_highlight_color,
+            code_text_prehighlight_color=code_text_prehighlight_color,
             # --- head block ---
             head_fill_color=head_fill_color,
             head_text_color=head_text_color,
@@ -120,7 +128,11 @@ class CodeBlock(CodeBlockBase):
             buff=0,
         )
 
-    def highlight(self, *indices: int):
+    def highlight(
+        self,
+        *indices: int,
+        pre: bool = False,
+    ):
         """Highlight specified lines by changing text and rectangle colors.
 
         Maintains internal set of highlighted indices to minimize state changes.
@@ -128,25 +140,32 @@ class CodeBlock(CodeBlockBase):
 
         Args:
             *indices: line indices to highlight.
+            pre: If True, uses pre-highlight colors for lines that are about to be visualized.
 
         Note:
             Previous highlights are cleared from lines not in the new indices.
         """
         new_highlighted = set(indices)
 
-        # Clear old highlights
+        # --- Clear old highlights ---
         for idx in self._highlighted_indices - new_highlighted:
             if self._code_text_mobs[idx]:
-                self._code_text_mobs[idx].set_color(self._code_text_color_regular)
+                self._code_text_mobs[idx].set_color(self._code_text_regular_color)
                 self._code_rect_mobs[idx].set_fill_color(self._code_rect_fill_color)
 
-        # Apply new highlights
+        # --- choose highlight colors ---
+        if not pre:
+            code_text_highlight_color = self._code_text_highlight_color
+            code_rect_highlight_color = self._code_rect_highlight_color
+        else:
+            code_text_highlight_color = self._code_text_prehighlight_color
+            code_rect_highlight_color = self._code_rect_prehighlight_color
+
+        # --- Apply new highlights ---
         for idx in new_highlighted - self._highlighted_indices:
             if self._code_text_mobs[idx]:
-                self._code_text_mobs[idx].set_color(self._code_text_color_highlight)
-                self._code_rect_mobs[idx].set_fill_color(
-                    self._code_rect_highlight_color
-                )
+                self._code_text_mobs[idx].set_color(code_text_highlight_color)
+                self._code_rect_mobs[idx].set_fill_color(code_rect_highlight_color)
 
         self._highlighted_indices = new_highlighted
 
@@ -154,39 +173,38 @@ class CodeBlock(CodeBlockBase):
 class CodeBlockLense(CodeBlockBase):
     """Code block with limited viewport and scrolling highlighting.
 
-    Displays only limit lines at a time, dimming boundary lines when scrolling.
-    Designed for long code blocks where full display is impractical.
-
     Args:
         code: Multiline string of code (first line must be empty).
         head: Multiline string of head block text (first line must be empty).
-        limit: Maximum number of visible lines (odd number, minimum 5).
+        limit: Maximum number of visible lines (odd number, minimum 7).
         vector: Position offset from mob_center for positioning.
         mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
-        align_screen (np.ndarray | None): Direction vector for screen edge alignment
-        screen_buff (float): Buffer distance from screen edge when using align_screen.
+        align_screen: Direction vector for screen edge alignment.
+        screen_buff: Buffer distance from screen edge when using align_screen.
         font_size: Common font size for all the text.
-        font: Common Font family for all the text. Defaults to system default.
-        code_buff: Common vertical buffer between codelines vgroups.
+        font: Common Font family for all the text.
+        code_buff: Common vertical buffer between code lines VGroups.
         rect_stroke_width: Stroke width for the code block container.
         rect_stroke_color: Stroke color for the code block container.
         rect_corner_radius: Corner radius for the rounded rectangle container.
         rect_buff: Padding around the code text within the background container.
         code_rect_fill_color: Background fill color for the code block container.
-        code_highlight_color: Background color for highlighted lines.
-        code_text_color_regular: Color for regular (non-highlighted) text.
-        code_text_color_highlight: Color for highlighted text.
+        code_rect_highlight_color: Background color for highlighted lines.
+        code_rect_prehighlight_color: Background color for pre-highlighted lines.
+        code_text_regular_color: Color for regular (non-highlighted) text.
+        code_text_highlight_color: Color for highlighted text.
+        code_text_prehighlight_color: Color for pre-highlighted text.
         head_fill_color: Background fill color for the head block.
         head_text_color: Text color for the head block.
         dim_high: Opacity for strongly dimmed boundary lines.
         dim_low: Opacity for weakly dimmed boundary lines.
 
     Raises:
-        ValueError: If `limit` < 5, or `len(code_lines)` <= `limit`.
+        ValueError: If limit < 7 or len(code_lines) <= limit.
     """
 
     def __init__(
@@ -215,11 +233,14 @@ class CodeBlockLense(CodeBlockBase):
         rect_stroke_color: ManimColor | str = "#151515",
         rect_corner_radius: float = 0.1,
         rect_buff: float = 0.3,
-        # --- code block ---
+        # --- code block rect ---
         code_rect_fill_color: ManimColor | str = "#545454",
-        code_highlight_color: ManimColor | str = mn.BLACK,
-        code_text_color_regular: ManimColor | str = "WHITE",
-        code_text_color_highlight: ManimColor | str = "YELLOW",
+        code_rect_highlight_color: ManimColor | str = mn.BLACK,
+        code_rect_prehighlight_color: ManimColor | str = mn.LOGO_BLACK,
+        # --- code block text ---
+        code_text_regular_color: ManimColor | str = mn.WHITE,
+        code_text_highlight_color: ManimColor | str = mn.YELLOW_C,
+        code_text_prehighlight_color: ManimColor | str = mn.YELLOW_A,
         # --- head block ---
         head_fill_color: ManimColor | str = "#f4d7ab",
         head_text_color: ManimColor | str = "#151515",
@@ -251,11 +272,14 @@ class CodeBlockLense(CodeBlockBase):
             rect_stroke_color=rect_stroke_color,
             rect_corner_radius=rect_corner_radius,
             rect_buff=rect_buff,
-            # --- code block ---
+            # --- code block rect ---
             code_rect_fill_color=code_rect_fill_color,
-            code_rect_highlight_color=code_highlight_color,
-            code_text_color_regular=code_text_color_regular,
-            code_text_color_highlight=code_text_color_highlight,
+            code_rect_highlight_color=code_rect_highlight_color,
+            code_rect_prehighlight_color=code_rect_prehighlight_color,
+            # --- code block text ---
+            code_text_regular_color=code_text_regular_color,
+            code_text_highlight_color=code_text_highlight_color,
+            code_text_prehighlight_color=code_text_prehighlight_color,
             # --- head block ---
             head_fill_color=head_fill_color,
             head_text_color=head_text_color,
@@ -406,7 +430,7 @@ class CodeBlockLense(CodeBlockBase):
         then empties the set of highlighted indices.
         """
         for idx in self._highlighted_indices:
-            self._code_text_mobs[idx].set_color(self._code_text_color_regular)
+            self._code_text_mobs[idx].set_color(self._code_text_regular_color)
             self._code_rect_mobs[idx].set_fill_color(self._code_rect_fill_color)
 
         self._highlighted_indices = set()
@@ -414,11 +438,13 @@ class CodeBlockLense(CodeBlockBase):
     def highlight(
         self,
         *indices: int,
+        pre: bool = False,
     ) -> None:
         """Highlight lines and scroll viewport to center them.
 
         Args:
             *indices: Consecutive line indices to highlight (global, 0-based).
+            pre: If True, uses pre-highlight colors for lines that are about to be visualized.
 
         Raises:
             ValueError: If indices are not consecutive or exceed limit//2.
@@ -447,21 +473,27 @@ class CodeBlockLense(CodeBlockBase):
 
         # --- clear old highlights ---
         for idx in self._highlighted_indices:
-            self._code_text_mobs[idx].set_color(self._code_text_color_regular)
+            self._code_text_mobs[idx].set_color(self._code_text_regular_color)
             self._code_rect_mobs[idx].set_fill_color(self._code_rect_fill_color)
 
         # --- apply new dim ---
         self._dim_lines(new_code_vgroup, *dim_indices)
+
+        # --- choose highlight colors ---
+        if not pre:
+            code_text_highlight_color = self._code_text_highlight_color
+            code_rect_highlight_color = self._code_rect_highlight_color
+        else:
+            code_text_highlight_color = self._code_text_prehighlight_color
+            code_rect_highlight_color = self._code_rect_prehighlight_color
 
         # --- apply new highlights ---
         for i in range(len(new_code_vgroup)):
             global_idx = start_idx + i
             if global_idx in indices:
                 if self._code_text_mobs[global_idx]:
-                    new_code_vgroup[i][1].set_color(self._code_text_color_highlight)
-                    new_code_vgroup[i][0].set_fill_color(
-                        self._code_rect_highlight_color
-                    )
+                    new_code_vgroup[i][1].set_color(code_text_highlight_color)
+                    new_code_vgroup[i][0].set_fill_color(code_rect_highlight_color)
 
         # --- update ---
         self._highlighted_indices = set(indices)

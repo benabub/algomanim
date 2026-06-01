@@ -50,11 +50,14 @@ class CodeBlockBase(AlgoManimBase):
         rect_stroke_color: ManimColor | str = "#151515",
         rect_corner_radius: float = 0.1,
         rect_buff: float = 0.2,
-        # --- code block ---
+        # --- code block rect ---
         code_rect_fill_color: ManimColor | str = "#545454",
         code_rect_highlight_color: ManimColor | str = mn.BLACK,
-        code_text_color_regular: ManimColor | str = "WHITE",
-        code_text_color_highlight: ManimColor | str = "YELLOW",
+        code_rect_prehighlight_color: ManimColor | str = mn.LOGO_BLACK,
+        # --- code block text ---
+        code_text_regular_color: ManimColor | str = mn.WHITE,
+        code_text_highlight_color: ManimColor | str = mn.YELLOW_C,
+        code_text_prehighlight_color: ManimColor | str = mn.YELLOW_A,
         # --- head block ---
         head_fill_color: ManimColor | str = "#f4d7ab",
         head_text_color: ManimColor | str = "#151515",
@@ -82,8 +85,10 @@ class CodeBlockBase(AlgoManimBase):
         # --- code block ---
         self._code_rect_fill_color = code_rect_fill_color
         self._code_rect_highlight_color = code_rect_highlight_color
-        self._code_text_color_regular = code_text_color_regular
-        self._code_text_color_highlight = code_text_color_highlight
+        self._code_rect_prehighlight_color = code_rect_prehighlight_color
+        self._code_text_regular_color = code_text_regular_color
+        self._code_text_highlight_color = code_text_highlight_color
+        self._code_text_prehighlight_color = code_text_prehighlight_color
         # --- head block ---
         self._head_fill_color = head_fill_color
         self._head_text_color = head_text_color
@@ -92,7 +97,7 @@ class CodeBlockBase(AlgoManimBase):
         # --- block's dicts ---
         self._code_params = {
             "fill_color": self._code_rect_fill_color,
-            "text_color": self._code_text_color_regular,
+            "text_color": self._code_text_regular_color,
             "weight": mn.NORMAL,
         }
         self._head_params = {
