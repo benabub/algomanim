@@ -4,10 +4,10 @@ import numpy as np
 import manim as mn
 from manim import ManimColor
 
-from algomanim.core.base import AlgoManimBase
+from algomanim.core.relative_text_base import RelativeTextBase, RelativeTextUpdatable
 
 
-class RelativeTextValue(AlgoManimBase):
+class RelativeTextValue(RelativeTextUpdatable):
     """Text group showing scope variables positioned relative to mobject.
 
     Args:
@@ -57,35 +57,27 @@ class RelativeTextValue(AlgoManimBase):
         items_align_edge: np.ndarray = mn.UP,
     ):
         super().__init__(
-            vector=vector,
             mob_center=mob_center,
+            vector=vector,
             align_left=align_left,
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
             align_screen=align_screen,
             screen_buff=screen_buff,
+            anchor=anchor,
+            font=font,
+            font_size=font_size,
+            weight=weight,
         )
 
         self._vars = vars
         self._data = [tpl[1]() for tpl in vars]
-        # --- font ---
-        self._font = font
-        self._font_size = font_size
-        self._weight = weight
         # --- other ---
         self._spaces = spaces
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
-        # ---- anchor ----
-        if anchor is not None:
-            if anchor not in ["start", "end"]:
-                raise ValueError("anchor must be 'start', 'end' or None")
-            self._anchor = anchor
-        else:
-            self._anchor: Literal["start", "end"] | None = None
-
         self.submobjects: List = []
 
         parts = []
@@ -103,21 +95,13 @@ class RelativeTextValue(AlgoManimBase):
             else:
                 text = f"{name} {val}"
 
-            parts.append(
-                mn.Text(
-                    text,
-                    font=self._font,
-                    font_size=self._font_size,
-                    weight=self._weight,
-                    color=color,
-                )
-            )
+            parts.append(self._create_text_mob(text, color))
 
-        self._text_mob = mn.VGroup(*parts).arrange(
+        self._text_mob_group = mn.VGroup(*parts).arrange(
             mn.RIGHT, buff=self._buff, aligned_edge=self._items_align_edge
         )
 
-        self.add(*self._text_mob)
+        self.add(*self._text_mob_group)
 
         self._position()
 
@@ -152,46 +136,12 @@ class RelativeTextValue(AlgoManimBase):
         )
 
         # copy anchor alignment
-        if self._anchor is not None:
-            if self._anchor == "start":
-                new_instance.align_to(self.get_left(), mn.LEFT)
-            else:
-                new_instance.align_to(self.get_right(), mn.RIGHT)
+        self._align_with_anchor(new_instance)
 
         return new_instance
 
-    def _set_new_value(self) -> None:
-        """Update internal data from callables without scene animation.
 
-        Replaces the current instance with a newly created one if any value has changed.
-        Does not add to scene.
-        """
-
-        new_instance = self._create_new_instance()
-
-        # replace self
-        self.become(new_instance)
-
-    def update_value(self, scene: mn.Scene, time=0.1, animate: bool = True):
-        """Update text values with current variable values.
-
-        Args:
-            scene: The scene to play animations in.
-            time: Duration of animation if animate=True.
-            animate: Whether to animate the update.
-        """
-
-        new_instance = self._create_new_instance()
-
-        if animate:
-            scene.play(mn.Transform(self, new_instance), run_time=time)
-        else:
-            scene.remove(self)
-            self.become(new_instance)
-            scene.add(self)
-
-
-class RelativeTextActive(AlgoManimBase):
+class RelativeTextActive(RelativeTextUpdatable):
     """Dynamic text element that updates its value from a callable.
 
     Args:
@@ -218,7 +168,7 @@ class RelativeTextActive(AlgoManimBase):
 
     def __init__(
         self,
-        value: Callable[[], Any],
+        text: Callable[[], Any],
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.ORIGIN,
@@ -241,46 +191,37 @@ class RelativeTextActive(AlgoManimBase):
         items_align_edge: np.ndarray = mn.UP,
     ):
         super().__init__(
-            vector=vector,
             mob_center=mob_center,
+            vector=vector,
             align_left=align_left,
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
             align_screen=align_screen,
             screen_buff=screen_buff,
+            anchor=anchor,
+            font=font,
+            font_size=font_size,
+            weight=weight,
         )
 
-        self._callable = value
-        if not isinstance(value(), str):
-            self._data = str(value())
+        self._callable = text
+        if not isinstance(text(), str):
+            self._text = str(text())
         else:
-            self._data = f'"{str(value())}"'
+            self._text = f'"{str(text())}"'
         # --- font ---
-        self._font = font
-        self._font_size = font_size
         self._text_color = text_color
-        self._weight = weight
         # --- other ---
         self._spaces = spaces
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
-        # ---- anchor ----
-        if anchor is not None:
-            if anchor not in ["start", "end"]:
-                raise ValueError("anchor must be 'start', 'end' or None")
-            self._anchor = anchor
-        else:
-            self._anchor: Literal["start", "end"] | None = None
 
         self.submobjects: List = []
 
-        self._text_mob = mn.Text(
-            self._data,
-            font=self._font,
-            font_size=self._font_size,
-            weight=self._weight,
+        self._text_mob = self._create_text_mob(
+            self._text,
             color=self._text_color,
         )
 
@@ -319,46 +260,12 @@ class RelativeTextActive(AlgoManimBase):
         )
 
         # copy anchor alignment
-        if self._anchor is not None:
-            if self._anchor == "start":
-                new_instance.align_to(self.get_left(), mn.LEFT)
-            else:
-                new_instance.align_to(self.get_right(), mn.RIGHT)
+        self._align_with_anchor(new_instance)
 
         return new_instance
 
-    def _set_new_value(self) -> None:
-        """Update internal data from callables without scene animation.
 
-        Replaces the current instance with a newly created one if any value has changed.
-        Does not add to scene.
-        """
-
-        new_instance = self._create_new_instance()
-
-        # replace self
-        self.become(new_instance)
-
-    def update_value(self, scene: mn.Scene, time=0.1, animate: bool = True):
-        """Update text values with current variable values.
-
-        Args:
-            scene: The scene to play animations in.
-            time: Duration of animation if animate=True.
-            animate: Whether to animate the update.
-        """
-
-        new_instance = self._create_new_instance()
-
-        if animate:
-            scene.play(mn.Transform(self, new_instance), run_time=time)
-        else:
-            scene.remove(self)
-            self.become(new_instance)
-            scene.add(self)
-
-
-class RelativeText(AlgoManimBase):
+class RelativeText(RelativeTextBase):
     """Static text element positioned relative to another mobject.
 
     Args:
@@ -396,28 +303,25 @@ class RelativeText(AlgoManimBase):
         weight: str = "NORMAL",
     ):
         super().__init__(
-            vector=vector,
             mob_center=mob_center,
+            vector=vector,
             align_left=align_left,
             align_right=align_right,
             align_top=align_top,
             align_bottom=align_bottom,
             align_screen=align_screen,
             screen_buff=screen_buff,
+            font=font,
+            font_size=font_size,
+            weight=weight,
         )
 
         self._text = text
-        self._font = font
-        self._font_size = font_size
         self._text_color = text_color
-        self._weight = weight
 
-        self._text_mob = mn.Text(
+        self._text_mob = self._create_text_mob(
             self._text,
-            font=self._font,
             color=self._text_color,
-            font_size=self._font_size,
-            weight=self._weight,
         )
 
         self.add(self._text_mob)
