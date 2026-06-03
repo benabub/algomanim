@@ -3,6 +3,7 @@ from .core.linear_container import LinearContainerStructure
 from .core.rectangle_cells import RectangleCellsStructure
 from .core.code_block_base import CodeBlockBase
 from .core.algo_scene import AlgoScene
+from .core.relative_text_base import RelativeTextBase, RelativeTextUpdatable
 from .core.code_generator import CodeGenerator
 from .core.paths.semi_rounded_rectangle import SemiRoundedRectangle
 
@@ -32,4 +33,6 @@ __all__ = [
     "TitleText",
     "TitleLogo",
     "SemiRoundedRectangle",
+    "RelativeTextBase",
+    "RelativeTextUpdatable",
 ]
