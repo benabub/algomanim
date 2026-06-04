@@ -270,7 +270,7 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             p_text = RelativeTextValue(
-                ("text", lambda: s, mn.BLACK),
+                ("input", lambda: s, mn.BLACK),
                 font_size=35,
                 mob_center=title,
                 vector=mn.DOWN * 1.0,
@@ -325,7 +325,7 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             p_text = RelativeTextValue(
-                ("text", lambda: s, mn.BLACK),
+                ("input", lambda: s, mn.BLACK),
                 font_size=35,
                 mob_center=title,
                 vector=mn.DOWN * 1.0,
@@ -375,7 +375,7 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             p_text = RelativeTextValue(
-                ("text", lambda: s, mn.BLACK),
+                ("input", lambda: s, mn.BLACK),
                 font_size=35,
                 mob_center=title,
                 vector=mn.DOWN * 1.0,
@@ -407,11 +407,175 @@ class Example_text(mn.Scene):
             self.wait(pause)
             self.clear()
 
+        def position(self):
+            pause = 1
+            s = "abc"
+
+            title = RelativeText(
+                "positioning",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            title.first_appear(self)
+
+            type1.group_appear(self, type2, type3, type4)
+            self.wait(pause)
+
+            vd1 = mn.DOWN * 0.6
+            vd2 = mn.DOWN * 0.7
+
+            center1 = Array(
+                lambda: list("mob_center"),
+                pointers=None,
+                mob_center=type1,
+                vector=vd1,
+            )
+            center2 = Array(
+                lambda: list("mob_center"),
+                pointers=None,
+                mob_center=type2,
+                vector=vd1,
+            )
+            center3 = Array(
+                lambda: list("mob_center"),
+                pointers=None,
+                mob_center=type3,
+                vector=vd1,
+            )
+            center4 = Array(
+                lambda: list("mob_center"),
+                pointers=None,
+                mob_center=type4,
+                vector=vd1,
+            )
+            center1.group_appear(self, center2, center3, center4)
+            self.wait(pause)
+
+            p = None
+            p_text = RelativeTextValue(
+                ("alignment", lambda: p, mn.BLACK),
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.0,
+                anchor=None,
+            )
+
+            p_text.update_value(self)
+            self.wait(pause)
+            t1 = RelativeText(
+                s,
+                font_size=mobs_font_size,
+                mob_center=center1,
+                vector=vd2,
+            )
+            t2 = RelativeTextActive(
+                lambda: s,
+                font_size=mobs_font_size,
+                mob_center=center2,
+                vector=vd2,
+            )
+            t3 = RelativeTextValue(
+                ("text", lambda: s, mn.WHITE),
+                font_size=mobs_font_size,
+                mob_center=center3,
+                vector=vd2,
+            )
+            t4 = RelativeTextValueGroup(
+                ("text", lambda: s, mn.LOGO_GREEN),
+                ("text", lambda: s, mn.BLUE),
+                font_size=mobs_font_size,
+                mob_center=center4,
+                vector=vd2,
+            )
+            t1.group_appear(self, t2, t3, t4)
+            self.wait(pause)
+            self.remove(t1, t2, t3, t4)
+            self.wait(pause)
+
+            p = "align_left"
+            p_text.update_value(self)
+            self.wait(pause)
+            t1 = RelativeText(
+                s,
+                font_size=mobs_font_size,
+                mob_center=center1,
+                align_left=center1,
+                vector=vd2,
+            )
+            t2 = RelativeTextActive(
+                lambda: s,
+                font_size=mobs_font_size,
+                mob_center=center2,
+                align_left=center2,
+                vector=vd2,
+            )
+            t3 = RelativeTextValue(
+                ("text", lambda: s, mn.WHITE),
+                font_size=mobs_font_size,
+                mob_center=center3,
+                align_left=center3,
+                vector=vd2,
+            )
+            t4 = RelativeTextValueGroup(
+                ("text", lambda: s, mn.LOGO_GREEN),
+                ("text", lambda: s, mn.BLUE),
+                font_size=mobs_font_size,
+                mob_center=center4,
+                align_left=center4,
+                vector=vd2,
+            )
+            t1.group_appear(self, t2, t3, t4)
+            self.wait(pause)
+            self.remove(t1, t2, t3, t4)
+            self.wait(pause)
+
+            p = "align_right"
+            p_text.update_value(self)
+            self.wait(pause)
+            t1 = RelativeText(
+                s,
+                font_size=mobs_font_size,
+                mob_center=center1,
+                align_right=center1,
+                vector=vd2,
+            )
+            t2 = RelativeTextActive(
+                lambda: s,
+                font_size=mobs_font_size,
+                mob_center=center2,
+                align_right=center2,
+                vector=vd2,
+            )
+            t3 = RelativeTextValue(
+                ("text", lambda: s, mn.WHITE),
+                font_size=mobs_font_size,
+                mob_center=center3,
+                align_right=center3,
+                vector=vd2,
+            )
+            t4 = RelativeTextValueGroup(
+                ("text", lambda: s, mn.LOGO_GREEN),
+                ("text", lambda: s, mn.BLUE),
+                font_size=mobs_font_size,
+                mob_center=center4,
+                align_right=center4,
+                vector=vd2,
+            )
+            t1.group_appear(self, t2, t3, t4)
+            self.wait(pause)
+            self.remove(t1, t2, t3, t4)
+            self.wait(pause)
+
+            self.clear()
+
         # ========== calls ==============
 
         first_appear(self)
         group_appear(self)
         update(self)
+        position(self)
 
         # ========== finish ==============
 
