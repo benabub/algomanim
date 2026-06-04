@@ -423,35 +423,7 @@ class Example_text(mn.Scene):
             type1.group_appear(self, type2, type3, type4)
             self.wait(pause)
 
-            vd1 = mn.DOWN * 0.6
-            vd2 = mn.DOWN * 0.7
-
-            center1 = Array(
-                lambda: list("mob_center"),
-                pointers=None,
-                mob_center=type1,
-                vector=vd1,
-            )
-            center2 = Array(
-                lambda: list("mob_center"),
-                pointers=None,
-                mob_center=type2,
-                vector=vd1,
-            )
-            center3 = Array(
-                lambda: list("mob_center"),
-                pointers=None,
-                mob_center=type3,
-                vector=vd1,
-            )
-            center4 = Array(
-                lambda: list("mob_center"),
-                pointers=None,
-                mob_center=type4,
-                vector=vd1,
-            )
-            center1.group_appear(self, center2, center3, center4)
-            self.wait(pause)
+            vd = mn.DOWN * 1
 
             p = None
             p_text = RelativeTextValue(
@@ -467,27 +439,27 @@ class Example_text(mn.Scene):
             t1 = RelativeText(
                 s,
                 font_size=mobs_font_size,
-                mob_center=center1,
-                vector=vd2,
+                mob_center=type1,
+                vector=vd,
             )
             t2 = RelativeTextActive(
                 lambda: s,
                 font_size=mobs_font_size,
-                mob_center=center2,
-                vector=vd2,
+                mob_center=type2,
+                vector=vd,
             )
             t3 = RelativeTextValue(
                 ("text", lambda: s, mn.WHITE),
                 font_size=mobs_font_size,
-                mob_center=center3,
-                vector=vd2,
+                mob_center=type3,
+                vector=vd,
             )
             t4 = RelativeTextValueGroup(
                 ("text", lambda: s, mn.LOGO_GREEN),
                 ("text", lambda: s, mn.BLUE),
                 font_size=mobs_font_size,
-                mob_center=center4,
-                vector=vd2,
+                mob_center=type4,
+                vector=vd,
             )
             t1.group_appear(self, t2, t3, t4)
             self.wait(pause)
@@ -500,31 +472,31 @@ class Example_text(mn.Scene):
             t1 = RelativeText(
                 s,
                 font_size=mobs_font_size,
-                mob_center=center1,
-                align_left=center1,
-                vector=vd2,
+                mob_center=type1,
+                align_left=type1,
+                vector=vd,
             )
             t2 = RelativeTextActive(
                 lambda: s,
                 font_size=mobs_font_size,
-                mob_center=center2,
-                align_left=center2,
-                vector=vd2,
+                mob_center=type2,
+                align_left=type2,
+                vector=vd,
             )
             t3 = RelativeTextValue(
                 ("text", lambda: s, mn.WHITE),
                 font_size=mobs_font_size,
-                mob_center=center3,
-                align_left=center3,
-                vector=vd2,
+                mob_center=type3,
+                align_left=type3,
+                vector=vd,
             )
             t4 = RelativeTextValueGroup(
                 ("text", lambda: s, mn.LOGO_GREEN),
                 ("text", lambda: s, mn.BLUE),
                 font_size=mobs_font_size,
-                mob_center=center4,
-                align_left=center4,
-                vector=vd2,
+                mob_center=type4,
+                align_left=type4,
+                vector=vd,
             )
             t1.group_appear(self, t2, t3, t4)
             self.wait(pause)
@@ -537,31 +509,31 @@ class Example_text(mn.Scene):
             t1 = RelativeText(
                 s,
                 font_size=mobs_font_size,
-                mob_center=center1,
-                align_right=center1,
-                vector=vd2,
+                mob_center=type1,
+                align_right=type1,
+                vector=vd,
             )
             t2 = RelativeTextActive(
                 lambda: s,
                 font_size=mobs_font_size,
-                mob_center=center2,
-                align_right=center2,
-                vector=vd2,
+                mob_center=type2,
+                align_right=type2,
+                vector=vd,
             )
             t3 = RelativeTextValue(
                 ("text", lambda: s, mn.WHITE),
                 font_size=mobs_font_size,
-                mob_center=center3,
-                align_right=center3,
-                vector=vd2,
+                mob_center=type3,
+                align_right=type3,
+                vector=vd,
             )
             t4 = RelativeTextValueGroup(
                 ("text", lambda: s, mn.LOGO_GREEN),
                 ("text", lambda: s, mn.BLUE),
                 font_size=mobs_font_size,
-                mob_center=center4,
-                align_right=center4,
-                vector=vd2,
+                mob_center=type4,
+                align_right=type4,
+                vector=vd,
             )
             t1.group_appear(self, t2, t3, t4)
             self.wait(pause)
