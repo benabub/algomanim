@@ -12,8 +12,18 @@ from .datastructures.string import String
 from .datastructures.linked_list import LinkedList
 
 from .ui.code_block import CodeBlock, CodeBlockLense
-from .ui.relative_text import RelativeText, RelativeTextValue, RelativeTextActive
+from .ui.relative_text import (
+    RelativeText,
+    RelativeTextValue,
+    RelativeTextValueGroup,
+    RelativeTextActive,
+)
 from .ui.titles import TitleText, TitleLogo
+
+from .helpers.visual import grid
+from .helpers.datastructures import Node, ListNode, TreeNode
+from .helpers.parsing import indent_cutter, code_to_lines
+
 
 __all__ = [
     "AlgoManimBase",
@@ -29,10 +39,17 @@ __all__ = [
     "CodeBlockLense",
     "RelativeText",
     "RelativeTextValue",
+    "RelativeTextValueGroup",
     "RelativeTextActive",
     "TitleText",
     "TitleLogo",
     "SemiRoundedRectangle",
     "RelativeTextBase",
     "RelativeTextUpdatable",
+    "Node",
+    "ListNode",
+    "TreeNode",
+    "indent_cutter",
+    "code_to_lines",
+    "grid",
 ]

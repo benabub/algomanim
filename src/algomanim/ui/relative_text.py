@@ -35,7 +35,141 @@ class RelativeTextValue(RelativeTextUpdatable):
 
     def __init__(
         self,
-        *vars: Tuple[str, Callable[[], Any], str | ManimColor],
+        input: Tuple[str, Callable[[], Any], str | ManimColor],
+        # --- position ---
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        vector: np.ndarray = mn.ORIGIN,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
+        align_screen: np.ndarray | None = None,
+        screen_buff: float = 0.2,
+        anchor: Literal["start", "end"] | None = "start",
+        # --- font ---
+        font="",
+        font_size: float = 25,
+        weight: str = "NORMAL",
+        # --- other ---
+        spaces: bool = True,
+        equal_sign: bool = True,
+    ):
+        super().__init__(
+            mob_center=mob_center,
+            vector=vector,
+            align_left=align_left,
+            align_right=align_right,
+            align_top=align_top,
+            align_bottom=align_bottom,
+            align_screen=align_screen,
+            screen_buff=screen_buff,
+            anchor=anchor,
+            font=font,
+            font_size=font_size,
+            weight=weight,
+        )
+
+        self._input = input
+        self._name = input[0]
+        self._callable = input[1]
+        self._color = input[2]
+        # --- other ---
+        self._spaces = spaces
+        self._equal_sign = equal_sign
+
+        self._text_mob = self._build_text_mob()
+
+        self.add(self._text_mob)
+
+        self._position()
+
+    def _build_text_mob(self):
+        """Build a text mobject with formatted value.
+
+        Formats the value from callable, adds quotes for strings,
+        and applies spacing and equal sign rules.
+
+        Returns:
+            Text mobject ready for positioning.
+        """
+        if not isinstance(self._callable(), str):
+            val = self._callable()
+        else:
+            val = f'"{self._callable()}"'
+
+        if self._equal_sign:
+            if self._spaces:
+                text = f"{self._name} = {val}"
+            else:
+                text = f"{self._name}={val}"
+        else:
+            text = f"{self._name} {val}"
+
+        return self._create_text_mob(text, self._color)
+
+    def _create_new_instance(self) -> "RelativeTextValue":
+        """Create a new RelativeTextValue instance with current variable values.
+
+        Returns:
+            New RelativeTextValue instance with the same configuration and fresh data.
+        """
+        # create new instance
+        new_instance = RelativeTextValue(
+            self._input,
+            # --- position ---
+            mob_center=self._mob_center,
+            vector=self._vector,
+            align_left=self._align_left,
+            align_right=self._align_right,
+            align_top=self._align_top,
+            align_bottom=self._align_bottom,
+            align_screen=self._align_screen,
+            screen_buff=self._screen_buff,
+            anchor=self._anchor,
+            # --- font ---
+            font=self._font,
+            font_size=self._font_size,
+            weight=self._weight,
+            # --- other ---
+            spaces=self._spaces,
+            equal_sign=self._equal_sign,
+        )
+
+        # copy anchor alignment
+        self._align_with_anchor(new_instance)
+
+        return new_instance
+
+
+class RelativeTextValueGroup(RelativeTextUpdatable):
+    """Text group showing scope variables positioned relative to mobject.
+
+    Args:
+        *vars (Tuple[str, Callable[[], Any], str | ManimColor]):
+            Tuples of (name, value_getter, color).
+        mob_center (mn.Mobject): Reference mobject for positioning.
+        vector (np.ndarray): Offset vector from reference mobject center.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
+        align_screen (np.ndarray | None): Direction vector for screen edge alignment
+        screen_buff (float): Buffer distance from screen edge when using align_screen.
+        anchor: Alignment anchor when no edge alignment specified.
+            Must be "start", "end", or None. Defaults to "start".
+        font (str): Text font family.
+        font_size (float): Text font size.
+        weight (str): Font weight (NORMAL, BOLD, etc.).
+        spaces(bool): Whether to add spaces around the equals sign.
+        buff (float): Spacing between text elements.
+        equal_sign (bool): Whether to use equals sign between name and value.
+        items_align_edge (np.ndarray): Alignment edge for text items within the group.
+        **kwargs: Additional keyword arguments passed to parent class.
+    """
+
+    def __init__(
+        self,
+        *inputs: Tuple[str, Callable[[], Any], str | ManimColor],
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.ORIGIN,
@@ -71,8 +205,8 @@ class RelativeTextValue(RelativeTextUpdatable):
             weight=weight,
         )
 
-        self._vars = vars
-        self._data = [tpl[1]() for tpl in vars]
+        self._inputs = inputs
+        self._data = [tpl[1]() for tpl in inputs]
         # --- other ---
         self._spaces = spaces
         self._buff = buff
@@ -81,7 +215,7 @@ class RelativeTextValue(RelativeTextUpdatable):
         self.submobjects: List = []
 
         parts = []
-        for name, value, color in self._vars:
+        for name, value, color in self._inputs:
             if not isinstance(value(), str):
                 val = value()
             else:
@@ -105,15 +239,15 @@ class RelativeTextValue(RelativeTextUpdatable):
 
         self._position()
 
-    def _create_new_instance(self) -> "RelativeTextValue":
+    def _create_new_instance(self) -> "RelativeTextValueGroup":
         """Create a new RelativeTextValue instance with current variable values.
 
         Returns:
             New RelativeTextValue instance with the same configuration and fresh data.
         """
         # create new instance
-        new_instance = RelativeTextValue(
-            *self._vars,
+        new_instance = RelativeTextValueGroup(
+            *self._inputs,
             # --- position ---
             mob_center=self._mob_center,
             vector=self._vector,
