@@ -17,6 +17,7 @@ from algomanim import (
     Array,
     String,
     RelativeTextValue,
+    RelativeTextValueGroup,
     RelativeTextActive,
     RelativeText,
     CodeBlock,
@@ -24,7 +25,12 @@ from algomanim import (
     TitleText,
     LinkedList,
     SemiRoundedRectangle,
+    grid,
 )
+
+
+class Stub:
+    a = [grid]
 
 
 class Example_selection_sort(mn.Scene):
@@ -177,23 +183,91 @@ class Example_text(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
+        vl = mn.LEFT * 3.5
+        vr = mn.RIGHT * 3.5
+        vu = mn.UP * 1.3
+        vd = mn.DOWN * 1.3
+        vmc = mn.DOWN * 1
+        type_font_size = 30
+        mobs_font_size = 30
+
+        type1 = RelativeText(
+            "RelativeText",
+            font_size=type_font_size,
+            text_color=mn.BLACK,
+            vector=vu + vl,
+        )
+
+        type2 = RelativeText(
+            "RelativeTextActive",
+            font_size=type_font_size,
+            text_color=mn.BLACK,
+            vector=vd + vl,
+        )
+
+        type3 = RelativeText(
+            "RelativeTextValue",
+            font_size=type_font_size,
+            text_color=mn.BLACK,
+            vector=vu + vr,
+        )
+
+        type4 = RelativeText(
+            "RelativeTextValueGroup",
+            font_size=type_font_size,
+            text_color=mn.BLACK,
+            vector=vd + vr,
+        )
+
+        s = "abc"
+
+        t1 = RelativeText(
+            s,
+            font_size=mobs_font_size,
+            mob_center=type1,
+            vector=vmc,
+        )
+
+        t2 = RelativeTextActive(
+            lambda: s,
+            font_size=mobs_font_size,
+            mob_center=type2,
+            vector=vmc,
+            anchor=None,
+        )
+
+        t3 = RelativeTextValue(
+            ("text", lambda: s, mn.WHITE),
+            font_size=mobs_font_size,
+            mob_center=type3,
+            vector=vmc,
+            anchor=None,
+        )
+
+        t4 = RelativeTextValueGroup(
+            # ("text", lambda: s, mn.DARK_BROWN),
+            ("text", lambda: s, mn.LOGO_GREEN),
+            ("text", lambda: s, mn.BLUE),
+            font_size=mobs_font_size,
+            mob_center=type4,
+            vector=vmc,
+            anchor=None,
+        )
+
         def first_appear(self):
             pause = 1
-            s = "abc"
 
             title = RelativeText(
                 "first_appear() + remove()",
                 font_size=50,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
-                screen_buff=1,
+                screen_buff=0.5,
             )
             title.first_appear(self)
 
-            text = RelativeTextValue(
-                ("text", lambda: s, mn.WHITE),
-                font_size=40,
-            )
+            type1.group_appear(self, type2, type3, type4)
+            self.wait(pause)
 
             p_text = RelativeTextValue(
                 ("text", lambda: s, mn.BLACK),
@@ -201,58 +275,54 @@ class Example_text(mn.Scene):
                 mob_center=title,
                 vector=mn.DOWN * 1.0,
             )
-
             p_text.first_appear(self)
             self.wait(pause)
-            text.first_appear(self)
+
+            t1.first_appear(self)
+            t2.first_appear(self)
+            t3.first_appear(self)
+            t4.first_appear(self)
             self.wait(pause)
-            self.remove(text)
+            self.remove(t1, t2, t3, t4)
             self.wait(pause)
 
-            s = "ab"
-            p_text.update_value(self)
-            self.wait(pause)
-            text.first_appear(self)
-            self.wait(pause)
-            self.remove(text)
-            self.wait(pause)
+            def cycle(new_val):
+                nonlocal s
+                s = new_val
+                p_text.update_value(self)
+                self.wait(pause)
+                t1.first_appear(self)
+                t2.first_appear(self)
+                t3.first_appear(self)
+                t4.first_appear(self)
+                self.wait(pause)
+                self.remove(t1, t2, t3, t4)
+                self.wait(pause)
 
-            s = "a"
-            p_text.update_value(self)
-            self.wait(pause)
-            text.first_appear(self)
-            self.wait(pause)
-            self.remove(text)
-            self.wait(pause)
-
-            s = ""
-            p_text.update_value(self)
-            self.wait(pause)
-            text.first_appear(self)
-            self.wait(pause)
-            self.remove(text)
-            self.wait(pause)
-
-            s = "a"
-            p_text.update_value(self)
-            self.wait(pause)
-            text.first_appear(self)
-            self.wait(1)
+            cycle("ab")
+            cycle("a")
+            cycle("")
+            cycle([1, 2, 3])
+            cycle({"a": 1})
 
             self.clear()
 
         def group_appear(self):
             pause = 1
+            nonlocal s
             s = "abc"
 
             title = RelativeText(
-                "first_appear() + remove()",
+                "group_appear()",
                 font_size=50,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
-                screen_buff=1,
+                screen_buff=0.5,
             )
             title.first_appear(self)
+
+            type1.group_appear(self, type2, type3, type4)
+            self.wait(pause)
 
             p_text = RelativeTextValue(
                 ("text", lambda: s, mn.BLACK),
@@ -263,68 +333,49 @@ class Example_text(mn.Scene):
             p_text.first_appear(self)
             self.wait(pause)
 
-            text_1 = RelativeTextValue(
-                ("text", lambda: s, mn.RED),
-                font_size=40,
-            )
-            text_2 = RelativeTextValue(
-                ("text", lambda: s, mn.BLUE),
-                font_size=40,
-                vector=mn.DOWN,
-            )
-            text_3 = RelativeTextValue(
-                ("text", lambda: s, mn.GREEN),
-                ("text", lambda: s, mn.PINK),
-                vector=mn.DOWN * 2,
-                font_size=40,
-            )
-
-            text_1.group_appear(self, text_2, text_3)
+            t1.group_appear(self, t2, t3, t4)
             self.wait(pause)
-            self.remove(text_1, text_2, text_3)
+            self.remove(t1, t2, t3, t4)
             self.wait(pause)
 
             def cycle(
-                scene: mn.Scene,
-                new_val: str,
-                param_text: mn.Mobject,
-                t1: mn.Mobject,
-                t2: mn.Mobject,
-                t3: mn.Mobject,
+                new_val,
             ):
                 nonlocal s
                 s = new_val
-                param_text.update_value(scene)
-                scene.wait(pause)
-                t1.group_appear(scene, t2, t3)
-                scene.wait(pause)
-                scene.remove(t1, t2, t3)
-                scene.wait(pause)
+                p_text.update_value(self)
+                self.wait(pause)
+                t1.group_appear(self, t2, t3, t4)
+                self.wait(pause)
+                self.remove(t1, t2, t3, t4)
+                self.wait(pause)
 
-            cycle(self, "ab", p_text, text_1, text_2, text_3)
-            cycle(self, "a", p_text, text_1, text_2, text_3)
-            cycle(self, "", p_text, text_1, text_2, text_3)
-            cycle(self, "a", p_text, text_1, text_2, text_3)
+            cycle("ab")
+            cycle("a")
+            cycle("")
+            cycle("a")
 
             self.clear()
 
-        def active(self):
-
+        def update(self):
             pause = 1
+            nonlocal s
+            s = "abc"
 
             title = RelativeText(
-                "RelativeTextActive",
+                "update_value()",
                 font_size=50,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
-                screen_buff=1,
+                screen_buff=0.5,
             )
             title.first_appear(self)
 
-            val = "value"
+            type1.group_appear(self, type2, type3, type4)
+            self.wait(pause)
 
             p_text = RelativeTextValue(
-                ("input callable", lambda: val, mn.BLACK),
+                ("text", lambda: s, mn.BLACK),
                 font_size=35,
                 mob_center=title,
                 vector=mn.DOWN * 1.0,
@@ -332,37 +383,35 @@ class Example_text(mn.Scene):
             p_text.first_appear(self)
             self.wait(pause)
 
-            text = RelativeTextActive(
-                lambda: val,
-                font_size=40,
-            )
-            text.first_appear(self)
+            t1.group_appear(self, t2, t3, t4)
             self.wait(pause)
 
             def cycle(
-                scene: mn.Scene,
-                text_mob: RelativeTextActive,
-                text_param: RelativeTextValue,
                 new_val,
             ):
-                nonlocal val
-                val = new_val
-                text_param.update_value(scene, animate=False)
-                text_mob.update_value(scene)
+                nonlocal s
+                s = new_val
+                p_text.update_value(self)
+                self.wait(pause)
+                t2.update_value(self)
+                t3.update_value(self)
+                t4.update_value(self)
                 self.wait(pause)
 
-            cycle(self, text, p_text, [[1, 2], [3, 4]])
-            cycle(self, text, p_text, {"a": 1, "b": 2})
-            cycle(self, text, p_text, [1, 2, 3, 4])
+            cycle("ab")
+            cycle("a")
+            cycle("")
+            cycle([1, 2, 3])
+            cycle({"a": 1})
 
-            self.wait(1)
+            self.wait(pause)
             self.clear()
 
         # ========== calls ==============
 
         first_appear(self)
         group_appear(self)
-        active(self)
+        update(self)
 
         # ========== finish ==============
 
