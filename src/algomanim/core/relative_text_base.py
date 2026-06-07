@@ -71,6 +71,11 @@ class RelativeTextBase(AlgoManimBase):
         """
         return mn.Text(text, color=color, **self._get_text_config())
 
+    def _get_position(self):
+        """Return text mobject for positioning purposes."""
+
+        return self._text_mob
+
 
 class RelativeTextUpdatable(RelativeTextBase):
     """Base class for updatable relative text elements.
