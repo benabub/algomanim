@@ -386,6 +386,16 @@ class RelativeTextActive(RelativeTextUpdatable):
         else:
             self._hl_rect = None
 
+    def _analyze_empty_str_transition(self) -> None:
+        """Determine if a shift is needed when transitioning between empty and non-empty string.
+
+        Sets _shift_up if moving to empty string, _shift_down if moving from empty string.
+        """
+        if self._prev_val != '""' and self._text == '""':
+            self._shift_up = True
+        elif self._prev_val == '""' and self._text != '""':
+            self._shift_down = True
+
     def _create_new_instance(self) -> "RelativeTextActive":
         """Create a new RelativeTextActive instance with current variable values.
 
