@@ -99,6 +99,38 @@ class RelativeTextBase(AlgoManimBase):
                 return self.HL_MAP[text_color]
         return mn.BLACK
 
+    def first_appear(
+        self,
+        scene: mn.Scene,
+        update: bool = True,
+        appear_time: float = 0.5,
+        hl: bool = True,
+        hl_time: float = 1.0,
+    ):
+        """Animate the initial appearance with optional highlight.
+
+        For non-updatable objects (without `_set_new_value`), activates highlight
+        before fading in. For updatable objects, highlight is already active
+        (set in constructor). After fade-in, waits and deactivates highlight.
+
+        Args:
+            scene: The scene to play the animation in.
+            update: If True, calls `_set_new_value()` before appearing.
+            appear_time: Duration of the fade-in animation.
+            hl: If True, enables highlight behavior.
+            hl_time: Time to wait before deactivating the highlight.
+        """
+        # for not RelativeTextUpdatable: activate self._hl_rect
+        if not hasattr(self, "_set_new_value") and hl and self._hl_rect is not None:
+            self._hl_rect.activate()
+
+        # for RelativeTextUpdatable: appear with active hl_rect already
+        super().first_appear(scene, update, appear_time)
+
+        if hl and self._hl_rect is not None:
+            scene.wait(hl_time)
+            self._hl_rect.deactivate()
+
 
 class RelativeTextUpdatable(RelativeTextBase):
     """Base class for updatable relative text elements.
