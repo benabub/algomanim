@@ -435,6 +435,7 @@ class RelativeText(RelativeTextBase):
         font_size: Text font size.
         text_color: Text color.
         weight: Font weight (NORMAL, BOLD, etc.).
+        highlight (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
@@ -454,6 +455,8 @@ class RelativeText(RelativeTextBase):
         font_size: float = 25,
         text_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
+        # --- other ---
+        highlight: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -479,3 +482,12 @@ class RelativeText(RelativeTextBase):
 
         self.add(self._text_mob)
         self._position()
+
+        if highlight:
+            self._hl_rect = HLRect(
+                self._text_mob,
+                self._get_hl_color(self._text_color),
+            )
+            self.add_to_back(self._hl_rect)
+        else:
+            self._hl_rect = None
