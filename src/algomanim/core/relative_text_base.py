@@ -1,10 +1,19 @@
 from typing import Literal
 from abc import abstractmethod
+from dataclasses import dataclass
 
 import manim as mn
 from manim import ManimColor
 
 from algomanim.core.base import AlgoManimBase
+from algomanim.core.paths.hl_rect import HLRect
+
+
+@dataclass(frozen=True)
+class HLColors:
+    colors = {
+        mn.BLACK: mn.YELLOW,
+    }
 
 
 class RelativeTextBase(AlgoManimBase):
@@ -16,6 +25,8 @@ class RelativeTextBase(AlgoManimBase):
         weight: Font weight (NORMAL, BOLD, etc.).
         **kwargs: Additional keyword arguments passed to parent class.
     """
+
+    HL_MAP = HLColors().colors
 
     def __init__(
         self,
@@ -30,6 +41,7 @@ class RelativeTextBase(AlgoManimBase):
         self._font = font
         self._font_size = font_size
         self._weight = weight
+        self._hl_rect: HLRect | None = None
 
     def _get_text_config(self) -> dict:
         """Return common text configuration dictionary.
