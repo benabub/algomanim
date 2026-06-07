@@ -306,7 +306,7 @@ class RelativeTextActive(RelativeTextUpdatable):
     """Dynamic text element that updates its value from a callable.
 
     Args:
-        value: Callable that returns the current value to display.
+        input: Callable that returns the current value to display.
         mob_center: Reference mobject for positioning.
         vector: Offset vector from reference mobject center.
         align_left: Reference mobject to align left edge with.
@@ -321,15 +321,12 @@ class RelativeTextActive(RelativeTextUpdatable):
         font_size: Text font size.
         text_color: Text color.
         weight: Font weight (NORMAL, BOLD, etc.).
-        spaces: Whether to add spaces around the equals sign. Defaults to True.
-        buff: Spacing between text elements.
-        equal_sign: Whether to use equals sign between name and value.
-        items_align_edge: Alignment edge for text items within the group.
+        highlight (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
         self,
-        text: Callable[[], Any],
+        input: Callable[[], Any],
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         vector: np.ndarray = mn.ORIGIN,
@@ -346,10 +343,7 @@ class RelativeTextActive(RelativeTextUpdatable):
         text_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
         # --- other ---
-        spaces: bool = True,
-        buff=0.5,
-        equal_sign: bool = True,
-        items_align_edge: np.ndarray = mn.UP,
+        highlight: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -366,29 +360,31 @@ class RelativeTextActive(RelativeTextUpdatable):
             weight=weight,
         )
 
-        self._callable = text
-        if not isinstance(text(), str):
-            self._text = str(text())
+        self._callable = input
+        if not isinstance(input(), str):
+            self._text = str(input())
         else:
-            self._text = f'"{str(text())}"'
+            self._text = f'"{str(input())}"'
         # --- font ---
         self._text_color = text_color
-        # --- other ---
-        self._spaces = spaces
-        self._buff = buff
-        self._equal_sign = equal_sign
-        self._items_align_edge = items_align_edge
-
         self.submobjects: List = []
+        self._highlight = highlight
 
         self._text_mob = self._create_text_mob(
             self._text,
             color=self._text_color,
         )
-
         self.add(*self._text_mob)
-
         self._position()
+
+        if self._highlight:
+            self._hl_rect = HLRect(
+                self._text_mob,
+                self._get_hl_color(self._text_color),
+            )
+            self.add_to_back(self._hl_rect)
+        else:
+            self._hl_rect = None
 
     def _create_new_instance(self) -> "RelativeTextActive":
         """Create a new RelativeTextActive instance with current variable values.
@@ -413,11 +409,7 @@ class RelativeTextActive(RelativeTextUpdatable):
             font=self._font,
             font_size=self._font_size,
             weight=self._weight,
-            # --- other ---
-            spaces=self._spaces,
-            buff=self._buff,
-            equal_sign=self._equal_sign,
-            items_align_edge=self._items_align_edge,
+            highlight=self._highlight,
         )
 
         # copy anchor alignment
