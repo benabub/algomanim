@@ -26,7 +26,10 @@ from algomanim import (
     LinkedList,
     SemiRoundedRectangle,
     grid,
+    AlgoManimBase,
 )
+
+group_appear = AlgoManimBase.group_appear
 
 
 class Stub:
@@ -577,7 +580,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=20,
             )
-            array_20.first_appear(self, time=0.1)
+            array_20.first_appear(self, appear_time=0.1)
 
             array_30 = Array(
                 lambda: arr,
@@ -585,7 +588,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            array_30.first_appear(self, time=0.1)
+            array_30.first_appear(self, appear_time=0.1)
 
             array_40 = Array(
                 lambda: arr,
@@ -593,7 +596,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=40,
             )
-            array_40.first_appear(self, time=0.1)
+            array_40.first_appear(self, appear_time=0.1)
 
             array_50 = Array(
                 lambda: arr,
@@ -601,7 +604,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=50,
             )
-            array_50.first_appear(self, time=0.1)
+            array_50.first_appear(self, appear_time=0.1)
 
             self.wait(1)
 
@@ -621,7 +624,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=20,
             )
-            array_20.first_appear(self, time=0.1)
+            array_20.first_appear(self, appear_time=0.1)
 
             array_30 = Array(
                 lambda: arr,
@@ -630,7 +633,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            array_30.first_appear(self, time=0.1)
+            array_30.first_appear(self, appear_time=0.1)
 
             array_40 = Array(
                 lambda: arr,
@@ -639,7 +642,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=40,
             )
-            array_40.first_appear(self, time=0.1)
+            array_40.first_appear(self, appear_time=0.1)
 
             array_50 = Array(
                 lambda: arr,
@@ -648,7 +651,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=50,
             )
-            array_50.first_appear(self, time=0.1)
+            array_50.first_appear(self, appear_time=0.1)
 
             self.wait(1)
 
@@ -668,7 +671,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=20,
             )
-            array_20.first_appear(self, time=0.1)
+            array_20.first_appear(self, appear_time=0.1)
 
             array_30 = Array(
                 lambda: arr,
@@ -677,7 +680,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            array_30.first_appear(self, time=0.1)
+            array_30.first_appear(self, appear_time=0.1)
 
             array_40 = Array(
                 lambda: arr,
@@ -686,7 +689,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=40,
             )
-            array_40.first_appear(self, time=0.1)
+            array_40.first_appear(self, appear_time=0.1)
 
             array_50 = Array(
                 lambda: arr,
@@ -695,7 +698,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=50,
             )
-            array_50.first_appear(self, time=0.1)
+            array_50.first_appear(self, appear_time=0.1)
 
             self.wait(1)
 
@@ -806,7 +809,7 @@ class Example_array(mn.Scene):
                 align_left=array1,
                 vector=mn.UP * 2,
             )
-            array1.group_appear(self, text1)
+            group_appear(self, array1, text1)
             self.wait(pause)
 
             array2 = Array(
@@ -821,7 +824,7 @@ class Example_array(mn.Scene):
                 align_bottom=text1,
                 align_left=array2,
             )
-            array2.group_appear(self, text2)
+            group_appear(self, array2, text2)
             self.wait(pause)
 
             array3 = Array(
@@ -836,7 +839,7 @@ class Example_array(mn.Scene):
                 align_bottom=text1,
                 align_left=array3,
             )
-            array3.group_appear(self, text3)
+            group_appear(self, array3, text3)
             self.wait(pause)
 
             update_text = RelativeText(
@@ -942,7 +945,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2,
                 align_left=array1,
             )
-            text1.group_appear(self, array1, array2)
+            group_appear(self, text1, array1, array2)
             self.wait(pause)
 
             array3 = Array(
@@ -968,7 +971,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2,
                 align_right=array3,
             )
-            text2.group_appear(self, array3, array4)
+            group_appear(self, text2, array3, array4)
             self.wait(pause)
 
             update_text = RelativeText(
@@ -1048,7 +1051,7 @@ class Example_array(mn.Scene):
                 align_left=array1,
                 vector=mn.UP * 2,
             )
-            array1.group_appear(self, text1)
+            group_appear(self, array1, text1)
             self.wait(pause)
 
             array2 = Array(
@@ -1064,7 +1067,7 @@ class Example_array(mn.Scene):
                 align_bottom=text1,
                 align_left=array2,
             )
-            array2.group_appear(self, text2)
+            group_appear(self, array2, text2)
             self.wait(pause)
 
             array3 = Array(
@@ -1080,7 +1083,7 @@ class Example_array(mn.Scene):
                 align_bottom=text1,
                 align_left=array3,
             )
-            array3.group_appear(self, text3)
+            group_appear(self, array3, text3)
             self.wait(pause)
 
             array1.highlight_pointers(0, 1, 2)
@@ -1372,7 +1375,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2,
                 font_size=35,
             )
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
 
             self.remove(array, top_text)
@@ -1389,7 +1392,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2,
                 font_size=35,
             )
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
 
             self.remove(array, top_text)
@@ -1406,7 +1409,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2,
                 font_size=35,
             )
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
 
             self.clear()
@@ -1422,7 +1425,7 @@ class Example_array(mn.Scene):
                 font_size=60,
                 vector=mn.DOWN * 2.4 + mn.RIGHT * 3,
             )
-            one.group_appear(self, two)
+            group_appear(self, one, two)
             self.wait(0.5)
 
             top_text = RelativeText(
@@ -1436,7 +1439,7 @@ class Example_array(mn.Scene):
                 align_bottom=two,
                 font_size=35,
             )
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
             self.remove(array, top_text)
 
@@ -1446,7 +1449,7 @@ class Example_array(mn.Scene):
                 font_size=30,
             )
             array = Array(lambda: arr, align_left=one, align_top=two)
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
             update_text = RelativeText(
                 "update_value()",
@@ -1483,7 +1486,7 @@ class Example_array(mn.Scene):
                 align_top=two,
                 font_size=35,
             )
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
 
             update_text = RelativeText(
@@ -1521,7 +1524,7 @@ class Example_array(mn.Scene):
                 align_bottom=two,
                 font_size=35,
             )
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
             self.remove(array, top_text)
 
@@ -1537,7 +1540,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 1,
                 font_size=35,
             )
-            array.group_appear(self, top_text)
+            group_appear(self, array, top_text)
             self.wait(pause)
             self.clear()
 
@@ -1550,7 +1553,7 @@ class Example_array(mn.Scene):
                 text_color=mn.BLACK,
                 font_size=50,
             )
-            center.group_appear(self, text_title)
+            group_appear(self, center, text_title)
 
             arr = [1, 2, 3]
 
@@ -1634,8 +1637,9 @@ class Example_array(mn.Scene):
                 font_size=30,
             )
 
-            arr_1.group_appear(
+            group_appear(
                 self,
+                arr_1,
                 arr_2,
                 arr_3,
                 arr_4,
@@ -1736,7 +1740,7 @@ class Example_array(mn.Scene):
             )
             donor_text = RelativeText("donor Array", font_size=30, mob_center=donor)
             donor_text.next_to(donor, mn.LEFT, buff=0.5)
-            donor.group_appear(self, donor_text)
+            group_appear(self, donor, donor_text)
             self.wait(pause)
 
             rec_val = [0, 0, 0, 0, 0]
@@ -1751,7 +1755,7 @@ class Example_array(mn.Scene):
             )
             rec_text = RelativeText("recipient Array", font_size=30, mob_center=donor)
             rec_text.next_to(recipient, mn.LEFT, buff=0.5)
-            recipient.group_appear(self, rec_text)
+            group_appear(self, recipient, rec_text)
             self.wait(pause)
 
             func_text = RelativeText(
@@ -1824,7 +1828,7 @@ class Example_array(mn.Scene):
                 mob_center=donor,
             )
             donor_text.next_to(donor, mn.LEFT, buff=0.5)
-            donor.group_appear(self, donor_text)
+            group_appear(self, donor, donor_text)
             self.wait(pause)
 
             rec_val = [0, 0, 0, 0, 0]
@@ -1843,7 +1847,7 @@ class Example_array(mn.Scene):
                 mob_center=donor,
             )
             rec_text.next_to(recipient, mn.LEFT, buff=0.5)
-            recipient.group_appear(self, rec_text)
+            group_appear(self, recipient, rec_text)
             self.wait(pause)
 
             func_text = RelativeText(
@@ -2137,7 +2141,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=25,
             )
-            string_20.first_appear(self, time=0.1)
+            string_20.first_appear(self, appear_time=0.1)
 
             string_25 = String(
                 lambda: s,
@@ -2145,7 +2149,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            string_25.first_appear(self, time=0.1)
+            string_25.first_appear(self, appear_time=0.1)
 
             string_35 = String(
                 lambda: s,
@@ -2153,7 +2157,7 @@ class Example_string(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=37,
             )
-            string_35.first_appear(self, time=0.1)
+            string_35.first_appear(self, appear_time=0.1)
 
             string_40 = String(
                 lambda: s,
@@ -2161,7 +2165,7 @@ class Example_string(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=40,
             )
-            string_40.first_appear(self, time=0.1)
+            string_40.first_appear(self, appear_time=0.1)
 
             self.wait(1)
 
@@ -2181,7 +2185,7 @@ class Example_string(mn.Scene):
                 font_size=25,
                 align_left=string,
             )
-            string_20.first_appear(self, time=0.1)
+            string_20.first_appear(self, appear_time=0.1)
 
             string_25 = String(
                 lambda: s,
@@ -2190,7 +2194,7 @@ class Example_string(mn.Scene):
                 font_size=30,
                 align_left=string,
             )
-            string_25.first_appear(self, time=0.1)
+            string_25.first_appear(self, appear_time=0.1)
 
             string_35 = String(
                 lambda: s,
@@ -2199,7 +2203,7 @@ class Example_string(mn.Scene):
                 font_size=37,
                 align_left=string,
             )
-            string_35.first_appear(self, time=0.1)
+            string_35.first_appear(self, appear_time=0.1)
 
             string_40 = String(
                 lambda: s,
@@ -2208,7 +2212,7 @@ class Example_string(mn.Scene):
                 font_size=40,
                 align_left=string,
             )
-            string_40.first_appear(self, time=0.1)
+            string_40.first_appear(self, appear_time=0.1)
 
             self.wait(1)
 
@@ -2228,7 +2232,7 @@ class Example_string(mn.Scene):
                 font_size=25,
                 align_right=string,
             )
-            string_20.first_appear(self, time=0.1)
+            string_20.first_appear(self, appear_time=0.1)
 
             string_25 = String(
                 lambda: s,
@@ -2237,7 +2241,7 @@ class Example_string(mn.Scene):
                 font_size=30,
                 align_right=string,
             )
-            string_25.first_appear(self, time=0.1)
+            string_25.first_appear(self, appear_time=0.1)
 
             string_35 = String(
                 lambda: s,
@@ -2246,7 +2250,7 @@ class Example_string(mn.Scene):
                 font_size=37,
                 align_right=string,
             )
-            string_35.first_appear(self, time=0.1)
+            string_35.first_appear(self, appear_time=0.1)
 
             string_40 = String(
                 lambda: s,
@@ -2255,7 +2259,7 @@ class Example_string(mn.Scene):
                 font_size=40,
                 align_right=string,
             )
-            string_40.first_appear(self, time=0.1)
+            string_40.first_appear(self, appear_time=0.1)
 
             self.wait(1)
             self.clear()
@@ -2393,8 +2397,9 @@ class Example_string(mn.Scene):
                 vector=mn.DOWN * 1,
             )
 
-            string1.group_appear(
+            group_appear(
                 self,
+                string1,
                 string2,
                 string3,
                 string4,
@@ -2429,7 +2434,7 @@ class Example_string(mn.Scene):
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
             s = String(lambda: string, mob_center=center, vector=mn.UP * 2)
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
 
             self.remove(s, top_text)
@@ -2441,7 +2446,7 @@ class Example_string(mn.Scene):
             s = String(
                 lambda: string, mob_center=center, align_left=center, vector=mn.UP * 2
             )
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
 
             self.remove(s, top_text)
@@ -2453,7 +2458,7 @@ class Example_string(mn.Scene):
             s = String(
                 lambda: string, mob_center=center, align_right=center, vector=mn.UP * 2
             )
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
 
             self.clear()
@@ -2462,7 +2467,7 @@ class Example_string(mn.Scene):
             two = String(
                 lambda: "two", font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3
             )
-            one.group_appear(self, two)
+            group_appear(self, one, two)
             self.wait(pause)
 
             # -----------------------
@@ -2472,7 +2477,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             s = String(lambda: string, align_left=one, align_bottom=two)
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
             self.remove(s, top_text)
 
@@ -2481,7 +2486,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             s = String(lambda: string, align_left=one, align_top=two)
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
             update_text = RelativeText(
                 "update_value()",
@@ -2511,7 +2516,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             s = String(lambda: string, align_right=one, align_top=two)
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
             update_text = RelativeText(
                 "update_value()",
@@ -2541,7 +2546,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             s = String(lambda: string, align_right=one, align_bottom=two)
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
             self.remove(s, top_text)
 
@@ -2555,7 +2560,7 @@ class Example_string(mn.Scene):
                 align_bottom=two,
                 vector=mn.UP * 1 + mn.RIGHT * 1,
             )
-            s.group_appear(self, top_text)
+            group_appear(self, s, top_text)
             self.wait(pause)
             self.clear()
 
@@ -2568,7 +2573,7 @@ class Example_string(mn.Scene):
                 text_color=mn.BLACK,
                 font_size=50,
             )
-            center.group_appear(self, text_title)
+            group_appear(self, center, text_title)
 
             string = "123"
             str_1 = String(
@@ -2632,8 +2637,9 @@ class Example_string(mn.Scene):
                 vector=mn.DOWN * 1.0 + mn.RIGHT * 2,
             )
 
-            str_1.group_appear(
+            group_appear(
                 self,
+                str_1,
                 str_2,
                 str_3,
                 str_4,
@@ -2758,8 +2764,9 @@ class Example_string(mn.Scene):
             str_3.highlight_containers(0, 1, 2)
             str_4.highlight_containers(0, 1, 2)
             str_5.highlight_containers(0, 1, 2)
-            str_1.group_appear(
+            group_appear(
                 self,
+                str_1,
                 str_2,
                 str_3,
                 str_4,
@@ -2827,7 +2834,7 @@ class Example_string(mn.Scene):
                 mob_center=donor,
             )
             donor_text.next_to(donor, mn.LEFT, buff=0.5)
-            donor.group_appear(self, donor_text)
+            group_appear(self, donor, donor_text)
             self.wait(pause)
 
             rec_val = "AAAAA"
@@ -2846,7 +2853,7 @@ class Example_string(mn.Scene):
                 mob_center=donor,
             )
             rec_text.next_to(recipient, mn.LEFT, buff=0.5)
-            recipient.group_appear(self, rec_text)
+            group_appear(self, recipient, rec_text)
             self.wait(pause)
 
             func_text = RelativeText(
@@ -2899,7 +2906,7 @@ class Example_string(mn.Scene):
                 mob_center=donor,
             )
             donor_text.next_to(donor, mn.LEFT, buff=0.5)
-            donor.group_appear(self, donor_text)
+            group_appear(self, donor, donor_text)
             self.wait(pause)
 
             rec_val = "AAAAA"
@@ -2918,7 +2925,7 @@ class Example_string(mn.Scene):
                 mob_center=donor,
             )
             rec_text.next_to(recipient, mn.LEFT, buff=0.5)
-            recipient.group_appear(self, rec_text)
+            group_appear(self, recipient, rec_text)
             self.wait(1)
 
             self.clear()
@@ -3035,7 +3042,7 @@ class Example_string(mn.Scene):
                 "highlight_containers_monocolor()",
                 vector=mn.UP * 2,
             )
-            string.group_appear(self, top_text)
+            group_appear(self, string, top_text)
             self.wait(pause)
 
             string.highlight_containers_monocolor([0, 1, 2, 3, 4, 5])
@@ -3055,7 +3062,7 @@ class Example_string(mn.Scene):
                 "highlight_containers_with_value()   pointers_on_value()",
                 vector=mn.UP * 2,
             )
-            string.group_appear(self, top_text)
+            group_appear(self, string, top_text)
             self.wait(1)
 
             string.highlight_containers_with_value("f")
@@ -3098,7 +3105,7 @@ class Example_string(mn.Scene):
                 align_screen=mn.UP,
                 screen_buff=0.5,
             )
-            string.group_appear(self, title)
+            group_appear(self, string, title)
             self.wait(1)
 
             set_text = RelativeTextValue(
@@ -3141,7 +3148,7 @@ class Example_string(mn.Scene):
                 "mix",
                 vector=mn.UP * 2,
             )
-            string.group_appear(self, top_text)
+            group_appear(self, string, top_text)
             self.wait(1)
 
             string.highlight_containers(0, 2, 4)
@@ -3258,7 +3265,7 @@ class Example_linked_list(mn.Scene):
                 mob_center=center,
                 vector=mn.UP * 2,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
 
             self.remove(ll, top_text)
@@ -3273,7 +3280,7 @@ class Example_linked_list(mn.Scene):
                 align_left=center,
                 vector=mn.UP * 2,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
 
             self.remove(ll, top_text)
@@ -3288,7 +3295,7 @@ class Example_linked_list(mn.Scene):
                 align_right=center,
                 vector=mn.UP * 2,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
 
             self.clear()
@@ -3299,7 +3306,7 @@ class Example_linked_list(mn.Scene):
             two = Array(
                 lambda: list("two"), font_size=60, vector=mn.DOWN * 2.4 + mn.RIGHT * 3
             )
-            one.group_appear(self, two)
+            group_appear(self, one, two)
             self.wait(0.5)
 
             # -----------------------
@@ -3313,7 +3320,7 @@ class Example_linked_list(mn.Scene):
                 align_left=one,
                 align_bottom=two,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
             self.remove(ll, top_text)
 
@@ -3326,7 +3333,7 @@ class Example_linked_list(mn.Scene):
                 align_left=one,
                 align_top=two,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
             self.remove(ll, top_text)
 
@@ -3339,7 +3346,7 @@ class Example_linked_list(mn.Scene):
                 align_right=one,
                 align_top=two,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
             self.remove(ll, top_text)
 
@@ -3352,7 +3359,7 @@ class Example_linked_list(mn.Scene):
                 align_right=one,
                 align_bottom=two,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
             self.remove(ll, top_text)
 
@@ -3366,7 +3373,7 @@ class Example_linked_list(mn.Scene):
                 align_bottom=two,
                 vector=mn.UP * 1 + mn.RIGHT * 1,
             )
-            ll.group_appear(self, top_text)
+            group_appear(self, ll, top_text)
             self.wait(pause)
             self.clear()
 
@@ -3581,7 +3588,7 @@ class Example_linked_list(mn.Scene):
                 align_left=ll,
                 vector=mn.UP * 3,
             )
-            ll.group_appear(self, rt)
+            group_appear(self, ll, rt)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -3629,7 +3636,7 @@ class Example_linked_list(mn.Scene):
                 align_left=ll,
                 vector=mn.UP * 3,
             )
-            ll.group_appear(self, rt)
+            group_appear(self, ll, rt)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -3677,7 +3684,7 @@ class Example_linked_list(mn.Scene):
                 align_left=ll,
                 vector=mn.UP * 3,
             )
-            ll.group_appear(self, rt)
+            group_appear(self, ll, rt)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -3725,7 +3732,7 @@ class Example_linked_list(mn.Scene):
                 align_left=ll,
                 vector=mn.UP * 3,
             )
-            ll.group_appear(self, rt)
+            group_appear(self, ll, rt)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -3768,7 +3775,7 @@ class Example_linked_list(mn.Scene):
                 mob_center=lln,
                 vector=mn.UP * 2,
             )
-            lln.group_appear(self, rt)
+            group_appear(self, lln, rt)
 
             lln.highlight_pointers(2, 4, 6)
             lln.highlight_containers(2, 4, 6)
@@ -3810,7 +3817,7 @@ class Example_linked_list(mn.Scene):
                 mob_center=lln,
                 vector=mn.UP * 2,
             )
-            lln.group_appear(self, rt)
+            group_appear(self, lln, rt)
 
             lln.highlight_containers_monocolor([0, 1, 2])
             self.wait(pause)
@@ -4028,7 +4035,7 @@ class Example_code_block(mn.Scene):
                 vector=mn.RIGHT * 3,
                 align_bottom=cb1,
             )
-            cb1.group_appear(self, cb2)
+            group_appear(self, cb1, cb2)
             self.wait(0.5)
 
             def highlight(*indices: int):
@@ -4238,7 +4245,7 @@ class Example_code_block_lense(mn.Scene):
                 vector=mn.RIGHT * 3,
                 align_bottom=cb1,
             )
-            cb1.group_appear(self, cb2)
+            group_appear(self, cb1, cb2)
             self.wait(0.5)
 
             def highlight(*indices: int):
@@ -4290,7 +4297,7 @@ class Example_semi_rounded_rectangle(mn.Scene):
                 align_screen=mn.DOWN,
                 screen_buff=1.3,
             )
-            title.group_appear(self, params)
+            group_appear(self, title, params)
 
             rect = SemiRoundedRectangle(
                 width=3,
@@ -4321,7 +4328,7 @@ class Example_semi_rounded_rectangle(mn.Scene):
                 text_color=mn.WHITE,
                 vector=mn.UP * 1.5,
             )
-            title.group_appear(self, params)
+            group_appear(self, title, params)
 
             corner_radius = 1
             fill_color = mn.GRAY_BROWN
