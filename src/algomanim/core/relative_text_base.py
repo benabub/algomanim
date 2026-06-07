@@ -197,6 +197,8 @@ class RelativeTextUpdatable(RelativeTextBase):
         scene: mn.Scene,
         time=0.1,
         animate: bool = True,
+        highlight: bool = True,
+        highlight_time: float = 1.0,
     ) -> None:
         """Update text values with current variable values.
 
@@ -214,3 +216,7 @@ class RelativeTextUpdatable(RelativeTextBase):
             scene.remove(self)
             self.become(new_instance)
             scene.add(self)
+
+        if highlight and self._hl_rect is not None:
+            scene.wait(highlight_time)
+            self._hl_rect.deactivate()
