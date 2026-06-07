@@ -48,9 +48,9 @@ class RelativeTextValue(RelativeTextUpdatable):
         font="",
         font_size: float = 25,
         weight: str = "NORMAL",
-        # --- other ---
         spaces: bool = True,
         equal_sign: bool = True,
+        # --- hl ---
         highlight: bool = True,
     ):
         super().__init__(
@@ -193,11 +193,11 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         font="",
         font_size: float = 25,
         weight: str = "NORMAL",
-        # --- other ---
         spaces: bool = True,
         buff=0.5,
         equal_sign: bool = True,
         items_align_edge: np.ndarray = mn.UP,
+        # --- hl ---
         highlight: bool = True,
     ):
         super().__init__(
@@ -342,7 +342,7 @@ class RelativeTextActive(RelativeTextUpdatable):
         font_size: float = 25,
         text_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
-        # --- other ---
+        # --- hl ---
         highlight: bool = True,
     ):
         super().__init__(
@@ -370,12 +370,28 @@ class RelativeTextActive(RelativeTextUpdatable):
         self.submobjects: List = []
         self._highlight = highlight
 
+        self._prev_val = None
+        self._shift_distance = None
+
+        self._shift_up = False
+        self._shift_down = False
+
+        if not self._shift_distance:
+            self._shift_distance = self._calc_shift_distance()
+
+        self._analyze_empty_str_transition()
+
         self._text_mob = self._create_text_mob(
             self._text,
             color=self._text_color,
         )
-        self.add(*self._text_mob)
+        self.add(self._text_mob)
         self._position()
+
+        if self._shift_up:
+            self.shift(mn.UP * self._shift_distance)
+        elif self._shift_down:
+            self.shift(mn.DOWN * self._shift_distance)
 
         if self._highlight:
             self._hl_rect = HLRect(
@@ -431,6 +447,9 @@ class RelativeTextActive(RelativeTextUpdatable):
             highlight=self._highlight,
         )
 
+        new_instance._prev_val = self._text
+        new_instance._shift_distance = self._shift_distance
+
         # copy anchor alignment
         self._align_with_anchor(new_instance)
 
@@ -474,7 +493,7 @@ class RelativeText(RelativeTextBase):
         font_size: float = 25,
         text_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
-        # --- other ---
+        # --- hl ---
         highlight: bool = True,
     ):
         super().__init__(
