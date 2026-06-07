@@ -154,7 +154,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
     """Text group showing scope variables positioned relative to mobject.
 
     Args:
-        *vars (Tuple[str, Callable[[], Any], str | ManimColor]):
+        *inputs (Tuple[str, Callable[[], Any], str | ManimColor]):
             Tuples of (name, value_getter, color).
         mob_center (mn.Mobject): Reference mobject for positioning.
         vector (np.ndarray): Offset vector from reference mobject center.
@@ -173,7 +173,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         buff (float): Spacing between text elements.
         equal_sign (bool): Whether to use equals sign between name and value.
         items_align_edge (np.ndarray): Alignment edge for text items within the group.
-        **kwargs: Additional keyword arguments passed to parent class.
+        highlight (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
@@ -198,6 +198,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         buff=0.5,
         equal_sign: bool = True,
         items_align_edge: np.ndarray = mn.UP,
+        highlight: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -222,7 +223,27 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
         self.submobjects: List = []
+        self._highlight = highlight
 
+        self._text_mob = self._build_text_mob()
+        self.add(*self._text_mob)
+        self._position()
+
+        if self._highlight:
+            self._hl_rect = HLRect(
+                self._text_mob,
+                mn.BLACK,
+            )
+            self.add_to_back(self._hl_rect)
+        else:
+            self._hl_rect = None
+
+    def _build_text_mob(self):
+        """Build a VGroup of text mobjects for all variables.
+
+        Returns:
+            VGroup containing text mobjects for each variable.
+        """
         parts = []
         for name, value, color in self._inputs:
             if not isinstance(value(), str):
@@ -240,13 +261,9 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
 
             parts.append(self._create_text_mob(text, color))
 
-        self._text_mob_group = mn.VGroup(*parts).arrange(
+        return mn.VGroup(*parts).arrange(
             mn.RIGHT, buff=self._buff, aligned_edge=self._items_align_edge
         )
-
-        self.add(*self._text_mob_group)
-
-        self._position()
 
     def _create_new_instance(self) -> "RelativeTextValueGroup":
         """Create a new RelativeTextValue instance with current variable values.
@@ -276,6 +293,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
             buff=self._buff,
             equal_sign=self._equal_sign,
             items_align_edge=self._items_align_edge,
+            highlight=self._highlight,
         )
 
         # copy anchor alignment
