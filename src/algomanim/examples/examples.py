@@ -266,7 +266,7 @@ class Example_text(mn.Scene):
             )
             title.first_appear(self)
 
-            type1.group_appear(self, type2, type3, type4)
+            group_appear(self, type1, type2, type3, type4)
             self.wait(pause)
 
             p_text = RelativeTextValue(
@@ -274,6 +274,7 @@ class Example_text(mn.Scene):
                 font_size=35,
                 mob_center=title,
                 vector=mn.DOWN * 1.0,
+                anchor=None,
             )
             p_text.first_appear(self)
             self.wait(pause)
@@ -307,7 +308,7 @@ class Example_text(mn.Scene):
 
             self.clear()
 
-        def group_appear(self):
+        def groupp_appear(self):
             pause = 1
             nonlocal s
             s = "abc"
@@ -321,19 +322,20 @@ class Example_text(mn.Scene):
             )
             title.first_appear(self)
 
-            type1.group_appear(self, type2, type3, type4)
+            group_appear(self, type1, type2, type3, type4)
             self.wait(pause)
 
             p_text = RelativeTextValue(
                 ("input", lambda: s, mn.BLACK),
                 font_size=35,
                 mob_center=title,
+                anchor=None,
                 vector=mn.DOWN * 1.0,
             )
             p_text.first_appear(self)
             self.wait(pause)
 
-            t1.group_appear(self, t2, t3, t4)
+            group_appear(self, t1, t2, t3, t4)
             self.wait(pause)
             self.remove(t1, t2, t3, t4)
             self.wait(pause)
@@ -345,7 +347,7 @@ class Example_text(mn.Scene):
                 s = new_val
                 p_text.update_value(self)
                 self.wait(pause)
-                t1.group_appear(self, t2, t3, t4)
+                group_appear(self, t1, t2, t3, t4)
                 self.wait(pause)
                 self.remove(t1, t2, t3, t4)
                 self.wait(pause)
@@ -371,19 +373,20 @@ class Example_text(mn.Scene):
             )
             title.first_appear(self)
 
-            type1.group_appear(self, type2, type3, type4)
+            group_appear(self, type1, type2, type3, type4, animate=False)
             self.wait(pause)
 
             p_text = RelativeTextValue(
                 ("input", lambda: s, mn.BLACK),
                 font_size=35,
                 mob_center=title,
+                anchor=None,
                 vector=mn.DOWN * 1.0,
             )
             p_text.first_appear(self)
             self.wait(pause)
 
-            t1.group_appear(self, t2, t3, t4)
+            group_appear(self, t1, t2, t3, t4)
             self.wait(pause)
 
             def cycle(
@@ -420,7 +423,7 @@ class Example_text(mn.Scene):
             )
             title.first_appear(self)
 
-            type1.group_appear(self, type2, type3, type4)
+            group_appear(self, type1, type2, type3, type4)
             self.wait(pause)
 
             vd = mn.DOWN * 1
@@ -461,7 +464,7 @@ class Example_text(mn.Scene):
                 mob_center=type4,
                 vector=vd,
             )
-            t1.group_appear(self, t2, t3, t4)
+            group_appear(self, t1, t2, t3, t4)
             self.wait(pause)
             self.remove(t1, t2, t3, t4)
             self.wait(pause)
@@ -498,7 +501,7 @@ class Example_text(mn.Scene):
                 align_left=type4,
                 vector=vd,
             )
-            t1.group_appear(self, t2, t3, t4)
+            group_appear(self, t1, t2, t3, t4)
             self.wait(pause)
             self.remove(t1, t2, t3, t4)
             self.wait(pause)
@@ -535,7 +538,7 @@ class Example_text(mn.Scene):
                 align_right=type4,
                 vector=vd,
             )
-            t1.group_appear(self, t2, t3, t4)
+            group_appear(self, t1, t2, t3, t4)
             self.wait(pause)
             self.remove(t1, t2, t3, t4)
             self.wait(pause)
@@ -545,7 +548,7 @@ class Example_text(mn.Scene):
         # ========== calls ==============
 
         first_appear(self)
-        group_appear(self)
+        groupp_appear(self)
         update(self)
         position(self)
 
