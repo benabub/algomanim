@@ -396,6 +396,15 @@ class RelativeTextActive(RelativeTextUpdatable):
         elif self._prev_val == '""' and self._text != '""':
             self._shift_down = True
 
+    def _calc_shift_distance(self) -> float:
+        """Calculate the vertical shift distance for empty string transition.
+
+        Returns:
+            Shift distance in Manim units.
+        """
+        measure = self._create_text_mob('""', mn.BLACK)
+        return measure.height * 1.5
+
     def _create_new_instance(self) -> "RelativeTextActive":
         """Create a new RelativeTextActive instance with current variable values.
 
