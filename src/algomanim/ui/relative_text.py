@@ -5,14 +5,14 @@ import manim as mn
 from manim import ManimColor
 
 from algomanim.core.relative_text_base import RelativeTextBase, RelativeTextUpdatable
+from algomanim.core.paths.hl_rect import HLRect
 
 
 class RelativeTextValue(RelativeTextUpdatable):
     """Text group showing scope variables positioned relative to mobject.
 
     Args:
-        *vars (Tuple[str, Callable[[], Any], str | ManimColor]):
-            Tuples of (name, value_getter, color).
+        input: Tuple of (var name, value_getter, color).
         mob_center (mn.Mobject): Reference mobject for positioning.
         vector (np.ndarray): Offset vector from reference mobject center.
         align_left: Reference mobject to align left edge with.
@@ -27,10 +27,8 @@ class RelativeTextValue(RelativeTextUpdatable):
         font_size (float): Text font size.
         weight (str): Font weight (NORMAL, BOLD, etc.).
         spaces(bool): Whether to add spaces around the equals sign.
-        buff (float): Spacing between text elements.
         equal_sign (bool): Whether to use equals sign between name and value.
-        items_align_edge (np.ndarray): Alignment edge for text items within the group.
-        **kwargs: Additional keyword arguments passed to parent class.
+        highlight (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
@@ -53,6 +51,7 @@ class RelativeTextValue(RelativeTextUpdatable):
         # --- other ---
         spaces: bool = True,
         equal_sign: bool = True,
+        highlight: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -76,12 +75,21 @@ class RelativeTextValue(RelativeTextUpdatable):
         # --- other ---
         self._spaces = spaces
         self._equal_sign = equal_sign
+        self._highlight = highlight
 
         self._text_mob = self._build_text_mob()
 
         self.add(self._text_mob)
-
         self._position()
+
+        if self._highlight:
+            self._hl_rect = HLRect(
+                self._text_mob,
+                self._get_hl_color(self._color),
+            )
+            self.add_to_back(self._hl_rect)
+        else:
+            self._hl_rect = None
 
     def _build_text_mob(self):
         """Build a text mobject with formatted value.
@@ -133,6 +141,7 @@ class RelativeTextValue(RelativeTextUpdatable):
             # --- other ---
             spaces=self._spaces,
             equal_sign=self._equal_sign,
+            highlight=self._highlight,
         )
 
         # copy anchor alignment
