@@ -76,6 +76,29 @@ class RelativeTextBase(AlgoManimBase):
 
         return self._text_mob
 
+    def _get_hl_color(
+        self,
+        text_color: ManimColor | list[ManimColor] | str | None = None,
+    ) -> ManimColor | str:
+        """Get highlight color based on text color.
+
+        Args:
+            text_color: The text color to map to a glow color.
+                If None or not found in HL_MAP, returns BLACK.
+
+        Returns:
+            Highlight color for the given text color.
+        """
+        if text_color:
+            # If text_color is a list (gradient), take the first color
+            if isinstance(text_color, list):
+                text_color = text_color[0]
+            if isinstance(text_color, str):
+                text_color = ManimColor(text_color)
+            if text_color in self.HL_MAP:
+                return self.HL_MAP[text_color]
+        return mn.BLACK
+
 
 class RelativeTextUpdatable(RelativeTextBase):
     """Base class for updatable relative text elements.
