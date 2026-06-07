@@ -13,6 +13,8 @@ Manim use notes:
 import numpy as np
 import manim as mn
 
+from algomanim.core.paths.hl_rect import HLRect
+
 
 class AlgoManimBase(mn.VGroup):
     """Base class for all algomanim classes.
@@ -91,8 +93,8 @@ class AlgoManimBase(mn.VGroup):
     def first_appear(
         self,
         scene: mn.Scene,
-        time=0.5,
         update: bool = True,
+        appear_time=0.5,
     ):
         """Animate the initial appearance in scene.
 
@@ -107,28 +109,68 @@ class AlgoManimBase(mn.VGroup):
             if hasattr(self, "_set_new_value"):
                 self._set_new_value()
 
-        scene.play(mn.FadeIn(self), run_time=time)
+        scene.play(mn.FadeIn(self), run_time=appear_time)
 
-    def group_appear(self, scene: mn.Scene, *mobjects: mn.Mobject, time: float = 0.5):
-        """Animate the appearance of this object together with additional mobjects.
+    @staticmethod
+    def group_appear(
+        scene: mn.Scene,
+        *mobjects: mn.Mobject,
+        animate: bool = True,
+        appear_time: float = 0.5,
+        hl: bool = True,
+        hl_time: float = 1.0,
+    ) -> None:
+        """Animate the appearance of multiple mobjects simultaneously.
 
-        All mobjects fade in simultaneously with the same duration.
+        Updates all mobjects by calling `_set_new_value()` if available,
+        then plays FadeIn animations (or adds directly) and optionally
+        deactivates highlights after a delay.
 
         Args:
-            scene: The Manim scene to play the animation in.
-            *mobjects: Additional mobjects to fade in together with this object.
-            time: Duration of the fade-in animation for all objects.
-        """
+            scene: The Manim scene to play animations in.
+            *mobjects: Mobjects to appear together.
+            animate: If True, plays FadeIn animation. If False, adds directly to scene.
+            appear_time: Duration of the FadeIn animation if animate=True.
+            hl: If True, applies highlight deactivation after waiting.
+            hl_time: Wait time before deactivating highlights.
 
-        if hasattr(self, "_set_new_value"):
-            self._set_new_value()
+        Note:
+            Highlight deactivation only occurs if at least one mobject has a
+            non-None `_hl_rect` attribute and `hl` is True.
+        """
+        hl_rects_presented = False
 
         for mob in mobjects:
             if hasattr(mob, "_set_new_value"):
                 mob._set_new_value()
+            elif hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
+                hl_rect = getattr(mob, "_hl_rect")
+                if isinstance(hl_rect, HLRect):
+                    hl_rect.activate()
+                hl_rects_presented = True
 
-        animations = [mn.FadeIn(self)] + [mn.FadeIn(mob) for mob in mobjects]
-        scene.play(*animations, run_time=time)
+        if animate:
+            animations = [mn.FadeIn(mob) for mob in mobjects]
+            scene.play(*animations, run_time=appear_time)
+        else:
+            scene.add(*mobjects)
+
+        if not hl_rects_presented:
+            for mob in mobjects:
+                if hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
+                    hl_rects_presented = True
+                    break
+
+        if not hl or not hl_rects_presented:
+            return
+
+        scene.wait(hl_time)
+
+        for mob in mobjects:
+            if hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
+                hl_rect = getattr(mob, "_hl_rect")
+                if isinstance(hl_rect, HLRect):
+                    hl_rect.deactivate()
 
     def appear(self, scene: mn.Scene):
         """Add VGroup the given scene.
