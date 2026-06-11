@@ -103,7 +103,7 @@ class RelativeTextBase(AlgoManimBase):
         self,
         scene: mn.Scene,
         update: bool = True,
-        appear_time: float = 0.5,
+        appear_time: float = 0.2,
         hl: bool = True,
         hl_time: float = 1.0,
     ):
@@ -195,10 +195,10 @@ class RelativeTextUpdatable(RelativeTextBase):
     def update_value(
         self,
         scene: mn.Scene,
-        time=0.1,
         animate: bool = True,
-        highlight: bool = True,
-        highlight_time: float = 1.0,
+        anim_time=0.2,
+        hl: bool = True,
+        hl_time: float = 1.0,
     ) -> None:
         """Update text values with current variable values.
 
@@ -211,12 +211,12 @@ class RelativeTextUpdatable(RelativeTextBase):
         new_instance = self._create_new_instance()
 
         if animate:
-            scene.play(mn.Transform(self, new_instance), run_time=time)
+            scene.play(mn.Transform(self, new_instance), run_time=anim_time)
         else:
             scene.remove(self)
             self.become(new_instance)
             scene.add(self)
 
-        if highlight and self._hl_rect is not None:
-            scene.wait(highlight_time)
+        if hl and self._hl_rect is not None:
+            scene.wait(hl_time)
             self._hl_rect.deactivate()
