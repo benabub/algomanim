@@ -94,7 +94,7 @@ class AlgoManimBase(mn.VGroup):
         self,
         scene: mn.Scene,
         update: bool = True,
-        appear_time=0.5,
+        appear_time=0.2,
     ):
         """Animate the initial appearance in scene.
 
@@ -116,7 +116,7 @@ class AlgoManimBase(mn.VGroup):
         scene: mn.Scene,
         *mobjects: mn.Mobject,
         animate: bool = True,
-        appear_time: float = 0.5,
+        appear_time: float = 0.2,
         hl: bool = True,
         hl_time: float = 1.0,
     ) -> None:
@@ -143,7 +143,7 @@ class AlgoManimBase(mn.VGroup):
         for mob in mobjects:
             if hasattr(mob, "_set_new_value"):
                 mob._set_new_value()
-            elif hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
+            elif hl and hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
                 hl_rect = getattr(mob, "_hl_rect")
                 if isinstance(hl_rect, HLRect):
                     hl_rect.activate()
