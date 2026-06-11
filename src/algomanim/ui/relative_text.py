@@ -28,7 +28,7 @@ class RelativeTextValue(RelativeTextUpdatable):
         weight (str): Font weight (NORMAL, BOLD, etc.).
         spaces(bool): Whether to add spaces around the equals sign.
         equal_sign (bool): Whether to use equals sign between name and value.
-        highlight (bool): If True, creates a highlight rectangle around the text.
+        hl (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
@@ -51,7 +51,7 @@ class RelativeTextValue(RelativeTextUpdatable):
         spaces: bool = True,
         equal_sign: bool = True,
         # --- hl ---
-        highlight: bool = True,
+        hl: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -75,14 +75,14 @@ class RelativeTextValue(RelativeTextUpdatable):
         # --- other ---
         self._spaces = spaces
         self._equal_sign = equal_sign
-        self._highlight = highlight
+        self._hl = hl
 
         self._text_mob = self._build_text_mob()
 
         self.add(self._text_mob)
         self._position()
 
-        if self._highlight:
+        if self._hl:
             self._hl_rect = HLRect(
                 self._text_mob,
                 self._get_hl_color(self._color),
@@ -141,7 +141,7 @@ class RelativeTextValue(RelativeTextUpdatable):
             # --- other ---
             spaces=self._spaces,
             equal_sign=self._equal_sign,
-            highlight=self._highlight,
+            hl=self._hl,
         )
 
         # copy anchor alignment
@@ -173,7 +173,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         buff (float): Spacing between text elements.
         equal_sign (bool): Whether to use equals sign between name and value.
         items_align_edge (np.ndarray): Alignment edge for text items within the group.
-        highlight (bool): If True, creates a highlight rectangle around the text.
+        hl (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
@@ -198,7 +198,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         equal_sign: bool = True,
         items_align_edge: np.ndarray = mn.UP,
         # --- hl ---
-        highlight: bool = True,
+        hl: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -223,13 +223,13 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
         self.submobjects: List = []
-        self._highlight = highlight
+        self._hl = hl
 
         self._text_mob = self._build_text_mob()
         self.add(*self._text_mob)
         self._position()
 
-        if self._highlight:
+        if self._hl:
             self._hl_rect = HLRect(
                 self._text_mob,
                 mn.BLACK,
@@ -293,7 +293,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
             buff=self._buff,
             equal_sign=self._equal_sign,
             items_align_edge=self._items_align_edge,
-            highlight=self._highlight,
+            hl=self._hl,
         )
 
         # copy anchor alignment
@@ -321,7 +321,7 @@ class RelativeTextActive(RelativeTextUpdatable):
         font_size: Text font size.
         text_color: Text color.
         weight: Font weight (NORMAL, BOLD, etc.).
-        highlight (bool): If True, creates a highlight rectangle around the text.
+        hl (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
@@ -343,7 +343,7 @@ class RelativeTextActive(RelativeTextUpdatable):
         text_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
         # --- hl ---
-        highlight: bool = True,
+        hl: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -368,7 +368,7 @@ class RelativeTextActive(RelativeTextUpdatable):
         # --- font ---
         self._text_color = text_color
         self.submobjects: List = []
-        self._highlight = highlight
+        self._hl = hl
 
         self._prev_val = None
         self._shift_distance = None
@@ -393,7 +393,7 @@ class RelativeTextActive(RelativeTextUpdatable):
         elif self._shift_down:
             self.shift(mn.DOWN * self._shift_distance)
 
-        if self._highlight:
+        if self._hl:
             self._hl_rect = HLRect(
                 self._text_mob,
                 self._get_hl_color(self._text_color),
@@ -444,7 +444,7 @@ class RelativeTextActive(RelativeTextUpdatable):
             font=self._font,
             font_size=self._font_size,
             weight=self._weight,
-            highlight=self._highlight,
+            hl=self._hl,
         )
 
         new_instance._prev_val = self._text
@@ -473,7 +473,7 @@ class RelativeText(RelativeTextBase):
         font_size: Text font size.
         text_color: Text color.
         weight: Font weight (NORMAL, BOLD, etc.).
-        highlight (bool): If True, creates a highlight rectangle around the text.
+        hl (bool): If True, creates a highlight rectangle around the text.
     """
 
     def __init__(
@@ -494,7 +494,7 @@ class RelativeText(RelativeTextBase):
         text_color: str | ManimColor = mn.WHITE,
         weight: str = "NORMAL",
         # --- hl ---
-        highlight: bool = True,
+        hl: bool = True,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -521,7 +521,7 @@ class RelativeText(RelativeTextBase):
         self.add(self._text_mob)
         self._position()
 
-        if highlight:
+        if hl:
             self._hl_rect = HLRect(
                 self._text_mob,
                 self._get_hl_color(self._text_color),
