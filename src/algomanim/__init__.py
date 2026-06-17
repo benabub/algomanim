@@ -22,6 +22,7 @@ from .ui.titles import TitleText, TitleLogo
 
 from .helpers.visual import grid
 from .helpers.datastructures import Node, ListNode, TreeNode
+from .helpers.parsing import indent_cutter, code_to_lines
 
 
 __all__ = [
@@ -48,5 +49,7 @@ __all__ = [
     "Node",
     "ListNode",
     "TreeNode",
+    "indent_cutter",
+    "code_to_lines",
     "grid",
 ]
