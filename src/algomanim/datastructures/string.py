@@ -168,6 +168,8 @@ class String(RectangleCellsStructure):
         else:
             self._anchor: Literal["start", "end"] | None = None
 
+        # =-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=
+
         # empty value
         if not self._data:
             self._create_empty_string()

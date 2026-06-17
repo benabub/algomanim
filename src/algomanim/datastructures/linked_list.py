@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Callable, Literal, cast
 
 import numpy as np
 import manim as mn
@@ -6,44 +6,45 @@ from manim import ManimColor
 
 from algomanim.helpers.datastructures import ListNode
 from algomanim.core.linear_container import LinearContainerStructure
+from algomanim.core.node_structure import NodeStructure
 from algomanim.assets.svg import SVG_DIR
 
 
-class LinkedList(LinearContainerStructure):
+class LinkedList(LinearContainerStructure, NodeStructure):
     """Linked list visualization as a VGroup of nodes with values and pointers.
 
     Args:
-        head (ListNode | None): Head node of the linked list.
-        radius (float): Radius of the circular nodes.
-        direction (np.ndarray): Direction vector for list orientation.
-        node_color (ManimColor | str): Border color for nodes.
-        fill_color (ManimColor | str): Fill color for nodes.
-        bg_color (ManimColor | str): Background color of scene and default pointer color.
-        vector (np.ndarray): Position offset from mob_center.
-        mob_center (mn.Mobject): Reference mobject for positioning.
+        value: Callable that returns a head node of the linked list to visualize.
+        radius: Radius of the circular nodes.
+        direction: Direction vector for list orientation.
+        node_color: Border color for nodes.
+        fill_color: Fill color for nodes.
+        bg_color: Background color of scene and default pointer color.
+        vector: Position offset from mob_center.
+        mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
         align_right: Reference mobject to align right edge with.
         align_top: Reference mobject to align top edge with.
         align_bottom: Reference mobject to align bottom edge with.
-        align_screen (np.ndarray | None): Direction vector for screen edge alignment
-        screen_buff (float): Buffer distance from screen edge when using align_screen.
-        anchor: Optional alignment anchor when neither align_left nor align_right
-        font (str): Font family for text elements.
-        text_color (ManimColor | str): Color for text elements.
-        weight (str): Font weight (NORMAL, BOLD, etc.).
-        pointers: Whether to create and display pointers.
+        align_screen: Direction vector for screen edge alignment.
+        screen_buff: Buffer distance from screen edge when using align_screen.
+        anchor: Alignment anchor when no edge alignment specified.
+        font: Font family for text elements.
+        text_color: Color for text elements.
+        weight: Font weight (NORMAL, BOLD, etc.).
+        pointers: Which pointers to create ("top", "bottom", "both" or None).
         **kwargs: Additional keyword arguments passed to parent class.
     """
 
     def __init__(
         self,
-        head: ListNode | None,
+        value: Callable[[], ListNode | None] | None,
         radius: float = 0.4,
+        # ---- direction ----
         direction: np.ndarray = mn.RIGHT,
-        # --- containers colors ---
-        node_color: ManimColor | str = mn.BLACK,
-        fill_color: ManimColor | str = mn.LIGHT_GRAY,
-        bg_color: ManimColor | str = mn.DARK_GRAY,
+        # ---- pointers ----
+        pointers: Literal["top", "bottom", "both"] | None = "top",
+        pointers_mode: Literal[3, 5] = 3,
         # -- position --
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -53,21 +54,26 @@ class LinkedList(LinearContainerStructure):
         align_bottom: mn.Mobject | None = None,
         align_screen: np.ndarray | None = None,
         screen_buff: float = 0.2,
-        anchor: np.ndarray | None = mn.LEFT,
+        anchor: Literal["start", "end"] | None = "start",
         # -- font --
         font: str = "",
         text_color: ManimColor | str = mn.BLACK,
         weight: str = "NORMAL",
-        # ---- pointers ----
-        pointers: bool = True,
+        # --- node colors ---
+        node_color: ManimColor | str = mn.BLACK,
+        fill_color: ManimColor | str = mn.LIGHT_GRAY,
+        bg_color: ManimColor | str = mn.DARK_GRAY,
         # ---- kwargs ----
         **kwargs,
     ):
-        kwargs.setdefault("color_123", mn.WHITE)
+        kwargs.setdefault("color_mix_6", mn.WHITE)
         kwargs.setdefault("color_containers_with_value", mn.RED)
         self._parent_kwargs = kwargs.copy()
 
         super().__init__(
+            # ---- pointers ----
+            pointers=pointers,
+            pointers_mode=pointers_mode,
             # ---- containers ----
             container_color=node_color,
             fill_color=fill_color,
@@ -90,10 +96,14 @@ class LinkedList(LinearContainerStructure):
         )
 
         # create class instance fields
-        self._data = self.linked_list_to_list(head)  # save head as py builtin list
+        self._callable = value
+
+        self._data = self.linked_list_to_list(value() if value is not None else None)
+
         self._radius = radius
+        # ---- direction ----
         self._direction = direction
-        # --- containers colors ---
+        # --- node colors ---
         self._node_color = node_color
         self._fill_color = fill_color
         self._bg_color = bg_color
@@ -110,18 +120,19 @@ class LinkedList(LinearContainerStructure):
         self._weight = weight
         # ---- pointers ----
         self._pointers = pointers
+        self._pointers_mode: Literal[3, 5] = pointers_mode
         # ---- anchor ----
         if not (align_left or align_right) and anchor is not None:
-            if not (
-                np.array_equal(anchor, mn.RIGHT) or np.array_equal(anchor, mn.LEFT)
-            ):
-                raise ValueError("anchor must be mn.RIGHT or mn.LEFT")
+            if anchor not in ["start", "end"]:
+                raise ValueError("anchor must be 'start', 'end' or None")
             self._anchor = anchor
         else:
-            self._anchor = None
+            self._anchor: Literal["start", "end"] | None = None
         # ---- spacing ----
         self.node_width = self._radius * 2
         self.node_arrow_width = self._radius * 3
+
+        # =-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=
 
         # empty value
         if not self._data:
@@ -129,7 +140,7 @@ class LinkedList(LinearContainerStructure):
             return
 
         # nodes
-        self._containers_mob = self._create_containers_mob()
+        self._containers_mob = self._create_nodes_mob()
 
         # arrows
         self._arrows_mob = self._create_and_pos_arrows_mob()
@@ -145,18 +156,16 @@ class LinkedList(LinearContainerStructure):
         self.add(self._containers_mob, self._arrows_mob)
         self._position()
 
-        # pointers
-        if self._pointers:
-            self._pointers_top, self._pointers_bottom = self.create_pointers(
-                self._containers_mob, direction=self._direction
-            )
-            self.add(self._pointers_top, self._pointers_bottom)
+        self.set_pointers(
+            self._containers_mob,
+            self._direction,
+        )
 
         # values
         self._values_mob = self._create_and_pos_values_mob()
         self.add(self._values_mob)
 
-    def _create_empty_linked_list(self):
+    def _create_empty_linked_list(self) -> None:
         """Initialize empty linked list visualization."""
 
         self._containers_mob = mn.Circle(
@@ -177,11 +186,260 @@ class LinkedList(LinearContainerStructure):
             font_size=40,
             font=self._font,
             weight=self._weight,
-            color=mn.WHITE,
+            color=mn.BLACK,
         )
         self._empty_value_mob.scale_to_fit_width(max_size_center)
         self._empty_value_mob.move_to(self._containers_mob)
         self.add(self._empty_value_mob)
+
+    def _create_nodes_mob(self) -> mn.VGroup:
+        """Create circular node mobjects for the linked list.
+
+        Returns:
+            mn.VGroup: Group of circular node mobjects.
+        """
+
+        node = self._create_single_node()
+        nodes_mob = mn.VGroup(*[node.copy() for _ in range(len(self._data))])
+        nodes_mob.arrange(buff=self._radius)
+
+        return nodes_mob
+
+    def _create_and_pos_arrows_mob(self) -> mn.VGroup:
+        """Create and position arrow mobjects between nodes.
+
+        Returns:
+            mn.VGroup: Group of arrow mobjects connecting the nodes.
+        """
+
+        arrow_path = str(SVG_DIR / "arrows/radius_x10.svg")
+        arrow = mn.SVGMobject(
+            arrow_path,
+            width=self._radius,
+        )
+        arrows_mob = mn.VGroup()
+        for i in range(len(self._data) - 1):
+            new_arrow = arrow.copy()
+            new_arrow.next_to(self._containers_mob[i], buff=0)
+            arrows_mob.add(new_arrow)
+        return arrows_mob
+
+    def _create_frame_mob(self) -> mn.VGroup:
+        """Create frame mobject containing all linked list elements.
+
+        Returns:
+            mn.VGroup: Group containing containers, arrows, and pointers.
+        """
+        if self._pointers == "top" and self._pointers_top is not None:
+            return mn.VGroup(
+                self._containers_mob,
+                self._arrows_mob,
+                self._pointers_top,
+            )
+        elif self._pointers == "bottom" and self._pointers_bottom is not None:
+            return mn.VGroup(
+                self._containers_mob,
+                self._arrows_mob,
+                self._pointers_bottom,
+            )
+        elif (
+            self._pointers == "both"
+            and self._pointers_top is not None
+            and self._pointers_bottom is not None
+        ):
+            return mn.VGroup(
+                self._containers_mob,
+                self._arrows_mob,
+                self._pointers_top,
+                self._pointers_bottom,
+            )
+        else:
+            return mn.VGroup(
+                self._containers_mob,
+                self._arrows_mob,
+            )
+
+    def _rotate_frame(self) -> None:
+        """Rotate the entire linked list frame to match the specified direction."""
+
+        if not np.allclose(self._direction, mn.RIGHT):
+            angle = mn.angle_of_vector(self._direction)
+            self._frame_mob.rotate(
+                angle,
+                about_point=self._containers_mob[0].get_center(),
+            )
+
+    def _text_config(self) -> dict:
+        return NodeStructure._text_config(self)
+
+    def _create_and_pos_values_mob(self):
+        """Create and position value text mobjects inside nodes.
+
+        Returns:
+            mn.VGroup: Group of value text mobjects positioned within nodes.
+        """
+        self._assign_base_font_size()
+        font_size = cast(float, self._base_font_size)
+
+        values_mob = mn.VGroup(
+            *[
+                mn.Text(str(val), font_size=font_size, **self._text_config())
+                for val in self._data
+            ]
+        )
+
+        for i in range(len(self._data)):
+            val = str(self._data[i])
+            mob = cast(mn.Text, values_mob[i])
+            node = cast(mn.Circle, self._containers_mob[i])
+
+            self._position_value_in_node(mob, str(val), node)
+
+        return values_mob
+
+    def _create_new_instance(self) -> "LinkedList":
+        """Create a new LinkedList instance with current parameters and updated data.
+
+        Returns:
+            New LinkedList instance with the same configuration and fresh data from callable.
+        """
+        # create new instance
+        new_instance = LinkedList(
+            value=self._callable,
+            radius=self._radius,
+            # ---- direction ----
+            direction=self._direction,
+            # ---- pointers ----
+            pointers=self._pointers,
+            pointers_mode=self._pointers_mode,
+            # -- position --
+            vector=self._vector,
+            mob_center=self._mob_center,
+            align_left=self._align_left,
+            align_right=self._align_right,
+            align_top=self._align_top,
+            align_bottom=self._align_bottom,
+            align_screen=self._align_screen,
+            screen_buff=self._screen_buff,
+            # -- font --
+            font=self._font,
+            text_color=self._text_color,
+            weight=self._weight,
+            # --- nodes colors ---
+            node_color=self._node_color,
+            fill_color=self._fill_color,
+            bg_color=self._bg_color,
+            # ---- kwargs ----
+            **self._parent_kwargs,
+        )
+
+        new_instance._base_font_size = self._base_font_size
+
+        if self._anchor is not None:
+            left_idx = 0
+            right_idx = -1
+
+            if self._anchor == "start":
+                self_left_node_center = self._containers_mob[left_idx].get_center()
+                new_left_node_center = new_instance._containers_mob[
+                    left_idx
+                ].get_center()
+                shift_vector = self_left_node_center - new_left_node_center
+                new_instance.shift(shift_vector)
+
+            if self._anchor == "end":
+                self_right_node_center = self._containers_mob[right_idx].get_center()
+                new_right_node_center = new_instance._containers_mob[
+                    right_idx
+                ].get_center()
+                shift_vector = self_right_node_center - new_right_node_center
+                new_instance.shift(shift_vector)
+
+        # preserve highlights
+        highlight_status = self._save_highlights_states()
+        self._preserve_highlights_states(new_instance, highlight_status)
+
+        return new_instance
+
+    def _set_new_value(self) -> None:
+        """Update internal data from callable without scene animation.
+
+        Replaces the current instance with a newly created one if the data has changed.
+        Preserves highlights and alignment. Does not add to scene.
+        """
+
+        new_instance = self._create_new_instance()
+
+        # replace self
+        self.become(new_instance)
+        head = self._callable() if self._callable is not None else None
+        self._update_internal_state(self.linked_list_to_list(head), new_instance)
+
+    def update_value(
+        self,
+        scene: mn.Scene,
+        animate: bool = False,
+        run_time: float = 0.2,
+    ) -> None:
+        """Replace the linked list visualization with new nodes.
+
+        Args:
+            scene (mn.Scene): The Manim scene to play animations in.
+            new_value: New linked list head node.
+            animate (bool): If True, animates the transition using Transform.
+            run_time (float): Duration of animation if animate=True.
+        """
+
+        # validation
+        if not self._data and (self._callable is None or not self._callable()):
+            return
+
+        # new group
+        new_instance = self._create_new_instance()
+
+        # add
+        if self._callable is not None:
+            if animate:
+                scene.play(mn.Transform(self, new_instance), run_time=run_time)
+                self._update_internal_state(
+                    self.linked_list_to_list(self._callable()), new_instance
+                )
+            else:
+                scene.remove(self)
+                self._update_internal_state(
+                    self.linked_list_to_list(self._callable()), new_instance
+                )
+                scene.add(self)
+
+    def append(
+        self,
+        scene: mn.Scene,
+        tail: "LinkedList",
+        animate: bool = False,
+        run_time: float = 0.2,
+    ) -> None:
+        """
+        Append another linked list to the end of this one in the scene.
+
+        Args:
+            scene: The Manim scene to play animations in.
+            tail: Linked list to append.
+            animate: Whether to animate the transition.
+            run_time: Animation duration if animate=True.
+        """
+
+        if not tail._data:
+            return
+
+        new_values = self._data + tail._data
+        scene.remove(tail)
+
+        self._callable = lambda: LinkedList.create_linked_list(new_values)
+        self.update_value(
+            scene=scene,
+            animate=animate,
+            run_time=run_time,
+        )
 
     @staticmethod
     def create_linked_list(value: list) -> ListNode | None:
@@ -196,6 +454,7 @@ class LinkedList(LinearContainerStructure):
 
         if not value:
             return None
+
         head = ListNode(value[0])
         current = head
         for val in value[1:]:
@@ -274,263 +533,3 @@ class LinkedList(LinearContainerStructure):
             result.append(current.val)
             current = current.next
         return result
-
-    def _create_containers_mob(self):
-        """Create circular node mobjects for the linked list.
-
-        Returns:
-            mn.VGroup: Group of circular node mobjects.
-        """
-
-        node = mn.Circle(
-            radius=self._radius,
-            color=self._container_color,
-            fill_color=self._fill_color,
-            fill_opacity=1,
-            stroke_width=self._radius * 7,
-        )
-        containers_mob = mn.VGroup(*[node.copy() for _ in range(len(self._data))])
-        containers_mob.arrange(buff=self._radius)
-
-        return containers_mob
-
-    def _create_and_pos_arrows_mob(self):
-        """Create and position arrow mobjects between nodes.
-
-        Returns:
-            mn.VGroup: Group of arrow mobjects connecting the nodes.
-        """
-
-        arrow_path = str(SVG_DIR / "arrows/radius_x10.svg")
-        arrow = mn.SVGMobject(
-            arrow_path,
-            width=self._radius,
-        )
-        arrows_mob = mn.VGroup()
-        for i in range(len(self._data) - 1):
-            new_arrow = arrow.copy()
-            new_arrow.next_to(self._containers_mob[i], buff=0)
-            arrows_mob.add(new_arrow)
-        return arrows_mob
-
-    def _create_frame_mob(self):
-        """Create frame mobject containing all linked list elements.
-
-        Returns:
-            mn.VGroup: Group containing containers, arrows, and pointers.
-        """
-        if self._pointers:
-            return mn.VGroup(
-                self._containers_mob,
-                self._arrows_mob,
-                self._pointers_top,
-                self._pointers_bottom,
-            )
-        else:
-            return mn.VGroup(
-                self._containers_mob,
-                self._arrows_mob,
-            )
-
-    def _rotate_frame(self) -> None:
-        """Rotate the entire linked list frame to match the specified direction."""
-
-        if not np.allclose(self._direction, mn.RIGHT):
-            angle = mn.angle_of_vector(self._direction)
-            self._frame_mob.rotate(
-                angle,
-                about_point=self._containers_mob[0].get_center(),
-            )
-
-    def _text_config(self):
-        return {
-            "font": self._font,
-            "weight": self._weight,
-            "color": self._text_color,
-        }
-
-    def _create_and_pos_values_mob(self):
-        """Create and position value text mobjects inside nodes.
-
-        Returns:
-            mn.VGroup: Group of value text mobjects positioned within nodes.
-        """
-
-        top_bottom_buff = self._radius / 2
-        ypgj_shift = self._radius / 16
-        max_size_test = (self._radius - top_bottom_buff) * 2
-        max_size_center = (self._radius - top_bottom_buff) * 2.5
-        max_size_shift = (self._radius - top_bottom_buff) * 2.2
-
-        # find base font_size
-        font_size = 10
-        test_mob = mn.Text("0", font_size=font_size)
-        while test_mob.height < max_size_test:
-            font_size += 1
-            test_mob = mn.Text("0", font_size=font_size)
-
-        values_mob = mn.VGroup(
-            *[
-                mn.Text(str(val), font_size=font_size, **self._text_config())
-                for val in self._data
-            ]
-        )
-
-        for i in range(len(self._data)):
-            val = str(self._data[i])
-            val_set = set(val)
-            mob = values_mob[i]
-            width = mob.width
-            container = self._containers_mob[i]
-
-            if len(val) == 1 and val in "0123456789":  # center alignment
-                mob.move_to(container)
-                continue
-
-            if val_set.issubset({'"', "'", "^", "`"}):  # top alignment
-                if width > max_size_shift:
-                    mob.scale_to_fit_width(max_size_shift)
-                mob.next_to(
-                    container.get_top(),
-                    direction=mn.DOWN,
-                    buff=top_bottom_buff,
-                )
-                continue
-
-            if val_set.issubset({"y", "p", "g", "j"}):  # down shift
-                if width > max_size_center:
-                    mob.scale_to_fit_width(max_size_center)
-                mob.move_to(container)
-                mob.shift(mn.DOWN * ypgj_shift)
-                continue
-
-            if val_set.issubset({".", ",", "_"}):  # bottom alignment
-                if width > max_size_shift:
-                    mob.scale_to_fit_width(max_size_shift)
-                mob.next_to(
-                    container.get_bottom(),
-                    direction=mn.UP,
-                    buff=top_bottom_buff,
-                )
-                continue
-
-            if width > max_size_center:
-                mob.scale_to_fit_width(max_size_center)
-            mob.move_to(container)
-
-        return values_mob
-
-    def update_value(
-        self,
-        scene: mn.Scene,
-        new_value: ListNode | None,
-        animate: bool = False,
-        run_time: float = 0.2,
-    ) -> None:
-        """Replace the linked list visualization with new nodes.
-
-        Args:
-            scene (mn.Scene): The Manim scene to play animations in.
-            new_value: New linked list head node.
-            animate (bool): If True, animates the transition using Transform.
-            run_time (float): Duration of animation if animate=True.
-        """
-
-        # checks
-        if not self._data and not new_value:
-            return
-
-        # new group
-        new_group = LinkedList(
-            head=new_value,
-            radius=self._radius,
-            direction=self._direction,
-            # --- containers colors ---
-            node_color=self._node_color,
-            fill_color=self._fill_color,
-            bg_color=self._bg_color,
-            # -- position --
-            vector=self._vector,
-            mob_center=self._mob_center,
-            align_left=self._align_left,
-            align_right=self._align_right,
-            align_top=self._align_top,
-            align_bottom=self._align_bottom,
-            align_screen=self._align_screen,
-            screen_buff=self._screen_buff,
-            # -- font --
-            font=self._font,
-            text_color=self._text_color,
-            weight=self._weight,
-            # ---- pointers ----
-            pointers=self._pointers,
-            # ---- kwargs ----
-            **self._parent_kwargs,
-        )
-
-        if self._anchor is not None:
-            if self._direction[0] >= 0:
-                left_idx = 0
-                right_idx = -1
-            else:
-                left_idx = -1
-                right_idx = 0
-
-            if np.array_equal(self._anchor, mn.LEFT):
-                self_left_node_center = self._containers_mob[left_idx].get_center()
-                new_left_node_center = new_group._containers_mob[left_idx].get_center()
-                shift_vector = self_left_node_center - new_left_node_center
-                new_group.shift(shift_vector)
-
-            elif np.array_equal(self._anchor, mn.RIGHT):
-                self_right_node_center = self._containers_mob[right_idx].get_center()
-                new_right_node_center = new_group._containers_mob[
-                    right_idx
-                ].get_center()
-                shift_vector = self_right_node_center - new_right_node_center
-                new_group.shift(shift_vector)
-
-        # restore colors
-        if new_value:
-            highlight_status = self._save_highlights_states()
-            self._preserve_highlights_states(new_group, highlight_status)
-
-        # add
-        if animate:
-            scene.play(mn.Transform(self, new_group), run_time=run_time)
-            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
-        else:
-            scene.remove(self)
-            self._update_internal_state(self.linked_list_to_list(new_value), new_group)
-            scene.add(self)
-
-    def append(
-        self,
-        scene: mn.Scene,
-        tail: "LinkedList",
-        animate: bool = False,
-        run_time: float = 0.2,
-    ) -> None:
-        """
-        Append another linked list to the end of this one in the scene.
-
-        Args:
-            scene: The Manim scene to play animations in.
-            tail: Linked list to append.
-            animate: Whether to animate the transition.
-            run_time: Animation duration if animate=True.
-        """
-
-        if not tail._data:
-            return
-
-        new_values = self._data + tail._data
-        scene.remove(tail)
-
-        new_value = LinkedList.create_linked_list(new_values)
-        self.update_value(
-            scene=scene,
-            new_value=new_value,
-            animate=animate,
-            run_time=run_time,
-        )
