@@ -50,6 +50,9 @@ class Example_selection_sort(mn.Scene):
         min_index = i
         k = i + 1
 
+        head = """
+        def selection_sort(arr: list[int]) -> list[int]:
+        """
         code = """
         length = len(arr)
 
@@ -73,43 +76,41 @@ class Example_selection_sort(mn.Scene):
 
         code_block = CodeBlock(
             code,
+            head=head,
             vector=mn.DOWN * 0.3 + mn.RIGHT * 2.6,
             font="Monospace",
         )
 
+        array = Array(
+            lambda: arr,
+            align_bottom=code_block,
+            vector=mn.LEFT * 4.4,
+            font_size=35,
+        )
+
         length_text = RelativeTextValue(
             ("length", lambda: length, mn.WHITE),
+            mob_center=array,
             align_top=code_block,
-            vector=mn.LEFT * 5,
         )
 
         i_text = RelativeTextValue(
             ("i", lambda: i, mn.RED),
-            mob_center=length_text,
-            align_left=length_text,
-            vector=mn.DOWN * 0.7,
-        )
-
-        min_text = RelativeTextValue(
-            ("min_index", lambda: min_index, mn.BLUE),
-            mob_center=i_text,
-            align_left=length_text,
-            vector=mn.DOWN * 0.7,
+            mob_center=array,
+            align_left=array,
+            vector=mn.UP * 2.2,
         )
 
         k_text = RelativeTextValue(
             ("k", lambda: k, mn.GREEN),
-            mob_center=min_text,
-            align_left=length_text,
-            vector=mn.DOWN * 0.7,
+            align_right=array,
+            align_bottom=i_text,
         )
 
-        array = Array(
-            lambda: arr,
-            mob_center=k_text,
-            align_bottom=code_block,
-            vector=mn.RIGHT * 1.2,
-            font_size=40,
+        min_text = RelativeTextValue(
+            ("min_index", lambda: min_index, mn.BLUE),
+            mob_center=array,
+            vector=mn.UP * 1.4,
         )
 
         # ======== PRE-CYCLE LOGIC =============
@@ -121,6 +122,15 @@ class Example_selection_sort(mn.Scene):
         code_block.highlight(0)
         length_text.first_appear(self)
         self.wait(pause)
+
+        # self.add(
+        #     length_text,
+        #     i_text,
+        #     min_text,
+        #     k_text,
+        # )
+
+        # grid(self)
 
         # ===== ALGORITHM CYCLE ==========
 
@@ -171,6 +181,7 @@ class Example_selection_sort(mn.Scene):
             ("return", lambda: arr, mn.ORANGE),
             mob_center=code_block,
             align_left=code_block,
+            font_size=35,
             vector=mn.DOWN * 3.0,
             equal_sign=False,
         )
@@ -1934,7 +1945,7 @@ class Example_array(mn.Scene):
             arr = [10, 2, 3000, 2, 100, 1, 40]
 
             title = RelativeText(
-                "highlight_containers_with_value()   pointers_on_value()",
+                "highlight_containers_with_value()\nhighlight_pointers_above_value()",
                 font_size=35,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
@@ -2127,6 +2138,8 @@ class Example_string(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
+        pause = 1
+
         def pyramid(self):
             s = "0agA-/*&.^`~"
             string = String(
@@ -2265,7 +2278,6 @@ class Example_string(mn.Scene):
             self.clear()
 
         def first_appear(self):
-            pause = 0.5
             s = "abc"
 
             title = RelativeText(
@@ -2288,42 +2300,19 @@ class Example_string(mn.Scene):
                 font_size=30,
             )
 
-            top_text.first_appear(self)
-            self.wait(pause)
-            string.first_appear(self)
-            self.wait(pause)
-            self.remove(string)
-            self.wait(pause)
+            def cycle(self, text):
+                nonlocal s
+                s = text
+                top_text.update_value(self)
+                self.wait(0.5)
+                string.update_value(self)
+                self.wait(pause)
 
-            s = '"ab"'
-            top_text.update_value(self)
-            self.wait(pause)
-            string.first_appear(self)
-            self.wait(pause)
-            self.remove(string)
-            self.wait(pause)
-
-            s = '"a"'
-            top_text.update_value(self)
-            self.wait(pause)
-            string.first_appear(self)
-            self.wait(pause)
-            self.remove(string)
-            self.wait(pause)
-
-            s = '""'
-            top_text.update_value(self)
-            self.wait(pause)
-            string.first_appear(self)
-            self.wait(pause)
-            self.remove(string)
-            self.wait(pause)
-
-            s = '"a"'
-            top_text.update_value(self)
-            self.wait(pause)
-            string.first_appear(self)
-            self.wait(1)
+            cycle(self, "abc")
+            cycle(self, "ab")
+            cycle(self, "a")
+            cycle(self, "")
+            cycle(self, "a")
 
             self.clear()
 
@@ -2342,7 +2331,7 @@ class Example_string(mn.Scene):
 
             string1 = String(
                 lambda: s,
-                # font_size=40,
+                pointers="both",
                 align_screen=mn.LEFT,
                 screen_buff=0.7,
             )
@@ -2350,42 +2339,36 @@ class Example_string(mn.Scene):
                 'pointers="both"',
                 font_size=30,
                 mob_center=string1,
-                # align_left=string1,
-                vector=mn.UP * 1,
+                vector=mn.UP * 1.3,
             )
 
             string2 = String(
                 lambda: s,
                 pointers="top",
-                # font_size=40,
                 vector=mn.LEFT * 1.8,
             )
             text2 = RelativeText(
                 'pointers="top"',
                 font_size=30,
                 mob_center=string2,
-                # align_left=string2,
-                vector=mn.DOWN * 1,
+                vector=mn.DOWN * 1.3,
             )
 
             string3 = String(
                 lambda: s,
                 pointers="bottom",
-                # font_size=40,
                 vector=mn.RIGHT * 1.8,
             )
             text3 = RelativeText(
                 'pointers="bottom"',
                 font_size=30,
                 mob_center=string3,
-                # align_left=string3,
-                vector=mn.UP * 1,
+                vector=mn.UP * 1.3,
             )
 
             string4 = String(
                 lambda: s,
                 pointers=None,
-                # font_size=40,
                 align_screen=mn.RIGHT,
                 screen_buff=0.7,
             )
@@ -2393,8 +2376,7 @@ class Example_string(mn.Scene):
                 "pointers=None",
                 font_size=30,
                 mob_center=string4,
-                # align_left=string4,
-                vector=mn.DOWN * 1,
+                vector=mn.DOWN * 1.3,
             )
 
             group_appear(
@@ -2653,11 +2635,11 @@ class Example_string(mn.Scene):
             )
             self.wait(2)
 
-            str_1.highlight_containers(0, 1, 2)
-            str_2.highlight_containers(0, 1, 2)
-            str_3.highlight_containers(0, 1, 2)
-            str_4.highlight_containers(0, 1, 2)
-            str_5.highlight_containers(0, 1, 2)
+            str_1.highlight_containers(0, 1, 2, 3)
+            str_2.highlight_containers(0, 1, 2, 3)
+            str_3.highlight_containers(0, 1, 2, 3)
+            str_4.highlight_containers(0, 1, 2, 3)
+            str_5.highlight_containers(0, 1, 2, 3)
             self.wait(pause)
 
             string = "12"
@@ -2818,7 +2800,7 @@ class Example_string(mn.Scene):
                 align_screen=mn.UP,
                 screen_buff=1,
             )
-            self.add(title)
+            title.first_appear(self)
 
             donor_val = [100, 100, 100, 100, 100]
             donor = Array(
@@ -2863,7 +2845,7 @@ class Example_string(mn.Scene):
                 align_screen=mn.DOWN,
                 screen_buff=1,
             )
-            self.add(func_text)
+            func_text.first_appear(self)
             self.wait(pause)
 
             donor_val = [10, 10, 10, 10, 10]
@@ -3059,32 +3041,32 @@ class Example_string(mn.Scene):
             s = "follow the rabbit"
             string = String(lambda: s)
             top_text = RelativeText(
-                "highlight_containers_with_value()   pointers_on_value()",
+                "highlight_containers_with_value()\nhighlight_pointers_above_value()",
                 vector=mn.UP * 2,
             )
             group_appear(self, string, top_text)
             self.wait(1)
 
             string.highlight_containers_with_value("f")
-            string.highlight_pointers_above_value("f")
+            string.highlight_pointers_above_value("f", pos=0)
             self.wait(pause)
             string.highlight_containers_with_value("t")
-            string.highlight_pointers_above_value("t")
+            string.highlight_pointers_above_value("t", pos=0)
             self.wait(pause)
             string.highlight_containers_with_value("a", color=mn.LIGHT_BROWN)
-            string.highlight_pointers_above_value("a", color=mn.LIGHT_BROWN)
+            string.highlight_pointers_above_value("a", color=mn.LIGHT_BROWN, pos=0)
             self.wait(pause)
             string.highlight_containers_with_value("b", color=mn.LIGHT_BROWN)
-            string.highlight_pointers_above_value("b", color=mn.LIGHT_BROWN)
+            string.highlight_pointers_above_value("b", color=mn.LIGHT_BROWN, pos=0)
             self.wait(pause)
             string.highlight_containers_with_value("l", color=mn.PURPLE)
-            string.highlight_pointers_above_value("l", color=mn.PURPLE)
+            string.highlight_pointers_above_value("l", color=mn.PURPLE, pos=0)
             self.wait(pause)
             string.highlight_containers_with_value("w", color=mn.PURPLE)
-            string.highlight_pointers_above_value("w", color=mn.PURPLE)
+            string.highlight_pointers_above_value("w", color=mn.PURPLE, pos=0)
             self.wait(pause)
             string.highlight_containers_with_value(" ", color=mn.PINK)
-            string.highlight_pointers_above_value(" ", color=mn.PINK)
+            string.highlight_pointers_above_value(" ", color=mn.PINK, pos=0)
             self.wait(1)
             self.clear()
 
@@ -3140,90 +3122,6 @@ class Example_string(mn.Scene):
 
             self.clear()
 
-        def mix(self):
-            pause = 0.5
-            s = "follow the rabbit"
-            string = String(lambda: s)
-            top_text = RelativeText(
-                "mix",
-                vector=mn.UP * 2,
-            )
-            group_appear(self, string, top_text)
-            self.wait(1)
-
-            string.highlight_containers(0, 2, 4)
-            string.highlight_pointers(0, 2, 4)
-            self.wait(pause)
-
-            s = "follow the"
-            string.update_value(
-                self,
-            )
-            string.clear_pointers_highlights(0)
-            string.highlight_pointers_above_value("f", color=mn.PINK)
-            string.highlight_containers_with_value("f", color=mn.PINK)
-            self.wait(pause)
-
-            s = "follow"
-            string.update_value(self)
-            string.clear_pointers_highlights(1)
-            string.highlight_containers(0, 2, 4)
-            string.highlight_pointers(0, 2, 4)
-            self.wait(pause)
-
-            s = ""
-            string.update_value(self, animate=True)
-            string.clear_pointers_highlights(0)
-            string.highlight_containers_with_value("b", color=mn.PINK)
-            string.highlight_pointers_above_value("b", color=mn.PINK)
-            self.wait(1)
-
-            s = "rabbit"
-            string.update_value(self, animate=True)
-            self.wait(1)
-
-            s = "rabbit"
-            string.update_value(self, animate=True)
-            string.highlight_containers_with_value("b", color=mn.PINK)
-            string.highlight_pointers_above_value("b", color=mn.PINK)
-            self.wait(1)
-
-            s = "white rabbit"
-            string.update_value(self, animate=True)
-            string.clear_pointers_highlights(1)
-            string.highlight_containers(0, 1, 2)
-            string.highlight_pointers(0, 1, 2)
-            self.wait(pause)
-
-            s = "rabbit white"
-            string.update_value(self, animate=True)
-            string.clear_pointers_highlights(0)
-            string.highlight_containers_with_value("t", color=mn.PINK)
-            string.highlight_pointers_above_value("t", color=mn.PINK)
-            self.wait(pause)
-
-            s = "rabbit the white"
-            string.update_value(self, animate=True)
-            string.clear_pointers_highlights(1)
-            string.highlight_containers(0, 2, 2)
-            string.highlight_pointers(0, 2, 2)
-            self.wait(pause)
-
-            s = "white the rabbit"
-            string.update_value(self, animate=True)
-            string.clear_pointers_highlights(0)
-            string.highlight_pointers_above_value(" ", color=mn.PINK)
-            string.highlight_containers_with_value(" ", color=mn.PINK)
-            self.wait(pause)
-
-            s = "rab follow rab"
-            string.update_value(self, animate=True)
-            string.highlight_containers(90, 90, 90)
-            string.highlight_pointers(90, 90, 90)
-            string.highlight_containers_with_value("a", color=mn.PINK)
-            string.highlight_pointers_above_value("a", color=mn.PINK)
-            self.wait(1)
-
         # ========== calls ==============
 
         pyramid(self)
@@ -3236,7 +3134,6 @@ class Example_string(mn.Scene):
         highlights_monocolor(self)
         highlight_on_value(self)
         pointers_on_values(self)
-        mix(self)
 
         # ========== finish ==============
 
@@ -3249,9 +3146,9 @@ class Example_linked_list(mn.Scene):
         self.camera.background_color = mn.GREY  # type: ignore
 
         cll = LinkedList.create_linked_list
+        pause = 1
 
         def positioning(self):
-            pause = 1
 
             center = Array(lambda: list("mob_center"), font_size=40)
             center.first_appear(self)
@@ -3377,17 +3274,331 @@ class Example_linked_list(mn.Scene):
             self.wait(pause)
             self.clear()
 
+        def pointers(self):
+
+            ln = cll([1, 2, 3])
+
+            title = RelativeText(
+                "pointers param",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            s = "both"
+            p_text = RelativeTextValue(
+                ("pointers", lambda: s, mn.WHITE),
+                font_size=30,
+                align_screen=mn.UP,
+                screen_buff=0.5,
+            )
+            p_text.first_appear(self)
+            self.wait(pause)
+
+            ll1 = LinkedList(
+                lambda: ln,
+                pointers="both",
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+
+            text1 = RelativeText(
+                "direction=mn.RIGHT",
+                font_size=30,
+                mob_center=ll1,
+                align_left=ll1,
+                vector=mn.UP * 2,
+            )
+            group_appear(self, ll1, text1)
+            self.wait(pause)
+
+            ll2 = LinkedList(
+                lambda: ln,
+                pointers="both",
+                direction=mn.UP,
+                vector=mn.LEFT * 1,
+            )
+            text2 = RelativeText(
+                "direction=mn.UP",
+                font_size=30,
+                align_bottom=text1,
+                align_left=ll2,
+            )
+            group_appear(self, ll2, text2)
+            self.wait(pause)
+
+            ll3 = LinkedList(
+                lambda: ln,
+                pointers="both",
+                direction=mn.DOWN,
+                vector=mn.RIGHT * 3,
+            )
+            text3 = RelativeText(
+                "direction=mn.DOWN",
+                font_size=30,
+                align_bottom=text1,
+                align_left=ll3,
+            )
+            group_appear(self, ll3, text3)
+            self.wait(pause)
+
+            ll1.highlight_pointers(0, 1, 2)
+            ll1.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll2.highlight_pointers(0, 1, 2)
+            ll2.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll3.highlight_pointers(0, 1, 2)
+            ll3.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.remove(
+                ll1,
+                ll2,
+                ll3,
+            )
+            self.wait(pause)
+
+            s = "top"
+            p_text.update_value(self)
+            self.wait(pause)
+
+            ll1 = LinkedList(
+                lambda: ln,
+                pointers="top",
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            ll1.first_appear(self)
+            self.wait(pause)
+
+            ll2 = LinkedList(
+                lambda: ln,
+                pointers="top",
+                direction=mn.UP,
+                vector=mn.LEFT * 1,
+            )
+            ll2.first_appear(self)
+            self.wait(pause)
+
+            ll3 = LinkedList(
+                lambda: ln,
+                pointers="top",
+                direction=mn.DOWN,
+                vector=mn.RIGHT * 3,
+            )
+            ll3.first_appear(self)
+            self.wait(pause)
+
+            ll1.highlight_pointers(0, 1, 2)
+            ll1.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll2.highlight_pointers(0, 1, 2)
+            ll2.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll3.highlight_pointers(0, 1, 2)
+            ll3.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.remove(
+                ll1,
+                ll2,
+                ll3,
+            )
+            self.wait(pause)
+
+            s = "bottom"
+            p_text.update_value(self)
+            self.wait(pause)
+
+            ll1 = LinkedList(
+                lambda: ln,
+                pointers="bottom",
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            ll1.first_appear(self)
+            self.wait(pause)
+
+            ll2 = LinkedList(
+                lambda: ln,
+                pointers="bottom",
+                direction=mn.UP,
+                vector=mn.LEFT * 1,
+            )
+            ll2.first_appear(self)
+            self.wait(pause)
+
+            ll3 = LinkedList(
+                lambda: ln,
+                pointers="bottom",
+                direction=mn.DOWN,
+                vector=mn.RIGHT * 3,
+            )
+            ll3.first_appear(self)
+            self.wait(pause)
+
+            ll1.highlight_pointers(0, 1, 2)
+            ll1.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll2.highlight_pointers(0, 1, 2)
+            ll2.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll3.highlight_pointers(0, 1, 2)
+            ll3.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.remove(
+                ll1,
+                ll2,
+                ll3,
+            )
+            self.wait(pause)
+
+            s = "None"
+            p_text.update_value(self)
+            self.wait(pause)
+
+            ll1 = LinkedList(
+                lambda: ln,
+                pointers=None,
+                align_screen=mn.LEFT,
+                screen_buff=0.5,
+            )
+            ll1.first_appear(self)
+            self.wait(pause)
+
+            ll2 = LinkedList(
+                lambda: ln,
+                pointers=None,
+                direction=mn.UP,
+                vector=mn.LEFT * 1,
+            )
+            ll2.first_appear(self)
+            self.wait(pause)
+
+            ll3 = LinkedList(
+                lambda: ln,
+                pointers=None,
+                direction=mn.DOWN,
+                vector=mn.RIGHT * 3,
+            )
+            ll3.first_appear(self)
+            self.wait(pause)
+
+            ll1.highlight_pointers(0, 1, 2)
+            ll1.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll2.highlight_pointers(0, 1, 2)
+            ll2.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            ll3.highlight_pointers(0, 1, 2)
+            ll3.highlight_pointers(1, pos=1, color_1=mn.PINK)
+            self.wait(1)
+
+            self.wait(1)
+            self.clear()
+
+        def highlights(self):
+            pause = 1
+
+            title = RelativeText(
+                "pointers_mode param; highlight_containers(); higlight_pointers()",
+                font_size=30,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            command_text = RelativeText(
+                "pointers_mode = 3",
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.2,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            ll = LinkedList(
+                lambda: cll([0, 0, 0, 0, 0]),
+            )
+            ll.first_appear(self)
+            self.wait(1)
+
+            indices = ()
+
+            param_text = RelativeTextValue(
+                ("indices_param", lambda: indices, mn.WHITE),
+                font_size=35,
+                mob_center=ll,
+                align_left=ll,
+                vector=mn.DOWN * 1.5,
+            )
+
+            def cycle(
+                scene: mn.Scene,
+                text: RelativeTextValue,
+                new_indices,
+            ):
+                nonlocal indices
+                indices = new_indices
+                text.update_value(scene, animate=False)
+                ll.highlight_containers(*new_indices)
+                ll.highlight_pointers(*new_indices)
+                self.wait(pause)
+
+            cycle(self, param_text, (0, 1, 2))
+            cycle(self, param_text, (0, 0, 2))
+            cycle(self, param_text, (0, 2, 2))
+            cycle(self, param_text, (1, 2, 1))
+            cycle(self, param_text, (1, 1, 1))
+
+            ll.clear_containers_highlights()
+            ll.clear_pointers_highlights()
+            self.remove(command_text, ll, param_text)
+            self.wait(1)
+
+            command_text = RelativeText(
+                "pointers_mode = 5",
+                font_size=35,
+                mob_center=title,
+                vector=mn.DOWN * 1.2,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            ll = LinkedList(
+                lambda: cll([0, 0, 0, 0, 0]),
+                pointers_mode=5,
+            )
+            ll.first_appear(self)
+            self.wait(1)
+
+            cycle(self, param_text, (0, 1, 2, 3, 4))
+            cycle(self, param_text, (0, 0, 2, 2, 5))
+            cycle(self, param_text, (0, 0, 0, 2, 2))
+            cycle(self, param_text, (0, 0, 0, 0))
+            cycle(self, param_text, (0, 0, 0, 0, 0))
+            cycle(self, param_text, (0, 0, 2, 3, 4))
+            cycle(self, param_text, (0, 1, 0, 3, 4))
+            cycle(self, param_text, (0, 1, 2, 0, 4))
+            cycle(self, param_text, (0, 1, 2, 3, 0))
+            cycle(self, param_text, (0, 1, 1, 3, 4))
+            cycle(self, param_text, (0, 1, 2, 1, 4))
+            cycle(self, param_text, (0, 1, 2, 3, 1))
+            cycle(self, param_text, (0, 1, 2, 2, 4))
+            cycle(self, param_text, (0, 1, 2, 3, 2))
+            cycle(self, param_text, (0, 1, 2, 3, 3))
+            cycle(self, param_text, (0, 1, 2, 3, 4))
+
+            self.wait(1)
+            self.remove(title)
+            ll.clear_pointers_highlights(0)
+            ll.clear_containers_highlights()
+
+            self.clear()
+
         def rotation(self):
             pause = 0.3
-            cll = LinkedList.create_linked_list
-
-            mob_center = Array(lambda: list("mob_center"), vector=mn.UP * 3)
-            mob_center.first_appear(self)
 
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
             )
             ll.appear(self)
             ll.highlight_pointers(0, 1, 2)
@@ -3396,8 +3607,6 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
                 direction=np.array([10, -10, 0]),
             )
             ll.appear(self)
@@ -3407,8 +3616,6 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
                 direction=np.array([0, -10, 0]),
             )
             ll.appear(self)
@@ -3418,8 +3625,6 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
                 direction=np.array([-10, -10, 0]),
             )
             ll.appear(self)
@@ -3429,8 +3634,6 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
                 direction=np.array([-10, 0, 0]),
             )
             ll.appear(self)
@@ -3440,8 +3643,6 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
                 direction=np.array([-10, 10, 0]),
             )
             ll.appear(self)
@@ -3451,8 +3652,6 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
                 direction=np.array([0, 10, 0]),
             )
             ll.appear(self)
@@ -3462,8 +3661,6 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
                 direction=np.array([10, 10, 0]),
             )
             ll.appear(self)
@@ -3473,24 +3670,36 @@ class Example_linked_list(mn.Scene):
             self.remove(ll)
             ll = LinkedList(
                 lambda: cll([0, 1, 2]),
-                mob_center=mob_center,
-                vector=mn.DOWN * 3.5,
             )
             ll.appear(self)
             ll.highlight_pointers(0, 1, 2)
             self.wait(1)
             self.remove(ll)
 
+            self.wait(1)
+            self.clear()
+
+        def alignment(self):
+
             # ======== left | right alignment ============
+
+            mob_center = Array(
+                lambda: list("mob_center"),
+                vector=mn.UP * 3,
+                font_size=35,
+            )
+            mob_center.first_appear(self)
 
             ll1 = LinkedList(
                 lambda: cll([0, 1, 2]),
+                radius=0.3,
                 mob_center=mob_center,
                 align_right=mob_center,
                 vector=mn.DOWN * 2,
             )
             ll2 = LinkedList(
                 lambda: cll([0, 1, 2]),
+                radius=0.3,
                 mob_center=mob_center,
                 align_left=mob_center,
                 vector=mn.DOWN * 2,
@@ -3500,13 +3709,13 @@ class Example_linked_list(mn.Scene):
                 "mob_center=mob_center\nalign_right=mob_center\nvector=mn.DOWN * 2",
                 mob_center=ll1,
                 align_left=ll1,
-                vector=mn.DOWN * 2,
+                vector=mn.DOWN * 2 + mn.LEFT * 0.5,
             )
             rt2 = RelativeText(
                 "mob_center=mob_center\nalign_left=mob_center\nvector=mn.DOWN * 2",
                 mob_center=ll2,
                 align_right=ll2,
-                vector=mn.DOWN * 2,
+                vector=mn.DOWN * 2 + mn.RIGHT * 0.5,
             )
 
             self.play(
@@ -3550,13 +3759,12 @@ class Example_linked_list(mn.Scene):
                 "mob_center=mob_center\nalign_top=mob_center\nvector=mn.LEFT * 5.3",
                 align_left=mob_center,
                 align_bottom=ll1,
-                vector=mn.ORIGIN,
+                vector=mn.UP * 0.3,
             )
             rt2 = RelativeText(
                 "mob_center=mob_center\nalign_bottom=mob_center\nvector=mn.RIGHT * 5.3",
                 align_right=mob_center,
                 align_top=ll2,
-                vector=mn.ORIGIN,
             )
 
             self.play(
@@ -3579,12 +3787,12 @@ class Example_linked_list(mn.Scene):
                 lambda: ln,
                 direction=np.array([10, 2, 0]),
                 vector=mn.DOWN * 1,
-                anchor=mn.LEFT,
+                anchor="start",
             )
             ll.highlight_containers(0, 2, 4)
             ll.highlight_pointers(0, 2, 4)
             rt = RelativeText(
-                "anchor=mn.LEFT\ndirection=np.array([10, 2, 0])\nupdate_value()",
+                "anchor='start'\ndirection=np.array([10, 2, 0])\nupdate_value()",
                 align_left=ll,
                 vector=mn.UP * 3,
             )
@@ -3627,12 +3835,12 @@ class Example_linked_list(mn.Scene):
                 lambda: ln,
                 direction=np.array([10, 2, 0]),
                 vector=mn.DOWN * 1,
-                anchor=mn.RIGHT,
+                anchor="end",
             )
             ll.highlight_containers(0, 2, 4)
             ll.highlight_pointers(0, 2, 4)
             rt = RelativeText(
-                "anchor=mn.RIGHT\ndirection=np.array([10, 2, 0])\nupdate_value()",
+                "anchor='end'\ndirection=np.array([10, 2, 0])\nupdate_value()",
                 align_left=ll,
                 vector=mn.UP * 3,
             )
@@ -3675,12 +3883,12 @@ class Example_linked_list(mn.Scene):
                 lambda: ln,
                 direction=np.array([-10, -2, 0]),
                 vector=mn.DOWN * 1,
-                anchor=mn.RIGHT,
+                anchor="end",
             )
             ll.highlight_containers(0, 2, 4)
             ll.highlight_pointers(0, 2, 4)
             rt = RelativeText(
-                "anchor=mn.RIGHT\ndirection=np.array([-10, -2, 0])\nupdate_value()",
+                "anchor='end'\ndirection=np.array([-10, -2, 0])\nupdate_value()",
                 align_left=ll,
                 vector=mn.UP * 3,
             )
@@ -3771,7 +3979,7 @@ class Example_linked_list(mn.Scene):
                 # vector=mn.LEFT * 4.8,
             )
             rt = RelativeText(
-                "pointers()   highlight_containers()",
+                "highlight_pointers()   highlight_containers()",
                 mob_center=lln,
                 vector=mn.UP * 2,
             )
@@ -3813,7 +4021,7 @@ class Example_linked_list(mn.Scene):
                 lambda: ln,
             )
             rt = RelativeText(
-                "pointers()   highlight_containers_monocolor()",
+                "highlight_containers_monocolor()",
                 mob_center=lln,
                 vector=mn.UP * 2,
             )
@@ -3840,66 +4048,69 @@ class Example_linked_list(mn.Scene):
             ll.first_appear(self)
 
             rt = RelativeText(
-                "highlight_containers_with_value()   pointers_on_value()",
+                "highlight_containers_with_value()   highlight_pointers_above_value()",
                 vector=mn.UP * 2,
             )
             rt.first_appear(self)
             self.wait(pause)
 
             ll.highlight_containers_with_value(2)
-            ll.highlight_pointers_above_value(2)
+            ll.highlight_pointers_above_value(2, pos=0)
             self.wait(pause)
 
             ln = cll([22, 0, 22, 0, 22, 0])
             ll.update_value(self)
             ll.highlight_containers_with_value(0)
-            ll.highlight_pointers_above_value(0)
+            ll.highlight_pointers_above_value(0, pos=0)
             self.wait(pause)
 
             ln = cll([0, 22, 0, 22, 0, 22])
             ll.update_value(self)
             ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-            ll.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN)
+            ll.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN, pos=0)
             self.wait(pause)
 
             ln = cll([22, 0, 22, 0, 22, 0])
             ll.update_value(self, animate=True)
             ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-            ll.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN)
+            ll.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN, pos=0)
             self.wait(pause)
 
             ln = cll([0, 22, 0, 22, 0, 22])
             ll.update_value(self)
             ll.update_value(self, animate=True)
             ll.highlight_containers_with_value(0, color=mn.PURPLE)
-            ll.highlight_pointers_above_value(0, color=mn.PURPLE)
+            ll.highlight_pointers_above_value(0, color=mn.PURPLE, pos=0)
             self.wait(pause)
 
             ln = cll([22, 0, 22, 0, 22])
             ll.update_value(self)
             ll.update_value(self, animate=True)
             ll.highlight_containers_with_value(0, color=mn.PURPLE)
-            ll.highlight_pointers_above_value(0, color=mn.PURPLE)
+            ll.highlight_pointers_above_value(0, color=mn.PURPLE, pos=0)
             self.wait(pause)
 
             ln = cll([0, 22, 0, 22, 0, 22])
             ll.update_value(self)
             ll.update_value(self, animate=True)
             ll.highlight_containers_with_value(0, color=mn.PINK)
-            ll.highlight_pointers_above_value(0, color=mn.PINK)
+            ll.highlight_pointers_above_value(0, color=mn.PINK, pos=0)
             self.wait(pause)
 
             ln = cll([22, 0, 22, 0, 22])
             ll.update_value(self)
             ll.update_value(self, animate=True)
             ll.highlight_containers_with_value(0, color=mn.PINK)
-            ll.highlight_pointers_above_value(0, color=mn.PINK)
+            ll.highlight_pointers_above_value(0, color=mn.PINK, pos=0)
             self.wait(1)
 
         # ========== calls ==============
 
         positioning(self)
+        pointers(self)
+        highlights(self)
         rotation(self)
+        alignment(self)
         updatevalue(self)
         highlights_1to3(self)
         highlights_monocolor(self)
@@ -4129,11 +4340,9 @@ class Example_code_block_lense(mn.Scene):
                 vector=mn.UP * 3.2 + mn.LEFT * 5.5,
                 font_size=30,
             )
-            title.first_appear(scene)
 
             def cycle(
                 scene: mn.Scene,
-                code_block: CodeBlockLense,
                 title: mn.Mobject,
                 *indices: int,
                 pre: bool = False,
@@ -4146,43 +4355,43 @@ class Example_code_block_lense(mn.Scene):
                 param = new_param
                 title.update_value(scene, animate=False)
                 if not pre:
-                    code_block.highlight(*indices)
+                    cb.highlight(*indices)
                 else:
-                    code_block.highlight(*indices, pre=True)
+                    cb.highlight(*indices, pre=True)
                 scene.wait(1)
 
-            cycle(scene, cb, title, 0)
+            cycle(scene, title, 0)
 
-            cycle(scene, cb, title, 2)
-            cycle(scene, cb, title, 3)
-            cycle(scene, cb, title, 4)
-            cycle(scene, cb, title, 5)
-            cycle(scene, cb, title, 6)
+            cycle(scene, title, 2)
+            cycle(scene, title, 3)
+            cycle(scene, title, 4)
+            cycle(scene, title, 5)
+            cycle(scene, title, 6)
 
-            cycle(scene, cb, title, 8)
-            cycle(scene, cb, title, 9)
-            cycle(scene, cb, title, 10)
+            cycle(scene, title, 8)
+            cycle(scene, title, 9)
+            cycle(scene, title, 10)
 
-            cycle(scene, cb, title, 12, 13)
-            cycle(scene, cb, title, 14)
-            cycle(scene, cb, title, 15)
-            cycle(scene, cb, title, 16)
+            cycle(scene, title, 12, 13)
+            cycle(scene, title, 14)
+            cycle(scene, title, 15)
+            cycle(scene, title, 16)
 
-            cycle(scene, cb, title, 18, 19, 20)
-            cycle(scene, cb, title, 21, 22)
-            cycle(scene, cb, title, 23)
+            cycle(scene, title, 18, 19, 20)
+            cycle(scene, title, 21, 22)
+            cycle(scene, title, 23)
 
-            cycle(scene, cb, title, 24, 25)
-            cycle(scene, cb, title, 26, 27)
+            cycle(scene, title, 24, 25)
+            cycle(scene, title, 26, 27)
 
-            cycle(scene, cb, title, 29)
-            cycle(scene, cb, title, 30)
-            cycle(scene, cb, title)
-            cycle(scene, cb, title, 32)
+            cycle(scene, title, 29)
+            cycle(scene, title, 30)
+            cycle(scene, title)
+            cycle(scene, title, 32)
 
-            cycle(scene, cb, title, 34, pre=True)
-            cycle(scene, cb, title, 35, 36, pre=True)
-            cycle(scene, cb, title, 35, 36)
+            cycle(scene, title, 34, pre=True)
+            cycle(scene, title, 35, 36, pre=True)
+            cycle(scene, title, 35, 36)
 
             scene.remove(cb)
             scene.wait(0.5)
