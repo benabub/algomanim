@@ -291,3 +291,19 @@ class AlgoManimBase(mn.VGroup):
             scene: The Manim scene to clean up.
         """
         scene.mobjects = [mob for mob in scene.mobjects if type(mob) is not mn.Mobject]
+
+    @staticmethod
+    def _print_scene(scene):
+        """Print all tracked scene mobjects with their indices.
+
+        Iterates through the current scene hierarchy and outputs the string
+        representation of each element to the terminal for debugging.
+
+        Args:
+            scene: The Manim scene to inspect.
+        """
+        count = 0
+        print("scene mobjects:")
+        for mob in scene.mobjects:
+            count += 1
+            print(f"    {count}: {mob}")
