@@ -430,13 +430,8 @@ class LinkedList(LinearContainerStructure, NodeStructure):
         Replaces the current instance with a newly created one if the data has changed.
         Preserves highlights and alignment. Does not add to scene.
         """
-
         new_instance = self._create_new_instance()
-
-        # replace self
-        self.become(new_instance)
-        head = self._callable() if self._callable is not None else None
-        self._update_internal_state(self.linked_list_to_list(head), new_instance)
+        self._update_internal_state(new_instance)
 
     def update_value(
         self,
