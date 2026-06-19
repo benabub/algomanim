@@ -210,3 +210,27 @@ class RectangleCellsStructure(LinearContainerStructure):
                 continue
             else:
                 mob.scale_to_fit_width(width_limit)
+
+    def _update_internal_state(
+        self,
+        new_value,
+        new_group: "RectangleCellsStructure",
+    ):
+        """Update internal state with data from a new group.
+
+        Args:
+            new_value: New data value to store.
+            new_group (LinearContainerStructure): New group to copy state from.
+        """
+
+        print("DANGER !!! LinearContainer _update_internal_state called!!!")
+
+        self._data = new_value
+        self._containers_mob = new_group._containers_mob
+        self._values_mob = new_group._values_mob
+        self.submobjects = new_group.submobjects
+
+        if hasattr(self, "_pointers") and not self._pointers:
+            return
+        self._pointers_top = new_group._pointers_top
+        self._pointers_bottom = new_group._pointers_bottom
