@@ -790,6 +790,18 @@ class LinearContainerStructure(AlgoManimBase):
 
         self._containers_colors = {}
 
+        # ------- logs --------
+
+        print(f"highlight_containers_with_value: id(self)={id(self)}")
+        print(f"highlight_containers_with_value: self._data={self._data}")
+        print(
+            f"highlight_containers_with_value: id(self._containers_mob)={id(getattr(self, '_containers_mob', None))}"
+        )
+        if hasattr(self, "_containers_mob"):
+            print(
+                f"highlight_containers_with_value: containers ids={[id(c) for c in self._containers_mob]}"
+            )
+
         # ------- validation --------
         if not self._data:
             return
