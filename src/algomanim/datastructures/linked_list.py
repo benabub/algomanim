@@ -98,7 +98,10 @@ class LinkedList(LinearContainerStructure, NodeStructure):
         # create class instance fields
         self._callable = value
 
-        self._data = self.linked_list_to_list(value() if value is not None else None)
+        if value is not None:
+            self._data = self.linked_list_to_list(value())
+        else:
+            self._data = []
 
         self._radius = radius
         # ---- direction ----
@@ -186,7 +189,7 @@ class LinkedList(LinearContainerStructure, NodeStructure):
             font_size=40,
             font=self._font,
             weight=self._weight,
-            color=mn.BLACK,
+            color=mn.WHITE,
         )
         self._empty_value_mob.scale_to_fit_width(max_size_center)
         self._empty_value_mob.move_to(self._containers_mob)
@@ -357,9 +360,69 @@ class LinkedList(LinearContainerStructure, NodeStructure):
 
         # preserve highlights
         highlight_status = self._save_highlights_states()
-        self._preserve_highlights_states(new_instance, highlight_status)
+        if new_instance._data:
+            self._preserve_highlights_states(new_instance, highlight_status)
 
         return new_instance
+
+    def _update_internal_state(
+        self,
+        new_instance: "LinkedList",
+    ) -> None:
+        """Update the current instance with data from a new instance.
+
+        Copies data, mobject references, and highlight states from the new instance.
+        Highlights are preserved and reapplied to the updated containers.
+
+        Args:
+            new_instance: The instance to copy state from.
+        """
+        # save highlight rules before overwriting state
+        old_containers_colors = (
+            self._containers_colors.copy()
+            if hasattr(self, "_containers_colors")
+            else {}
+        )
+        old_top_colors = (
+            self._top_pointers_colors.copy()
+            if hasattr(self, "_top_pointers_colors")
+            else {}
+        )
+        old_bottom_colors = (
+            self._bottom_pointers_colors.copy()
+            if hasattr(self, "_bottom_pointers_colors")
+            else {}
+        )
+
+        # sync raw data and closures
+        self._data = new_instance._data.copy()
+        self._callable = new_instance._callable
+
+        # transfer references to sub-mobject groups
+        if hasattr(new_instance, "_containers_mob"):
+            self._containers_mob = new_instance._containers_mob
+        if hasattr(new_instance, "_arrows_mob"):
+            self._arrows_mob = new_instance._arrows_mob
+        if hasattr(new_instance, "_values_mob"):
+            self._values_mob = new_instance._values_mob
+        if hasattr(new_instance, "_pointers_top"):
+            self._pointers_top = new_instance._pointers_top
+        if hasattr(new_instance, "_pointers_bottom"):
+            self._pointers_bottom = new_instance._pointers_bottom
+
+        # restore and apply highlights
+        self._containers_colors = old_containers_colors
+        self._top_pointers_colors = old_top_colors
+        self._bottom_pointers_colors = old_bottom_colors
+
+        if self._data:
+            self._apply_containers_colors()
+            if hasattr(self, "_pointers") and self._pointers:
+                self._apply_pointers_colors(0)
+                self._apply_pointers_colors(1)
+
+        # sync pure geometry hierarchy
+        self.submobjects = new_instance.submobjects.copy()
 
     def _set_new_value(self) -> None:
         """Update internal data from callable without scene animation.
