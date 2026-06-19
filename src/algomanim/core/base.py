@@ -279,3 +279,15 @@ class AlgoManimBase(mn.VGroup):
 
         # readd object to make it above the glow
         scene.add(self)
+
+    @staticmethod
+    def _clear_scene(scene):
+        """Remove empty utility mobjects from the scene.
+
+        Filters out raw mobjects that accumulate as artifacts after animations,
+        preventing memory leaks and maintaining rendering performance.
+
+        Args:
+            scene: The Manim scene to clean up.
+        """
+        scene.mobjects = [mob for mob in scene.mobjects if type(mob) is not mn.Mobject]
