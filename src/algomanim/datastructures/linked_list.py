@@ -436,38 +436,32 @@ class LinkedList(LinearContainerStructure, NodeStructure):
     def update_value(
         self,
         scene: mn.Scene,
-        animate: bool = False,
-        run_time: float = 0.2,
+        animate: bool = True,
+        update_time: float = 0.2,
     ) -> None:
         """Replace the linked list visualization with new nodes.
 
         Args:
-            scene (mn.Scene): The Manim scene to play animations in.
-            new_value: New linked list head node.
-            animate (bool): If True, animates the transition using Transform.
-            run_time (float): Duration of animation if animate=True.
+            scene: The Manim scene to play animations in.
+            animate: If True, plays a fade transition. If False, updates instantly.
+            update_time: Duration of the fade transition if animate=True.
         """
-
-        # validation
-        if not self._data and (self._callable is None or not self._callable()):
-            return
-
-        # new group
         new_instance = self._create_new_instance()
 
-        # add
-        if self._callable is not None:
-            if animate:
-                scene.play(mn.Transform(self, new_instance), run_time=run_time)
-                self._update_internal_state(
-                    self.linked_list_to_list(self._callable()), new_instance
-                )
-            else:
-                scene.remove(self)
-                self._update_internal_state(
-                    self.linked_list_to_list(self._callable()), new_instance
-                )
-                scene.add(self)
+        if animate:
+            scene.play(
+                mn.FadeOut(self),
+                mn.FadeIn(new_instance),
+                run_time=update_time,
+            )
+
+        scene.remove(self)
+        scene.remove(new_instance)
+
+        self._update_internal_state(new_instance)
+
+        scene.add(self)
+        self._clear_scene(scene)
 
     def append(
         self,
