@@ -468,30 +468,42 @@ class LinkedList(LinearContainerStructure, NodeStructure):
         scene: mn.Scene,
         tail: "LinkedList",
         animate: bool = False,
-        run_time: float = 0.2,
+        update_time: float = 0.2,
     ) -> None:
-        """
-        Append another linked list to the end of this one in the scene.
+        """Append another linked list to the end of this one in the scene.
 
         Args:
             scene: The Manim scene to play animations in.
             tail: Linked list to append.
             animate: Whether to animate the transition.
-            run_time: Animation duration if animate=True.
+            update_time: Animation duration if animate=True.
         """
-
         if not tail._data:
             return
 
-        new_values = self._data + tail._data
+        self._data = self._data + tail._data
+
+        # Capture current data snapshot to avoid closure bug
+        current_data = self._data.copy()
+        self._callable = lambda: LinkedList.create_linked_list(current_data)
+
+        new_instance = self._create_new_instance()
         scene.remove(tail)
 
-        self._callable = lambda: LinkedList.create_linked_list(new_values)
-        self.update_value(
-            scene=scene,
-            animate=animate,
-            run_time=run_time,
-        )
+        if animate:
+            scene.play(
+                mn.FadeOut(self),
+                mn.FadeIn(new_instance),
+                run_time=update_time,
+            )
+
+        scene.remove(self)
+        scene.remove(new_instance)
+
+        self._update_internal_state(new_instance)
+
+        scene.add(self)
+        self._clear_scene(scene)
 
     @staticmethod
     def create_linked_list(value: list) -> ListNode | None:
