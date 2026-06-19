@@ -2315,6 +2315,9 @@ class Example_string(mn.Scene):
             self.clear()
 
         def first_appear(self):
+
+            from typing import cast, Callable
+
             s = "abc"
 
             title = RelativeText(
@@ -2327,30 +2330,59 @@ class Example_string(mn.Scene):
             title.first_appear(self)
 
             string = String(
-                lambda: s,
+                cast(Callable[[], str], lambda: s),
                 font_size=40,
             )
-            top_text = RelativeTextValue(
-                ("string", lambda: s, mn.WHITE),
-                mob_center=string,
-                vector=mn.UP * 1.5,
-                font_size=30,
+            string.first_appear(self)
+            self.wait(1.5)
+            self.remove(string)
+
+            def cycle(
+                self,
+                text: str,
+            ):
+                top_text = RelativeText(
+                    text,
+                    mob_center=string,
+                    vector=mn.UP * 1.5,
+                    font_size=30,
+                )
+                top_text.first_appear(self, hl_time=0.5)
+                string.first_appear(self)
+                self.wait(1.5)
+                self.remove(string, top_text)
+                self.wait(0.5)
+
+            s = "ab"
+            cycle(self, "s = 'ab'")
+
+            s = ""
+            cycle(self, "s = ''")
+
+            s = "abc"
+            cycle(self, "s = 'abc'")
+
+            string.highlight_containers(0, 1, 2)
+            string.highlight_pointers(0, 1, 2)
+            cycle(
+                self,
+                "string.highlight_containers(0,1,2)\nstring.highlight_pointers(0,1,2)",
             )
 
-            def cycle(self, text):
-                nonlocal s
-                s = text
-                top_text.update_value(self)
-                self.wait(0.5)
-                string.update_value(self)
-                self.wait(pause)
+            s = ""
+            cycle(self, "s = ''")
 
-            cycle(self, "abc")
-            cycle(self, "ab")
-            cycle(self, "a")
-            cycle(self, "")
-            cycle(self, "a")
+            s = "abc"
+            cycle(self, "s = 'abc'")
 
+            string.clear_containers_highlights()
+            string.clear_pointers_highlights()
+            cycle(
+                self,
+                "string.clear_containers_highlights()\nstring.clear_pointers_highlights()",
+            )
+
+            self.wait(pause)
             self.clear()
 
         def pointers(self):
@@ -2583,7 +2615,7 @@ class Example_string(mn.Scene):
             self.wait(pause)
             self.clear()
 
-        def updatevalue(self):
+        def update_value(self):
             pause = 0.5
             center = String(lambda: "mob_center", font_size=50)
             text_title = RelativeText(
@@ -2594,23 +2626,23 @@ class Example_string(mn.Scene):
             )
             group_appear(self, center, text_title)
 
-            string = "123"
+            s = "123"
             str_1 = String(
-                lambda: string,
+                lambda: s,
                 mob_center=center,
                 vector=mn.UP * 1.5,
                 anchor=None,
                 pointers=None,
             )
             str_2 = String(
-                lambda: string,
+                lambda: s,
                 mob_center=str_1,
                 vector=mn.UP * 0.7,
                 anchor="end",
                 pointers=None,
             )
             str_3 = String(
-                lambda: string,
+                lambda: s,
                 mob_center=str_2,
                 vector=mn.UP * 0.7,
                 anchor="start",
@@ -2631,13 +2663,13 @@ class Example_string(mn.Scene):
             )
 
             str_4 = String(
-                lambda: string,
+                lambda: s,
                 align_left=center,
                 vector=mn.DOWN * 1.5,
                 pointers=None,
             )
             str_5 = String(
-                lambda: string,
+                lambda: s,
                 align_right=center,
                 vector=mn.DOWN * 1.5,
                 pointers=None,
@@ -2672,68 +2704,33 @@ class Example_string(mn.Scene):
             )
             self.wait(2)
 
-            str_1.highlight_containers(0, 1, 2, 3)
-            str_2.highlight_containers(0, 1, 2, 3)
-            str_3.highlight_containers(0, 1, 2, 3)
-            str_4.highlight_containers(0, 1, 2, 3)
-            str_5.highlight_containers(0, 1, 2, 3)
-            self.wait(pause)
+            def highlight_containers():
+                str_1.highlight_containers(0, 1, 2, 3)
+                str_2.highlight_containers(0, 1, 2, 3)
+                str_3.highlight_containers(0, 1, 2, 3)
+                str_4.highlight_containers(0, 1, 2, 3)
+                str_5.highlight_containers(0, 1, 2, 3)
+                self.wait(pause)
 
-            string = "12"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
+            highlight_containers()
 
-            string = "1"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
+            def cycle(self, new_str: str):
+                nonlocal s
+                s = new_str
+                str_1.update_value(self)
+                str_2.update_value(self)
+                str_3.update_value(self)
+                str_4.update_value(self)
+                str_5.update_value(self)
+                self.wait(pause)
 
-            string = ""
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
-
-            string = "1"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
-
-            string = "12"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
-
-            string = "123"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
-
-            string = "1234"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
+            cycle(self, "12")
+            cycle(self, "1")
+            cycle(self, "")
+            cycle(self, "1")
+            cycle(self, "12")
+            cycle(self, "123")
+            cycle(self, "1234")
 
             self.remove(
                 str_1,
@@ -2744,45 +2741,43 @@ class Example_string(mn.Scene):
             )
             self.wait(pause)
 
-            string = ""
+            s = ""
             str_1 = String(
-                lambda: string,
+                lambda: s,
                 mob_center=center,
                 vector=mn.UP * 1.5,
                 anchor=None,
                 pointers=None,
             )
             str_2 = String(
-                lambda: string,
+                lambda: s,
                 mob_center=str_1,
                 vector=mn.UP * 0.7,
                 anchor="end",
                 pointers=None,
             )
             str_3 = String(
-                lambda: string,
+                lambda: s,
                 mob_center=str_2,
                 vector=mn.UP * 0.7,
                 anchor="start",
                 pointers=None,
             )
             str_4 = String(
-                lambda: string,
+                lambda: s,
                 align_left=center,
                 vector=mn.DOWN * 1.5,
                 pointers=None,
             )
             str_5 = String(
-                lambda: string,
+                lambda: s,
                 align_right=center,
                 vector=mn.DOWN * 1.5,
                 pointers=None,
             )
-            str_1.highlight_containers(0, 1, 2)
-            str_2.highlight_containers(0, 1, 2)
-            str_3.highlight_containers(0, 1, 2)
-            str_4.highlight_containers(0, 1, 2)
-            str_5.highlight_containers(0, 1, 2)
+
+            highlight_containers()
+
             group_appear(
                 self,
                 str_1,
@@ -2793,38 +2788,12 @@ class Example_string(mn.Scene):
             )
             self.wait(1)
 
-            string = "1"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
+            cycle(self, "1")
+            cycle(self, "")
+            cycle(self, "12")
+            cycle(self, "123")
 
-            string = ""
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
-
-            string = "12"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
-
-            string = "123"
-            str_1.update_value(self)
-            str_2.update_value(self)
-            str_3.update_value(self)
-            str_4.update_value(self)
-            str_5.update_value(self)
-            self.wait(pause)
-
+            self.wait(1)
             self.clear()
 
         def frame_import(self):
@@ -3165,7 +3134,7 @@ class Example_string(mn.Scene):
         first_appear(self)
         pointers(self)
         positioning(self)
-        updatevalue(self)
+        update_value(self)
         frame_import(self)
         highlights(self)
         highlights_monocolor(self)
