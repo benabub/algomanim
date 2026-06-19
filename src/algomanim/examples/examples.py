@@ -3154,6 +3154,75 @@ class Example_linked_list(mn.Scene):
         cll = LinkedList.create_linked_list
         pause = 1
 
+        def first_appear(self):
+
+            from typing import Callable, cast
+            from algomanim.helpers.datastructures import ListNode
+
+            ln = cll([1, 2, 3])
+
+            title = RelativeText(
+                "first_appear() + remove()",
+                font_size=50,
+                text_color=mn.BLACK,
+                align_screen=mn.DOWN,
+                screen_buff=1,
+            )
+            title.first_appear(self)
+
+            ll = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=0.35,
+            )
+            ll.first_appear(self)
+            self.wait(1.5)
+            self.remove(ll)
+
+            def cycle(
+                self,
+                text: str,
+            ):
+                top_text = RelativeText(
+                    text,
+                    mob_center=ll,
+                    vector=mn.UP * 1.5,
+                    font_size=30,
+                )
+                top_text.first_appear(self, hl_time=0.5)
+                ll.first_appear(self)
+                self.wait(1.5)
+                self.remove(ll, top_text)
+                self.wait(0.5)
+
+            ln = cll([1, 2])
+            cycle(self, "ln = cll([1, 2])")
+
+            ln = cll([1, 2, 3])
+            cycle(self, "ln = cll([1, 2, 3])")
+
+            ll.highlight_containers(0, 1, 2)
+            ll.highlight_pointers(0, 1, 2)
+            cycle(
+                self,
+                "ll.highlight_containers(0,1,2)\nll.highlight_pointers(0,1,2)",
+            )
+
+            ln = cll([])
+            cycle(self, "ln = cll([])")
+
+            ln = cll([1, 2])
+            cycle(self, "ln = cll([1, 2])")
+
+            ll.clear_containers_highlights()
+            ll.clear_pointers_highlights()
+            cycle(
+                self,
+                "ll.clear_containers_highlights()\nll.clear_pointers_highlights()",
+            )
+
+            self.wait(pause)
+            self.clear()
+
         def positioning(self):
 
             center = Array(lambda: list("mob_center"), font_size=40)
@@ -3494,7 +3563,6 @@ class Example_linked_list(mn.Scene):
             ll2.highlight_pointers(1, pos=1, color_1=mn.PINK)
             ll3.highlight_pointers(0, 1, 2)
             ll3.highlight_pointers(1, pos=1, color_1=mn.PINK)
-            self.wait(1)
 
             self.wait(1)
             self.clear()
@@ -3503,7 +3571,7 @@ class Example_linked_list(mn.Scene):
             pause = 1
 
             title = RelativeText(
-                "pointers_mode param; highlight_containers(); higlight_pointers()",
+                "pointers_mode param; highlight_containers(); highlight_pointers()",
                 font_size=30,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
@@ -3784,10 +3852,229 @@ class Example_linked_list(mn.Scene):
             self.wait(1)
             self.clear()
 
-        def updatevalue(self):
-            pause = 0.7
+        def update_value(self):
+
+            from typing import cast, Callable
+            from algomanim.helpers.datastructures import ListNode
+
+            pause = 0.5
+            center = Array(lambda: list("mob_center"), font_size=50)
+            title = RelativeText(
+                "update_value()",
+                vector=mn.LEFT * 4.4 + mn.UP * 3.2,
+                text_color=mn.BLACK,
+                font_size=50,
+            )
+            group_appear(self, center, title)
+
+            ln = cll([1, 2, 3])
+
+            radius = 0.3
+
+            ll_1 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                mob_center=center,
+                vector=mn.UP * 1.5,
+                anchor=None,
+                pointers=None,
+            )
+            ll_2 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                mob_center=ll_1,
+                vector=mn.UP * 0.7,
+                anchor="end",
+                pointers=None,
+            )
+            ll_3 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                mob_center=ll_2,
+                vector=mn.UP * 0.7,
+                anchor="start",
+                pointers=None,
+            )
+
+            text_no_align = RelativeText(
+                "no align_sides:",
+                align_bottom=ll_2,
+                vector=mn.LEFT * 4.6,
+                font_size=30,
+            )
+            text_arr_3 = RelativeText(
+                "anchor='start'",
+                mob_center=ll_3,
+                vector=mn.RIGHT * 4.4,
+                font_size=30,
+            )
+            text_arr_1 = RelativeText(
+                "anchor=None",
+                mob_center=ll_1,
+                align_left=text_arr_3,
+                font_size=30,
+            )
+            text_arr_2 = RelativeText(
+                "anchor='end'",
+                mob_center=ll_2,
+                align_left=text_arr_3,
+                font_size=30,
+            )
+
+            ll_4 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                align_left=center,
+                vector=mn.DOWN * 1.5,
+                pointers=None,
+            )
+            ll_5 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                align_right=center,
+                vector=mn.DOWN * 1.5,
+                pointers=None,
+            )
+
+            text_arr_4 = RelativeText(
+                "align_left=mob_center",
+                align_left=ll_4,
+                mob_center=ll_4,
+                vector=mn.DOWN * 1.0 + mn.LEFT * 1,
+                font_size=30,
+            )
+            text_arr_5 = RelativeText(
+                "align_right=mob_center",
+                align_right=ll_5,
+                mob_center=ll_5,
+                vector=mn.DOWN * 1.0 + mn.RIGHT * 1,
+                font_size=30,
+            )
+
+            group_appear(
+                self,
+                ll_1,
+                ll_2,
+                ll_3,
+                ll_4,
+                ll_5,
+                text_no_align,
+                text_arr_1,
+                text_arr_2,
+                text_arr_3,
+                text_arr_4,
+                text_arr_5,
+            )
+            self.wait(2)
+
+            def highlight_containers():
+                ll_1.highlight_containers(0, 1, 2, 3)
+                ll_2.highlight_containers(0, 1, 2, 3)
+                ll_3.highlight_containers(0, 1, 2, 3)
+                ll_4.highlight_containers(0, 1, 2, 3)
+                ll_5.highlight_containers(0, 1, 2, 3)
+                self.wait(pause)
+
+            highlight_containers()
+
+            def cycle(self, new_list: list):
+                nonlocal ln
+                ln = cll(new_list)
+                ll_1.update_value(self)
+                ll_2.update_value(self)
+                ll_3.update_value(self)
+                ll_4.update_value(self)
+                ll_5.update_value(self)
+                self.wait(pause)
+
+            cycle(self, [1, 2])
+            cycle(self, [1])
+            cycle(self, [])
+            cycle(self, [1])
+            cycle(self, [1, 2])
+            cycle(self, [1, 2, 3])
+            cycle(self, [1, 2, 3, 4])
+
+            self.remove(
+                ll_1,
+                ll_2,
+                ll_3,
+                ll_4,
+                ll_5,
+            )
+            self.wait(pause)
+
+            ln = cll([])
+            ll_1 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                mob_center=center,
+                vector=mn.UP * 1.5,
+                anchor=None,
+                pointers=None,
+            )
+            ll_2 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                mob_center=ll_1,
+                vector=mn.UP * 0.7,
+                anchor="end",
+                pointers=None,
+            )
+            ll_3 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                mob_center=ll_2,
+                vector=mn.UP * 0.7,
+                anchor="start",
+                pointers=None,
+            )
+            ll_4 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                align_left=center,
+                vector=mn.DOWN * 1.5,
+                pointers=None,
+            )
+            ll_5 = LinkedList(
+                cast(Callable[[], ListNode | None], lambda: ln),
+                radius=radius,
+                align_right=center,
+                vector=mn.DOWN * 1.5,
+                pointers=None,
+            )
+
+            highlight_containers()
+
+            group_appear(
+                self,
+                ll_1,
+                ll_2,
+                ll_3,
+                ll_4,
+                ll_5,
+            )
+            self.wait(1)
+
+            cycle(self, [1])
+            cycle(self, [])
+            cycle(self, [1, 2])
+            cycle(self, [1, 2, 3])
+
+            self.wait(1)
+            self.clear()
+
+        def update_value_direction(self):
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+
+            title = RelativeText(
+                "anchor='start'\ndirection=np.array([10, 2, 0])\nupdate_value()",
+                align_screen=mn.LEFT + mn.UP,
+                screen_buff=0.5,
+            )
+            title.first_appear(self)
+            self.wait(pause)
 
             ll = LinkedList(
                 lambda: ln,
@@ -3797,12 +4084,7 @@ class Example_linked_list(mn.Scene):
             )
             ll.highlight_containers(0, 2, 4)
             ll.highlight_pointers(0, 2, 4)
-            rt = RelativeText(
-                "anchor='start'\ndirection=np.array([10, 2, 0])\nupdate_value()",
-                align_left=ll,
-                vector=mn.UP * 3,
-            )
-            group_appear(self, ll, rt)
+            ll.first_appear(self)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -3845,12 +4127,12 @@ class Example_linked_list(mn.Scene):
             )
             ll.highlight_containers(0, 2, 4)
             ll.highlight_pointers(0, 2, 4)
-            rt = RelativeText(
+            title = RelativeText(
                 "anchor='end'\ndirection=np.array([10, 2, 0])\nupdate_value()",
                 align_left=ll,
                 vector=mn.UP * 3,
             )
-            group_appear(self, ll, rt)
+            group_appear(self, ll, title)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -3893,12 +4175,12 @@ class Example_linked_list(mn.Scene):
             )
             ll.highlight_containers(0, 2, 4)
             ll.highlight_pointers(0, 2, 4)
-            rt = RelativeText(
+            title = RelativeText(
                 "anchor='end'\ndirection=np.array([-10, -2, 0])\nupdate_value()",
                 align_left=ll,
                 vector=mn.UP * 3,
             )
-            group_appear(self, ll, rt)
+            group_appear(self, ll, title)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -3941,12 +4223,12 @@ class Example_linked_list(mn.Scene):
             )
             ll.highlight_containers(0, 2, 4)
             ll.highlight_pointers(0, 2, 4)
-            rt = RelativeText(
+            title = RelativeText(
                 "anchor=None\ndirection=np.array([10, 2, 0])\nupdate_value()",
                 align_left=ll,
                 vector=mn.UP * 3,
             )
-            group_appear(self, ll, rt)
+            group_appear(self, ll, title)
             self.wait(pause)
 
             ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
@@ -4021,7 +4303,6 @@ class Example_linked_list(mn.Scene):
             self.clear()
 
         def highlights_monocolor(self):
-            pause = 1
             ln = cll([0, 1, 2, 3, 4, 5])
             lln = LinkedList(
                 lambda: ln,
@@ -4048,79 +4329,87 @@ class Example_linked_list(mn.Scene):
             self.clear()
 
         def highlight_on_value(self):
-            pause = 0.5
-            ln = cll([10, 2, 3000, 2, 100, 2, 40])
-            ll = LinkedList(lambda: ln)
-            ll.first_appear(self)
 
-            rt = RelativeText(
+            title = RelativeText(
                 "highlight_containers_with_value()   highlight_pointers_above_value()",
                 vector=mn.UP * 2,
             )
-            rt.first_appear(self)
+            title.first_appear(self)
             self.wait(pause)
 
-            ll.highlight_containers_with_value(2)
-            ll.highlight_pointers_above_value(2, pos=0)
+            ln = cll([10, 2, 3000, 2, 100, 2, 40])
+            ll = LinkedList(lambda: ln)
+            ll.first_appear(self)
             self.wait(pause)
 
-            ln = cll([22, 0, 22, 0, 22, 0])
-            ll.update_value(self)
-            ll.highlight_containers_with_value(0)
-            ll.highlight_pointers_above_value(0, pos=0)
+            def cycle(
+                scene: mn.Scene,
+                val: int,
+                list_new: list,
+                color=None,
+            ):
+                nonlocal ln
+                ln = cll(list_new)
+                ll.update_value(scene)
+                ll.highlight_containers_with_value(val, color=color)
+                ll.highlight_pointers_above_value(val, 0, color=color)
+                self.wait(pause)
+
+            cycle(self, 0, [22, 0, 22, 0, 22, 0])
+            cycle(self, 22, [22, 0, 22, 0, 22, 0, 22], mn.LIGHT_BROWN)
+            cycle(self, 0, [22, 0, 22, 0, 22, 0], mn.LIGHT_BROWN)
+            cycle(self, 22, [22, 0, 22, 0, 22, 0, 22], mn.PURPLE)
+            cycle(self, 0, [22, 0, 22, 0, 22], mn.PURPLE)
+            cycle(self, 22, [22, 0, 22, 0, 22, 0, 22], mn.PINK)
+            cycle(self, 0, [22, 0, 22, 0, 22], mn.PINK)
+
+            self.wait(pause)
+            self.clear()
+
+        def append(self):
+
+            title = RelativeText(
+                "append()",
+                vector=mn.UP * 2,
+            )
+            title.first_appear(self)
             self.wait(pause)
 
-            ln = cll([0, 22, 0, 22, 0, 22])
-            ll.update_value(self)
-            ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-            ll.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN, pos=0)
+            ll = LinkedList(lambda: cll([0]), vector=mn.LEFT * 1.7)
+            ll.highlight_containers(0, 1, 2, 3)
+            ll.first_appear(self)
             self.wait(pause)
 
-            ln = cll([22, 0, 22, 0, 22, 0])
-            ll.update_value(self, animate=True)
-            ll.highlight_containers_with_value(0, color=mn.LIGHT_BROWN)
-            ll.highlight_pointers_above_value(0, color=mn.LIGHT_BROWN, pos=0)
+            ll_1 = LinkedList(lambda: cll([1]))
+            ll_2 = LinkedList(lambda: cll([2]))
+            ll_3 = LinkedList(lambda: cll([3]))
+
+            ll.append(self, ll_1)
             self.wait(pause)
 
-            ln = cll([0, 22, 0, 22, 0, 22])
-            ll.update_value(self)
-            ll.update_value(self, animate=True)
-            ll.highlight_containers_with_value(0, color=mn.PURPLE)
-            ll.highlight_pointers_above_value(0, color=mn.PURPLE, pos=0)
+            ll.append(self, ll_2)
             self.wait(pause)
 
-            ln = cll([22, 0, 22, 0, 22])
-            ll.update_value(self)
-            ll.update_value(self, animate=True)
-            ll.highlight_containers_with_value(0, color=mn.PURPLE)
-            ll.highlight_pointers_above_value(0, color=mn.PURPLE, pos=0)
+            ll.append(self, ll_3)
             self.wait(pause)
 
-            ln = cll([0, 22, 0, 22, 0, 22])
-            ll.update_value(self)
-            ll.update_value(self, animate=True)
-            ll.highlight_containers_with_value(0, color=mn.PINK)
-            ll.highlight_pointers_above_value(0, color=mn.PINK, pos=0)
             self.wait(pause)
-
-            ln = cll([22, 0, 22, 0, 22])
-            ll.update_value(self)
-            ll.update_value(self, animate=True)
-            ll.highlight_containers_with_value(0, color=mn.PINK)
-            ll.highlight_pointers_above_value(0, color=mn.PINK, pos=0)
-            self.wait(1)
+            self.clear()
 
         # ========== calls ==============
 
+        first_appear(self)
         positioning(self)
         pointers(self)
-        highlights(self)
         rotation(self)
+        highlights(self)
         alignment(self)
-        updatevalue(self)
+        update_value(self)
+        update_value_direction(self)
         highlights_1to3(self)
         highlights_monocolor(self)
         highlight_on_value(self)
+        append(self)
 
         # ========== finish ==============
 
