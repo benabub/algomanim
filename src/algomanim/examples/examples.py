@@ -576,6 +576,8 @@ class Example_array(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
+        pause = 1
+
         def pyramid(self):
             arr = [0, "\"'`^", "ace", "ygpj", "ABC", ":*#", "."]
 
@@ -722,7 +724,6 @@ class Example_array(mn.Scene):
             )
 
         def first_appear(self):
-            pause = 0.5
             arr = [1, 2, 3]
 
             title = RelativeText(
@@ -738,50 +739,53 @@ class Example_array(mn.Scene):
                 lambda: arr,
                 font_size=40,
             )
-            top_text = RelativeTextValue(
-                ("arr", lambda: arr, mn.WHITE),
-                mob_center=array,
-                vector=mn.UP * 1.5,
-                font_size=30,
-            )
-
-            top_text.first_appear(self)
-            self.wait(pause)
             array.first_appear(self)
-            self.wait(pause)
+            self.wait(1.5)
             self.remove(array)
-            self.wait(pause)
+
+            def cycle(
+                self,
+                text: str,
+            ):
+                top_text = RelativeText(
+                    text,
+                    mob_center=array,
+                    vector=mn.UP * 1.5,
+                    font_size=30,
+                )
+                top_text.first_appear(self, hl_time=0.5)
+                array.first_appear(self)
+                self.wait(1.5)
+                self.remove(array, top_text)
+                self.wait(0.5)
 
             arr = [1, 2]
-            top_text.update_value(self)
-            self.wait(pause)
-            array.first_appear(self)
-            self.wait(pause)
-            self.remove(array)
-            self.wait(pause)
+            cycle(self, "arr = [1,2]")
 
-            arr = [1]
-            top_text.update_value(self)
-            self.wait(pause)
-            array.first_appear(self)
-            self.wait(pause)
-            self.remove(array)
-            self.wait(pause)
+            arr = [1, 2, 3]
+            cycle(self, "arr = [1,2,3]")
+
+            array.highlight_containers(0, 1, 2)
+            array.highlight_pointers(0, 1, 2)
+            cycle(
+                self,
+                "array.highlight_containers(0,1,2)\narray.highlight_pointers(0,1,2)",
+            )
 
             arr = []
-            top_text.update_value(self)
-            self.wait(pause)
-            array.first_appear(self)
-            self.wait(pause)
-            self.remove(array)
-            self.wait(pause)
+            cycle(self, "arr = []")
 
-            arr = [1]
-            top_text.update_value(self)
-            self.wait(pause)
-            array.first_appear(self)
-            self.wait(1)
+            arr = [1, 2]
+            cycle(self, "arr = [1,2]")
 
+            array.clear_containers_highlights()
+            array.clear_pointers_highlights()
+            cycle(
+                self,
+                "array.clear_containers_highlights()\narray.clear_pointers_highlights()",
+            )
+
+            self.wait(pause)
             self.clear()
 
         def direction(self):
@@ -1558,13 +1562,13 @@ class Example_array(mn.Scene):
         def update_value(self):
             pause = 0.5
             center = Array(lambda: list("mob_center"), font_size=50)
-            text_title = RelativeText(
+            title = RelativeText(
                 "update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
                 text_color=mn.BLACK,
                 font_size=50,
             )
-            group_appear(self, center, text_title)
+            group_appear(self, center, title)
 
             arr = [1, 2, 3]
 
@@ -1664,69 +1668,102 @@ class Example_array(mn.Scene):
             )
             self.wait(2)
 
-            arr_1.highlight_containers(0, 1, 2, 3)
-            arr_2.highlight_containers(0, 1, 2, 3)
-            arr_3.highlight_containers(0, 1, 2, 3)
-            arr_4.highlight_containers(0, 1, 2, 3)
-            arr_5.highlight_containers(0, 1, 2, 3)
-            self.wait(pause)
+            def highlight_containers():
+                arr_1.highlight_containers(0, 1, 2, 3)
+                arr_2.highlight_containers(0, 1, 2, 3)
+                arr_3.highlight_containers(0, 1, 2, 3)
+                arr_4.highlight_containers(0, 1, 2, 3)
+                arr_5.highlight_containers(0, 1, 2, 3)
+                self.wait(pause)
 
-            arr = [1, 2]
-            arr_1.update_value(self)
-            arr_2.update_value(self)
-            arr_3.update_value(self)
-            arr_4.update_value(self)
-            arr_5.update_value(self)
-            self.wait(pause)
+            highlight_containers()
 
-            arr = [1]
-            arr_1.update_value(self)
-            arr_2.update_value(self)
-            arr_3.update_value(self)
-            arr_4.update_value(self)
-            arr_5.update_value(self)
+            def cycle(self, new_arr: list):
+                nonlocal arr
+                arr = new_arr
+                arr_1.update_value(self)
+                arr_2.update_value(self)
+                arr_3.update_value(self)
+                arr_4.update_value(self)
+                arr_5.update_value(self)
+                self.wait(pause)
+
+            cycle(self, [1, 2])
+            cycle(self, [1])
+            cycle(self, [])
+            cycle(self, [1])
+            cycle(self, [1, 2])
+            cycle(self, [1, 2, 3])
+            cycle(self, [1, 2, 3, 4])
+
+            self.remove(
+                arr_1,
+                arr_2,
+                arr_3,
+                arr_4,
+                arr_5,
+            )
             self.wait(pause)
 
             arr = []
-            arr_1.update_value(self)
-            arr_2.update_value(self)
-            arr_3.update_value(self)
-            arr_4.update_value(self)
-            arr_5.update_value(self)
-            self.wait(pause)
 
-            arr = [1]
-            arr_1.update_value(self)
-            arr_2.update_value(self)
-            arr_3.update_value(self)
-            arr_4.update_value(self)
-            arr_5.update_value(self)
-            self.wait(pause)
+            arr_1 = Array(
+                lambda: arr,
+                mob_center=center,
+                vector=mn.UP * 1.5,
+                anchor=None,
+                pointers=None,
+                font_size=35,
+            )
+            arr_2 = Array(
+                lambda: arr,
+                mob_center=arr_1,
+                vector=mn.UP * 0.7,
+                anchor="end",
+                pointers=None,
+                font_size=35,
+            )
+            arr_3 = Array(
+                lambda: arr,
+                mob_center=arr_2,
+                vector=mn.UP * 0.7,
+                anchor="start",
+                pointers=None,
+                font_size=35,
+            )
+            arr_4 = Array(
+                lambda: arr,
+                align_left=center,
+                vector=mn.DOWN * 1.5,
+                pointers=None,
+                font_size=35,
+            )
+            arr_5 = Array(
+                lambda: arr,
+                align_right=center,
+                vector=mn.DOWN * 1.5,
+                pointers=None,
+                font_size=35,
+            )
 
-            arr = [1, 2]
-            arr_1.update_value(self)
-            arr_2.update_value(self)
-            arr_3.update_value(self)
-            arr_4.update_value(self)
-            arr_5.update_value(self)
-            self.wait(pause)
+            highlight_containers()
 
-            arr = [1, 2, 3]
-            arr_1.update_value(self)
-            arr_2.update_value(self)
-            arr_3.update_value(self)
-            arr_4.update_value(self)
-            arr_5.update_value(self)
-            self.wait(pause)
+            group_appear(
+                self,
+                arr_1,
+                arr_2,
+                arr_3,
+                arr_4,
+                arr_5,
+            )
+            self.wait(1)
 
-            arr = [1, 2, 3, 4]
-            arr_1.update_value(self)
-            arr_2.update_value(self)
-            arr_3.update_value(self)
-            arr_4.update_value(self)
-            arr_5.update_value(self)
-            self.wait(pause)
+            cycle(self, [1])
+            cycle(self, [])
+            cycle(self, [1, 2])
+            cycle(self, [1, 2, 3])
 
+            self.wait(1)
             self.clear()
 
         def frame_import(self):
@@ -1963,24 +2000,24 @@ class Example_array(mn.Scene):
 
             def cycle(
                 scene: mn.Scene,
-                array_mob: Array,
-                array: list,
+                val: int,
+                arr_new: list,
                 color=None,
             ):
                 nonlocal arr
-                arr = array
-                array_mob.update_value(scene)
-                array_mob.highlight_containers_with_value(0, color=color)
-                array_mob.highlight_pointers_above_value(0, 0, color)
+                arr = arr_new
+                array.update_value(scene)
+                array.highlight_containers_with_value(val, color=color)
+                array.highlight_pointers_above_value(val, 0, color)
                 self.wait(pause)
 
-            cycle(self, array, [22, 0, 22, 0, 22, 0])
-            cycle(self, array, [0, 22, 0, 22, 0, 22], mn.LIGHT_BROWN)
-            cycle(self, array, [22, 0, 22, 0, 22, 0], mn.LIGHT_BROWN)
-            cycle(self, array, [0, 22, 0, 22, 0, 22], mn.PURPLE)
-            cycle(self, array, [22, 0, 22, 0, 22], mn.PURPLE)
-            cycle(self, array, [0, 22, 0, 22, 0, 22], mn.PINK)
-            cycle(self, array, [22, 0, 22, 0, 22], mn.PINK)
+            cycle(self, 0, [22, 0, 22, 0, 22, 0])
+            cycle(self, 22, [22, 0, 22, 0, 22, 0, 22], mn.LIGHT_BROWN)
+            cycle(self, 0, [22, 0, 22, 0, 22, 0], mn.LIGHT_BROWN)
+            cycle(self, 22, [22, 0, 22, 0, 22, 0, 22], mn.PURPLE)
+            cycle(self, 0, [22, 0, 22, 0, 22], mn.PURPLE)
+            cycle(self, 22, [22, 0, 22, 0, 22, 0, 22], mn.PINK)
+            cycle(self, 0, [22, 0, 22, 0, 22], mn.PINK)
 
             self.remove(title)
 

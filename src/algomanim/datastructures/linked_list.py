@@ -593,7 +593,9 @@ class LinkedList(LinearContainerStructure, NodeStructure):
         """
         result = []
         current = head
+
         while current:
             result.append(current.val)
             current = current.next
+
         return result
