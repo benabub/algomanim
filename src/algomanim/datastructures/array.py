@@ -482,8 +482,16 @@ class Array(RectangleCellsStructure):
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
-        """Replace the array visualization with updated values from the callable."""
+        """Replace the array visualization with updated values from the callable.
 
+        Creates a new Array instance with fresh data, then applies a fade transition
+        from the old to the new state. Highlights and colors are preserved.
+
+        Args:
+            scene: The Manim scene to play animations in.
+            animate: If True, plays a fade transition. If False, updates instantly.
+            run_time: Duration of the fade transition if animate=True.
+        """
         if not self._data and not self._callable():
             return
 

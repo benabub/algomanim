@@ -273,6 +273,11 @@ class LinkedList(LinearContainerStructure, NodeStructure):
             )
 
     def _text_config(self) -> dict:
+        """Get text configuration dictionary for node labels.
+
+        Returns:
+            Dictionary with font, weight and color settings.
+        """
         return NodeStructure._text_config(self)
 
     def _create_and_pos_values_mob(self):
