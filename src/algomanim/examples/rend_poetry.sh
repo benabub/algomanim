@@ -43,6 +43,10 @@ if ! grep -q "class $CLASS(" examples.py; then
     exit 1
 fi
 
+
+# Record the start timestamp of the render process
+START_TIME=$(date +%s)
+
 poetry run manim -"${QUALITY}" examples.py "$CLASS"
 
 OUTFILE="media/videos/examples/${RESDIR}/${CLASS}.mp4"
@@ -50,6 +54,15 @@ if [ ! -f "$OUTFILE" ]; then
     echo "Error: Output file '$OUTFILE' not found"
     exit 1
 fi
+
+# Record the end timestamp of the render process
+END_TIME=$(date +%s)
+# Calculate total duration in seconds
+DURATION=$((END_TIME - START_TIME))
+MIN=$((DURATION / 60))
+SEC=$((DURATION % 60))
+# Print the total rendering time in seconds
+printf "Render time: %d min %d sec\n" "$MIN" "$SEC"
 
 mv "$OUTFILE" "video_output/${OUTDIR}/${NAME_LOWER}.mp4"
 rm -rf media __pycache__

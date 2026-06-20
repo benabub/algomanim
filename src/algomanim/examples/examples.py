@@ -797,7 +797,6 @@ class Example_array(mn.Scene):
             self.wait(pause)
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def direction(self):
 
@@ -2180,19 +2179,19 @@ class Example_array(mn.Scene):
 
         # ========== calls ==============
 
-        pyramid(self)
+        # pyramid(self)
         first_appear(self)
-        direction(self)
-        lockwidth(self)
-        pointers(self)
-        highlights(self)
-        positioning(self)
-        update_value(self)
-        frame_import(self)
-        monocolor(self)
-        highlight_containers_with_value(self)
-        highlight_containers_with_values(self)
-        pointers_on_values(self)
+        # direction(self)
+        # lockwidth(self)
+        # pointers(self)
+        # highlights(self)
+        # positioning(self)
+        # update_value(self)
+        # frame_import(self)
+        # monocolor(self)
+        # highlight_containers_with_value(self)
+        # highlight_containers_with_values(self)
+        # pointers_on_values(self)
 
         # ========== finish ==============
 
