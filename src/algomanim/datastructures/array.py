@@ -313,7 +313,6 @@ class Array(RectangleCellsStructure):
 
         mob_group = mn.VGroup(*cells_mobs_list)
 
-        # arrange cells in a row
         mob_group.arrange(self._direction, buff=0.1)
 
         return mob_group
@@ -364,7 +363,7 @@ class Array(RectangleCellsStructure):
         """
         # create new instance
         new_instance = Array(
-            self._callable,
+            value=self._callable,
             direction=self._direction,
             # ---- pointers ----
             pointers=self._pointers,
@@ -422,7 +421,8 @@ class Array(RectangleCellsStructure):
 
         # preserve highlights
         highlight_status = self._save_highlights_states()
-        self._preserve_highlights_states(new_instance, highlight_status)
+        if new_instance._data:
+            self._preserve_highlights_states(new_instance, highlight_status)
 
         return new_instance
 
