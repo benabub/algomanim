@@ -355,7 +355,7 @@ class String(RectangleCellsStructure):
             New String instance with the same configuration and fresh data from callable.
         """
         new_instance = String(
-            self._callable,
+            value=self._callable,
             # ---- pointers ----
             pointers=self._pointers,
             pointers_mode=self._pointers_mode,
@@ -414,10 +414,10 @@ class String(RectangleCellsStructure):
                     )
                     new_instance.align_to(target, mn.RIGHT)
 
-        # save old group status
+        # preserve highlights
         highlight_status = self._save_highlights_states()
-        # restore colors
-        self._preserve_highlights_states(new_instance, highlight_status)
+        if new_instance._data:
+            self._preserve_highlights_states(new_instance, highlight_status)
 
         return new_instance
 
