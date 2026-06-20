@@ -30,6 +30,7 @@ from algomanim import (
 )
 
 group_appear = AlgoManimBase.group_appear
+print_scene = AlgoManimBase._print_scene
 
 
 class Stub:
@@ -321,6 +322,8 @@ class Example_text(mn.Scene):
             cycle({"a": 1})
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def groupp_appear(self):
             pause = 1
@@ -372,6 +375,8 @@ class Example_text(mn.Scene):
             cycle("a")
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def update(self):
             pause = 1
@@ -423,6 +428,8 @@ class Example_text(mn.Scene):
 
             self.wait(pause)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def position(self):
             pause = 1
@@ -558,6 +565,8 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         # ========== calls ==============
 
@@ -787,6 +796,8 @@ class Example_array(mn.Scene):
 
             self.wait(pause)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def direction(self):
 
@@ -916,6 +927,8 @@ class Example_array(mn.Scene):
             self.wait(1)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def lockwidth(self):
             pause = 0.5
@@ -1027,6 +1040,8 @@ class Example_array(mn.Scene):
             self.wait(1)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def pointers(self):
 
@@ -1258,6 +1273,8 @@ class Example_array(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def highlights(self):
             pause = 1
@@ -1362,6 +1379,8 @@ class Example_array(mn.Scene):
             array.clear_containers_highlights()
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def positioning(self):
             pause = 1
@@ -1428,6 +1447,9 @@ class Example_array(mn.Scene):
             self.wait(pause)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
+
             self.add(title)
 
             one = Array(
@@ -1558,6 +1580,8 @@ class Example_array(mn.Scene):
             group_appear(self, array, top_text)
             self.wait(pause)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def update_value(self):
             pause = 0.5
@@ -1765,6 +1789,8 @@ class Example_array(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def frame_import(self):
             pause = 0.5
@@ -1925,6 +1951,8 @@ class Example_array(mn.Scene):
             self.wait(1)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def monocolor(self):
             pause = 1
@@ -1976,6 +2004,8 @@ class Example_array(mn.Scene):
             array.clear_containers_highlights()
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def highlight_containers_with_value(self):
             pause = 0.5
@@ -2022,6 +2052,8 @@ class Example_array(mn.Scene):
             self.remove(title)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def highlight_containers_with_values(self):
             pause = 0.5
@@ -2093,6 +2125,8 @@ class Example_array(mn.Scene):
             self.remove(title)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def pointers_on_values(self):
             arr = ["A", 0, "B", 1, "C", 2, "D"]
@@ -2141,6 +2175,8 @@ class Example_array(mn.Scene):
 
             self.wait(pause)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         # ========== calls ==============
 
@@ -2306,6 +2342,8 @@ class Example_string(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def first_appear(self):
 
@@ -2377,6 +2415,8 @@ class Example_string(mn.Scene):
 
             self.wait(pause)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def pointers(self):
 
@@ -2465,10 +2505,20 @@ class Example_string(mn.Scene):
             self.wait(1)
 
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def positioning(self):
-            pause = 1
-            string = "str"
+
+            title = RelativeText(
+                "positioning",
+                font_size=40,
+                text_color=mn.BLACK,
+                align_screen=mn.UP + mn.RIGHT,
+            )
+            title.first_appear(self)
+
+            s = "str"
 
             center = String(lambda: "mob_center", font_size=40)
             center.first_appear(self)
@@ -2477,35 +2527,36 @@ class Example_string(mn.Scene):
                 "mob_center=mob_center\nvector=mn.UP * 1",
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
-            s = String(lambda: string, mob_center=center, vector=mn.UP * 2)
-            group_appear(self, s, top_text)
+            string = String(lambda: s, mob_center=center, vector=mn.UP * 2)
+            group_appear(self, string, top_text)
             self.wait(pause)
 
-            self.remove(s, top_text)
+            self.remove(string, top_text)
 
             top_text = RelativeText(
                 "mob_center=mob_center\nalign_left=mob_center\nvector=mn.UP * 1",
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
-            s = String(
-                lambda: string, mob_center=center, align_left=center, vector=mn.UP * 2
+            string = String(
+                lambda: s, mob_center=center, align_left=center, vector=mn.UP * 2
             )
-            group_appear(self, s, top_text)
+            group_appear(self, string, top_text)
             self.wait(pause)
 
-            self.remove(s, top_text)
+            self.remove(string, top_text)
 
             top_text = RelativeText(
                 "mob_center=mob_center\nalign_right=mob_center\nvector=mn.UP * 1",
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
-            s = String(
-                lambda: string, mob_center=center, align_right=center, vector=mn.UP * 2
+            string = String(
+                lambda: s, mob_center=center, align_right=center, vector=mn.UP * 2
             )
-            group_appear(self, s, top_text)
+            group_appear(self, string, top_text)
             self.wait(pause)
 
             self.clear()
+            self.add(title)
 
             one = String(lambda: "one", font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
             two = String(
@@ -2520,17 +2571,17 @@ class Example_string(mn.Scene):
                 "align_left=one\nalign_bottom=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            s = String(lambda: string, align_left=one, align_bottom=two)
-            group_appear(self, s, top_text)
+            string = String(lambda: s, align_left=one, align_bottom=two)
+            group_appear(self, string, top_text)
             self.wait(pause)
-            self.remove(s, top_text)
+            self.remove(string, top_text)
 
             top_text = RelativeText(
                 "align_left=one\nalign_top=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            s = String(lambda: string, align_left=one, align_top=two)
-            group_appear(self, s, top_text)
+            string = String(lambda: s, align_left=one, align_top=two)
+            group_appear(self, string, top_text)
             self.wait(pause)
             update_text = RelativeText(
                 "update_value()",
@@ -2540,27 +2591,27 @@ class Example_string(mn.Scene):
             )
             update_text.first_appear(self)
 
-            string = "123"
-            s.update_value(self)
+            s = "abc"
+            string.update_value(self)
             self.wait(0.5)
-            string = "1"
-            s.update_value(self)
+            s = "a"
+            string.update_value(self)
             self.wait(0.5)
-            string = ""
-            s.update_value(self)
+            s = ""
+            string.update_value(self)
             self.wait(0.5)
-            string = "12"
-            s.update_value(self)
+            s = "ab"
+            string.update_value(self)
             self.wait(0.5)
 
-            self.remove(s, top_text, update_text)
+            self.remove(string, top_text, update_text)
 
             top_text = RelativeText(
                 "align_right=one\nalign_top=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            s = String(lambda: string, align_right=one, align_top=two)
-            group_appear(self, s, top_text)
+            string = String(lambda: s, align_right=one, align_top=two)
+            group_appear(self, string, top_text)
             self.wait(pause)
             update_text = RelativeText(
                 "update_value()",
@@ -2570,43 +2621,45 @@ class Example_string(mn.Scene):
             )
             update_text.first_appear(self)
 
-            string = "123"
-            s.update_value(self)
+            s = "abc"
+            string.update_value(self)
             self.wait(0.5)
-            string = "1"
-            s.update_value(self)
+            s = "a"
+            string.update_value(self)
             self.wait(0.5)
-            string = ""
-            s.update_value(self)
+            s = ""
+            string.update_value(self)
             self.wait(0.5)
-            string = "12"
-            s.update_value(self)
+            s = "ab"
+            string.update_value(self)
             self.wait(0.5)
 
-            self.remove(s, top_text, update_text)
+            self.remove(string, top_text, update_text)
 
             top_text = RelativeText(
                 "align_right=one\nalign_bottom=two",
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
-            s = String(lambda: string, align_right=one, align_bottom=two)
-            group_appear(self, s, top_text)
+            string = String(lambda: s, align_right=one, align_bottom=two)
+            group_appear(self, string, top_text)
             self.wait(pause)
-            self.remove(s, top_text)
+            self.remove(string, top_text)
 
             top_text = RelativeText(
                 "align_left=one\nalign_bottom=two\nvector=mn.UP * 1 + mn.RIGHT * 1",
                 vector=mn.UP * 0.7 + mn.RIGHT * 2,
             )
-            s = String(
-                lambda: string,
+            string = String(
+                lambda: s,
                 align_left=one,
                 align_bottom=two,
                 vector=mn.UP * 1 + mn.RIGHT * 1,
             )
-            group_appear(self, s, top_text)
+            group_appear(self, string, top_text)
             self.wait(pause)
             self.clear()
+            print_scene(self)
+            print_scene(self)
 
         def update_value(self):
             pause = 0.5
@@ -2788,6 +2841,7 @@ class Example_string(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
 
         def frame_import(self):
             pause = 0.5
@@ -2910,6 +2964,7 @@ class Example_string(mn.Scene):
             self.wait(1)
 
             self.clear()
+            print_scene(self)
 
         def highlights(self):
             pause = 1
@@ -3014,6 +3069,7 @@ class Example_string(mn.Scene):
             string.clear_containers_highlights()
 
             self.clear()
+            print_scene(self)
 
         def highlights_monocolor(self):
             pause = 1
@@ -3034,6 +3090,7 @@ class Example_string(mn.Scene):
             string.update_value(self)
             self.wait(2)
             self.clear()
+            print_scene(self)
 
         def highlight_on_value(self):
             pause = 0.5
@@ -3068,25 +3125,28 @@ class Example_string(mn.Scene):
             string.highlight_pointers_above_value(" ", color=mn.PINK, pos=0)
             self.wait(1)
             self.clear()
+            print_scene(self)
 
         def pointers_on_values(self):
-            pause = 0.5
             s = "A0B1C2D"
             st = {"0", "1", "2"}
+
+            title = RelativeText(
+                "pointers_on_values()",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
 
             string = String(
                 lambda: s,
                 font_size=35,
                 weight="BOLD",
             )
-            title = RelativeText(
-                "pointers_on_values()",
-                text_color=mn.BLACK,
-                font_size=50,
-                align_screen=mn.UP,
-                screen_buff=0.5,
-            )
-            group_appear(self, string, title)
+            string.first_appear(self)
             self.wait(1)
 
             set_text = RelativeTextValue(
@@ -3098,28 +3158,22 @@ class Example_string(mn.Scene):
             set_text.first_appear(self)
             self.wait(1)
 
-            string.highlight_pointers_above_values(st, 1, mn.ORANGE)
-            self.wait(1)
+            def cycle(self, new_str):
+                nonlocal s
+                s = new_str
+                string.update_value(self)
+                string.highlight_pointers_above_values(st, 0, mn.ORANGE)
+                self.wait(pause)
 
-            string.highlight_containers(0, 2, 4)
-            string.highlight_pointers(0, 2, 4)
+            cycle(self, "A0B1C2D")
+            cycle(self, "0B1C2D")
+            cycle(self, "B1C2D")
+            cycle(self, "ABCD")
+            cycle(self, "A0B1C2D")
+
             self.wait(pause)
-
-            s = "0B1C2D"
-            string.update_value(self)
-            self.wait(pause)
-
-            s = "B1C2D"
-            string.update_value(self)
-            self.wait(pause)
-
-            s = "ABCD"
-            string.update_value(self)
-            self.wait(1)
-
-            self.remove(string)
-
             self.clear()
+            print_scene(self)
 
         # ========== calls ==============
 
@@ -3215,6 +3269,7 @@ class Example_linked_list(mn.Scene):
 
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
         def positioning(self):
 
@@ -3264,6 +3319,7 @@ class Example_linked_list(mn.Scene):
             self.wait(pause)
 
             self.clear()
+            print_scene(self)
 
             one = Array(
                 lambda: list("one"), font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4
@@ -3341,6 +3397,7 @@ class Example_linked_list(mn.Scene):
             group_appear(self, ll, top_text)
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
         def pointers(self):
 
@@ -3559,6 +3616,7 @@ class Example_linked_list(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
 
         def highlights(self):
             pause = 1
@@ -3660,6 +3718,7 @@ class Example_linked_list(mn.Scene):
             ll.clear_containers_highlights()
 
             self.clear()
+            print_scene(self)
 
         def rotation(self):
             pause = 0.3
@@ -3745,6 +3804,7 @@ class Example_linked_list(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
 
         def alignment(self):
 
@@ -3844,6 +3904,7 @@ class Example_linked_list(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
 
         def update_value(self):
 
@@ -4056,6 +4117,7 @@ class Example_linked_list(mn.Scene):
 
             self.wait(1)
             self.clear()
+            print_scene(self)
 
         def update_value_direction(self):
 
@@ -4108,6 +4170,7 @@ class Example_linked_list(mn.Scene):
             ll.update_value(self)
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
             # ------------------
 
@@ -4156,6 +4219,7 @@ class Example_linked_list(mn.Scene):
             ll.update_value(self)
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
             # ------------------
 
@@ -4204,6 +4268,7 @@ class Example_linked_list(mn.Scene):
             ll.update_value(self)
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
             # ------------------
 
@@ -4252,6 +4317,7 @@ class Example_linked_list(mn.Scene):
             ll.update_value(self)
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
         def highlights_1to3(self):
             pause = 0.5
@@ -4294,6 +4360,7 @@ class Example_linked_list(mn.Scene):
             lln.clear_pointers_highlights(0)
             self.wait(1)
             self.clear()
+            print_scene(self)
 
         def highlights_monocolor(self):
             ln = cll([0, 1, 2, 3, 4, 5])
@@ -4320,6 +4387,7 @@ class Example_linked_list(mn.Scene):
             lln.highlight_containers_monocolor([1, 3, 5, 7])
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
         def highlight_on_value(self):
 
@@ -4358,6 +4426,7 @@ class Example_linked_list(mn.Scene):
 
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
         def append(self):
 
@@ -4388,6 +4457,7 @@ class Example_linked_list(mn.Scene):
 
             self.wait(pause)
             self.clear()
+            print_scene(self)
 
         # ========== calls ==============
 
@@ -4486,6 +4556,7 @@ class Example_code_block(mn.Scene):
             self.remove(cb)
             self.wait(0.5)
             self.clear()
+            print_scene(self)
             self.wait(1)
 
         def head(self):
@@ -4552,6 +4623,7 @@ class Example_code_block(mn.Scene):
             self.remove(cb1, cb2)
             self.wait(0.5)
             self.clear()
+            print_scene(self)
 
         # ========== calls ==============
 
@@ -4762,6 +4834,7 @@ class Example_code_block_lense(mn.Scene):
             self.remove(cb1, cb2)
             self.wait(0.5)
             self.clear()
+            print_scene(self)
 
         # ========== calls ==============
 
@@ -4806,6 +4879,7 @@ class Example_semi_rounded_rectangle(mn.Scene):
             self.wait(2)
 
             self.clear()
+            print_scene(self)
             self.wait(0.5)
 
         def non_default(self):
@@ -4923,6 +4997,7 @@ class Example_semi_rounded_rectangle(mn.Scene):
             self.wait(2)
 
             self.clear()
+            print_scene(self)
             self.wait(0.5)
 
         # ========== calls ==============
