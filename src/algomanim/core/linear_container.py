@@ -964,8 +964,10 @@ class LinearContainerStructure(AlgoManimBase):
         self._apply_pointers_colors(pos)
 
     def _get_highlight_dicts(self) -> tuple:
-        """
-        ...
+        """Get copies of current highlight color dictionaries.
+
+        Returns:
+            Tuple of (containers_colors, top_pointers_colors, bottom_pointers_colors).
         """
         containers_colors = (
             self._containers_colors.copy()
@@ -990,8 +992,12 @@ class LinearContainerStructure(AlgoManimBase):
         top_pointers_colors: dict,
         bottom_pointers_colors: dict,
     ) -> None:
-        """
-        ...
+        """Restore highlight colors from saved dictionaries.
+
+        Args:
+            containers_colors: Dictionary of container highlight colors.
+            top_pointers_colors: Dictionary of top pointer highlight colors.
+            bottom_pointers_colors: Dictionary of bottom pointer highlight colors.
         """
         # restore colors dicts
         self._containers_colors = containers_colors
