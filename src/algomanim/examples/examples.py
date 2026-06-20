@@ -1374,7 +1374,7 @@ class Example_array(mn.Scene):
             )
             title.first_appear(self)
 
-            arr = list("arr")
+            arr = [1, 2, 3]
 
             center = Array(lambda: list("mob_center"), font_size=40)
             center.first_appear(self)
@@ -2095,7 +2095,6 @@ class Example_array(mn.Scene):
             self.clear()
 
         def pointers_on_values(self):
-            pause = 0.5
             arr = ["A", 0, "B", 1, "C", 2, "D"]
             st = [0, 1, 2]
 
@@ -2111,6 +2110,7 @@ class Example_array(mn.Scene):
 
             array = Array(
                 lambda: arr,
+                pointers="both",
                 font_size=35,
                 weight="BOLD",
             )
@@ -2126,27 +2126,20 @@ class Example_array(mn.Scene):
             set_text.first_appear(self)
             self.wait(1)
 
-            array.highlight_pointers_above_values(st, 1, mn.ORANGE)
-            self.wait(1)
+            def cycle(self, new_arr):
+                nonlocal arr
+                arr = new_arr
+                array.update_value(self)
+                array.highlight_pointers_above_values(st, 0, mn.ORANGE)
+                self.wait(pause)
 
-            array.highlight_containers(0, 2, 4)
-            array.highlight_pointers(0, 2, 4)
+            cycle(self, ["A", 0, "B", 1, "C", 2, "D"])
+            cycle(self, [0, "B", 1, "C", 2, "D"])
+            cycle(self, ["B", 1, "C", 2, "D"])
+            cycle(self, ["A", "B", "C", "D"])
+            cycle(self, ["A", 0, "B", 1, "C", 2, "D"])
+
             self.wait(pause)
-
-            arr = [0, "B", 1, "C", 2, "D"]
-            array.update_value(self)
-            self.wait(pause)
-
-            arr = ["B", 1, "C", 2, "D"]
-            array.update_value(self)
-            self.wait(pause)
-
-            arr = ["A", "B", "C", "D"]
-            array.update_value(self)
-            self.wait(1)
-
-            self.remove(array)
-
             self.clear()
 
         # ========== calls ==============
