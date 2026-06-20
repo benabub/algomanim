@@ -482,32 +482,25 @@ class Array(RectangleCellsStructure):
         animate: bool = True,
         run_time: float = 0.2,
     ) -> None:
-        """Replace the array visualization with updated values from the callable.
+        """Replace the array visualization with updated values from the callable."""
 
-        This method creates a new `Array` instance by calling the stored callable,
-        then either animates a smooth transformation or performs an instantaneous
-        update. Highlight states (container and pointer colors) are preserved.
-
-        Args:
-            scene: The Manim scene in which the animation or update will be played.
-            animate: If True, animates the transition using a Transform.
-                     If False, updates the object instantly.
-            run_time: Duration (in seconds) of the animation if `animate=True`.
-                     Has no effect if `animate=False`.
-        """
-
-        # validation
         if not self._data and not self._callable():
             return
 
-        # new group
         new_instance = self._create_new_instance()
 
-        # add
         if animate:
-            scene.play(mn.Transform(self, new_instance), run_time=run_time)
-            self._update_internal_state(self._callable(), new_instance)
-        else:
-            scene.remove(self)
-            self._update_internal_state(self._callable(), new_instance)
-            scene.add(self)
+            scene.play(
+                mn.FadeOut(self),
+                mn.FadeIn(new_instance),
+                run_time=run_time,
+            )
+
+        scene.remove(self)
+        scene.remove(new_instance)
+
+        self._update_internal_state(new_instance)
+
+        scene.add(self)
+
+        self._clear_scene(scene)
