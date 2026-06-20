@@ -48,7 +48,7 @@ class Example_selection_sort(mn.Scene):
         arr = [1, 3, 5, 4, 5, 2]
         length = len(arr)
         i = 0
-        min_index = i
+        min_idx = i
         k = i + 1
 
         head = """
@@ -58,7 +58,7 @@ class Example_selection_sort(mn.Scene):
         length = len(arr)
 
         for i in range(length - 1):
-            min_index = i
+            min_idx = i
             for k in range(i + 1, length):
                 if arr[min_index] > arr[k]:
                     min_index = k
@@ -85,7 +85,7 @@ class Example_selection_sort(mn.Scene):
         array = Array(
             lambda: arr,
             align_bottom=code_block,
-            vector=mn.LEFT * 4.4,
+            vector=mn.LEFT * 4.4 + mn.UP * 1,
             font_size=35,
         )
 
@@ -99,7 +99,7 @@ class Example_selection_sort(mn.Scene):
             ("i", lambda: i, mn.RED),
             mob_center=array,
             align_left=array,
-            vector=mn.UP * 2.2,
+            vector=mn.UP * 1.4,
         )
 
         k_text = RelativeTextValue(
@@ -109,9 +109,9 @@ class Example_selection_sort(mn.Scene):
         )
 
         min_text = RelativeTextValue(
-            ("min_index", lambda: min_index, mn.BLUE),
+            ("min_idx", lambda: min_idx, mn.BLUE),
             mob_center=array,
-            vector=mn.UP * 1.4,
+            align_top=i_text,
         )
 
         # ======== PRE-CYCLE LOGIC =============
@@ -142,36 +142,36 @@ class Example_selection_sort(mn.Scene):
             array.highlight_containers(i)
             self.wait(pause)
 
-            min_index = i
+            min_idx = i
             code_block.highlight(3)
-            array.highlight_pointers(i, min_index)
-            array.highlight_containers(i, min_index)
+            array.highlight_pointers(i, min_idx)
+            array.highlight_containers(i, min_idx)
             min_text.update_value(self)
             self.wait(pause)
 
             for k in range(i + 1, length):
                 code_block.highlight(4)
-                array.highlight_pointers(i, min_index, k)
-                array.highlight_containers(i, min_index, k)
+                array.highlight_pointers(i, min_idx, k)
+                array.highlight_containers(i, min_idx, k)
                 k_text.update_value(self)
                 self.wait(pause)
 
                 code_block.highlight(5)
                 self.wait(pause)
-                if arr[k] < arr[min_index]:
+                if arr[k] < arr[min_idx]:
                     #
-                    min_index = k
+                    min_idx = k
                     code_block.highlight(6)
-                    array.highlight_pointers(i, min_index, k)
-                    array.highlight_containers(i, min_index, k)
+                    array.highlight_pointers(i, min_idx, k)
+                    array.highlight_containers(i, min_idx, k)
                     min_text.update_value(self)
                     self.wait(pause)
 
             code_block.highlight(7)
             self.wait(pause)
-            if min_index != i:
+            if min_idx != i:
                 #
-                arr[i], arr[min_index] = arr[min_index], arr[i]
+                arr[i], arr[min_idx] = arr[min_idx], arr[i]
                 array.update_value(self)
                 code_block.highlight(8)
                 self.wait(pause)
