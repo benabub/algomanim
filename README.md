@@ -10,11 +10,11 @@ A Manim-based library for visualizing algorithms and explaining LeetCode-style s
 
 ### GIF
 
-![Example Selection Sort](assets/selection_sort.gif)
+![Example Selection Sort](.assets/selection_sort.gif)
 
-![Example String](assets/string.gif)
+![Example String](.assets/string.gif)
 
-![Example Linked List](assets/linkedlist.gif)
+![Example Linked List](.assets/linkedlist.gif)
 
 ## Installation
 
