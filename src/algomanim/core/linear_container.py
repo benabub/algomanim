@@ -983,3 +983,24 @@ class LinearContainerStructure(AlgoManimBase):
             else {}
         )
         return containers_colors, top_pointers_colors, bottom_pointers_colors
+
+    def _restore_highlight_colors(
+        self,
+        containers_colors: dict,
+        top_pointers_colors: dict,
+        bottom_pointers_colors: dict,
+    ) -> None:
+        """
+        ...
+        """
+        # restore colors dicts
+        self._containers_colors = containers_colors
+        self._top_pointers_colors = top_pointers_colors
+        self._bottom_pointers_colors = bottom_pointers_colors
+
+        # apply colors
+        if self._data:
+            self._apply_containers_colors()
+            if hasattr(self, "_pointers") and self._pointers:
+                self._apply_pointers_colors(0)
+                self._apply_pointers_colors(1)
