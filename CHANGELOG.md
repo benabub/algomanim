@@ -289,3 +289,51 @@
 
 ## Removed
 - `CodeBlock` precode-related parameters and logic
+
+---
+
+# [0.5.1] - 2026-06-20
+
+## Added
+- `NodeStructure`: New base class for linked list node management (`core/node_structure.py`)
+- `HLRect`: New background highlight class (`core/paths/hl_rect.py`)
+- `RelativeTextBase`, `RelativeTextUpdatable`: New base classes for relative text mobjects
+- `RelativeTextActive`, `RelativeTextValueGroup`: New relative text child classes
+- `AlgoScene`: New scene class with custom sound blocking support (`sound_block()` method)
+- `LinearContainerStructure`: Added `Colors` dataclass for centralizing color configurations
+- `LinearContainerStructure`: Added multi-color and automated blend logic (`_blend_colors()`, `_blend_colors_advanced()`)
+- `LinearContainerStructure`: Added automated side selection logic for layout pointers (`set_pointers()`)
+- `LinearContainerStructure`: Added `pointers_on_values()` and `text_color_with_values()` helper methods
+- `helpers/visual.py`: Added grid rendering support via new `grid()` helper function
+- `test_color_blending.py`: New unit tests for color blending algorithms
+
+## Changed
+- `{Array, String, LinkedList}`: Switched to dynamic instance-cloning state synchronization pattern (`_update_internal_state()`)
+- `{Array, String}`: Default `pointers` parameter changed from `"both"` to `"top"`
+- `{Array, String, LinkedList}`: Input dataset initialization parameter converted to callable closure
+- `String`: Replaced explicit positioning `anchor` constraint type with `Literal['start', 'end'] | None`
+- `RelativeText` hierarchy: Renamed `highlight` parameter to `hl` across all base and child configurations
+- `{RelativeText, RelativeTextValue, RelativeTextValueGroup}`: Embedded automated background highlighting using `HLRect`
+- `AlgoManimBase`: Converted `group_appear()` into a static method and shifted layout calculation rules
+- `CodeBlockBase`: Merged visual rectangle background setup and header block parsing directly into the base class
+- `CodeBlockLense`: Added selective pre-highlight behavior and automated background dimming
+- Assets folder: Relocated project asset tracking route from `assets/` to hidden `.assets/` directory
+
+## Refactored
+- `RelativeText` hierarchy: Migrated active objects to build directly on top of `RelativeTextBase` and `RelativeTextUpdatable`
+- `RectangleCellsStructure`: Stripped redundant `data_len` sizing definitions from all child initialization chains
+- `examples.py`: Partitioned monolithic script layout into modular, isolated test cases (`Example_class_name` structure)
+
+## Fixed
+- `LinkedList`: Resolved internal state corruption in `append()` and dynamic `update_value()` execution loops
+- `Array`: Fixed positioning offsets when rendering multiline strings inside sequential layout slots
+- `LinearContainerStructure`: Decoupled layout pointer calculation tasks from strict dependencies on active container structures
+- `CodeBlockBase`: Patched empty header runtime parsing failures and return line animation tracking bugs
+- Shell scripts: Fixed target file tracking layout bug in automated `.sh` testing pipelines
+
+## Removed
+- Code generator engine: Removed deprecated standalone script parsers (`code_generator.py` and `parsing.py`)
+- `LinearContainerStructure`: Stripped hardcoded historical color-mixing tables and obsolete legacy pointer methods
+- `examples.py`: Removed deprecated and isolated formatting utilities
+
+---
