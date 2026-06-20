@@ -378,21 +378,11 @@ class LinkedList(LinearContainerStructure, NodeStructure):
             new_instance: The instance to copy state from.
         """
         # save highlight rules before overwriting state
-        old_containers_colors = (
-            self._containers_colors.copy()
-            if hasattr(self, "_containers_colors")
-            else {}
-        )
-        old_top_colors = (
-            self._top_pointers_colors.copy()
-            if hasattr(self, "_top_pointers_colors")
-            else {}
-        )
-        old_bottom_colors = (
-            self._bottom_pointers_colors.copy()
-            if hasattr(self, "_bottom_pointers_colors")
-            else {}
-        )
+        (
+            old_containers_colors,
+            old_top_pointers_colors,
+            old_bottom_pointers_colors,
+        ) = self._get_highlight_dicts()
 
         # sync raw data and closures
         self._data = new_instance._data.copy()
@@ -410,16 +400,11 @@ class LinkedList(LinearContainerStructure, NodeStructure):
         if hasattr(new_instance, "_pointers_bottom"):
             self._pointers_bottom = new_instance._pointers_bottom
 
-        # restore and apply highlights
-        self._containers_colors = old_containers_colors
-        self._top_pointers_colors = old_top_colors
-        self._bottom_pointers_colors = old_bottom_colors
-
-        if self._data:
-            self._apply_containers_colors()
-            if hasattr(self, "_pointers") and self._pointers:
-                self._apply_pointers_colors(0)
-                self._apply_pointers_colors(1)
+        self._restore_highlight_colors(
+            old_containers_colors,
+            old_top_pointers_colors,
+            old_bottom_pointers_colors,
+        )
 
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
