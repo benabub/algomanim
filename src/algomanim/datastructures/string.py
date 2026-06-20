@@ -421,6 +421,54 @@ class String(RectangleCellsStructure):
 
         return new_instance
 
+    def _update_internal_state(self, new_instance: "String") -> None:
+        """Update the current instance with data from a new instance.
+
+        Copies data, mobject references, and highlight states from the new instance.
+        Highlights are preserved and reapplied to the updated containers.
+
+        Args:
+            new_instance: The instance to copy state from.
+        """
+        # save highlight rules before overwriting state
+        (
+            old_containers_colors,
+            old_top_pointers_colors,
+            old_bottom_pointers_colors,
+        ) = self._get_highlight_dicts()
+
+        # sync raw data and closures
+        self._data = new_instance._data
+        self._callable = new_instance._callable
+
+        # transfer references to sub-mobject groups
+        if hasattr(new_instance, "_containers_mob"):
+            self._containers_mob = new_instance._containers_mob
+        if hasattr(new_instance, "_values_mob"):
+            self._values_mob = new_instance._values_mob
+        if hasattr(new_instance, "_letters_cells_left_edge"):
+            self._letters_cells_left_edge = new_instance._letters_cells_left_edge
+        if hasattr(new_instance, "_empty_value_mob"):
+            self._empty_value_mob = new_instance._empty_value_mob
+        if hasattr(new_instance, "_left_quote_cell_mob"):
+            self._left_quote_cell_mob = new_instance._left_quote_cell_mob
+        if hasattr(new_instance, "_right_quote_cell_mob"):
+            self._right_quote_cell_mob = new_instance._right_quote_cell_mob
+        if hasattr(new_instance, "_quotes_mob"):
+            self._quotes_mob = new_instance._quotes_mob
+        if hasattr(new_instance, "_pointers_top"):
+            self._pointers_top = new_instance._pointers_top
+        if hasattr(new_instance, "_pointers_bottom"):
+            self._pointers_bottom = new_instance._pointers_bottom
+
+        self._restore_highlight_colors(
+            old_containers_colors,
+            old_top_pointers_colors,
+            old_bottom_pointers_colors,
+        )
+
+        # sync pure geometry hierarchy
+        self.submobjects = new_instance.submobjects.copy()
     def _set_new_value(self) -> None:
         """Update internal data from callable without scene animation.
 
