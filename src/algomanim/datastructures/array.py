@@ -473,12 +473,8 @@ class Array(RectangleCellsStructure):
         Replaces the current instance with a newly created one if the data has changed.
         Preserves highlights and alignment. Does not add to scene.
         """
-
         new_instance = self._create_new_instance()
-
-        # replace self
-        self.become(new_instance)
-        self._update_internal_state(self._callable(), new_instance)
+        self._update_internal_state(new_instance)
 
     def update_value(
         self,
