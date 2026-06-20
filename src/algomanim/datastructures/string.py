@@ -469,17 +469,15 @@ class String(RectangleCellsStructure):
 
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
+
     def _set_new_value(self) -> None:
         """Update internal data from callable without scene animation.
 
-        Replaces the current instance with a newly created one.
+        Replaces the current instance with a newly created one if the data has changed.
         Preserves highlights and alignment. Does not add to scene.
         """
         new_instance = self._create_new_instance()
-
-        # replace self
-        self.become(new_instance)
-        self._update_internal_state(self._callable(), new_instance)
+        self._update_internal_state(new_instance)
 
     def update_value(
         self,
