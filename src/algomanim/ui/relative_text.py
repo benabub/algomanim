@@ -421,7 +421,6 @@ class RelativeTextActive(RelativeTextUpdatable):
             self._text = f'"{str(input())}"'
         # --- font ---
         self._text_color = text_color
-        self.submobjects: List = []
         self._hl = hl
 
         self._prev_val = None
@@ -474,6 +473,34 @@ class RelativeTextActive(RelativeTextUpdatable):
         """
         measure = self._create_text_mob('""', mn.BLACK)
         return measure.height * 1.5
+
+    def _update_internal_state(self, new_instance: "RelativeTextActive") -> None:
+        """Update the current instance with data from a new instance.
+
+        Copies data, mobject references, and highlight states from the new instance.
+        Highlights are preserved and reapplied to the updated containers.
+
+        Args:
+            new_instance: The instance to copy state from.
+        """
+        # sync raw data and closures
+        self._callable = new_instance._callable
+        self._text = new_instance._text
+        self._text_color = new_instance._text_color
+        self._hl = new_instance._hl
+        self._prev_val = new_instance._prev_val
+        self._shift_distance = new_instance._shift_distance
+        self._shift_up = new_instance._shift_up
+        self._shift_down = new_instance._shift_down
+
+        # transfer references to sub-mobject groups
+        if hasattr(new_instance, "_text_mob"):
+            self._text_mob = new_instance._text_mob
+        if hasattr(new_instance, "_hl_rect"):
+            self._hl_rect = new_instance._hl_rect
+
+        # sync pure geometry hierarchy
+        self.submobjects = new_instance.submobjects.copy()
 
     def _create_new_instance(self) -> "RelativeTextActive":
         """Create a new RelativeTextActive instance with current variable values.
