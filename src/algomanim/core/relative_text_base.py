@@ -1,11 +1,11 @@
 from typing import Literal
-from abc import abstractmethod
 from dataclasses import dataclass
 
 import manim as mn
 from manim import ManimColor
 
 from algomanim.core.base import AlgoManimBase
+from algomanim.core.updatable import UpdatableMixin
 from algomanim.core.paths.hl_rect import HLRect
 
 
@@ -132,7 +132,7 @@ class RelativeTextBase(AlgoManimBase):
             self._hl_rect.deactivate()
 
 
-class RelativeTextUpdatable(RelativeTextBase):
+class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
     """Base class for updatable relative text elements.
 
     Args:
@@ -171,27 +171,6 @@ class RelativeTextUpdatable(RelativeTextBase):
         elif self._anchor == "end":
             new_instance.align_to(self.get_right(), mn.RIGHT)
 
-    @abstractmethod
-    def _create_new_instance(self) -> "RelativeTextUpdatable":
-        """Create a new instance with current configuration and fresh data.
-
-        Returns:
-            New instance with the same configuration and updated data.
-        """
-        pass
-
-    def _set_new_value(self) -> None:
-        """Update internal data from callables without scene animation.
-
-        Replaces the current instance with a newly created one.
-        Does not add to scene. Useful for silent updates before appearance.
-        """
-
-        new_instance = self._create_new_instance()
-
-        # replace self
-        self.become(new_instance)
-
     def update_value(
         self,
         scene: mn.Scene,
@@ -208,14 +187,7 @@ class RelativeTextUpdatable(RelativeTextBase):
             animate: Whether to animate the update.
         """
 
-        new_instance = self._create_new_instance()
-
-        if animate:
-            scene.play(mn.Transform(self, new_instance), run_time=anim_time)
-        else:
-            scene.remove(self)
-            self.become(new_instance)
-            scene.add(self)
+        UpdatableMixin.update_value(self, scene, animate=animate, anim_time=anim_time)
 
         if hl and self._hl_rect is not None:
             scene.wait(hl_time)
