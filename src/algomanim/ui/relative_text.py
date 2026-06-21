@@ -250,7 +250,6 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         self._buff = buff
         self._equal_sign = equal_sign
         self._items_align_edge = items_align_edge
-        self.submobjects: List = []
         self._hl = hl
 
         self._text_mob = self._build_text_mob()
@@ -292,6 +291,33 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         return mn.VGroup(*parts).arrange(
             mn.RIGHT, buff=self._buff, aligned_edge=self._items_align_edge
         )
+
+    def _update_internal_state(self, new_instance: "RelativeTextValueGroup") -> None:
+        """Update the current instance with data from a new instance.
+
+        Copies data, mobject references, and highlight states from the new instance.
+        Highlights are preserved and reapplied to the updated containers.
+
+        Args:
+            new_instance: The instance to copy state from.
+        """
+        # sync raw data and closures
+        self._inputs = new_instance._inputs
+        self._data = new_instance._data
+        self._spaces = new_instance._spaces
+        self._buff = new_instance._buff
+        self._equal_sign = new_instance._equal_sign
+        self._items_align_edge = new_instance._items_align_edge
+        self._hl = new_instance._hl
+
+        # transfer references to sub-mobject groups
+        if hasattr(new_instance, "_text_mob"):
+            self._text_mob = new_instance._text_mob
+        if hasattr(new_instance, "_hl_rect"):
+            self._hl_rect = new_instance._hl_rect
+
+        # sync pure geometry hierarchy
+        self.submobjects = new_instance.submobjects.copy()
 
     def _create_new_instance(self) -> "RelativeTextValueGroup":
         """Create a new RelativeTextValue instance with current variable values.
