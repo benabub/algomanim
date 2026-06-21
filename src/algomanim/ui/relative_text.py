@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Literal, Tuple
+from typing import Any, Callable, Literal, Tuple
 
 import numpy as np
 import manim as mn
@@ -114,6 +114,34 @@ class RelativeTextValue(RelativeTextUpdatable):
             text = f"{self._name} {val}"
 
         return self._create_text_mob(text, self._color)
+
+    def _update_internal_state(self, new_instance: "RelativeTextValue") -> None:
+        """Update the current instance with data from a new instance.
+
+        Copies data, mobject references, and highlight states from the new instance.
+        Highlights are preserved and reapplied to the updated containers.
+
+        Args:
+            new_instance: The instance to copy state from.
+        """
+
+        # sync raw data and closures
+        self._input = new_instance._input
+        self._name = new_instance._name
+        self._callable = new_instance._callable
+        self._color = new_instance._color
+        self._spaces = new_instance._spaces
+        self._equal_sign = new_instance._equal_sign
+        self._hl = new_instance._hl
+
+        # transfer references to sub-mobject groups
+        if hasattr(new_instance, "_text_mob"):
+            self._text_mob = new_instance._text_mob
+        if hasattr(new_instance, "_hl_rect"):
+            self._hl_rect = new_instance._hl_rect
+
+        # sync pure geometry hierarchy
+        self.submobjects = new_instance.submobjects.copy()
 
     def _create_new_instance(self) -> "RelativeTextValue":
         """Create a new RelativeTextValue instance with current variable values.
