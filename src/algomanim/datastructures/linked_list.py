@@ -427,7 +427,7 @@ class LinkedList(LinearContainerStructure, NodeStructure):
         self,
         scene: mn.Scene,
         animate: bool = True,
-        update_time: float = 0.2,
+        anim_time: float = 0.2,
     ) -> None:
         """Replace the linked list visualization with new nodes.
 
@@ -442,7 +442,7 @@ class LinkedList(LinearContainerStructure, NodeStructure):
             scene.play(
                 mn.FadeOut(self),
                 mn.FadeIn(new_instance),
-                run_time=update_time,
+                run_time=anim_time,
             )
 
         scene.remove(self)

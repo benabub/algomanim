@@ -483,7 +483,7 @@ class String(RectangleCellsStructure):
         self,
         scene: mn.Scene,
         animate: bool = True,
-        run_time: float = 0.2,
+        anim_time: float = 0.2,
     ) -> None:
         """Replace the string visualization with updated values from the callable.
 
@@ -504,7 +504,7 @@ class String(RectangleCellsStructure):
             scene.play(
                 mn.FadeOut(self),
                 mn.FadeIn(new_instance),
-                run_time=run_time,
+                run_time=anim_time,
             )
 
         scene.remove(self)
