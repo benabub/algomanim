@@ -743,6 +743,7 @@ class Example_array(mn.Scene):
             array = Array(
                 lambda: arr,
                 font_size=40,
+                anchor=None,
             )
             array.first_appear(self)
             self.wait(1.5)
@@ -2345,6 +2346,7 @@ class Example_string(mn.Scene):
             string = String(
                 cast(Callable[[], str], lambda: s),
                 font_size=40,
+                anchor=None,
             )
             string.first_appear(self)
             self.wait(1.5)
@@ -3199,6 +3201,7 @@ class Example_linked_list(mn.Scene):
             ll = LinkedList(
                 cast(Callable[[], ListNode | None], lambda: ln),
                 radius=0.35,
+                anchor=None,
             )
             ll.first_appear(self)
             self.wait(1.5)
