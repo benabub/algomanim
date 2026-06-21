@@ -302,8 +302,11 @@ class AlgoManimBase(mn.VGroup):
         Args:
             scene: The Manim scene to inspect.
         """
-        count = 0
-        print("scene mobjects:")
-        for mob in scene.mobjects:
-            count += 1
-            print(f"    {count}: {mob}")
+        if not scene.mobjects:
+            print("scene mobjects: clear")
+        else:
+            count = 0
+            print("scene mobjects list:")
+            for mob in scene.mobjects:
+                count += 1
+                print(f"    {count}: {mob}")
