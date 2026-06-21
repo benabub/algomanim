@@ -449,8 +449,8 @@ class LinkedList(LinearContainerStructure, NodeStructure):
         scene.remove(new_instance)
 
         self._update_internal_state(new_instance)
-
         scene.add(self)
+
         self._clear_scene(scene)
 
     def append(

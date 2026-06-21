@@ -495,9 +495,6 @@ class String(RectangleCellsStructure):
             animate: If True, plays a fade transition. If False, updates instantly.
             run_time: Duration of the fade transition if animate=True.
         """
-        if not self._data and not self._callable():
-            return
-
         new_instance = self._create_new_instance()
 
         if animate:
@@ -511,7 +508,6 @@ class String(RectangleCellsStructure):
         scene.remove(new_instance)
 
         self._update_internal_state(new_instance)
-
         scene.add(self)
 
         self._clear_scene(scene)
