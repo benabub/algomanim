@@ -4,6 +4,7 @@ from .core.rectangle_cells import RectangleCellsStructure
 from .core.code_block_base import CodeBlockBase
 from .core.algo_scene import AlgoScene
 from .core.relative_text_base import RelativeTextBase, RelativeTextUpdatable
+from .core.updatable import UpdatableMixin
 from .core.node_structure import NodeStructure
 from .core.paths.semi_rounded_rectangle import SemiRoundedRectangle
 from .core.paths.hl_rect import HLRect
@@ -47,6 +48,7 @@ __all__ = [
     "HLRect",
     "RelativeTextBase",
     "RelativeTextUpdatable",
+    "UpdatableMixin",
     "NodeStructure",
     "Node",
     "ListNode",

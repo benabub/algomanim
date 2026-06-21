@@ -7,6 +7,7 @@ from .paths.semi_rounded_rectangle import SemiRoundedRectangle
 from .paths.hl_rect import HLRect
 from .relative_text_base import RelativeTextBase, RelativeTextUpdatable
 from .node_structure import NodeStructure
+from .updatable import UpdatableMixin
 
 __all__ = [
     "AlgoManimBase",
@@ -19,4 +20,5 @@ __all__ = [
     "RelativeTextBase",
     "RelativeTextUpdatable",
     "NodeStructure",
+    "UpdatableMixin",
 ]

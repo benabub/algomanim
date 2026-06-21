@@ -4,12 +4,13 @@ import manim as mn
 from manim import ManimColor
 
 from algomanim.core.rectangle_cells import RectangleCellsStructure
+from algomanim.core.updatable import UpdatableMixin
 
 if TYPE_CHECKING:
     from algomanim.datastructures.array import Array
 
 
-class String(RectangleCellsStructure):
+class String(RectangleCellsStructure, UpdatableMixin):
     """String visualization as a VGroup of character cells with quotes.
 
     Args:
@@ -469,45 +470,3 @@ class String(RectangleCellsStructure):
 
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
-
-    def _set_new_value(self) -> None:
-        """Update internal data from callable without scene animation.
-
-        Replaces the current instance with a newly created one if the data has changed.
-        Preserves highlights and alignment. Does not add to scene.
-        """
-        new_instance = self._create_new_instance()
-        self._update_internal_state(new_instance)
-
-    def update_value(
-        self,
-        scene: mn.Scene,
-        animate: bool = True,
-        anim_time: float = 0.2,
-    ) -> None:
-        """Replace the string visualization with updated values from the callable.
-
-        Creates a new String instance with fresh data, then applies a fade transition
-        from the old to the new state. Highlights and colors are preserved.
-
-        Args:
-            scene: The Manim scene to play animations in.
-            animate: If True, plays a fade transition. If False, updates instantly.
-            run_time: Duration of the fade transition if animate=True.
-        """
-        new_instance = self._create_new_instance()
-
-        if animate:
-            scene.play(
-                mn.FadeOut(self),
-                mn.FadeIn(new_instance),
-                run_time=anim_time,
-            )
-
-        scene.remove(self)
-        scene.remove(new_instance)
-
-        self._update_internal_state(new_instance)
-        scene.add(self)
-
-        self._clear_scene(scene)

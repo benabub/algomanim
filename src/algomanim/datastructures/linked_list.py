@@ -7,10 +7,11 @@ from manim import ManimColor
 from algomanim.helpers.datastructures import ListNode
 from algomanim.core.linear_container import LinearContainerStructure
 from algomanim.core.node_structure import NodeStructure
+from algomanim.core.updatable import UpdatableMixin
 from algomanim.assets.svg import SVG_DIR
 
 
-class LinkedList(LinearContainerStructure, NodeStructure):
+class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
     """Linked list visualization as a VGroup of nodes with values and pointers.
 
     Args:
@@ -413,45 +414,6 @@ class LinkedList(LinearContainerStructure, NodeStructure):
 
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
-
-    def _set_new_value(self) -> None:
-        """Update internal data from callable without scene animation.
-
-        Replaces the current instance with a newly created one if the data has changed.
-        Preserves highlights and alignment. Does not add to scene.
-        """
-        new_instance = self._create_new_instance()
-        self._update_internal_state(new_instance)
-
-    def update_value(
-        self,
-        scene: mn.Scene,
-        animate: bool = True,
-        anim_time: float = 0.2,
-    ) -> None:
-        """Replace the linked list visualization with new nodes.
-
-        Args:
-            scene: The Manim scene to play animations in.
-            animate: If True, plays a fade transition. If False, updates instantly.
-            update_time: Duration of the fade transition if animate=True.
-        """
-        new_instance = self._create_new_instance()
-
-        if animate:
-            scene.play(
-                mn.FadeOut(self),
-                mn.FadeIn(new_instance),
-                run_time=anim_time,
-            )
-
-        scene.remove(self)
-        scene.remove(new_instance)
-
-        self._update_internal_state(new_instance)
-        scene.add(self)
-
-        self._clear_scene(scene)
 
     def append(
         self,
