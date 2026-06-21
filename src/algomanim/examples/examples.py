@@ -455,7 +455,8 @@ class Example_text(mn.Scene):
                 anchor=None,
             )
 
-            p_text.update_value(self)
+            p_text.first_appear(self)
+
             self.wait(pause)
             t1 = RelativeText(
                 s,
