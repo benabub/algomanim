@@ -323,7 +323,6 @@ class Example_text(mn.Scene):
 
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def groupp_appear(self):
             pause = 1
@@ -376,7 +375,6 @@ class Example_text(mn.Scene):
 
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def update(self):
             pause = 1
@@ -428,7 +426,6 @@ class Example_text(mn.Scene):
 
             self.wait(pause)
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def position(self):
@@ -565,7 +562,6 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         # ========== calls ==============
@@ -927,7 +923,6 @@ class Example_array(mn.Scene):
 
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def lockwidth(self):
             pause = 0.5
@@ -1039,7 +1034,6 @@ class Example_array(mn.Scene):
             self.wait(1)
 
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def pointers(self):
@@ -1273,7 +1267,6 @@ class Example_array(mn.Scene):
             self.wait(1)
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def highlights(self):
             pause = 1
@@ -1310,8 +1303,8 @@ class Example_array(mn.Scene):
                 ("indices_param", lambda: indices, mn.WHITE),
                 font_size=35,
                 mob_center=array,
-                align_left=array,
                 vector=mn.DOWN * 1.5,
+                anchor=None,
             )
 
             def cycle(
@@ -1378,7 +1371,6 @@ class Example_array(mn.Scene):
             array.clear_containers_highlights()
 
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def positioning(self):
@@ -1447,9 +1439,8 @@ class Example_array(mn.Scene):
 
             self.clear()
             print_scene(self)
-            print_scene(self)
 
-            self.add(title)
+            title.first_appear(self)
 
             one = Array(
                 lambda: list("one"),
@@ -1579,7 +1570,6 @@ class Example_array(mn.Scene):
             group_appear(self, array, top_text)
             self.wait(pause)
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def update_value(self):
@@ -1789,7 +1779,6 @@ class Example_array(mn.Scene):
             self.wait(1)
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def frame_import(self):
             pause = 0.5
@@ -1801,7 +1790,7 @@ class Example_array(mn.Scene):
                 align_screen=mn.UP,
                 screen_buff=1,
             )
-            self.add(title)
+            title.first_appear(self)
 
             donor_val = [100, 100, 100, 100, 100]
             donor = Array(
@@ -1838,7 +1827,7 @@ class Example_array(mn.Scene):
                 align_screen=mn.DOWN,
                 screen_buff=1,
             )
-            self.add(func_text)
+            func_text.first_appear(self)
             self.wait(pause)
 
             rec_val = [10, 10, 10, 10, 10]
@@ -1930,7 +1919,7 @@ class Example_array(mn.Scene):
                 align_screen=mn.DOWN,
                 screen_buff=1,
             )
-            self.add(func_text)
+            func_text.first_appear(self)
             self.wait(pause)
 
             rec_val = [10, 10, 10, 10, 10]
@@ -1950,7 +1939,6 @@ class Example_array(mn.Scene):
             self.wait(1)
 
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def monocolor(self):
@@ -1979,8 +1967,8 @@ class Example_array(mn.Scene):
                 ("indices_param", lambda: indices, mn.WHITE),
                 font_size=35,
                 mob_center=array,
-                align_left=array,
                 vector=mn.DOWN * 1.5,
+                anchor=None,
             )
 
             def cycle(
@@ -2003,7 +1991,6 @@ class Example_array(mn.Scene):
             array.clear_containers_highlights()
 
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def highlight_containers_with_value(self):
@@ -2051,7 +2038,6 @@ class Example_array(mn.Scene):
             self.remove(title)
 
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def highlight_containers_with_values(self):
@@ -2125,7 +2111,6 @@ class Example_array(mn.Scene):
 
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def pointers_on_values(self):
             arr = ["A", 0, "B", 1, "C", 2, "D"]
@@ -2175,23 +2160,22 @@ class Example_array(mn.Scene):
             self.wait(pause)
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         # ========== calls ==============
 
-        # pyramid(self)
+        pyramid(self)
         first_appear(self)
-        # direction(self)
-        # lockwidth(self)
-        # pointers(self)
-        # highlights(self)
-        # positioning(self)
-        # update_value(self)
-        # frame_import(self)
-        # monocolor(self)
-        # highlight_containers_with_value(self)
-        # highlight_containers_with_values(self)
-        # pointers_on_values(self)
+        direction(self)
+        lockwidth(self)
+        pointers(self)
+        highlights(self)
+        positioning(self)
+        update_value(self)
+        frame_import(self)
+        monocolor(self)
+        highlight_containers_with_value(self)
+        highlight_containers_with_values(self)
+        pointers_on_values(self)
 
         # ========== finish ==============
 
@@ -2342,7 +2326,6 @@ class Example_string(mn.Scene):
             self.wait(1)
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def first_appear(self):
 
@@ -2414,7 +2397,6 @@ class Example_string(mn.Scene):
 
             self.wait(pause)
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def pointers(self):
@@ -2505,7 +2487,6 @@ class Example_string(mn.Scene):
 
             self.clear()
             print_scene(self)
-            print_scene(self)
 
         def positioning(self):
 
@@ -2555,7 +2536,7 @@ class Example_string(mn.Scene):
             self.wait(pause)
 
             self.clear()
-            self.add(title)
+            title.first_appear(self)
 
             one = String(lambda: "one", font_size=60, vector=mn.UP * 2.7 + mn.LEFT * 4)
             two = String(
@@ -2657,7 +2638,6 @@ class Example_string(mn.Scene):
             group_appear(self, string, top_text)
             self.wait(pause)
             self.clear()
-            print_scene(self)
             print_scene(self)
 
         def update_value(self):
@@ -3000,8 +2980,8 @@ class Example_string(mn.Scene):
                 ("indices_param", lambda: indices, mn.WHITE),
                 font_size=35,
                 mob_center=string,
-                align_left=string,
                 vector=mn.DOWN * 1.5,
+                anchor=None,
             )
 
             def cycle(
@@ -3651,8 +3631,8 @@ class Example_linked_list(mn.Scene):
                 ("indices_param", lambda: indices, mn.WHITE),
                 font_size=35,
                 mob_center=ll,
-                align_left=ll,
                 vector=mn.DOWN * 1.5,
+                anchor=None,
             )
 
             def cycle(
