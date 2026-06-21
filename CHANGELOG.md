@@ -337,3 +337,22 @@
 - `examples.py`: Removed deprecated and isolated formatting utilities
 
 ---
+
+# [0.5.2] - 2026-06-21
+
+## Added
+- `UpdatableMixin`: New base class for active instance-cloning state updates (`core/updatable.py`)
+- `{RelativeTextValue, RelativeTextValueGroup, RelativeTextActive}`: Implemented `_update_internal_state()` method for dynamic state synchronization
+- `rend_poetry.sh`: Added execution time logging support during rendering pipelines
+
+## Changed
+- `RelativeTextUpdatable`: Integrated `UpdatableMixin` parent class, updated `update_value()` execution logic, and removed obsolete parent methods
+- `{Array, String, LinkedList}`: Removed redundant data validation checks inside `update_value()` execution loops
+- `{Array, String, LinkedList}`: Renamed animation duration parameter `run_time` to `anim_time` in `update_value()`
+- `{Array, String, LinkedList}`: Migrated `update_value()` and `_set_new_value()` workflows to build on top of `UpdatableMixin`
+- `AlgoManimBase`: Updated internal scene printing logic within `_print_scene()` method
+
+## Fixed
+- `examples.py`
+
+---

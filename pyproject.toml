@@ -1,6 +1,6 @@
 [project]
 name = "algomanim"
-version = "0.5.1"
+version = "0.5.2"
 description = "Manim-powered algorithm tasks visualizations for LeetCode and beyond"
 authors = [
     {name = "Benedict Abub", email = "dfgertwer@proton.me"}
