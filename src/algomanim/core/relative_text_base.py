@@ -186,6 +186,15 @@ class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
             time: Duration of animation if animate=True.
             animate: Whether to animate the update.
         """
+        if self not in scene.mobjects:
+            RelativeTextBase.first_appear(
+                self,
+                scene,
+                appear_time=anim_time,
+                hl=hl,
+                hl_time=hl_time,
+            )
+            return
 
         UpdatableMixin.update_value(self, scene, animate=animate, anim_time=anim_time)
 

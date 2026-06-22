@@ -400,7 +400,7 @@ class Example_text(mn.Scene):
                 anchor=None,
                 vector=mn.DOWN * 1.0,
             )
-            p_text.first_appear(self)
+            p_text.update_value(self)
             self.wait(pause)
 
             group_appear(self, t1, t2, t3, t4)
