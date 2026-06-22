@@ -143,10 +143,10 @@ class AlgoManimBase(mn.VGroup):
         for mob in mobjects:
             if hasattr(mob, "_set_new_value"):
                 mob._set_new_value()
-            elif hl and hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
+            if not hl and hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
                 hl_rect = getattr(mob, "_hl_rect")
                 if isinstance(hl_rect, HLRect):
-                    hl_rect.activate()
+                    hl_rect.deactivate()
                 hl_rects_presented = True
 
         if animate:
@@ -161,7 +161,7 @@ class AlgoManimBase(mn.VGroup):
                     hl_rects_presented = True
                     break
 
-        if not hl or not hl_rects_presented:
+        if not hl_rects_presented or not hl:
             return
 
         scene.wait(hl_time)
