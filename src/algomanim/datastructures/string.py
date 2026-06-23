@@ -230,7 +230,8 @@ class String(RectangleCellsStructure, UpdatableMixin):
         return {
             "color": self._bg_color,
             "fill_color": self._bg_color,
-            "side_length": self._cell_height,
+            "height": self._cell_height,
+            "width": self._cell_height / 2,
             "fill_opacity": 1,
         }
 
@@ -286,9 +287,8 @@ class String(RectangleCellsStructure, UpdatableMixin):
         Returns:
             tuple: Tuple containing (left_quote_cell, right_quote_cell).
         """
-
-        left_quote_cell = mn.Square(**self._quotes_cell_config())
-        right_quote_cell = mn.Square(**self._quotes_cell_config())
+        left_quote_cell = mn.Rectangle(**self._quotes_cell_config())
+        right_quote_cell = mn.Rectangle(**self._quotes_cell_config())
         left_quote_cell.next_to(self._containers_mob, mn.LEFT, buff=0.0)
         right_quote_cell.next_to(self._containers_mob, mn.RIGHT, buff=0.0)
         return left_quote_cell, right_quote_cell
@@ -400,8 +400,8 @@ class String(RectangleCellsStructure, UpdatableMixin):
                 elif self._data and not self._callable():
                     new_instance.align_to(self._containers_mob.get_left(), mn.LEFT)
                 elif not self._data and self._callable():
-                    target = (
-                        self._containers_mob.get_left() + mn.LEFT * self._cell_height
+                    target = self._containers_mob.get_left() + mn.LEFT * (
+                        self._cell_height / 2
                     )
                     new_instance.align_to(target, mn.LEFT)
             elif self._anchor == "end":
@@ -410,8 +410,8 @@ class String(RectangleCellsStructure, UpdatableMixin):
                 elif self._data and not self._callable():
                     new_instance.align_to(self._containers_mob.get_right(), mn.RIGHT)
                 elif not self._data and self._callable():
-                    target = (
-                        self._containers_mob.get_right() + mn.RIGHT * self._cell_height
+                    target = self._containers_mob.get_right() + mn.RIGHT * (
+                        self._cell_height / 2
                     )
                     new_instance.align_to(target, mn.RIGHT)
 
