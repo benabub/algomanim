@@ -599,7 +599,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=20,
             )
-            array_20.first_appear(self, appear_time=0.1)
+            array_20.first_appear(self, anim_time=0.1)
 
             array_30 = Array(
                 lambda: arr,
@@ -607,7 +607,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            array_30.first_appear(self, appear_time=0.1)
+            array_30.first_appear(self, anim_time=0.1)
 
             array_40 = Array(
                 lambda: arr,
@@ -615,7 +615,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=40,
             )
-            array_40.first_appear(self, appear_time=0.1)
+            array_40.first_appear(self, anim_time=0.1)
 
             array_50 = Array(
                 lambda: arr,
@@ -623,7 +623,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=50,
             )
-            array_50.first_appear(self, appear_time=0.1)
+            array_50.first_appear(self, anim_time=0.1)
 
             self.wait(1)
 
@@ -643,7 +643,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=20,
             )
-            array_20.first_appear(self, appear_time=0.1)
+            array_20.first_appear(self, anim_time=0.1)
 
             array_30 = Array(
                 lambda: arr,
@@ -652,7 +652,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            array_30.first_appear(self, appear_time=0.1)
+            array_30.first_appear(self, anim_time=0.1)
 
             array_40 = Array(
                 lambda: arr,
@@ -661,7 +661,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=40,
             )
-            array_40.first_appear(self, appear_time=0.1)
+            array_40.first_appear(self, anim_time=0.1)
 
             array_50 = Array(
                 lambda: arr,
@@ -670,7 +670,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=50,
             )
-            array_50.first_appear(self, appear_time=0.1)
+            array_50.first_appear(self, anim_time=0.1)
 
             self.wait(1)
 
@@ -690,7 +690,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=20,
             )
-            array_20.first_appear(self, appear_time=0.1)
+            array_20.first_appear(self, anim_time=0.1)
 
             array_30 = Array(
                 lambda: arr,
@@ -699,7 +699,7 @@ class Example_array(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            array_30.first_appear(self, appear_time=0.1)
+            array_30.first_appear(self, anim_time=0.1)
 
             array_40 = Array(
                 lambda: arr,
@@ -708,7 +708,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=40,
             )
-            array_40.first_appear(self, appear_time=0.1)
+            array_40.first_appear(self, anim_time=0.1)
 
             array_50 = Array(
                 lambda: arr,
@@ -717,7 +717,7 @@ class Example_array(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=50,
             )
-            array_50.first_appear(self, appear_time=0.1)
+            array_50.first_appear(self, anim_time=0.1)
 
             self.wait(1)
 
@@ -2205,7 +2205,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 2.8,
                 font_size=25,
             )
-            string_20.first_appear(self, appear_time=0.1)
+            string_20.first_appear(self, anim_time=0.1)
 
             string_25 = String(
                 lambda: s,
@@ -2213,7 +2213,7 @@ class Example_string(mn.Scene):
                 vector=mn.UP * 1.4,
                 font_size=30,
             )
-            string_25.first_appear(self, appear_time=0.1)
+            string_25.first_appear(self, anim_time=0.1)
 
             string_35 = String(
                 lambda: s,
@@ -2221,7 +2221,7 @@ class Example_string(mn.Scene):
                 vector=mn.DOWN * 1.5,
                 font_size=37,
             )
-            string_35.first_appear(self, appear_time=0.1)
+            string_35.first_appear(self, anim_time=0.1)
 
             string_40 = String(
                 lambda: s,
@@ -2229,7 +2229,7 @@ class Example_string(mn.Scene):
                 vector=mn.DOWN * 3.0,
                 font_size=40,
             )
-            string_40.first_appear(self, appear_time=0.1)
+            string_40.first_appear(self, anim_time=0.1)
 
             self.wait(1)
 
@@ -2249,7 +2249,7 @@ class Example_string(mn.Scene):
                 font_size=25,
                 align_left=string,
             )
-            string_20.first_appear(self, appear_time=0.1)
+            string_20.first_appear(self, anim_time=0.1)
 
             string_25 = String(
                 lambda: s,
@@ -2258,7 +2258,7 @@ class Example_string(mn.Scene):
                 font_size=30,
                 align_left=string,
             )
-            string_25.first_appear(self, appear_time=0.1)
+            string_25.first_appear(self, anim_time=0.1)
 
             string_35 = String(
                 lambda: s,
@@ -2267,7 +2267,7 @@ class Example_string(mn.Scene):
                 font_size=37,
                 align_left=string,
             )
-            string_35.first_appear(self, appear_time=0.1)
+            string_35.first_appear(self, anim_time=0.1)
 
             string_40 = String(
                 lambda: s,
@@ -2276,7 +2276,7 @@ class Example_string(mn.Scene):
                 font_size=40,
                 align_left=string,
             )
-            string_40.first_appear(self, appear_time=0.1)
+            string_40.first_appear(self, anim_time=0.1)
 
             self.wait(1)
 
@@ -2296,7 +2296,7 @@ class Example_string(mn.Scene):
                 font_size=25,
                 align_right=string,
             )
-            string_20.first_appear(self, appear_time=0.1)
+            string_20.first_appear(self, anim_time=0.1)
 
             string_25 = String(
                 lambda: s,
@@ -2305,7 +2305,7 @@ class Example_string(mn.Scene):
                 font_size=30,
                 align_right=string,
             )
-            string_25.first_appear(self, appear_time=0.1)
+            string_25.first_appear(self, anim_time=0.1)
 
             string_35 = String(
                 lambda: s,
@@ -2314,7 +2314,7 @@ class Example_string(mn.Scene):
                 font_size=37,
                 align_right=string,
             )
-            string_35.first_appear(self, appear_time=0.1)
+            string_35.first_appear(self, anim_time=0.1)
 
             string_40 = String(
                 lambda: s,
@@ -2323,7 +2323,7 @@ class Example_string(mn.Scene):
                 font_size=40,
                 align_right=string,
             )
-            string_40.first_appear(self, appear_time=0.1)
+            string_40.first_appear(self, anim_time=0.1)
 
             self.wait(1)
             self.clear()
