@@ -114,11 +114,11 @@ class AlgoManimBase(mn.VGroup):
     @staticmethod
     def group_appear(
         scene: mn.Scene,
-        *mobjects: mn.Mobject,
+        *mobjects: "AlgoManimBase",
         animate: bool = True,
-        appear_time: float = 0.2,
+        anim_time: float = 0.2,
         hl: bool = True,
-        hl_time: float = 1.0,
+        hl_time: float = 1.1,
     ) -> None:
         """Animate the appearance of multiple mobjects simultaneously.
 
@@ -151,7 +151,7 @@ class AlgoManimBase(mn.VGroup):
 
         if animate:
             animations = [mn.FadeIn(mob) for mob in mobjects]
-            scene.play(*animations, run_time=appear_time)
+            scene.play(*animations, run_time=anim_time)
         else:
             scene.add(*mobjects)
 
@@ -171,6 +171,79 @@ class AlgoManimBase(mn.VGroup):
                 hl_rect = getattr(mob, "_hl_rect")
                 if isinstance(hl_rect, HLRect):
                     hl_rect.deactivate()
+
+    @staticmethod
+    def group_update(
+        scene: mn.Scene,
+        *mobjects: "AlgoManimBase",
+        animate: bool = True,
+        anim_time: float = 0.2,
+        hl: bool = True,
+        hl_time: float = 1.1,
+    ) -> None:
+        """Update multiple objects simultaneously with an optionally animation.
+
+        Creates new instances for all mobjects, replaces them in the scene,
+        and optionally handles highlight deactivation.
+
+        Args:
+            scene: The Manim scene to play animations in.
+            *mobjects: Objects to update. Must have `_create_new_instance` and
+                `_update_internal_state` methods.
+            animate: If True, plays FadeOut/FadeIn transitions for all objects.
+            anim_time: Duration of the fade transition if animate=True.
+            hl: If True, deactivates highlights after the update.
+            hl_time: Wait time before deactivating highlights.
+
+        Raises:
+            ValueError: If any mobject lacks required update methods.
+        """
+        # -- validation ---
+
+        for mob in mobjects:
+            if not hasattr(mob, "_create_new_instance") or not hasattr(
+                mob, "_update_internal_state"
+            ):
+                raise ValueError(
+                    "All mobject must have _update_internal_state and _create_new_instance methods"
+                )
+
+        # -- logic ---
+        new_instances = []
+        for mob in mobjects:
+            new_instances.append(mob._create_new_instance())
+
+        if animate:
+            animations = []
+            for old, new in zip(mobjects, new_instances):
+                animations.append(mn.FadeOut(old))
+                animations.append(mn.FadeIn(new))
+            scene.play(*animations, run_time=anim_time)
+
+        for old, new in zip(mobjects, new_instances):
+            scene.remove(old)
+            scene.remove(new)
+            old._update_internal_state(new)
+            scene.add(old)
+
+        if hl:
+            hl_rects_presented = False
+            for mob in mobjects:
+                if hasattr(mob, "_hl_rect"):
+                    hl_rects_presented = True
+                    break
+
+            if hl_rects_presented:
+                scene.wait(hl_time)
+                for mob in mobjects:
+                    if (
+                        hasattr(mob, "_hl_rect")
+                        and isinstance(mob._hl_rect, HLRect)
+                        and mob._hl_rect is not None
+                    ):
+                        mob._hl_rect.deactivate()
+
+        AlgoManimBase._clear_scene(scene)
 
     def appear(self, scene: mn.Scene):
         """Add VGroup the given scene.
