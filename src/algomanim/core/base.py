@@ -94,7 +94,7 @@ class AlgoManimBase(mn.VGroup):
         self,
         scene: mn.Scene,
         update: bool = True,
-        appear_time=0.2,
+        anim_time=0.2,
     ):
         """Animate the initial appearance in scene.
 
@@ -109,7 +109,7 @@ class AlgoManimBase(mn.VGroup):
             if hasattr(self, "_set_new_value"):
                 self._set_new_value()
 
-        scene.play(mn.FadeIn(self), run_time=appear_time)
+        scene.play(mn.FadeIn(self), run_time=anim_time)
 
     @staticmethod
     def group_appear(

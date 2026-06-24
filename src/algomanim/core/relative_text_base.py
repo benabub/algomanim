@@ -103,7 +103,7 @@ class RelativeTextBase(AlgoManimBase):
         self,
         scene: mn.Scene,
         update: bool = True,
-        appear_time: float = 0.2,
+        anim_time: float = 0.2,
         hl: bool = True,
         hl_time: float = 1.0,
     ):
@@ -120,12 +120,18 @@ class RelativeTextBase(AlgoManimBase):
             hl: If True, enables highlight behavior.
             hl_time: Time to wait before deactivating the highlight.
         """
-        # for not RelativeTextUpdatable: activate self._hl_rect
-        if not hasattr(self, "_set_new_value") and hl and self._hl_rect is not None:
-            self._hl_rect.activate()
 
-        # for RelativeTextUpdatable: appear with active hl_rect already
-        super().first_appear(scene, update, appear_time)
+        if update:
+            if hasattr(self, "_set_new_value"):
+                self._set_new_value()
+
+        if not hl and self._hl_rect is not None:
+            self._hl_rect.deactivate()
+
+        scene.play(mn.FadeIn(self), run_time=anim_time)
+
+        if not hl and self._hl_rect is not None:
+            return
 
         if hl and self._hl_rect is not None:
             scene.wait(hl_time)
@@ -190,7 +196,7 @@ class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
             RelativeTextBase.first_appear(
                 self,
                 scene,
-                appear_time=anim_time,
+                anim_time=anim_time,
                 hl=hl,
                 hl_time=hl_time,
             )
