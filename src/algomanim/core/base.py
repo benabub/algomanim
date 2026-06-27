@@ -181,10 +181,11 @@ class AlgoManimBase(mn.VGroup):
         hl: bool = True,
         hl_time: float = 1.1,
     ) -> None:
-        """Update multiple objects simultaneously with an optionally animation.
+        """Update multiple objects simultaneously with an optional animation.
 
         Creates new instances for all mobjects, replaces them in the scene,
-        and optionally handles highlight deactivation.
+        and optionally handles highlight deactivation. Objects already present
+        on the scene receive FadeOut animation; new objects only FadeIn.
 
         Args:
             scene: The Manim scene to play animations in.
@@ -216,7 +217,8 @@ class AlgoManimBase(mn.VGroup):
         if animate:
             animations = []
             for old, new in zip(mobjects, new_instances):
-                animations.append(mn.FadeOut(old))
+                if old in scene.mobjects:
+                    animations.append(mn.FadeOut(old))
                 animations.append(mn.FadeIn(new))
             scene.play(*animations, run_time=anim_time)
 
