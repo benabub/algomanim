@@ -2042,11 +2042,10 @@ class Example_array(mn.Scene):
             self.clear()
             print_scene(self)
 
-        def highlight_containers_with_values(self):
-            pause = 0.5
+        def value_colors_map_mode(self):
 
             title = RelativeText(
-                "highlight_containers_with_values();  text_color_with_values()",
+                "value_colors_map mode",
                 font_size=35,
                 text_color=mn.BLACK,
                 align_screen=mn.UP,
@@ -2055,16 +2054,21 @@ class Example_array(mn.Scene):
             title.first_appear(self)
             self.wait(1)
 
-            arr = [0, 1, 2, 0, 1, 2]
+            text = ""
+            command_text = RelativeTextActive(
+                lambda: text,
+                anchor=None,
+                font_size=30,
+                text_color=mn.BLACK,
+                mob_center=title,
+                vector=mn.DOWN,
+            )
 
-            cont_mapp = {
-                0: "#FF0000",
-                1: "#FFFFFF",
-                2: "#0000FF",
-            }
-            text_mapp = {
-                1: "#000000",
-                2: mn.YELLOW,
+            arr = [0, 1, 2, 0, 1, 2]
+            mapp = {
+                0: ["#FF0000", "#FFFFFF"],
+                1: ["#FFFFFF", mn.BLACK],
+                2: ["#0000FF", mn.YELLOW],
             }
 
             array = Array(
@@ -2072,44 +2076,90 @@ class Example_array(mn.Scene):
                 font_size=35,
                 weight="BOLD",
             )
+
+            def text_update(new_text):
+                nonlocal text
+                text = new_text
+                command_text.update_value(self)
+                self.wait(1)
+
+            def ds_update(new_arr, pause=0.5):
+                nonlocal arr
+                arr = new_arr
+                array.update_value(self)
+                self.wait(pause)
+
+            def ds_hl_cont_pointers(*idx, pause=0.5):
+                array.highlight_containers(*idx)
+                array.highlight_pointers(*idx)
+                self.wait(pause)
+
+            def ds_hl_pointers(*idx, pause=0.5):
+                array.highlight_pointers(*idx)
+                self.wait(pause)
+
             array.first_appear(self)
             self.wait(1)
 
-            array.highlight_containers_with_values(cont_mapp)
-            array.text_color_with_values(text_mapp)
-            self.wait(pause)
+            text_update("regular mode: ds.update_value()")
 
-            arr = [2, 2, 1, 1, 0, 0]
-            array.update_value(self)
-            array.highlight_containers_with_values(cont_mapp)
-            array.text_color_with_values(text_mapp)
-            self.wait(pause)
+            ds_update([2, 0, 1, 2, 0, 1])
+            ds_update([1, 2, 0, 1, 2, 0])
+            ds_update([0, 1, 2, 0, 1, 2], 1)
 
-            arr = [0, 0, 1, 1, 2, 2]
+            text_update("regular mode: ds.highlight_{pointers, containers}()")
+
+            ds_hl_cont_pointers(0, 2, 4)
+            ds_hl_cont_pointers(1, 2, 3)
+            ds_hl_cont_pointers(2, 2, 2)
+            ds_hl_cont_pointers(0, 2, 4, pause=1)
+
+            text_update("ds.activate_value_colors_mode(...)")
+            array.activate_value_colors_mode(mapp)
             array.update_value(self)
-            array.highlight_containers_with_values(cont_mapp)
-            array.text_color_with_values(text_mapp)
             self.wait(1)
 
-            arr = [0, 1, 2, 0, 1, 2]
-            array.update_value(self, animate=False)
-            array.highlight_containers_with_values(cont_mapp)
-            array.text_color_with_values(text_mapp)
-            self.wait(pause)
+            text_update("value_colors_mode: ds.update_value()")
 
-            arr = [2, 2, 1, 1, 0, 0]
-            array.update_value(self, animate=False)
-            array.highlight_containers_with_values(cont_mapp)
-            array.text_color_with_values(text_mapp)
-            self.wait(pause)
+            ds_update([2, 0, 1, 2, 0, 1])
+            ds_update([1, 2, 0, 1, 2, 0])
+            ds_update([0, 1, 2, 0, 1, 2], 1)
 
-            arr = [0, 0, 1, 1, 2, 2]
-            array.update_value(self, animate=False)
-            array.highlight_containers_with_values(cont_mapp)
-            array.text_color_with_values(text_mapp)
+            text_update("value_colors_mode: ds.highlight_pointers()")
+
+            ds_hl_pointers(0, 2, 4)
+            ds_hl_pointers(1, 2, 3)
+            ds_hl_pointers(2, 2, 2)
+            ds_hl_pointers(0, 2, 4, pause=1)
+
+            text_update("ds.deactivate_value_colors_mode(...)")
+            array.deactivate_value_colors_mode()
+            array.update_value(self)
             self.wait(1)
 
-            self.remove(title)
+            text_update("regular mode: ds.highlight_{pointers, containers}()")
+
+            ds_hl_cont_pointers(0, 2, 4)
+            ds_hl_cont_pointers(1, 2, 3)
+            ds_hl_cont_pointers(2, 2, 2)
+            ds_hl_cont_pointers(0, 2, 4, pause=1)
+            self.remove(array)
+
+            text_update("value_colors_mode from init: scene.add(ds)")
+
+            array = Array(
+                lambda: arr,
+                font_size=35,
+                weight="BOLD",
+                value_colors_map=mapp,
+            )
+            self.add(array)
+            self.wait(2)
+            self.remove(array)
+
+            text_update("value_colors_mode from init: ds.first_appear()")
+            array.first_appear(self)
+            self.wait(2)
 
             self.clear()
             print_scene(self)
@@ -2176,7 +2226,7 @@ class Example_array(mn.Scene):
         frame_import(self)
         monocolor(self)
         highlight_containers_with_value(self)
-        highlight_containers_with_values(self)
+        value_colors_map_mode(self)
         pointers_on_values(self)
 
         # ========== finish ==============
@@ -3157,6 +3207,128 @@ class Example_string(mn.Scene):
             self.clear()
             print_scene(self)
 
+        def value_colors_map_mode(self):
+
+            title = RelativeText(
+                "value_colors_map mode",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            text = ""
+            command_text = RelativeTextActive(
+                lambda: text,
+                anchor=None,
+                font_size=30,
+                text_color=mn.BLACK,
+                mob_center=title,
+                vector=mn.DOWN,
+            )
+
+            s = "ABCABC"
+            mapp = {
+                "A": ["#FF0000", "#FFFFFF"],
+                "B": ["#FFFFFF", mn.BLACK],
+                "C": ["#0000FF", mn.YELLOW],
+            }
+
+            string = String(
+                lambda: s,
+                font_size=35,
+                weight="BOLD",
+            )
+
+            def text_update(new_text):
+                nonlocal text
+                text = new_text
+                command_text.update_value(self)
+                self.wait(1)
+
+            def ds_update(new_arr, pause=0.5):
+                nonlocal s
+                s = new_arr
+                string.update_value(self)
+                self.wait(pause)
+
+            def ds_hl_cont_pointers(*idx, pause=0.5):
+                string.highlight_containers(*idx)
+                string.highlight_pointers(*idx)
+                self.wait(pause)
+
+            def ds_hl_pointers(*idx, pause=0.5):
+                string.highlight_pointers(*idx)
+                self.wait(pause)
+
+            string.first_appear(self)
+            self.wait(1)
+
+            text_update("regular mode: ds.update_value()")
+
+            ds_update("CABCAB")
+            ds_update("BCABCA")
+            ds_update("ABCABC", 1)
+
+            text_update("regular mode: ds.highlight_{pointers, containers}()")
+
+            ds_hl_cont_pointers(0, 2, 4)
+            ds_hl_cont_pointers(1, 2, 3)
+            ds_hl_cont_pointers(2, 2, 2)
+            ds_hl_cont_pointers(0, 2, 4, pause=1)
+
+            text_update("ds.activate_value_colors_mode(...)")
+            string.activate_value_colors_mode(mapp)
+            string.update_value(self)
+            self.wait(1)
+
+            text_update("value_colors_mode: ds.update_value()")
+
+            ds_update("CABCAB")
+            ds_update("BCABCA")
+            ds_update("ABCABC", 1)
+
+            text_update("value_colors_mode: ds.highlight_pointers()")
+
+            ds_hl_pointers(0, 2, 4)
+            ds_hl_pointers(1, 2, 3)
+            ds_hl_pointers(2, 2, 2)
+            ds_hl_pointers(0, 2, 4, pause=1)
+
+            text_update("ds.deactivate_value_colors_mode(...)")
+            string.deactivate_value_colors_mode()
+            string.update_value(self)
+            self.wait(1)
+
+            text_update("regular mode: ds.highlight_{pointers, containers}()")
+
+            ds_hl_cont_pointers(0, 2, 4)
+            ds_hl_cont_pointers(1, 2, 3)
+            ds_hl_cont_pointers(2, 2, 2)
+            ds_hl_cont_pointers(0, 2, 4, pause=1)
+            self.remove(string)
+
+            text_update("value_colors_mode from init: scene.add(ds)")
+
+            string = String(
+                lambda: s,
+                font_size=35,
+                weight="BOLD",
+                value_colors_map=mapp,
+            )
+            self.add(string)
+            self.wait(2)
+            self.remove(string)
+
+            text_update("value_colors_mode from init: ds.first_appear()")
+            string.first_appear(self)
+            self.wait(2)
+
+            self.clear()
+            print_scene(self)
+
         # ========== calls ==============
 
         pyramid(self)
@@ -3169,6 +3341,7 @@ class Example_string(mn.Scene):
         highlights_monocolor(self)
         highlight_on_value(self)
         pointers_on_values(self)
+        value_colors_map_mode(self)
 
         # ========== finish ==============
 
@@ -4411,6 +4584,124 @@ class Example_linked_list(mn.Scene):
             self.clear()
             print_scene(self)
 
+        def value_colors_map_mode(self):
+
+            title = RelativeText(
+                "value_colors_map mode",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+                screen_buff=0.7,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            text = ""
+            command_text = RelativeTextActive(
+                lambda: text,
+                anchor=None,
+                font_size=30,
+                text_color=mn.BLACK,
+                mob_center=title,
+                vector=mn.DOWN,
+            )
+
+            ln = cll([0, 1, 2, 0, 1, 2])
+            mapp = {
+                0: ["#FF0000", "#FFFFFF"],
+                1: ["#FFFFFF", mn.BLACK],
+                2: ["#0000FF", mn.YELLOW],
+            }
+
+            ll = LinkedList(
+                lambda: ln,
+            )
+
+            def text_update(new_text):
+                nonlocal text
+                text = new_text
+                command_text.update_value(self)
+                self.wait(1)
+
+            def ds_update(new_arr, pause=0.5):
+                nonlocal ln
+                ln = cll(new_arr)
+                ll.update_value(self)
+                self.wait(pause)
+
+            def ds_hl_cont_pointers(*idx, pause=0.5):
+                ll.highlight_containers(*idx)
+                ll.highlight_pointers(*idx)
+                self.wait(pause)
+
+            def ds_hl_pointers(*idx, pause=0.5):
+                ll.highlight_pointers(*idx)
+                self.wait(pause)
+
+            ll.first_appear(self)
+            self.wait(1)
+
+            text_update("regular mode: ds.update_value()")
+
+            ds_update([2, 0, 1, 2, 0, 1])
+            ds_update([1, 2, 0, 1, 2, 0])
+            ds_update([0, 1, 2, 0, 1, 2], 1)
+
+            text_update("regular mode: ds.highlight_{pointers, containers}()")
+
+            ds_hl_cont_pointers(0, 2, 4)
+            ds_hl_cont_pointers(1, 2, 3)
+            ds_hl_cont_pointers(2, 2, 2)
+            ds_hl_cont_pointers(0, 2, 4, pause=1)
+
+            text_update("ds.activate_value_colors_mode(...)")
+            ll.activate_value_colors_mode(mapp)
+            ll.update_value(self)
+            self.wait(1)
+
+            text_update("value_colors_mode: ds.update_value()")
+
+            ds_update([2, 0, 1, 2, 0, 1])
+            ds_update([1, 2, 0, 1, 2, 0])
+            ds_update([0, 1, 2, 0, 1, 2], 1)
+
+            text_update("value_colors_mode: ds.highlight_pointers()")
+
+            ds_hl_pointers(0, 2, 4)
+            ds_hl_pointers(1, 2, 3)
+            ds_hl_pointers(2, 2, 2)
+            ds_hl_pointers(0, 2, 4, pause=1)
+
+            text_update("ds.deactivate_value_colors_mode(...)")
+            ll.deactivate_value_colors_mode()
+            ll.update_value(self)
+            self.wait(1)
+
+            text_update("regular mode: ds.highlight_{pointers, containers}()")
+
+            ds_hl_cont_pointers(0, 2, 4)
+            ds_hl_cont_pointers(1, 2, 3)
+            ds_hl_cont_pointers(2, 2, 2)
+            ds_hl_cont_pointers(0, 2, 4, pause=1)
+            self.remove(ll)
+
+            text_update("value_colors_mode from init: scene.add(ds)")
+
+            ll = LinkedList(
+                lambda: ln,
+                value_colors_map=mapp,
+            )
+            self.add(ll)
+            self.wait(2)
+            self.remove(ll)
+
+            text_update("value_colors_mode from init: ds.first_appear()")
+            ll.first_appear(self)
+            self.wait(2)
+
+            self.clear()
+            print_scene(self)
+
         def append(self):
 
             title = RelativeText(
@@ -4455,6 +4746,7 @@ class Example_linked_list(mn.Scene):
         highlights_1to3(self)
         highlights_monocolor(self)
         highlight_on_value(self)
+        value_colors_map_mode(self)
         append(self)
 
         # ========== finish ==============
