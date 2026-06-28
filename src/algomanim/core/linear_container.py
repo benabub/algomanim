@@ -72,6 +72,8 @@ class LinearContainerStructure(AlgoManimBase):
         container_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
+        # ---- value colors mode ----
+        value_colors_map: dict[Any, list[ManimColor | str]] = {},
         # ---- highlight containers colors ----
         color_containers_with_value: ManimColor | str = mn.BLACK,
         color_1: ManimColor | str = COLORS.color_1,
@@ -113,6 +115,9 @@ class LinearContainerStructure(AlgoManimBase):
         self._containers_colors: dict[int, ManimColor | str] = {}
         self._top_pointers_colors: dict[int, list[ManimColor | str]] = {}
         self._bottom_pointers_colors: dict[int, list[ManimColor | str]] = {}
+
+        # ---- value colors mode ----
+        self._value_colors_map = value_colors_map
 
         # ---- font ----
         self._font = font
@@ -178,8 +183,38 @@ class LinearContainerStructure(AlgoManimBase):
         self._containers_colors = {}
         self._apply_containers_colors()
 
+    def _apply_value_colors(self):
+        """
+        ...
+        """
+        if not self._data or not self._value_colors_map:
+            return
+
+        for i, val in enumerate(self._data):
+            if val in self._value_colors_map:
+                container_color, text_color = self._value_colors_map[val]
+                self._containers_mob[i].set_fill(container_color)
+                self._values_mob[i].set_color(text_color)
+
+    def activate_value_colors_mode(
+        self,
+        value_colors_map: dict[Any, list[ManimColor | str]] = {},
+    ):
+        """
+        ...
+        """
+        self._value_colors_map = value_colors_map
+
+    def deactivate_value_colors_mode(self):
+        """
+        ...
+        """
+        self._value_colors_map = {}
+
     def _apply_containers_colors(self):
         """Apply stored color highlights to container objects."""
+        if self._value_colors_map:
+            return
 
         for i, mob in enumerate(self._containers_mob):
             if i in self._containers_colors:
@@ -241,6 +276,7 @@ class LinearContainerStructure(AlgoManimBase):
             "_containers_colors": self._containers_colors,
             "_top_pointers_colors": self._top_pointers_colors,
             "_bottom_pointers_colors": self._bottom_pointers_colors,
+            "_value_colors_map": self._value_colors_map,
         }
 
     @staticmethod
@@ -257,8 +293,10 @@ class LinearContainerStructure(AlgoManimBase):
         new_group._containers_colors = status["_containers_colors"]
         new_group._top_pointers_colors = status["_top_pointers_colors"]
         new_group._bottom_pointers_colors = status["_bottom_pointers_colors"]
+        new_group._value_colors_map = status["_value_colors_map"]
 
         new_group._apply_containers_colors()
+        new_group._apply_value_colors()
         new_group._apply_pointers_colors(0)
         new_group._apply_pointers_colors(1)
 
@@ -532,6 +570,9 @@ class LinearContainerStructure(AlgoManimBase):
             ValueError: If number of indices is not between 1 and 6.
         """
         # ------- validation --------
+        if self._value_colors_map:
+            raise RuntimeError("Method is incompatible with value_colors_map mode.")
+
         if not 1 <= len(indices) <= 6:
             raise ValueError("indices must contain between 1 and 6 elements")
 
@@ -693,6 +734,9 @@ class LinearContainerStructure(AlgoManimBase):
             color: Color to apply to all highlighted cells. Default is RED.
         """
         # validation
+        if self._value_colors_map:
+            raise RuntimeError("Method is incompatible with value_colors_map mode.")
+
         if not self._data:
             return
 
@@ -783,16 +827,18 @@ class LinearContainerStructure(AlgoManimBase):
             color: Color for the highlighted pointer.
         """
 
+        # ------- validation --------
+        if self._value_colors_map:
+            raise RuntimeError("Method is incompatible with value_colors_map mode.")
+
+        if not self._data:
+            return
         # ------- asserts --------
 
         if not color:
             color = self._color_containers_with_value
 
         self._containers_colors = {}
-
-        # ------- validation --------
-        if not self._data:
-            return
 
         # ------- fill store --------
         for idx in range(len(self._data)):
@@ -866,8 +912,12 @@ class LinearContainerStructure(AlgoManimBase):
             ValueError: If mapping is empty or data is not initialized.
         """
         # ------- validation --------
+        if self._value_colors_map:
+            raise RuntimeError("Method is incompatible with value_colors_map mode.")
+
         if not self._data:
             return
+
         if not mapping:
             raise ValueError("Mapping cannot be empty")
 
@@ -897,8 +947,12 @@ class LinearContainerStructure(AlgoManimBase):
             ValueError: If mapping is empty or data is not initialized.
         """
         # ------- validation --------
+        if self._value_colors_map:
+            raise RuntimeError("Method is incompatible with value_colors_map mode.")
+
         if not self._data:
             return
+
         if not mapping:
             raise ValueError("Mapping cannot be empty")
 
@@ -964,33 +1018,45 @@ class LinearContainerStructure(AlgoManimBase):
         self._apply_pointers_colors(pos)
 
     def _get_highlight_dicts(self) -> tuple:
-        """Get copies of current highlight color dictionaries.
-
-        Returns:
-            Tuple of (containers_colors, top_pointers_colors, bottom_pointers_colors).
         """
-        containers_colors = (
-            self._containers_colors.copy()
-            if hasattr(self, "_containers_colors")
-            else {}
+        ...
+        """
+        return (
+            self._containers_colors.copy(),
+            self._top_pointers_colors.copy(),
+            self._bottom_pointers_colors.copy(),
+            self._value_colors_map.copy(),
         )
-        top_pointers_colors = (
-            self._top_pointers_colors.copy()
-            if hasattr(self, "_top_pointers_colors")
-            else {}
-        )
-        bottom_pointers_colors = (
-            self._bottom_pointers_colors.copy()
-            if hasattr(self, "_bottom_pointers_colors")
-            else {}
-        )
-        return containers_colors, top_pointers_colors, bottom_pointers_colors
+
+    # def _get_highlight_dicts(self) -> tuple:
+    #     """Get copies of current highlight color dictionaries.
+    #
+    #     Returns:
+    #         Tuple of (containers_colors, top_pointers_colors, bottom_pointers_colors).
+    #     """
+    #     containers_colors = (
+    #         self._containers_colors.copy()
+    #         if hasattr(self, "_containers_colors")
+    #         else {}
+    #     )
+    #     top_pointers_colors = (
+    #         self._top_pointers_colors.copy()
+    #         if hasattr(self, "_top_pointers_colors")
+    #         else {}
+    #     )
+    #     bottom_pointers_colors = (
+    #         self._bottom_pointers_colors.copy()
+    #         if hasattr(self, "_bottom_pointers_colors")
+    #         else {}
+    #     )
+    #     return containers_colors, top_pointers_colors, bottom_pointers_colors
 
     def _restore_highlight_colors(
         self,
         containers_colors: dict,
         top_pointers_colors: dict,
         bottom_pointers_colors: dict,
+        value_colors_map: dict,
     ) -> None:
         """Restore highlight colors from saved dictionaries.
 
@@ -1003,10 +1069,12 @@ class LinearContainerStructure(AlgoManimBase):
         self._containers_colors = containers_colors
         self._top_pointers_colors = top_pointers_colors
         self._bottom_pointers_colors = bottom_pointers_colors
+        self._value_colors_map = value_colors_map
 
         # apply colors
         if self._data:
             self._apply_containers_colors()
+            self._apply_value_colors()
             if hasattr(self, "_pointers") and self._pointers:
                 self._apply_pointers_colors(0)
                 self._apply_pointers_colors(1)
