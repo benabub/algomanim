@@ -1,4 +1,4 @@
-from typing import Callable, Literal, TYPE_CHECKING
+from typing import Any, Callable, Literal, TYPE_CHECKING
 
 import numpy as np
 import manim as mn
@@ -87,6 +87,8 @@ class Array(RectangleCellsStructure, UpdatableMixin):
         container_color: ManimColor | str = mn.LIGHT_GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.DARK_GRAY,
+        # ---- value colors mode ----
+        value_colors_map: dict[Any, list[ManimColor | str]] = {},
         # ---- cell params ----
         lock_width: bool = False,
         cell_params_auto: bool = True,
@@ -125,6 +127,8 @@ class Array(RectangleCellsStructure, UpdatableMixin):
             container_color=container_color,
             bg_color=bg_color,
             fill_color=fill_color,
+            # ---- value colors mode ----
+            value_colors_map=value_colors_map,
             # ---- kwargs ----
             **kwargs,
         )
@@ -219,6 +223,9 @@ class Array(RectangleCellsStructure, UpdatableMixin):
             self._containers_mob,
             self._direction,
         )
+
+        if self._value_colors_map:
+            self._apply_value_colors()
 
     def _empty_value_alignment(self):
         """Align the empty array text "[]" within its container.
@@ -390,6 +397,8 @@ class Array(RectangleCellsStructure, UpdatableMixin):
             container_color=self._container_color,
             bg_color=self._bg_color,
             fill_color=self._fill_color,
+            # ---- value colors mode ----
+            value_colors_map=self._value_colors_map,
             # ---- cell params ----
             lock_width=self._lock_width,
             cell_params_auto=False,
@@ -441,6 +450,7 @@ class Array(RectangleCellsStructure, UpdatableMixin):
             old_containers_colors,
             old_top_pointers_colors,
             old_bottom_pointers_colors,
+            old_value_colors_map,
         ) = self._get_highlight_dicts()
 
         # sync raw data and closures
@@ -463,6 +473,7 @@ class Array(RectangleCellsStructure, UpdatableMixin):
             old_containers_colors,
             old_top_pointers_colors,
             old_bottom_pointers_colors,
+            old_value_colors_map,
         )
 
         # sync pure geometry hierarchy
