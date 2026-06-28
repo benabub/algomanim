@@ -64,6 +64,8 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         node_color: ManimColor | str = mn.BLACK,
         fill_color: ManimColor | str = mn.LIGHT_GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
+        # ---- value colors mode ----
+        value_colors_map: dict[Any, list[ManimColor | str]] = {},
         # ---- kwargs ----
         **kwargs,
     ):
@@ -92,6 +94,8 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             font=font,
             text_color=text_color,
             weight=weight,
+            # ---- value colors mode ----
+            value_colors_map=value_colors_map,
             # ---- kwargs ----
             **kwargs,
         )
@@ -168,6 +172,9 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         # values
         self._values_mob = self._create_and_pos_values_mob()
         self.add(self._values_mob)
+
+        if self._value_colors_map:
+            self._apply_value_colors()
 
     def _create_empty_linked_list(self) -> None:
         """Initialize empty linked list visualization."""
@@ -338,6 +345,8 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             node_color=self._node_color,
             fill_color=self._fill_color,
             bg_color=self._bg_color,
+            # ---- value colors mode ----
+            value_colors_map=self._value_colors_map,
             # ---- kwargs ----
             **self._parent_kwargs,
         )
@@ -388,6 +397,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             old_containers_colors,
             old_top_pointers_colors,
             old_bottom_pointers_colors,
+            old_value_colors_map,
         ) = self._get_highlight_dicts()
 
         # sync raw data and closures
@@ -410,6 +420,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             old_containers_colors,
             old_top_pointers_colors,
             old_bottom_pointers_colors,
+            old_value_colors_map,
         )
 
         # sync pure geometry hierarchy
