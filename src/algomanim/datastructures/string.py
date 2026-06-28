@@ -1,4 +1,4 @@
-from typing import Callable, Literal, TYPE_CHECKING
+from typing import Any, Callable, Literal, TYPE_CHECKING
 import numpy as np
 import manim as mn
 from manim import ManimColor
@@ -77,6 +77,8 @@ class String(RectangleCellsStructure, UpdatableMixin):
         container_color: ManimColor | str = mn.DARK_GRAY,
         fill_color: ManimColor | str = mn.GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
+        # ---- value colors mode ----
+        value_colors_map: dict[Any, list[ManimColor | str]] = {},
         # ---- cell params ----
         cell_params_auto=True,
         cell_height=0.65625,
@@ -114,6 +116,8 @@ class String(RectangleCellsStructure, UpdatableMixin):
             container_color=container_color,
             bg_color=bg_color,
             fill_color=fill_color,
+            # ---- value colors mode ----
+            value_colors_map=value_colors_map,
             # ---- kwargs ----
             **kwargs,
         )
@@ -205,6 +209,9 @@ class String(RectangleCellsStructure, UpdatableMixin):
             self._containers_mob,
             mn.RIGHT,
         )
+
+        if self._value_colors_map:
+            self._apply_value_colors()
 
     def _containers_cell_config(self):
         """Get configuration for character cell containers.
@@ -381,6 +388,8 @@ class String(RectangleCellsStructure, UpdatableMixin):
             container_color=self._container_color,
             bg_color=self._bg_color,
             fill_color=self._fill_color,
+            # ---- value colors mode ----
+            value_colors_map=self._value_colors_map,
             # ---- cell params ----
             cell_params_auto=False,
             cell_height=self._cell_height,
@@ -436,6 +445,7 @@ class String(RectangleCellsStructure, UpdatableMixin):
             old_containers_colors,
             old_top_pointers_colors,
             old_bottom_pointers_colors,
+            old_value_colors_map,
         ) = self._get_highlight_dicts()
 
         # sync raw data and closures
@@ -466,6 +476,7 @@ class String(RectangleCellsStructure, UpdatableMixin):
             old_containers_colors,
             old_top_pointers_colors,
             old_bottom_pointers_colors,
+            old_value_colors_map,
         )
 
         # sync pure geometry hierarchy
