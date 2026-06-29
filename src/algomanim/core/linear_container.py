@@ -42,6 +42,8 @@ class LinearContainerStructure(AlgoManimBase):
         container_color: Border color for containers.
         fill_color: Fill color for containers.
         bg_color: Background color for pointers.
+        value_colors_map: Dictionary mapping data values to [container_color, text_color] pairs.
+            When active, replaces container and text colors based on values.
         color_containers_with_value: Color for containers with specific value.
         color_1: Highlight color for first index.
         color_2: Highlight color for second index.
@@ -183,9 +185,11 @@ class LinearContainerStructure(AlgoManimBase):
         self._containers_colors = {}
         self._apply_containers_colors()
 
-    def _apply_value_colors(self):
-        """
-        ...
+    def _apply_value_colors(self) -> None:
+        """Apply container and text colors based on data values.
+
+        Uses `_value_colors_map` where each value maps to a list
+        of [container_color, text_color].
         """
         if not self._data or not self._value_colors_map:
             return
@@ -199,20 +203,26 @@ class LinearContainerStructure(AlgoManimBase):
     def activate_value_colors_mode(
         self,
         value_colors_map: dict[Any, list[ManimColor | str]] = {},
-    ):
-        """
-        ...
+    ) -> None:
+        """Activate value-based coloring mode with the given mapping.
+
+        Args:
+            value_colors_map: Dictionary mapping values to [container_color, text_color].
         """
         self._value_colors_map = value_colors_map
 
-    def deactivate_value_colors_mode(self):
-        """
-        ...
+    def deactivate_value_colors_mode(self) -> None:
+        """Deactivate value-based coloring mode.
+
+        Resets `_value_colors_map` to empty, reverting to default highlighting.
         """
         self._value_colors_map = {}
 
-    def _apply_containers_colors(self):
-        """Apply stored color highlights to container objects."""
+    def _apply_containers_colors(self) -> None:
+        """Apply stored index-based highlight colors to container objects.
+
+        Skips execution when value-based coloring mode is active.
+        """
         if self._value_colors_map:
             return
 
@@ -567,6 +577,7 @@ class LinearContainerStructure(AlgoManimBase):
             color_6: Color for sixth index position.
 
         Raises:
+            RuntimeError: If value_colors_map is active.
             ValueError: If number of indices is not between 1 and 6.
         """
         # ------- validation --------
@@ -732,6 +743,9 @@ class LinearContainerStructure(AlgoManimBase):
         Args:
             idx_list: List of indices to highlight (any number of elements).
             color: Color to apply to all highlighted cells. Default is RED.
+
+        Raises:
+            RuntimeError: If value_colors_map is active.
         """
         # validation
         if self._value_colors_map:
@@ -768,6 +782,7 @@ class LinearContainerStructure(AlgoManimBase):
                 If None, uses color_containers_with_value.
 
         Raises:
+            RuntimeError: If value_colors_map is active.
             ValueError: If pos is not 0 or 1.
         """
         # ------- validation --------
@@ -825,6 +840,9 @@ class LinearContainerStructure(AlgoManimBase):
         Args:
             val: The value to compare with array elements.
             color: Color for the highlighted pointer.
+
+        Raises:
+            RuntimeError: If value_colors_map is active.
         """
 
         # ------- validation --------
@@ -909,6 +927,7 @@ class LinearContainerStructure(AlgoManimBase):
             mapping: Dictionary mapping values to highlight colors.
 
         Raises:
+            RuntimeError: If value_colors_map is active.
             ValueError: If mapping is empty or data is not initialized.
         """
         # ------- validation --------
@@ -944,6 +963,7 @@ class LinearContainerStructure(AlgoManimBase):
                 Cells with values not in mapping keep default text color.
 
         Raises:
+            RuntimeError: If value_colors_map is active.
             ValueError: If mapping is empty or data is not initialized.
         """
         # ------- validation --------
@@ -1018,8 +1038,11 @@ class LinearContainerStructure(AlgoManimBase):
         self._apply_pointers_colors(pos)
 
     def _get_highlight_dicts(self) -> tuple:
-        """
-        ...
+        """Get copies of current highlight state dictionaries.
+
+        Returns:
+            Tuple of (containers_colors, top_pointers_colors,
+            bottom_pointers_colors, value_colors_map).
         """
         return (
             self._containers_colors.copy(),
@@ -1027,29 +1050,6 @@ class LinearContainerStructure(AlgoManimBase):
             self._bottom_pointers_colors.copy(),
             self._value_colors_map.copy(),
         )
-
-    # def _get_highlight_dicts(self) -> tuple:
-    #     """Get copies of current highlight color dictionaries.
-    #
-    #     Returns:
-    #         Tuple of (containers_colors, top_pointers_colors, bottom_pointers_colors).
-    #     """
-    #     containers_colors = (
-    #         self._containers_colors.copy()
-    #         if hasattr(self, "_containers_colors")
-    #         else {}
-    #     )
-    #     top_pointers_colors = (
-    #         self._top_pointers_colors.copy()
-    #         if hasattr(self, "_top_pointers_colors")
-    #         else {}
-    #     )
-    #     bottom_pointers_colors = (
-    #         self._bottom_pointers_colors.copy()
-    #         if hasattr(self, "_bottom_pointers_colors")
-    #         else {}
-    #     )
-    #     return containers_colors, top_pointers_colors, bottom_pointers_colors
 
     def _restore_highlight_colors(
         self,
@@ -1064,6 +1064,7 @@ class LinearContainerStructure(AlgoManimBase):
             containers_colors: Dictionary of container highlight colors.
             top_pointers_colors: Dictionary of top pointer highlight colors.
             bottom_pointers_colors: Dictionary of bottom pointer highlight colors.
+            value_colors_map: Dictionary of value-based color mapping.
         """
         # restore colors dicts
         self._containers_colors = containers_colors
