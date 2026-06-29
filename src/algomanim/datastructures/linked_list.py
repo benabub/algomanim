@@ -18,9 +18,8 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         value: Callable that returns a head node of the linked list to visualize.
         radius: Radius of the circular nodes.
         direction: Direction vector for list orientation.
-        node_color: Border color for nodes.
-        fill_color: Fill color for nodes.
-        bg_color: Background color of scene and default pointer color.
+        pointers: Which pointers to create ("top", "bottom", "both" or None).
+        pointers_mode: Number of pointer triangles per cell. 3 or 5.
         vector: Position offset from mob_center.
         mob_center: Reference mobject for positioning.
         align_left: Reference mobject to align left edge with.
@@ -33,7 +32,12 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         font: Font family for text elements.
         text_color: Color for text elements.
         weight: Font weight (NORMAL, BOLD, etc.).
-        pointers: Which pointers to create ("top", "bottom", "both" or None).
+        node_color: Border color for nodes.
+        fill_color: Fill color for nodes.
+        bg_color: Background color of scene and default pointer color.
+        value_colors_map: Dictionary mapping data values to
+            [container_color, text_color] pairs. When active, replaces
+            container and text colors based on values.
         **kwargs: Additional keyword arguments passed to parent class.
     """
 

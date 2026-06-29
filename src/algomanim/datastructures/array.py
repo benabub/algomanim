@@ -36,6 +36,9 @@ class Array(RectangleCellsStructure, UpdatableMixin):
         container_color: Border color for cells.
         bg_color: Background color for cells and default pointer color.
         fill_color: Fill color for cells.
+        value_colors_map: Dictionary mapping data values to
+            [container_color, text_color] pairs. When active, replaces
+            container and text colors based on values.
         lock_width: Whether to lock cell width to cell height.
             If True, cells become square and text scales to fit.
             If False, cell width adjusts to text content.

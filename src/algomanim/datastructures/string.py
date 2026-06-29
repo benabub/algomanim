@@ -34,6 +34,9 @@ class String(RectangleCellsStructure, UpdatableMixin):
         container_color: Border color for cells.
         fill_color: Fill color for character cells.
         bg_color: Background color for quote cells and default pointer color.
+        value_colors_map: Dictionary mapping data values to
+            [container_color, text_color] pairs. When active, replaces
+            container and text colors based on values.
         cell_params_auto: Whether to auto-calculate cell parameters.
         cell_height: Manual cell height when auto-calculation disabled.
         top_bottom_buff: Internal top/bottom padding within cells.
