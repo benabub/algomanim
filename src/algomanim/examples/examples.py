@@ -404,7 +404,6 @@ class Example_text(mn.Scene):
             self.wait(pause)
 
             group_appear(self, t1, t2, t3, t4)
-            self.wait(pause)
 
             def cycle(
                 new_val,
@@ -425,6 +424,148 @@ class Example_text(mn.Scene):
             cycle({"a": 1})
 
             self.wait(pause)
+            self.clear()
+            print_scene(self)
+
+        def position_after_update_RTV(self):
+            center = Array(
+                lambda: list("mob_center"),
+                pointers=None,
+                font_size=50,
+                vector=mn.DOWN * 0.5,
+            )
+            title = RelativeText(
+                "position + update_value(): RelativeTextValue",
+                align_screen=mn.UP,
+                text_color=mn.BLACK,
+                font_size=35,
+            )
+            group_appear(self, center, title)
+
+            s = 123
+
+            t1 = RelativeTextValue(
+                ("s", lambda: s, mn.WHITE),
+                equal_sign=False,
+                font_size=35,
+                mob_center=center,
+                vector=mn.UP * 1,
+                anchor=None,
+            )
+            t2 = RelativeTextValue(
+                ("s", lambda: s, mn.WHITE),
+                equal_sign=False,
+                font_size=35,
+                mob_center=t1,
+                vector=mn.UP * 0.7,
+                anchor="end",
+            )
+            t3 = RelativeTextValue(
+                ("s", lambda: s, mn.WHITE),
+                equal_sign=False,
+                font_size=35,
+                mob_center=t2,
+                vector=mn.UP * 0.7,
+                anchor="start",
+            )
+            t4 = RelativeTextValue(
+                ("s", lambda: s, mn.WHITE),
+                equal_sign=False,
+                font_size=35,
+                mob_center=center,
+                align_left=center,
+                vector=mn.DOWN * 1,
+            )
+            t5 = RelativeTextValue(
+                ("s", lambda: s, mn.WHITE),
+                equal_sign=False,
+                font_size=35,
+                mob_center=center,
+                align_right=center,
+                vector=mn.DOWN * 1,
+            )
+
+            text_no_align = RelativeText(
+                "no align_sides:",
+                align_bottom=t2,
+                vector=mn.LEFT * 4.6,
+                font_size=30,
+            )
+            text_arr_3 = RelativeText(
+                "anchor='start'",
+                mob_center=t3,
+                vector=mn.RIGHT * 4.4,
+                font_size=30,
+            )
+            text_arr_1 = RelativeText(
+                "anchor=None",
+                mob_center=t1,
+                align_left=text_arr_3,
+                font_size=30,
+            )
+            text_arr_2 = RelativeText(
+                "anchor='end'",
+                mob_center=t2,
+                align_left=text_arr_3,
+                font_size=30,
+            )
+
+            text_arr_4 = RelativeText(
+                "align_left=mob_center",
+                align_left=t4,
+                mob_center=t4,
+                vector=mn.DOWN * 1.0 + mn.LEFT * 1,
+                font_size=30,
+            )
+            text_arr_5 = RelativeText(
+                "align_right=mob_center",
+                align_right=t5,
+                mob_center=t5,
+                vector=mn.DOWN * 1.0 + mn.RIGHT * 1,
+                font_size=30,
+            )
+
+            group_appear(
+                self,
+                t1,
+                t2,
+                t3,
+                t4,
+                t5,
+                text_no_align,
+                text_arr_1,
+                text_arr_2,
+                text_arr_3,
+                text_arr_4,
+                text_arr_5,
+            )
+            self.wait(1)
+
+            def cycle(new_val):
+                nonlocal s
+                s = new_val
+                t1.update_value(self, hl_time=0.3)
+                t2.update_value(self, hl_time=0.3)
+                t3.update_value(self, hl_time=0.3)
+                t4.update_value(self, hl_time=0.3)
+                t5.update_value(self, hl_time=0.3)
+                self.wait(1)
+
+            cycle(12)
+            cycle(1)
+            cycle(123)
+            cycle(1234)
+            cycle(12345)
+
+            self.remove(
+                t1,
+                t2,
+                t3,
+                t4,
+                t5,
+            )
+
+            self.wait(2)
             self.clear()
             print_scene(self)
 
@@ -567,10 +708,11 @@ class Example_text(mn.Scene):
 
         # ========== calls ==============
 
-        first_appear(self)
-        groupp_appear(self)
-        update(self)
-        position(self)
+        # first_appear(self)
+        # groupp_appear(self)
+        # update(self)
+        position_after_update_RTV(self)
+        # position(self)
 
         # ========== finish ==============
 
@@ -1574,11 +1716,11 @@ class Example_array(mn.Scene):
             self.clear()
             print_scene(self)
 
-        def update_value(self):
+        def position_after_update(self):
             pause = 0.5
             center = Array(lambda: list("mob_center"), font_size=50)
             title = RelativeText(
-                "update_value()",
+                "posittion + update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
                 text_color=mn.BLACK,
                 font_size=50,
@@ -2222,7 +2364,7 @@ class Example_array(mn.Scene):
         pointers(self)
         highlights(self)
         positioning(self)
-        update_value(self)
+        position_after_update(self)
         frame_import(self)
         monocolor(self)
         highlight_containers_with_value(self)
@@ -2693,11 +2835,11 @@ class Example_string(mn.Scene):
             self.clear()
             print_scene(self)
 
-        def update_value(self):
+        def position_after_update(self):
             pause = 0.5
             center = String(lambda: "mob_center", font_size=50)
             text_title = RelativeText(
-                "update_value()",
+                "posittion + update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
                 text_color=mn.BLACK,
                 font_size=50,
@@ -3335,7 +3477,7 @@ class Example_string(mn.Scene):
         first_appear(self)
         pointers(self)
         positioning(self)
-        update_value(self)
+        position_after_update(self)
         frame_import(self)
         highlights(self)
         highlights_monocolor(self)
@@ -4062,7 +4204,7 @@ class Example_linked_list(mn.Scene):
             self.clear()
             print_scene(self)
 
-        def update_value(self):
+        def position_after_update(self):
 
             from typing import cast, Callable
             from algomanim.helpers.datastructures import ListNode
@@ -4070,7 +4212,7 @@ class Example_linked_list(mn.Scene):
             pause = 0.5
             center = Array(lambda: list("mob_center"), font_size=50)
             title = RelativeText(
-                "update_value()",
+                "posittion + update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
                 text_color=mn.BLACK,
                 font_size=50,
@@ -4741,7 +4883,7 @@ class Example_linked_list(mn.Scene):
         rotation(self)
         highlights(self)
         alignment(self)
-        update_value(self)
+        position_after_update(self)
         update_value_direction(self)
         highlights_1to3(self)
         highlights_monocolor(self)
