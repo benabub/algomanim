@@ -6,6 +6,10 @@ from algomanim.core.base import AlgoManimBase
 
 
 class UpdatableMixin(AlgoManimBase, ABC):
+    """
+    ...
+    """
+
     @abstractmethod
     def _create_new_instance(self) -> "AlgoManimBase":
         """Create a new instance with current configuration and fresh data.

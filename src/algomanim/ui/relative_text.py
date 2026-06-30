@@ -4,11 +4,15 @@ import numpy as np
 import manim as mn
 from manim import ManimColor
 
-from algomanim.core.relative_text_base import RelativeTextBase, RelativeTextUpdatable
+from algomanim.core.relative_text_base import (
+    RelativeTextBase,
+    RelativeTextUpdatable,
+    SingleRelativeTextMixin,
+)
 from algomanim.core.paths.hl_rect import HLRect
 
 
-class RelativeTextValue(RelativeTextUpdatable):
+class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
     """Text group showing scope variables positioned relative to mobject.
 
     Args:
@@ -356,7 +360,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         return new_instance
 
 
-class RelativeTextActive(RelativeTextUpdatable):
+class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
     """Dynamic text element that updates its value from a callable.
 
     Args:
@@ -537,7 +541,7 @@ class RelativeTextActive(RelativeTextUpdatable):
         return new_instance
 
 
-class RelativeText(RelativeTextBase):
+class RelativeText(RelativeTextBase, SingleRelativeTextMixin):
     """Static text element positioned relative to another mobject.
 
     Args:

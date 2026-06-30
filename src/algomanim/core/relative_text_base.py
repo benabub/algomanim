@@ -207,3 +207,43 @@ class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
         if hl and self._hl_rect is not None:
             scene.wait(hl_time)
             self._hl_rect.deactivate()
+
+
+class SingleRelativeTextMixin(AlgoManimBase):
+    """
+    Mixin for RelativeText classes with single mn.Text mobject.
+    """
+
+    def change_color(
+        self,
+        scene: mn.Scene,
+        color: str | ManimColor,
+        hl: bool = True,
+        hl_time: float = 1.3,
+    ) -> None:
+        """Change text color with optional highlight effect.
+
+        Args:
+            scene: The Manim scene to play animations in.
+            color: New color for the text.
+            hl: If True, activates highlight before color change and
+                deactivates after hl_time.
+            hl_time: Duration to keep highlight active.
+
+        Raises:
+            ValueError: If object lacks required `_hl_rect` or `_text_mob` attributes.
+        """
+        if not hasattr(self, "_hl_rect") or not isinstance(self._hl_rect, HLRect):
+            raise ValueError("Object must have _hl_rect attribute of HLRect type")
+
+        if hl:
+            if self._hl_rect is None:
+                hl = False
+
+        if hasattr(self, "_text_mob") and isinstance(self._text_mob, mn.Text):
+            self._text_mob.set_color(color)
+
+        if hl:
+            self._hl_rect.activate()
+            scene.wait(hl_time)
+            self._hl_rect.deactivate()
