@@ -151,10 +151,15 @@ class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
         self,
         # --- position ---
         anchor: Literal["start", "end"] | None = "start",
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
         # ---- kwargs ----
         **kwargs,
     ):
         super().__init__(**kwargs)
+        # ---- align left|right ----
+        self._align_left = align_left
+        self._align_right = align_right
         # ---- anchor ----
         if anchor is not None:
             if anchor not in ["start", "end"]:
@@ -162,6 +167,19 @@ class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
             self._anchor = anchor
         else:
             self._anchor: Literal["start", "end"] | None = None
+
+        self._sync_anchor()
+
+    def _sync_anchor(self) -> None:
+        """Synchronize anchor with align_left/align_right.
+
+        If align_left is set, anchor becomes "start".
+        If align_right is set, anchor becomes "end".
+        """
+        if self._align_left is not None:
+            self._anchor = "start"
+        elif self._align_right is not None:
+            self._anchor = "end"
 
     def _align_with_anchor(
         self,
