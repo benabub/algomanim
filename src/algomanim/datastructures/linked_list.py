@@ -434,8 +434,8 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         self,
         scene: mn.Scene,
         tail: "LinkedList",
-        animate: bool = False,
-        update_time: float = 0.2,
+        animate: bool = True,
+        anim_time: float = 0.2,
     ) -> None:
         """Append another linked list to the end of this one in the scene.
 
@@ -461,7 +461,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             scene.play(
                 mn.FadeOut(self),
                 mn.FadeIn(new_instance),
-                run_time=update_time,
+                run_time=anim_time,
             )
 
         scene.remove(self)
