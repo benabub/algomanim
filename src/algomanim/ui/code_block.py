@@ -456,7 +456,7 @@ class CodeBlockLense(CodeBlockBase):
             return
         if not list(indices) == list(range(min(indices), max(indices) + 1)):
             raise ValueError("indices must be consecutive integers")
-        if len(indices) > self._limit // 2:
+        if len(indices) > self._limit // 2 + 1:
             raise ValueError(
                 f"Cannot highlight {len(indices)} lines, maximum is {self._limit // 2}"
             )
