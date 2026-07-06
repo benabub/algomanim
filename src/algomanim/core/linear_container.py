@@ -554,7 +554,7 @@ class LinearContainerStructure(AlgoManimBase):
 
     def highlight_containers(
         self,
-        *indices: int,
+        *indices: int | None,
         color_1: ManimColor | str | None = None,
         color_2: ManimColor | str | None = None,
         color_3: ManimColor | str | None = None,
@@ -580,6 +580,15 @@ class LinearContainerStructure(AlgoManimBase):
             RuntimeError: If value_colors_map is active.
             ValueError: If number of indices is not between 1 and 6.
         """
+
+        # ------- clear indices --------
+
+        indices = tuple(i for i in indices if i is not None)
+
+        if not indices:
+            self.clear_containers_highlights()
+            return
+
         # ------- validation --------
         if self._value_colors_map:
             raise RuntimeError("Method is incompatible with value_colors_map mode.")
