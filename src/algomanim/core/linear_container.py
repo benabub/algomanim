@@ -631,7 +631,7 @@ class LinearContainerStructure(AlgoManimBase):
 
     def highlight_pointers(
         self,
-        *indices: int,
+        *indices: int | None,
         pos: int = 0,
         color_1: ManimColor | str | None = None,
         color_2: ManimColor | str | None = None,
@@ -651,6 +651,14 @@ class LinearContainerStructure(AlgoManimBase):
             pos: 0 for top pointers, 1 for bottom pointers.
             color_1..color_5: Colors for each position in the input order.
         """
+        # ------- clear indices --------
+
+        indices = tuple(i for i in indices if i is not None)
+
+        if not indices:
+            self.clear_pointers_highlights(pos=pos)
+            return
+
         # --- validation ---
         if hasattr(self, "_pointers") and not self._pointers:
             return
