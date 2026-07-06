@@ -137,6 +137,28 @@ class RelativeTextBase(AlgoManimBase):
             scene.wait(hl_time)
             self._hl_rect.deactivate()
 
+    def highlight(
+        self,
+        scene: mn.Scene,
+        time: float = 1.3,
+    ):
+        """Activate highlight rectangle for a specified duration.
+
+        Args:
+            scene: The Manim scene to play animations in.
+            time: Duration to keep highlight active. Defaults to 1.3.
+
+        Raises:
+            ValueError: If `_hl_rect` is not initialized.
+        """
+        # --- validation ---
+        if not hasattr(self, "_hl_rect") or self._hl_rect is None:
+            raise ValueError("Object must have active _hl_rect attribute.")
+        # --- logic ---
+        self._hl_rect.activate()
+        scene.wait(time)
+        self._hl_rect.deactivate()
+
 
 class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
     """Base class for updatable relative text elements.
