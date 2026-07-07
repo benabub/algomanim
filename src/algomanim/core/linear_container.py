@@ -1096,3 +1096,20 @@ class LinearContainerStructure(AlgoManimBase):
             if hasattr(self, "_pointers") and self._pointers:
                 self._apply_pointers_colors(0)
                 self._apply_pointers_colors(1)
+
+    def get_indices_to_end(
+        self,
+        idx: int,
+    ) -> tuple[int, ...]:
+        """Return tuple of indices from given index to the end of data.
+
+        Args:
+            idx: Starting index.
+
+        Returns:
+            Tuple of indices from idx to len(data) - 1.
+        """
+        if self._data is None:
+            return ()
+
+        return tuple(range(idx, len(self._data) + 1))
