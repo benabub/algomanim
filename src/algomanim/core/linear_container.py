@@ -969,6 +969,25 @@ class LinearContainerStructure(AlgoManimBase):
         # ------- apply --------
         self._apply_containers_colors()
 
+    def highlight_containers_map(
+        self,
+        mapping: dict[int, ManimColor | str],
+    ) -> None:
+        """Highlight containers using a direct index-to-color mapping.
+
+        Args:
+            mapping: Dictionary mapping container indices to fill colors.
+
+        Note:
+            If mapping is empty, clears all container highlights.
+        """
+        if not mapping:
+            self.clear_containers_highlights()
+            return
+
+        self._containers_colors = mapping
+        self._apply_containers_colors()
+
     def text_color_with_values(
         self,
         mapping: Mapping[Any, ManimColor | str],
@@ -1113,3 +1132,22 @@ class LinearContainerStructure(AlgoManimBase):
             return ()
 
         return tuple(range(idx, len(self._data) + 1))
+
+    def highlight_tail(
+        self,
+        idx: int | None,
+        color: ManimColor | str = mn.RED,
+    ):
+        """Highlight all containers from given index to the end.
+
+        Args:
+            idx: Starting index for highlighting.
+            color: Color to apply to all tail containers. Defaults to RED.
+        """
+
+        if idx is None:
+            self.clear_containers_highlights()
+            return
+
+        indices = self.get_indices_to_end(idx)
+        self.highlight_containers_monocolor(indices, color)
