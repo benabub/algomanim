@@ -449,10 +449,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             return
 
         self._data = self._data + tail._data
-
-        # Capture current data snapshot to avoid closure bug
-        current_data = self._data.copy()
-        self._callable = lambda: LinkedList.create_linked_list(current_data)
+        self._callable = lambda: LinkedList.create_linked_list(self._data)
 
         new_instance = self._create_new_instance()
         scene.remove(tail)
