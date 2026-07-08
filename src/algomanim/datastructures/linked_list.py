@@ -493,8 +493,13 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             current = current.next
         return head
 
+    # TODO: remove log
     @staticmethod
-    def get_node_index(head: ListNode | None, target: ListNode | None) -> int | None:
+    def get_node_index(
+        head: ListNode | None,
+        target: ListNode | None,
+        log=False,
+    ) -> int | None:
         """
         Find the index of target node in linked list starting from head.
 
@@ -509,7 +514,15 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         current = head
         i = 0
 
+        if log:
+            print("------")
+            print(f"target: {target}")
+            print("---")
+
         while current:
+            if log:
+                print(f"current: {current}")
+
             if current is target:
                 return i
             i += 1
