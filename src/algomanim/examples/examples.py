@@ -728,11 +728,11 @@ class Example_text(mn.Scene):
 
         # ========== calls ==============
 
-        # first_appear(self)
-        # groupp_appear(self)
-        # update(self)
+        first_appear(self)
+        groupp_appear(self)
+        update(self)
         position_after_update_RTV(self)
-        # position(self)
+        position(self)
 
         # ========== finish ==============
 
@@ -4741,6 +4741,52 @@ class Example_linked_list(mn.Scene):
             cycle(self, 0, [22, 0, 22, 0, 22], mn.PURPLE)
             cycle(self, 22, [22, 0, 22, 0, 22, 0, 22], mn.PINK)
             cycle(self, 0, [22, 0, 22, 0, 22], mn.PINK)
+
+            self.wait(pause)
+            self.clear()
+            print_scene(self)
+
+        def highlight_tail(self):
+            from contextlib import contextmanager
+
+            title = RelativeText(
+                "LinkedList.highlight_nodes\n+ ListNode.index()",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            command = "current command"
+            command_text = RelativeTextActive(
+                lambda: command,
+                quoted_str=False,
+                font_size=35,
+                mob_center=title,
+                vector=D * 1.2,
+                anchor=None,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            ll = LinkedList(
+                lambda: cll([0, 1, 2, 3, 4, 5]),
+            )
+            ll.first_appear(self)
+            self.wait(1)
+
+            @contextmanager
+            def com(s):
+                nonlocal command
+                command = s
+                command_text.update_value(self)
+                yield
+                self.wait(0.5)
+
+            for i in range(6):
+                with com(f"ll.highlight_tail({i})"):
+                    ll.highlight_tail(i)
 
             self.wait(pause)
             self.clear()
