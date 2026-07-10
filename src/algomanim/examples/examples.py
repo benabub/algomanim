@@ -37,6 +37,26 @@ class Stub:
     a = [grid]
 
 
+# vectors
+U = mn.UP
+D = mn.DOWN
+R = mn.RIGHT
+L = mn.LEFT
+
+# colors
+CW = mn.WHITE
+CR = mn.RED
+CRR = mn.PINK
+CB = mn.BLUE
+CBB = "#7c83b4"
+CG = mn.GREEN
+CGG = mn.TEAL_E
+CY = mn.YELLOW_E
+CYY = mn.LIGHT_BROWN
+CO = mn.ORANGE
+CP = mn.PINK
+
+
 class Example_selection_sort(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.DARK_GRAY  # type: ignore
