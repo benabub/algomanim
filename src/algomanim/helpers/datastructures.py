@@ -10,6 +10,32 @@ class ListNode:
         self.val = val
         self.next = next
 
+    def __contains__(
+        self,
+        key: "ListNode | None",
+    ) -> bool:
+        """Check if a node exists in the linked list.
+
+        Traverses the list starting from self and compares each node
+        by object identity (is) with the given key.
+
+        Args:
+            key: The node to search for.
+
+        Returns:
+            True if the node is found in the list, False otherwise.
+        """
+        if self is None or key is None:
+            return False
+
+        current = self
+        while current:
+            if current is key:
+                return True
+            current = current.next
+
+        return False
+
     def index(
         self,
         target: "ListNode | None",
