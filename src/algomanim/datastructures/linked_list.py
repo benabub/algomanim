@@ -512,6 +512,45 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         scene.add(self)
         self._clear_scene(scene)
 
+    def highlight_nodes(
+        self,
+        nodes_colors: list[tuple[ListNode, ManimColor | str]],
+        pointers: bool = True,
+        pointers_pos: int = 0,
+    ):
+        """Highlight containers and optionally pointers for given nodes.
+
+        Args:
+            nodes_colors: List of (node, color) pairs.
+            pointers: Whether to also highlight pointers.
+            pointers_pos: Pointer position (0 for top, 1 for bottom).
+        """
+        if self._callable is None or not nodes_colors:
+            return
+
+        head = self._callable()
+
+        indices = []
+        colors = []
+
+        for node, color in nodes_colors:
+            if head is not None and node in head:
+                idx = head.index(node)
+                if idx is not None:
+                    indices.append(idx)
+                    colors.append(color)
+
+        if not indices:
+            self.clear_containers_highlights()
+            if pointers:
+                self.clear_pointers_highlights(pos=pointers_pos)
+            return
+
+        self.highlight_containers(*indices, colors=colors)
+
+        if pointers:
+            self.highlight_pointers(*indices, colors=colors, pos=pointers_pos)
+
     @staticmethod
     def create_linked_list(value: list) -> ListNode | None:
         """Create a singly-linked list from a list.
