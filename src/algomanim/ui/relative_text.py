@@ -400,6 +400,8 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         font_size: float = 25,
         text_color: ManimColor | str = mn.WHITE,
         weight: str = "NORMAL",
+        # --- quoted_str ---
+        quoted_str: bool = True,
         # --- hl ---
         hl: bool = True,
     ):
@@ -419,10 +421,14 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         )
 
         self._callable = input
-        if not isinstance(input(), str):
-            self._text = str(input())
-        else:
+
+        self._quoted_str = quoted_str
+
+        if self._quoted_str and isinstance(input(), str):
             self._text = f'"{str(input())}"'
+        else:
+            self._text = str(input())
+
         # --- font ---
         self._text_color = text_color
         self._hl = hl
@@ -530,6 +536,8 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
             font_size=self._font_size,
             weight=self._weight,
             hl=self._hl,
+            # --- quoted_str ---
+            quoted_str=self._quoted_str,
         )
 
         new_instance._prev_val = self._text
