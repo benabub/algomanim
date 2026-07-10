@@ -555,6 +555,7 @@ class LinearContainerStructure(AlgoManimBase):
     def highlight_containers(
         self,
         *indices: int | None,
+        colors: list[ManimColor | str] | None = None,
         color_1: ManimColor | str | None = None,
         color_2: ManimColor | str | None = None,
         color_3: ManimColor | str | None = None,
@@ -597,12 +598,15 @@ class LinearContainerStructure(AlgoManimBase):
             raise ValueError("indices must contain between 1 and 6 elements")
 
         # --- map colors to their positions ---
-        colors = [color_1, color_2, color_3, color_4, color_5, color_6]
+        if colors is not None:
+            clrs = list(colors) + [None] * (6 - len(colors))
+        else:
+            clrs = [color_1, color_2, color_3, color_4, color_5, color_6]
 
         # --- apply default colors if not provided ---
         for i in range(len(indices)):
-            if colors[i] is None:
-                colors[i] = getattr(self, f"_color_{i + 1}")
+            if clrs[i] is None:
+                clrs[i] = getattr(self, f"_color_{i + 1}")
 
         # --- clear previous highlights ---
         self._containers_colors = {}
@@ -613,7 +617,7 @@ class LinearContainerStructure(AlgoManimBase):
         for idx, color_pos in zip(indices, range(len(indices))):
             if idx not in groups:
                 groups[idx] = []
-            groups[idx].append(colors[color_pos])
+            groups[idx].append(clrs[color_pos])
 
         # --- for each container, assign color or blend multiple colors ---
         for idx, color_list in groups.items():
@@ -632,6 +636,7 @@ class LinearContainerStructure(AlgoManimBase):
     def highlight_pointers(
         self,
         *indices: int | None,
+        colors: list[ManimColor | str] | None = None,
         pos: int = 0,
         color_1: ManimColor | str | None = None,
         color_2: ManimColor | str | None = None,
@@ -678,18 +683,23 @@ class LinearContainerStructure(AlgoManimBase):
             self._bottom_pointers_colors = {}
             colors_dict = self._bottom_pointers_colors
 
+        # --- map colors to their positions ---
+        if colors is not None:
+            clrs = list(colors) + [None] * (5 - len(colors))
+        else:
+            clrs = [color_1, color_2, color_3, color_4, color_5]
+
         # --- apply default colors if not provided ---
-        colors = [color_1, color_2, color_3, color_4, color_5]
         for i in range(len(indices)):
-            if colors[i] is None:
-                colors[i] = getattr(self, f"_color_{i + 1}")
+            if clrs[i] is None:
+                clrs[i] = getattr(self, f"_color_{i + 1}")
 
         bg = self._bg_color
 
         # group indices in dict: each unique index gets a list of colors assigned to it
         # example: indices = [0,0,1] → groups = {0: [color_1, color_2], 1: [color_3]}
         groups = {}
-        for idx, color in zip(indices, colors):
+        for idx, color in zip(indices, clrs):
             if idx not in groups:
                 groups[idx] = []
             groups[idx].append(color)
