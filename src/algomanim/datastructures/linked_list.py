@@ -552,7 +552,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             self.highlight_pointers(*indices, colors=colors, pos=pointers_pos)
 
     @staticmethod
-    def create_linked_list(value: list) -> ListNode | None:
+    def create_linked_list(value: list) -> ListNode:
         """Create a singly-linked list from a list.
 
         Args:
@@ -563,7 +563,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         """
 
         if not value:
-            return None
+            raise ValueError("Input value must not be empty.")
 
         head = ListNode(value[0])
         current = head
@@ -571,41 +571,6 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             current.next = ListNode(val)
             current = current.next
         return head
-
-    # TODO: remove log
-    @staticmethod
-    def get_node_index(
-        head: ListNode | None,
-        target: ListNode | None,
-        log=False,
-    ) -> int | None:
-        """
-        Find the index of target node in linked list starting from head.
-
-        Args:
-            head: Head node of the linked list.
-            target: Node to find (must be same object reference).
-
-        Returns:
-            Zero-based index of target node, or None if not found.
-        """
-
-        current = head
-        i = 0
-
-        if log:
-            print("------")
-            print(f"target: {target}")
-            print("---")
-
-        while current:
-            if log:
-                print(f"current: {current}")
-
-            if current is target:
-                return i
-            i += 1
-            current = current.next
 
     @staticmethod
     def get_head_value(head: ListNode | None) -> Any | None:
