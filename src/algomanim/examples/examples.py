@@ -4792,6 +4792,192 @@ class Example_linked_list(mn.Scene):
             self.clear()
             print_scene(self)
 
+        def highlight_nodes(self):
+            from algomanim import ListNode
+            from contextlib import contextmanager
+
+            title = RelativeText(
+                "LinkedList.highlight_nodes()\n+ ListNode.index()",
+                font_size=35,
+                text_color=mn.BLACK,
+                align_screen=mn.UP,
+            )
+            title.first_appear(self)
+            self.wait(1)
+
+            command = "current command"
+            command_text = RelativeTextActive(
+                lambda: command,
+                quoted_str=False,
+                font_size=35,
+                mob_center=title,
+                vector=D * 1.2,
+                anchor=None,
+            )
+            command_text.first_appear(self)
+            self.wait(1)
+
+            @contextmanager
+            def com(s):
+                nonlocal command
+                command = s
+                command_text.update_value(self)
+                yield
+                self.wait(1.1)
+
+            node1 = cll(["G", "G", "G"])
+            node2 = cll(["P", "P", "P"])
+
+            dummy = cll([0, 1, 2, 3, 4, 5, 6])
+            tail: ListNode | None = dummy  # type: ignore
+
+            C1 = mn.GREEN
+            C2 = mn.PINK
+
+            # ------ MOBJECTS CONSTRUCTION -------
+
+            lld = LinkedList(
+                lambda: dummy,
+                vector=U * 0.5 + L * 1,
+            )
+            lld.highlight_containers(0)
+            lld.highlight_pointers(0)
+
+            ll1 = LinkedList(
+                lambda: node1,
+                # pointers=None,
+                mob_center=lld,
+                align_left=lld,
+                vector=D * 1.3 + R * lld.node_arrow_width,
+            )
+
+            ll2 = LinkedList(
+                lambda: node2,
+                # pointers=None,
+                mob_center=ll1,
+                align_left=ll1,
+                vector=D * 1.3,
+            )
+
+            node1_text = RelativeText(
+                "node1",
+                text_color=C1,
+                mob_center=ll1,
+                align_left=lld,
+            )
+
+            node2_text = RelativeText(
+                "node2",
+                text_color=C2,
+                mob_center=ll2,
+                align_left=lld,
+            )
+
+            ll1.highlight_containers(0, color_1=C1)
+            ll2.highlight_containers(0, color_1=C2)
+
+            dummy_text = RelativeText(
+                "dummy",
+                text_color=CR,
+                mob_center=lld,
+                align_left=lld,
+                vector=L * 1.6,
+            )
+
+            tail_text = RelativeText(
+                "tail",
+                text_color=CB,
+                mob_center=lld,
+                align_right=lld,
+                vector=R * 0.8,
+            )
+
+            idx_text = RelativeTextValue(
+                ("dummy.index(tail)", lambda: dummy.index(tail), CW),
+                align_screen=R,
+                anchor="end",
+                vector=U * 1.2,
+            )
+
+            # ========== PRE-CYCLE LOGIC ============
+
+            dummy = ListNode()
+
+            group_appear(
+                self,
+                ll1,
+                ll2,
+                lld,
+                dummy_text,
+                node1_text,
+                node2_text,
+                idx_text,
+            )
+
+            # grid(self)
+
+            # ===== ALGORITHM CYCLE ==========
+
+            tail: ListNode = dummy
+
+            with com("tail = dummy"):
+                lld.highlight_containers(0, dummy.index(tail))
+                lld.highlight_pointers(0, dummy.index(tail))
+                tail_text.first_appear(self, hl=False)
+                idx_text.update_value(self, hl=False)
+            self.wait(1)
+
+            cnt = True
+
+            def get_nodes_colors():
+                return [
+                    (dummy, CR),
+                    (tail, CB),
+                    (node1, CG),
+                    (node2, CP),
+                ]
+
+            def update_all():
+                ll1.highlight_nodes(get_nodes_colors())
+                ll2.highlight_nodes(get_nodes_colors())
+                lld.highlight_nodes(get_nodes_colors())
+                AlgoManimBase.group_update(self, ll1, ll2, lld, animate=False)
+                idx_text.update_value(self, hl=False)
+
+            while node1 or node2:
+                if cnt:
+                    with com("tail.next = node1"):
+                        tail.next = node1
+
+                        update_all()
+
+                    with com("node1 = node1.next"):
+                        if node1:
+                            node1 = node1.next
+                        update_all()
+
+                else:
+                    with com("tail.next = node2"):
+                        tail.next = node2
+                        update_all()
+
+                    with com("node2 = node2.next"):
+                        if node2:
+                            node2 = node2.next
+                        update_all()
+
+                with com("tail = tail.next"):
+                    tail = tail.next  # type: ignore
+                    update_all()
+
+                cnt = not cnt
+
+            # --- finish ---
+
+            self.wait(pause)
+            self.clear()
+            print_scene(self)
+
         def value_colors_map_mode(self):
 
             title = RelativeText(
@@ -4954,6 +5140,8 @@ class Example_linked_list(mn.Scene):
         highlights_1to3(self)
         highlights_monocolor(self)
         highlight_on_value(self)
+        highlight_tail(self)
+        highlight_nodes(self)
         value_colors_map_mode(self)
         append(self)
 
