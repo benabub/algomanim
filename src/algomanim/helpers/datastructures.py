@@ -10,6 +10,33 @@ class ListNode:
         self.val = val
         self.next = next
 
+    def index(
+        self,
+        target: "ListNode | None",
+    ) -> int | None:
+        """Return the index of the target node in the list starting from self.
+
+        Traverses the list from the current node and compares nodes by object id.
+
+        Args:
+            target: The node to search for.
+
+        Returns:
+            Zero-based index of the target node if found, None otherwise.
+        """
+
+        if target is None or self is None:
+            return None
+
+        current = self
+        i = 0
+
+        while current:
+            if current is target:
+                return i
+            i += 1
+            current = current.next
+
 
 class TreeNode:
     """Leetcode definition for a binary tree node.
