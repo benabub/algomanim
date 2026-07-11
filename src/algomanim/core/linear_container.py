@@ -223,7 +223,12 @@ class LinearContainerStructure(AlgoManimBase):
 
         Skips execution when value-based coloring mode is active.
         """
+        from algomanim.datastructures.linked_list import LinkedList
+
         if self._value_colors_map:
+            return
+
+        if isinstance(self, LinkedList) and not self._data:
             return
 
         for i, mob in enumerate(self._containers_mob):
