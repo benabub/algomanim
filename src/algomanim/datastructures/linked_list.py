@@ -516,7 +516,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         self,
         nodes_colors: list[tuple[ListNode, ManimColor | str]],
         pointers: bool = True,
-        pointers_pos: int = 0,
+        pos: int = 0,
     ):
         """Highlight containers and optionally pointers for given nodes.
 
@@ -543,13 +543,13 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         if not indices:
             self.clear_containers_highlights()
             if pointers:
-                self.clear_pointers_highlights(pos=pointers_pos)
+                self.clear_pointers_highlights(pos=pos)
             return
 
         self.highlight_containers(*indices, colors=colors)
 
         if pointers:
-            self.highlight_pointers(*indices, colors=colors, pos=pointers_pos)
+            self.highlight_pointers(*indices, colors=colors, pos=pos)
 
     @staticmethod
     def create_linked_list(value: list) -> ListNode:
