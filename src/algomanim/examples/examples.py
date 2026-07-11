@@ -3515,7 +3515,7 @@ class Example_linked_list(mn.Scene):
     def construct(self):
         self.camera.background_color = mn.GREY  # type: ignore
 
-        cll = LinkedList.create_linked_list
+        cln = LinkedList.create_list_node
         pause = 1
 
         def first_appear(self):
@@ -3523,7 +3523,7 @@ class Example_linked_list(mn.Scene):
             from typing import Callable, cast
             from algomanim.helpers.datastructures import ListNode
 
-            ln = cll([1, 2, 3])
+            ln = cln([1, 2, 3])
 
             title = RelativeText(
                 "first_appear() + remove()",
@@ -3559,10 +3559,10 @@ class Example_linked_list(mn.Scene):
                 self.remove(ll, top_text)
                 self.wait(0.5)
 
-            ln = cll([1, 2])
+            ln = cln([1, 2])
             cycle(self, "ln = cll([1, 2])")
 
-            ln = cll([1, 2, 3])
+            ln = cln([1, 2, 3])
             cycle(self, "ln = cll([1, 2, 3])")
 
             ll.highlight_containers(0, 1, 2)
@@ -3572,10 +3572,10 @@ class Example_linked_list(mn.Scene):
                 "ll.highlight_containers(0,1,2)\nll.highlight_pointers(0,1,2)",
             )
 
-            ln = cll([])
+            ln = cln([])
             cycle(self, "ln = cll([])")
 
-            ln = cll([1, 2])
+            ln = cln([1, 2])
             cycle(self, "ln = cll([1, 2])")
 
             ll.clear_containers_highlights()
@@ -3599,7 +3599,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 mob_center=center,
                 vector=mn.UP * 2,
             )
@@ -3613,7 +3613,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 mob_center=center,
                 align_left=center,
                 vector=mn.UP * 2,
@@ -3628,7 +3628,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.DOWN * 2 + mn.RIGHT * 0,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 mob_center=center,
                 align_right=center,
                 vector=mn.UP * 2,
@@ -3655,7 +3655,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 align_left=one,
                 align_bottom=two,
             )
@@ -3668,7 +3668,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 align_left=one,
                 align_top=two,
             )
@@ -3681,7 +3681,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 align_right=one,
                 align_top=two,
             )
@@ -3694,7 +3694,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.UP * 1 + mn.RIGHT * 2,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 align_right=one,
                 align_bottom=two,
             )
@@ -3707,7 +3707,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.UP * 0.7 + mn.RIGHT * 2,
             )
             ll = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 align_left=one,
                 align_bottom=two,
                 vector=mn.UP * 1 + mn.RIGHT * 1,
@@ -3719,7 +3719,7 @@ class Example_linked_list(mn.Scene):
 
         def pointers(self):
 
-            ln = cll([1, 2, 3])
+            ln = cln([1, 2, 3])
 
             title = RelativeText(
                 "pointers param",
@@ -3959,7 +3959,7 @@ class Example_linked_list(mn.Scene):
             self.wait(1)
 
             ll = LinkedList(
-                lambda: cll([0, 0, 0, 0, 0]),
+                lambda: cln([0, 0, 0, 0, 0]),
             )
             ll.first_appear(self)
             self.wait(1)
@@ -4007,7 +4007,7 @@ class Example_linked_list(mn.Scene):
             self.wait(1)
 
             ll = LinkedList(
-                lambda: cll([0, 0, 0, 0, 0]),
+                lambda: cln([0, 0, 0, 0, 0]),
                 pointers_mode=5,
             )
             ll.first_appear(self)
@@ -4042,7 +4042,7 @@ class Example_linked_list(mn.Scene):
             pause = 0.3
 
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
             )
             ll.appear(self)
             ll.highlight_pointers(0, 1, 2)
@@ -4050,7 +4050,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 direction=np.array([10, -10, 0]),
             )
             ll.appear(self)
@@ -4059,7 +4059,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 direction=np.array([0, -10, 0]),
             )
             ll.appear(self)
@@ -4068,7 +4068,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 direction=np.array([-10, -10, 0]),
             )
             ll.appear(self)
@@ -4077,7 +4077,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 direction=np.array([-10, 0, 0]),
             )
             ll.appear(self)
@@ -4086,7 +4086,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 direction=np.array([-10, 10, 0]),
             )
             ll.appear(self)
@@ -4095,7 +4095,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 direction=np.array([0, 10, 0]),
             )
             ll.appear(self)
@@ -4104,7 +4104,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 direction=np.array([10, 10, 0]),
             )
             ll.appear(self)
@@ -4113,7 +4113,7 @@ class Example_linked_list(mn.Scene):
 
             self.remove(ll)
             ll = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
             )
             ll.appear(self)
             ll.highlight_pointers(0, 1, 2)
@@ -4136,14 +4136,14 @@ class Example_linked_list(mn.Scene):
             mob_center.first_appear(self)
 
             ll1 = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 radius=0.3,
                 mob_center=mob_center,
                 align_right=mob_center,
                 vector=mn.DOWN * 2,
             )
             ll2 = LinkedList(
-                lambda: cll([0, 1, 2]),
+                lambda: cln([0, 1, 2]),
                 radius=0.3,
                 mob_center=mob_center,
                 align_left=mob_center,
@@ -4184,7 +4184,7 @@ class Example_linked_list(mn.Scene):
             self.play(mob_center.animate.move_to(mn.ORIGIN))
 
             ll1 = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 radius=0.8,
                 mob_center=mob_center,
                 align_top=mob_center,
@@ -4192,7 +4192,7 @@ class Example_linked_list(mn.Scene):
                 direction=mn.UP,
             )
             ll2 = LinkedList(
-                lambda: cll([0, 1]),
+                lambda: cln([0, 1]),
                 radius=0.8,
                 mob_center=mob_center,
                 align_bottom=mob_center,
@@ -4235,11 +4235,11 @@ class Example_linked_list(mn.Scene):
                 "posittion + update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
                 text_color=mn.BLACK,
-                font_size=50,
+                font_size=30,
             )
             group_appear(self, center, title)
 
-            ln = cll([1, 2, 3])
+            ln = cln([1, 2, 3])
 
             radius = 0.3
 
@@ -4351,7 +4351,7 @@ class Example_linked_list(mn.Scene):
 
             def cycle(self, new_list: list):
                 nonlocal ln
-                ln = cll(new_list)
+                ln = cln(new_list)
                 ll_1.update_value(self)
                 ll_2.update_value(self)
                 ll_3.update_value(self)
@@ -4362,6 +4362,7 @@ class Example_linked_list(mn.Scene):
             cycle(self, [1, 2])
             cycle(self, [1])
             cycle(self, [])
+            highlight_containers()
             cycle(self, [1])
             cycle(self, [1, 2])
             cycle(self, [1, 2, 3])
@@ -4376,7 +4377,7 @@ class Example_linked_list(mn.Scene):
             )
             self.wait(pause)
 
-            ln = cll([])
+            ln = cln([])
             ll_1 = LinkedList(
                 cast(Callable[[], ListNode | None], lambda: ln),
                 radius=radius,
@@ -4428,8 +4429,11 @@ class Example_linked_list(mn.Scene):
             )
             self.wait(1)
 
+            highlight_containers()
+
             cycle(self, [1])
             cycle(self, [])
+            highlight_containers()
             cycle(self, [1, 2])
             cycle(self, [1, 2, 3])
 
@@ -4439,7 +4443,7 @@ class Example_linked_list(mn.Scene):
 
         def update_value_direction(self):
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
 
             title = RelativeText(
                 "anchor='start'\ndirection=np.array([10, 2, 0])\nupdate_value()",
@@ -4460,31 +4464,31 @@ class Example_linked_list(mn.Scene):
             ll.first_appear(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([])
+            ln = cln([])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12])
+            ln = cln([0, 12])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
             ll.update_value(self)
             self.wait(pause)
             self.clear()
@@ -4492,7 +4496,7 @@ class Example_linked_list(mn.Scene):
 
             # ------------------
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
             ll = LinkedList(
                 lambda: ln,
                 direction=np.array([10, 2, 0]),
@@ -4509,31 +4513,31 @@ class Example_linked_list(mn.Scene):
             group_appear(self, ll, title)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([])
+            ln = cln([])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12])
+            ln = cln([0, 12])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
             ll.update_value(self)
             self.wait(pause)
             self.clear()
@@ -4541,7 +4545,7 @@ class Example_linked_list(mn.Scene):
 
             # ------------------
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
             ll = LinkedList(
                 lambda: ln,
                 direction=np.array([-10, -2, 0]),
@@ -4558,31 +4562,31 @@ class Example_linked_list(mn.Scene):
             group_appear(self, ll, title)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([])
+            ln = cln([])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12])
+            ln = cln([0, 12])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
             ll.update_value(self)
             self.wait(pause)
             self.clear()
@@ -4590,7 +4594,7 @@ class Example_linked_list(mn.Scene):
 
             # ------------------
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
             ll = LinkedList(
                 lambda: ln,
                 direction=np.array([10, 2, 0]),
@@ -4607,31 +4611,31 @@ class Example_linked_list(mn.Scene):
             group_appear(self, ll, title)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([])
+            ln = cln([])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12])
+            ln = cln([0, 12])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"'])
+            ln = cln([0, 12, 12345, "'", '^"'])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa"])
             ll.update_value(self)
             self.wait(pause)
 
-            ln = cll([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
+            ln = cln([0, 12, 12345, "'", '^"', ".", "_.,", "Aa", "acv", "gjy", "gyp"])
             ll.update_value(self)
             self.wait(pause)
             self.clear()
@@ -4640,7 +4644,7 @@ class Example_linked_list(mn.Scene):
         def highlights_1to3(self):
             pause = 0.5
             lln = LinkedList(
-                lambda: cll([1, 0, 2, 0, 3, 0, 4, 0, 5]),
+                lambda: cln([1, 0, 2, 0, 3, 0, 4, 0, 5]),
                 # vector=mn.LEFT * 4.8,
             )
             rt = RelativeText(
@@ -4681,7 +4685,7 @@ class Example_linked_list(mn.Scene):
             print_scene(self)
 
         def highlights_monocolor(self):
-            ln = cll([0, 1, 2, 3, 4, 5])
+            ln = cln([0, 1, 2, 3, 4, 5])
             lln = LinkedList(
                 lambda: ln,
             )
@@ -4697,7 +4701,7 @@ class Example_linked_list(mn.Scene):
             lln.highlight_containers_monocolor([3, 4, 5, 6, 7])
             self.wait(pause)
 
-            ln = cll([0, 1, 2, 3, 4, 5, 6, 7])
+            ln = cln([0, 1, 2, 3, 4, 5, 6, 7])
             lln.update_value(self)
             self.wait(pause)
             lln.highlight_containers_monocolor([0, 2, 4, 6])
@@ -4716,7 +4720,7 @@ class Example_linked_list(mn.Scene):
             title.first_appear(self)
             self.wait(pause)
 
-            ln = cll([10, 2, 3000, 2, 100, 2, 40])
+            ln = cln([10, 2, 3000, 2, 100, 2, 40])
             ll = LinkedList(lambda: ln)
             ll.first_appear(self)
             self.wait(pause)
@@ -4728,7 +4732,7 @@ class Example_linked_list(mn.Scene):
                 color=None,
             ):
                 nonlocal ln
-                ln = cll(list_new)
+                ln = cln(list_new)
                 ll.update_value(scene)
                 ll.highlight_containers_with_value(val, color=color)
                 ll.highlight_pointers_above_value(val, 0, color=color)
@@ -4771,7 +4775,7 @@ class Example_linked_list(mn.Scene):
             self.wait(1)
 
             ll = LinkedList(
-                lambda: cll([0, 1, 2, 3, 4, 5]),
+                lambda: cln([0, 1, 2, 3, 4, 5]),
             )
             ll.first_appear(self)
             self.wait(1)
@@ -4825,10 +4829,10 @@ class Example_linked_list(mn.Scene):
                 yield
                 self.wait(1.1)
 
-            node1 = cll(["G", "G", "G"])
-            node2 = cll(["P", "P", "P"])
+            node1 = cln(["G", "G", "G"])
+            node2 = cln(["P", "P", "P"])
 
-            dummy = cll([0, 1, 2, 3, 4, 5, 6])
+            dummy = cln([0, 1, 2, 3, 4, 5, 6])
             tail: ListNode | None = dummy  # type: ignore
 
             C1 = mn.GREEN
@@ -4893,7 +4897,7 @@ class Example_linked_list(mn.Scene):
             )
 
             idx_text = RelativeTextValue(
-                ("dummy.index(tail)", lambda: dummy.index(tail), CW),
+                ("dummy.index(tail)", lambda: dummy.index(tail) if dummy else None, CW),
                 align_screen=R,
                 anchor="end",
                 vector=U * 1.2,
@@ -4937,10 +4941,13 @@ class Example_linked_list(mn.Scene):
                     (node2, CP),
                 ]
 
-            def update_all():
+            def hl_all():
                 ll1.highlight_nodes(get_nodes_colors())
                 ll2.highlight_nodes(get_nodes_colors())
                 lld.highlight_nodes(get_nodes_colors())
+
+            def update_all():
+
                 AlgoManimBase.group_update(self, ll1, ll2, lld, animate=False)
                 idx_text.update_value(self, hl=False)
 
@@ -4950,25 +4957,30 @@ class Example_linked_list(mn.Scene):
                         tail.next = node1
 
                         update_all()
+                        hl_all()
 
                     with com("node1 = node1.next"):
                         if node1:
                             node1 = node1.next
                         update_all()
+                        hl_all()
 
                 else:
                     with com("tail.next = node2"):
                         tail.next = node2
                         update_all()
+                        hl_all()
 
                     with com("node2 = node2.next"):
                         if node2:
                             node2 = node2.next
                         update_all()
+                        hl_all()
 
                 with com("tail = tail.next"):
                     tail = tail.next  # type: ignore
                     update_all()
+                    hl_all()
 
                 cnt = not cnt
 
@@ -5000,7 +5012,7 @@ class Example_linked_list(mn.Scene):
                 vector=mn.DOWN,
             )
 
-            ln = cll([0, 1, 2, 0, 1, 2])
+            ln = cln([0, 1, 2, 0, 1, 2])
             mapp = {
                 0: ["#FF0000", "#FFFFFF"],
                 1: ["#FFFFFF", mn.BLACK],
@@ -5019,7 +5031,7 @@ class Example_linked_list(mn.Scene):
 
             def ds_update(new_arr, pause=0.5):
                 nonlocal ln
-                ln = cll(new_arr)
+                ln = cln(new_arr)
                 ll.update_value(self)
                 self.wait(pause)
 
@@ -5105,14 +5117,14 @@ class Example_linked_list(mn.Scene):
             title.first_appear(self)
             self.wait(pause)
 
-            ll = LinkedList(lambda: cll([0]), vector=mn.LEFT * 1.7)
+            ll = LinkedList(lambda: cln([0]), vector=mn.LEFT * 1.7)
             ll.highlight_containers(0, 1, 2, 3)
             ll.first_appear(self)
             self.wait(pause)
 
-            ll_1 = LinkedList(lambda: cll([1]))
-            ll_2 = LinkedList(lambda: cll([2]))
-            ll_3 = LinkedList(lambda: cll([3]))
+            ll_1 = LinkedList(lambda: cln([1]))
+            ll_2 = LinkedList(lambda: cln([2]))
+            ll_3 = LinkedList(lambda: cln([3]))
 
             ll.append(self, ll_1)
             self.wait(pause)
