@@ -492,7 +492,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             return
 
         self._data = self._data + tail._data
-        self._callable = lambda: LinkedList.create_linked_list(self._data)
+        self._callable = lambda: LinkedList.create_list_node(self._data)
 
         new_instance = self._create_new_instance()
         scene.remove(tail)
@@ -552,7 +552,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
             self.highlight_pointers(*indices, colors=colors, pos=pos)
 
     @staticmethod
-    def create_linked_list(value: list) -> ListNode:
+    def create_list_node(value: list) -> ListNode | None:
         """Create a singly-linked list from a list.
 
         Args:
@@ -563,7 +563,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         """
 
         if not value:
-            raise ValueError("Input value must not be empty.")
+            return None
 
         head = ListNode(value[0])
         current = head
