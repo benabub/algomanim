@@ -55,6 +55,9 @@ class UpdatableMixin(AlgoManimBase, ABC):
         """
         new_instance = self._create_new_instance()
 
+        if animate and not anim_time:
+            animate = False
+
         if animate:
             scene.play(
                 mn.FadeOut(self),
