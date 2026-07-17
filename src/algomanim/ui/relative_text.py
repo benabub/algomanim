@@ -32,6 +32,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         weight (str): Font weight (NORMAL, BOLD, etc.).
         spaces(bool): Whether to add spaces around the equals sign.
         equal_sign (bool): Whether to use equals sign between name and value.
+        quoted_str: If True, wraps string values in double quotes.
         hl (bool): If True, creates a highlight rectangle around the text.
     """
 
@@ -54,6 +55,8 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         weight: str = "NORMAL",
         spaces: bool = True,
         equal_sign: bool = True,
+        # --- quoted_str ---
+        quoted_str: bool = True,
         # --- hl ---
         hl: bool = True,
     ):
@@ -79,6 +82,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         # --- other ---
         self._spaces = spaces
         self._equal_sign = equal_sign
+        self._quoted_str = quoted_str
         self._hl = hl
 
         self._text_mob = self._build_text_mob()
@@ -107,7 +111,10 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         if not isinstance(self._callable(), str):
             val = self._callable()
         else:
-            val = f'"{self._callable()}"'
+            if self._quoted_str:
+                val = f'"{self._callable()}"'
+            else:
+                val = self._callable()
 
         if self._equal_sign:
             if self._spaces:
@@ -136,6 +143,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         self._color = new_instance._color
         self._spaces = new_instance._spaces
         self._equal_sign = new_instance._equal_sign
+        self._quoted_str = new_instance._quoted_str
         self._hl = new_instance._hl
 
         # transfer references to sub-mobject groups
@@ -170,9 +178,11 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
             font=self._font,
             font_size=self._font_size,
             weight=self._weight,
-            # --- other ---
             spaces=self._spaces,
             equal_sign=self._equal_sign,
+            # --- quoted_str ---
+            quoted_str=self._quoted_str,
+            # --- hl ---
             hl=self._hl,
         )
 
@@ -379,6 +389,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         font_size: Text font size.
         text_color: Text color.
         weight: Font weight (NORMAL, BOLD, etc.).
+        quoted_str: If True, wraps string values in double quotes.
         hl (bool): If True, creates a highlight rectangle around the text.
     """
 
