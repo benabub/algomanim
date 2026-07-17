@@ -223,7 +223,7 @@ class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
         animate: bool = True,
         anim_time=0.2,
         hl: bool = True,
-        hl_time: float = 1.0,
+        hl_time: float = 1.1,
     ) -> None:
         """Update text values with current variable values.
 
