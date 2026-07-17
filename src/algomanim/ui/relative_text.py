@@ -34,6 +34,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         equal_sign (bool): Whether to use equals sign between name and value.
         quoted_str: If True, wraps string values in double quotes.
         hl (bool): If True, creates a highlight rectangle around the text.
+        dim_zone (float): Size of the blur zone around the highlight rectangle.
     """
 
     def __init__(
@@ -59,6 +60,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         quoted_str: bool = True,
         # --- hl ---
         hl: bool = True,
+        dim_zone: float = 0.2,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -84,6 +86,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         self._equal_sign = equal_sign
         self._quoted_str = quoted_str
         self._hl = hl
+        self._dim_zone = dim_zone
 
         self._text_mob = self._build_text_mob()
 
@@ -94,6 +97,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
             self._hl_rect = HLRect(
                 self._text_mob,
                 self._get_hl_color(self._color),
+                dim_zone=self._dim_zone,
             )
             self.add_to_back(self._hl_rect)
         else:
@@ -184,6 +188,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
             quoted_str=self._quoted_str,
             # --- hl ---
             hl=self._hl,
+            dim_zone=self._dim_zone,
         )
 
         # copy anchor alignment
@@ -391,6 +396,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         weight: Font weight (NORMAL, BOLD, etc.).
         quoted_str: If True, wraps string values in double quotes.
         hl (bool): If True, creates a highlight rectangle around the text.
+        dim_zone (float): Size of the blur zone around the highlight rectangle.
     """
 
     def __init__(
@@ -415,6 +421,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         quoted_str: bool = True,
         # --- hl ---
         hl: bool = True,
+        dim_zone: float = 0.2,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -443,6 +450,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         # --- font ---
         self._text_color = text_color
         self._hl = hl
+        self._dim_zone = dim_zone
 
         self._prev_val = None
         self._shift_distance = None
@@ -471,6 +479,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
             self._hl_rect = HLRect(
                 self._text_mob,
                 self._get_hl_color(self._text_color),
+                dim_zone=self._dim_zone,
             )
             self.add_to_back(self._hl_rect)
         else:
@@ -578,6 +587,7 @@ class RelativeText(RelativeTextBase, SingleRelativeTextMixin):
         text_color: Text color.
         weight: Font weight (NORMAL, BOLD, etc.).
         hl (bool): If True, creates a highlight rectangle around the text.
+        dim_zone (float): Size of the blur zone around the highlight rectangle.
     """
 
     def __init__(
@@ -599,6 +609,7 @@ class RelativeText(RelativeTextBase, SingleRelativeTextMixin):
         weight: str = "NORMAL",
         # --- hl ---
         hl: bool = True,
+        dim_zone: float = 0.2,
     ):
         super().__init__(
             mob_center=mob_center,
@@ -629,6 +640,7 @@ class RelativeText(RelativeTextBase, SingleRelativeTextMixin):
             self._hl_rect = HLRect(
                 self._text_mob,
                 self._get_hl_color(self._text_color),
+                dim_zone=dim_zone,
             )
             self.add_to_back(self._hl_rect)
         else:
