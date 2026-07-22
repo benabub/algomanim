@@ -332,7 +332,7 @@ class Array(RectangleCellsStructure, UpdatableMixin):
         """Position value text mobjects within their respective cells with proper alignment."""
         # predefine character sets
         top_chars = set("\"'^`")
-        deep_bottom_chars = set("ypgj")
+        deep_bottom_chars = set("ypgjq")
         bottom_chars = set("wertuioasdfhklzxcvbnm,.:;_")
 
         for i in range(len(self._data)):
