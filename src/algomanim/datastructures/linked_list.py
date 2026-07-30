@@ -430,49 +430,6 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
 
-    # TODO: this is the old version: remove, when confident in new one
-    # def append(
-    #     self,
-    #     scene: mn.Scene,
-    #     tail: "LinkedList",
-    #     animate: bool = True,
-    #     anim_time: float = 0.2,
-    # ) -> None:
-    #     """Append another linked list to the end of this one in the scene.
-    #
-    #     Args:
-    #         scene: The Manim scene to play animations in.
-    #         tail: Linked list to append.
-    #         animate: Whether to animate the transition.
-    #         update_time: Animation duration if animate=True.
-    #     """
-    #     if not tail._data:
-    #         return
-    #
-    #     self._data = self._data + tail._data
-    #
-    #     # Capture current data snapshot to avoid closure bug
-    #     current_data = self._data.copy()
-    #     self._callable = lambda: LinkedList.create_linked_list(current_data)
-    #
-    #     new_instance = self._create_new_instance()
-    #     scene.remove(tail)
-    #
-    #     if animate:
-    #         scene.play(
-    #             mn.FadeOut(self),
-    #             mn.FadeIn(new_instance),
-    #             run_time=anim_time,
-    #         )
-    #
-    #     scene.remove(self)
-    #     scene.remove(new_instance)
-    #
-    #     self._update_internal_state(new_instance)
-    #
-    #     scene.add(self)
-    #     self._clear_scene(scene)
-
     def append(
         self,
         scene: mn.Scene,
