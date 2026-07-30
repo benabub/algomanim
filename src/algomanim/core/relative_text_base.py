@@ -105,7 +105,7 @@ class RelativeTextBase(AlgoManimBase):
         update: bool = True,
         anim_time: float = 0.2,
         hl: bool = True,
-        hl_time: float = 1.0,
+        hl_time: float = 1.1,
     ):
         """Animate the initial appearance with optional highlight.
 
@@ -127,6 +127,9 @@ class RelativeTextBase(AlgoManimBase):
 
         if not hl and self._hl_rect is not None:
             self._hl_rect.deactivate()
+
+        if hl and self._hl_rect is not None:
+            self._hl_rect.activate()
 
         scene.play(mn.FadeIn(self), run_time=anim_time)
 
