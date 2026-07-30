@@ -356,3 +356,48 @@
 - `examples.py`
 
 ---
+
+# [0.5.3] - 2026-07-30
+
+## Added
+- `LinearContainerStructure`: `highlight_containers_map()` method for mapping-based container highlighting
+- `LinearContainerStructure`: `get_indices_to_end()` method
+- `{Array, String, LinkedList}`: `value_colors_map` parameter for custom value-to-color mapping
+- `SingleRelativeTextMixin`: New mixin class for single relative text handling
+- `RelativeTextBase`: `highlight()` method
+- `{RelativeText, RelativeTextValue, RelativeTextActive}`: `dim_zone` parameter
+- `{RelativeText, RelativeTextValue, RelativeTextActive}`: Integrated `SingleRelativeTextMixin`
+- `{RelativeTextValue, RelativeTextActive}`: `quoted_str` parameter
+- `RelativeTextUpdatable`: `_sync_anchor()` method to fix update positioning bug
+- `LinkedList`: `highlight_nodes()` method
+- `LinkedList`: `highlight_tail()` method
+- `LinkedList`: `get_node_index()` method
+- `ListNode`: `__contains__()` method
+- `ListNode`: `index()` method
+- `AlgoManimBase`: `group_update()` static method
+- `examples.py`: `Example_linked_list`: `highlight_nodes()` + `highlight_tail()`
+- `examples.py`: `value_colors_map_mode()` examples for `Array`, `String`, `LinkedList`
+- `examples.py`: `Example_text`: `position_after_update_RTV()`
+
+## Changed
+- `LinkedList`: `create_linked_list()` renamed to `create_list_node()`
+- `LinkedList`: `create_list_node()` no longer accepts `None` as input
+- `LinkedList`: Changed default behavior in `append()` method
+- `LinkedList`: `highlight_nodes()`: parameter `pointers_pos` renamed to `pos`
+- `LinearContainerStructure`: `highlight_containers()` and `highlight_pointers()` now accept `colors` parameter
+- `LinearContainerStructure`: `highlight_pointers()` and `highlight_containers()` now handle `None` indices
+- `RelativeTextBase`: `update_value()` default `hl_time` changed from default to `1.1`
+- `CodeBlockLense`: Increased highlight range limit
+- `String`: Quote selection mobs changed from `Square` to `Rectangle` (half width)
+
+## Fixed
+- `LinkedList`: `append()` internal state synchronization with `_callable` and `_data`
+- `LinkedList`: `append()` new logic
+- `RelativeTextBase`: `first_appear()`: activate `hl_rect` for non-first appearances
+- `Array`: `_position_values_in_containers()`: handle low-depth symbols with `q`
+- `LinearContainerStructure`: `_apply_containers_colors()`: handling of empty `LinkedList`
+- `UpdatableMixin`: `update_value()`: animation parameter handling when `anim_time` not provided
+- `AlgoManimBase`: `group_appear()` highlight issue
+- `AlgoManimBase`: `group_update()`: handle first-appear mobjects without `FadeOut` animation
+- `RelativeTextBase`: `first_appear()` logic
+- `RelativeTextUpdatable`: `update_value()`: call `first_appear()` if self not in scene
