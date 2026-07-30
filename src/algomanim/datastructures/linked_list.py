@@ -1,4 +1,4 @@
-from typing import Any, Callable, Literal, cast
+from typing import Any, Callable, Literal, Sequence, cast
 
 import numpy as np
 import manim as mn
@@ -514,7 +514,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
 
     def highlight_nodes(
         self,
-        nodes_colors: list[tuple[ListNode, ManimColor | str]],
+        nodes_colors: Sequence[tuple[ListNode, ManimColor | str]],
         pointers: bool = True,
         pos: int = 0,
     ):
