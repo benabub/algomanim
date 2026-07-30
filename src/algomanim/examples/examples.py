@@ -3560,10 +3560,10 @@ class Example_linked_list(mn.Scene):
                 self.wait(0.5)
 
             ln = cln([1, 2])
-            cycle(self, "ln = cll([1, 2])")
+            cycle(self, "ln = cln([1, 2])")
 
             ln = cln([1, 2, 3])
-            cycle(self, "ln = cll([1, 2, 3])")
+            cycle(self, "ln = cln([1, 2, 3])")
 
             ll.highlight_containers(0, 1, 2)
             ll.highlight_pointers(0, 1, 2)
@@ -3573,10 +3573,10 @@ class Example_linked_list(mn.Scene):
             )
 
             ln = cln([])
-            cycle(self, "ln = cll([])")
+            cycle(self, "ln = cln([])")
 
             ln = cln([1, 2])
-            cycle(self, "ln = cll([1, 2])")
+            cycle(self, "ln = cln([1, 2])")
 
             ll.clear_containers_highlights()
             ll.clear_pointers_highlights()
