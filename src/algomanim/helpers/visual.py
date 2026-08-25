@@ -18,14 +18,14 @@ def grid(
     """
     for x in range(-7, 8):
         line = mn.Line(
-            start=mn.RIGHT * x + mn.UP * 4,
-            end=mn.RIGHT * x + mn.DOWN * 4,
+            start=mn.RIGHT * x + mn.UP * 7,
+            end=mn.RIGHT * x + mn.DOWN * 7,
             color=lines_color,
             stroke_width=1,
         )
         scene.add(line)
 
-    for y in range(-4, 5):
+    for y in range(-7, 8):
         line = mn.Line(
             start=mn.LEFT * 7 + mn.UP * y,
             end=mn.RIGHT * 7 + mn.UP * y,
