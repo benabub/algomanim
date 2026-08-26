@@ -10,6 +10,7 @@ from .titles import (
     TitleLogo,
     TitleShorts,
 )
+from .banner import CloseBanner
 
 __all__ = [
     "CodeBlock",
@@ -21,4 +22,5 @@ __all__ = [
     "TitleText",
     "TitleLogo",
     "TitleShorts",
+    "CloseBanner",
 ]

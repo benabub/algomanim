@@ -331,8 +331,8 @@ class TitleShorts(AlgoManimBase):
         text_inter_buff: float = 0.3,
         text_outer_buff: float = 0.3,
         # --- rectangle ---
-        width: float = 7.5,
-        corner_radius: float = 0.2,
+        rect_width: float = 7.5,
+        rect_corner_radius: float = 0.2,
         bg_color: ManimColor | str = mn.PINK,
         # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
@@ -355,13 +355,13 @@ class TitleShorts(AlgoManimBase):
             screen_buff=screen_buff,
         )
 
-        self.text_lines = list(text_lines)
-        self.text_lines.append("VISUALIZATION")
+        self._text_lines = list(text_lines)
+        self._text_lines.append("VISUALIZATION")
 
-        if font_sizes and len(font_sizes) != len(self.text_lines):
-            raise ValueError("font_sizes: number different than text lines")
+        if font_sizes and len(font_sizes) != len(self._text_lines):
+            raise ValueError("font_sizes: number different than text_lines")
 
-        self.text_mobs = mn.VGroup(
+        self._text_mobs = mn.VGroup(
             mn.Text(
                 line,
                 font=font,
@@ -369,25 +369,25 @@ class TitleShorts(AlgoManimBase):
                 font_size=font_size if not font_sizes else font_sizes[i],
                 color=text_color,
             )
-            for i, line in enumerate(self.text_lines)
+            for i, line in enumerate(self._text_lines)
         )
-        self.text_mobs.arrange(mn.DOWN, buff=text_inter_buff)
-        self.text_mobs.move_to(mn.ORIGIN)
+        self._text_mobs.arrange(mn.DOWN, buff=text_inter_buff)
+        self._text_mobs.move_to(mn.ORIGIN)
 
-        rect_height = self.text_mobs.height + text_outer_buff * 2
+        rect_height = self._text_mobs.height + text_outer_buff * 2
 
         # create rectangle
-        self.rect_mob = mn.RoundedRectangle(
-            corner_radius=corner_radius,
-            width=width,
+        self._rect_mob = mn.RoundedRectangle(
+            corner_radius=rect_corner_radius,
+            width=rect_width,
             height=rect_height,
             fill_color=bg_color,
             fill_opacity=1,
             stroke_width=0,
         )
         self.add(
-            self.rect_mob,
-            self.text_mobs,
+            self._rect_mob,
+            self._text_mobs,
         )
 
         self._position()

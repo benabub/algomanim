@@ -25,6 +25,7 @@ from .ui.relative_text import (
     RelativeTextActive,
 )
 from .ui.titles import TitleText, TitleLogo, TitleShorts
+from .ui.banner import CloseBanner
 
 from .helpers.visual import grid
 from .helpers.datastructures import Node, ListNode, TreeNode
@@ -49,6 +50,7 @@ __all__ = [
     "TitleText",
     "TitleLogo",
     "TitleShorts",
+    "CloseBanner",
     "SemiRoundedRectangle",
     "HLRect",
     "RelativeTextBase",
