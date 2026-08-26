@@ -265,14 +265,15 @@ class TitleLogo(AlgoManimBase):
         svg: str,
         # --- svg ---
         svg_height: float = 2.0,
+        # --- position ---
         mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
         align_bottom: mn.Mobject | None = None,
         align_screen: np.ndarray | None = None,
         screen_buff: float = 0.2,
-        vector: np.ndarray = mn.ORIGIN,
         # --- text ---
         text: str | None = None,
         text_color: ManimColor | str = "WHITE",
@@ -281,8 +282,8 @@ class TitleLogo(AlgoManimBase):
         text_vector: np.ndarray = mn.ORIGIN,
     ):
         super().__init__(
-            vector=vector,
             mob_center=mob_center,
+            vector=vector,
             align_left=align_left,
             align_right=align_right,
             align_top=align_top,
@@ -311,3 +312,82 @@ class TitleLogo(AlgoManimBase):
             )
             self.text_mobject.move_to(self._svg.get_center() + text_vector)
             self.add(self.text_mobject)
+
+
+class TitleShorts(AlgoManimBase):
+    """
+    ...
+    """
+
+    def __init__(
+        self,
+        # --- text ---
+        *text_lines: str,
+        # --- font ---
+        font: str = "",
+        font_size: float = 40,
+        font_sizes: tuple[int, ...] = (),
+        text_color: ManimColor | str = mn.WHITE,
+        text_inter_buff: float = 0.3,
+        text_outer_buff: float = 0.3,
+        # --- rectangle ---
+        width: float = 7.5,
+        corner_radius: float = 0.2,
+        bg_color: ManimColor | str = mn.PINK,
+        # --- position ---
+        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        vector: np.ndarray = mn.ORIGIN,
+        align_left: mn.Mobject | None = None,
+        align_right: mn.Mobject | None = None,
+        align_top: mn.Mobject | None = None,
+        align_bottom: mn.Mobject | None = None,
+        align_screen: np.ndarray | None = mn.UP,
+        screen_buff: float = 0.2,
+    ):
+        super().__init__(
+            mob_center=mob_center,
+            vector=vector,
+            align_left=align_left,
+            align_right=align_right,
+            align_top=align_top,
+            align_bottom=align_bottom,
+            align_screen=align_screen,
+            screen_buff=screen_buff,
+        )
+
+        self.text_lines = list(text_lines)
+        self.text_lines.append("VISUALIZATION")
+
+        if font_sizes and len(font_sizes) != len(self.text_lines):
+            raise ValueError("font_sizes: number different than text lines")
+
+        self.text_mobs = mn.VGroup(
+            mn.Text(
+                line,
+                font=font,
+                weight="BOLD",
+                font_size=font_size if not font_sizes else font_sizes[i],
+                color=text_color,
+            )
+            for i, line in enumerate(self.text_lines)
+        )
+        self.text_mobs.arrange(mn.DOWN, buff=text_inter_buff)
+        self.text_mobs.move_to(mn.ORIGIN)
+
+        rect_height = self.text_mobs.height + text_outer_buff * 2
+
+        # create rectangle
+        self.rect_mob = mn.RoundedRectangle(
+            corner_radius=corner_radius,
+            width=width,
+            height=rect_height,
+            fill_color=bg_color,
+            fill_opacity=1,
+            stroke_width=0,
+        )
+        self.add(
+            self.rect_mob,
+            self.text_mobs,
+        )
+
+        self._position()

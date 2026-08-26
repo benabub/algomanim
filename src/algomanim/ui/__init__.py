@@ -8,6 +8,7 @@ from .relative_text import (
 from .titles import (
     TitleText,
     TitleLogo,
+    TitleShorts,
 )
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "RelativeTextActive",
     "TitleText",
     "TitleLogo",
+    "TitleShorts",
 ]
