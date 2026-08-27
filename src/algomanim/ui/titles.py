@@ -1,5 +1,7 @@
-import numpy as np
+from __future__ import annotations
+
 import manim as mn
+import numpy as np
 from manim import ManimColor
 
 from algomanim.core.base import AlgoManimBase
@@ -57,7 +59,7 @@ class TitleText(AlgoManimBase):
         self,
         text: str,
         # --- position ---
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
@@ -266,7 +268,7 @@ class TitleLogo(AlgoManimBase):
         # --- svg ---
         svg_height: float = 2.0,
         # --- position ---
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
@@ -315,27 +317,49 @@ class TitleLogo(AlgoManimBase):
 
 
 class TitleShorts(AlgoManimBase):
-    """
-    ...
+    """Title banner for YouTube Shorts format videos.
+
+    Args:
+        *text_lines: Main text lines to display.
+        suffix: Text appended after the main lines. Defaults to "VISUALIZATION".
+        font: Font family for the text.
+        font_size: Base font size for all text lines.
+        font_sizes: Optional tuple of font sizes for each line individually.
+            Must match the number of text_lines + suffix. Overrides font_size for those lines.
+        text_color: Color of the text.
+        text_inter_buff: Vertical spacing between text lines.
+        padding: Space between text and rectangle edges.
+        rect_width: Fixed width of the banner rectangle (format-specific).
+        rect_corner_radius: Corner radius of the rectangle.
+        bg_color: Background color of the banner rectangle.
+        mob_center: Reference mobject for positioning.
+        vector: Offset vector from reference mobject center.
+        align_left: Reference mobject to align left edge with.
+        align_right: Reference mobject to align right edge with.
+        align_top: Reference mobject to align top edge with.
+        align_bottom: Reference mobject to align bottom edge with.
+        align_screen: Direction vector for screen edge alignment.
+        screen_buff: Buffer distance from screen edge when using align_screen.
     """
 
     def __init__(
         self,
         # --- text ---
         *text_lines: str,
+        suffix: str = "VISUALIZATION",
         # --- font ---
         font: str = "",
         font_size: float = 40,
         font_sizes: tuple[int, ...] = (),
         text_color: ManimColor | str = mn.WHITE,
         text_inter_buff: float = 0.3,
-        text_outer_buff: float = 0.3,
+        padding: float = 0.3,
         # --- rectangle ---
         rect_width: float = 7.5,
         rect_corner_radius: float = 0.2,
         bg_color: ManimColor | str = mn.PINK,
         # --- position ---
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
@@ -356,7 +380,7 @@ class TitleShorts(AlgoManimBase):
         )
 
         self._text_lines = list(text_lines)
-        self._text_lines.append("VISUALIZATION")
+        self._text_lines.append(suffix)
 
         if font_sizes and len(font_sizes) != len(self._text_lines):
             raise ValueError("font_sizes: number different than text_lines")
@@ -374,7 +398,7 @@ class TitleShorts(AlgoManimBase):
         self._text_mobs.arrange(mn.DOWN, buff=text_inter_buff)
         self._text_mobs.move_to(mn.ORIGIN)
 
-        rect_height = self._text_mobs.height + text_outer_buff * 2
+        rect_height = self._text_mobs.height + padding * 2
 
         # create rectangle
         self._rect_mob = mn.RoundedRectangle(
