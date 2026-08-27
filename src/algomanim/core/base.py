@@ -10,8 +10,10 @@ Manim use notes:
     for unknown reason (artifacts are located in mn.ORIGIN)
 """
 
-import numpy as np
+from __future__ import annotations
+
 import manim as mn
+import numpy as np
 
 from algomanim.core.paths.hl_rect import HLRect
 
@@ -44,7 +46,7 @@ class AlgoManimBase(mn.VGroup):
     def __init__(
         self,
         vector: np.ndarray = mn.ORIGIN,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -64,31 +66,33 @@ class AlgoManimBase(mn.VGroup):
                 "AlgoManimBase is base class only, cannot be instantiated directly."
             )
 
-        if align_screen is not None:
-            if not (
-                np.array_equal(align_screen, mn.LEFT)
-                or np.array_equal(align_screen, mn.RIGHT)
-                or np.array_equal(align_screen, mn.UP)
-                or np.array_equal(align_screen, mn.DOWN)
-                or np.array_equal(align_screen, mn.DOWN + mn.LEFT)
-                or np.array_equal(align_screen, mn.DOWN + mn.RIGHT)
-                or np.array_equal(align_screen, mn.UP + mn.RIGHT)
-                or np.array_equal(align_screen, mn.UP + mn.LEFT)
-            ):
-                raise ValueError(
-                    "align_screen must be one of: mn.LEFT, mn.RIGHT, mn.UP, mn.DOWN, mn.DOWN + mn.LEFT, mn.DOWN + mn.RIGHT, mn.UP + mn.LEFT, mn.UP + mn.RIGHT"
-                )
+        if align_screen is not None and not (
+            np.array_equal(align_screen, mn.LEFT)
+            or np.array_equal(align_screen, mn.RIGHT)
+            or np.array_equal(align_screen, mn.UP)
+            or np.array_equal(align_screen, mn.DOWN)
+            or np.array_equal(align_screen, mn.DOWN + mn.LEFT)
+            or np.array_equal(align_screen, mn.DOWN + mn.RIGHT)
+            or np.array_equal(align_screen, mn.UP + mn.RIGHT)
+            or np.array_equal(align_screen, mn.UP + mn.LEFT)
+        ):
+            raise ValueError(
+                "align_screen must be one of: mn.LEFT, mn.RIGHT, mn.UP, mn.DOWN, mn.DOWN + mn.LEFT, mn.DOWN + mn.RIGHT, mn.UP + mn.LEFT, mn.UP + mn.RIGHT"
+            )
 
         # ------ inition -------
         super().__init__(**kwargs)
         self._vector = vector
-        self._mob_center = mob_center
         self._align_left = align_left
         self._align_right = align_right
         self._align_top = align_top
         self._align_bottom = align_bottom
         self._align_screen = align_screen
         self._screen_buff = screen_buff
+
+        if mob_center is None:
+            mob_center = mn.Dot(mn.ORIGIN)
+        self._mob_center = mob_center
 
     def first_appear(
         self,
@@ -105,16 +109,15 @@ class AlgoManimBase(mn.VGroup):
                 Set to False if you have manually configured the object
                 (e.g., applied highlights or text colors) before adding to scene.
         """
-        if update:
-            if hasattr(self, "_set_new_value"):
-                self._set_new_value()
+        if update and hasattr(self, "_set_new_value"):
+            self._set_new_value()
 
         scene.play(mn.FadeIn(self), run_time=anim_time)
 
     @staticmethod
     def group_appear(
         scene: mn.Scene,
-        *mobjects: "AlgoManimBase",
+        *mobjects: AlgoManimBase,
         animate: bool = True,
         anim_time: float = 0.2,
         hl: bool = True,
@@ -144,7 +147,7 @@ class AlgoManimBase(mn.VGroup):
             if hasattr(mob, "_set_new_value"):
                 mob._set_new_value()
             if not hl and hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
-                hl_rect = getattr(mob, "_hl_rect")
+                hl_rect = mob._hl_rect
                 if isinstance(hl_rect, HLRect):
                     hl_rect.deactivate()
                 hl_rects_presented = True
@@ -168,14 +171,14 @@ class AlgoManimBase(mn.VGroup):
 
         for mob in mobjects:
             if hasattr(mob, "_hl_rect") and mob._hl_rect is not None:
-                hl_rect = getattr(mob, "_hl_rect")
+                hl_rect = mob._hl_rect
                 if isinstance(hl_rect, HLRect):
                     hl_rect.deactivate()
 
     @staticmethod
     def group_update(
         scene: mn.Scene,
-        *mobjects: "AlgoManimBase",
+        *mobjects: AlgoManimBase,
         animate: bool = True,
         anim_time: float = 0.2,
         hl: bool = True,
@@ -382,6 +385,6 @@ class AlgoManimBase(mn.VGroup):
         else:
             count = 0
             print("scene mobjects list:")
-            for mob in scene.mobjects:
-                count += 1
+
+            for count, mob in enumerate(scene.mobjects, start=1):
                 print(f"    {count}: {mob}")
