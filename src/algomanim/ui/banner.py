@@ -1,13 +1,24 @@
+from __future__ import annotations
+
 import manim as mn
-import numpy as np
 from manim import ManimColor
 
 from ..core.code_block_base import CodeBlockBase
 
 
 class CloseBanner(mn.VGroup):
-    """
-    ...
+    """Banner that overlays a code block with text and a background rectangle.
+
+    Args:
+        code_block: The code block to overlay.
+        *text_lines: Text lines to display on the banner.
+        font: Font family for the text.
+        font_size: Base font size for all text lines.
+        font_sizes: Optional tuple of font sizes for each line individually.
+            Must match the number of text_lines. Overrides font_size for those lines.
+        text_color: Color of the text.
+        text_inter_buff: Vertical spacing between text lines.
+        bg_color: Background color of the banner rectangle.
     """
 
     def __init__(
