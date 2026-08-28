@@ -1,14 +1,17 @@
-from typing import Any, Callable, Literal, Sequence, cast
+from __future__ import annotations
 
-import numpy as np
+from collections.abc import Sequence
+from typing import Any, Callable, Literal, cast
+
 import manim as mn
+import numpy as np
 from manim import ManimColor
 
-from algomanim.helpers.datastructures import ListNode
+from algomanim.assets.svg import SVG_DIR
 from algomanim.core.linear_container import LinearContainerStructure
 from algomanim.core.node_structure import NodeStructure
 from algomanim.core.updatable import UpdatableMixin
-from algomanim.assets.svg import SVG_DIR
+from algomanim.helpers.datastructures import ListNode
 
 
 class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
@@ -52,7 +55,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         pointers_mode: Literal[3, 5] = 3,
         # -- position --
         vector: np.ndarray = mn.ORIGIN,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -69,7 +72,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         fill_color: ManimColor | str = mn.LIGHT_GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         # ---- value colors mode ----
-        value_colors_map: dict[Any, list[ManimColor | str]] = {},
+        value_colors_map: dict[Any, list[ManimColor | str]] | None = None,
         # ---- kwargs ----
         **kwargs,
     ):
@@ -317,7 +320,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
 
         return values_mob
 
-    def _create_new_instance(self) -> "LinkedList":
+    def _create_new_instance(self) -> LinkedList:
         """Create a new LinkedList instance with current parameters and updated data.
 
         Returns:
@@ -386,7 +389,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
 
     def _update_internal_state(
         self,
-        new_instance: "LinkedList",
+        new_instance: LinkedList,
     ) -> None:
         """Update the current instance with data from a new instance.
 
@@ -433,7 +436,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
     def append(
         self,
         scene: mn.Scene,
-        tail: "LinkedList",
+        tail: LinkedList,
         animate: bool = True,
         anim_time: float = 0.2,
     ) -> None:

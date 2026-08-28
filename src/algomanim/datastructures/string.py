@@ -1,6 +1,9 @@
-from typing import Any, Callable, Literal, TYPE_CHECKING
-import numpy as np
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Callable, Literal
+
 import manim as mn
+import numpy as np
 from manim import ManimColor
 
 from algomanim.core.rectangle_cells import RectangleCellsStructure
@@ -60,10 +63,10 @@ class String(RectangleCellsStructure, UpdatableMixin):
         pointers: Literal["top", "bottom", "both"] | None = "top",
         pointers_mode: Literal[3, 5] = 3,
         # ---- frame ----
-        frame_from: "Array | String |  None " = None,
+        frame_from: Array | String | None = None,
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -81,7 +84,7 @@ class String(RectangleCellsStructure, UpdatableMixin):
         fill_color: ManimColor | str = mn.GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         # ---- value colors mode ----
-        value_colors_map: dict[Any, list[ManimColor | str]] = {},
+        value_colors_map: dict[Any, list[ManimColor | str]] | None = None,
         # ---- cell params ----
         cell_params_auto=True,
         cell_height=0.65625,
@@ -359,7 +362,7 @@ class String(RectangleCellsStructure, UpdatableMixin):
                     buff=self._bottom_buff,
                 )
 
-    def _create_new_instance(self) -> "String":
+    def _create_new_instance(self) -> String:
         """Create a new String instance with current parameters and updated data.
 
         Returns:
@@ -434,7 +437,7 @@ class String(RectangleCellsStructure, UpdatableMixin):
 
         return new_instance
 
-    def _update_internal_state(self, new_instance: "String") -> None:
+    def _update_internal_state(self, new_instance: String) -> None:
         """Update the current instance with data from a new instance.
 
         Copies data, mobject references, and highlight states from the new instance.
