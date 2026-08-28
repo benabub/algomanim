@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class ListNode:
     """Leetcode definition for singly-linked list node.
 
@@ -12,7 +15,7 @@ class ListNode:
 
     def __contains__(
         self,
-        key: "ListNode | None",
+        key: ListNode | None,
     ) -> bool:
         """Check if a node exists in the linked list.
 
@@ -38,7 +41,7 @@ class ListNode:
 
     def index(
         self,
-        target: "ListNode | None",
+        target: ListNode | None,
     ) -> int | None:
         """Return the index of the target node in the list starting from self.
 

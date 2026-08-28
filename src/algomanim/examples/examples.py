@@ -10,23 +10,23 @@ Note: Uses default Manim fonts. For better visual results, consider installing
 and specifying custom fonts in the scene configurations.
 """
 
-import numpy as np
 import manim as mn
+import numpy as np
 
 from algomanim import (
+    AlgoManimBase,
     Array,
-    String,
-    RelativeTextValue,
-    RelativeTextValueGroup,
-    RelativeTextActive,
-    RelativeText,
     CodeBlock,
     CodeBlockLense,
-    TitleText,
     LinkedList,
+    RelativeText,
+    RelativeTextActive,
+    RelativeTextValue,
+    RelativeTextValueGroup,
     SemiRoundedRectangle,
+    String,
+    TitleText,
     grid,
-    AlgoManimBase,
 )
 
 group_appear = AlgoManimBase.group_appear
@@ -34,7 +34,7 @@ print_scene = AlgoManimBase._print_scene
 
 
 class Stub:
-    a = [grid]
+    a = grid
 
 
 # vectors
@@ -179,7 +179,6 @@ class Example_selection_sort(mn.Scene):
                 code_block.highlight(5)
                 self.wait(pause)
                 if arr[k] < arr[min_idx]:
-                    #
                     min_idx = k
                     code_block.highlight(6)
                     array.highlight_pointers(i, min_idx, k)
@@ -190,7 +189,6 @@ class Example_selection_sort(mn.Scene):
             code_block.highlight(7)
             self.wait(pause)
             if min_idx != i:
-                #
                 arr[i], arr[min_idx] = arr[min_idx], arr[i]
                 array.update_value(self)
                 code_block.highlight(8)
@@ -2543,7 +2541,7 @@ class Example_string(mn.Scene):
 
         def first_appear(self):
 
-            from typing import cast, Callable
+            from typing import Callable, cast
 
             s = "abc"
 
@@ -3521,6 +3519,7 @@ class Example_linked_list(mn.Scene):
         def first_appear(self):
 
             from typing import Callable, cast
+
             from algomanim.helpers.datastructures import ListNode
 
             ln = cln([1, 2, 3])
@@ -4226,7 +4225,8 @@ class Example_linked_list(mn.Scene):
 
         def position_after_update(self):
 
-            from typing import cast, Callable
+            from typing import Callable, cast
+
             from algomanim.helpers.datastructures import ListNode
 
             pause = 0.5
@@ -4797,8 +4797,9 @@ class Example_linked_list(mn.Scene):
             print_scene(self)
 
         def highlight_nodes(self):
-            from algomanim import ListNode
             from contextlib import contextmanager
+
+            from algomanim import ListNode
 
             title = RelativeText(
                 "LinkedList.highlight_nodes()\n+ ListNode.index()",

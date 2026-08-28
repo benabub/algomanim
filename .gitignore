@@ -15,6 +15,9 @@ venv/
 
 **/del/*
 
+# Linters
+.ruff_cache/
+
 # Output and build artifacts
 **/media/
 

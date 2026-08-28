@@ -1,7 +1,7 @@
-import pytest
 import manim as mn
-from algomanim.core.linear_container import LinearContainerStructure
-from algomanim.core.linear_container import Colors
+import pytest
+
+from algomanim.core.linear_container import Colors, LinearContainerStructure
 
 blend = LinearContainerStructure._blend_colors_algo
 
