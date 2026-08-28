@@ -1,5 +1,8 @@
-import manim as mn
+from __future__ import annotations
+
 import re
+
+import manim as mn
 from manim import ManimColor
 
 from algomanim.core.paths.semi_rounded_rectangle import SemiRoundedRectangle

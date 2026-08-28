@@ -1,17 +1,19 @@
-from typing import Literal
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import ClassVar, Literal
 
 import manim as mn
 from manim import ManimColor
 
 from algomanim.core.base import AlgoManimBase
-from algomanim.core.updatable import UpdatableMixin
 from algomanim.core.paths.hl_rect import HLRect
+from algomanim.core.updatable import UpdatableMixin
 
 
 @dataclass(frozen=True)
 class HLColors:
-    colors = {
+    colors: ClassVar[dict[ManimColor, ManimColor]] = {
         mn.BLACK: mn.YELLOW,
     }
 
@@ -121,9 +123,8 @@ class RelativeTextBase(AlgoManimBase):
             hl_time: Time to wait before deactivating the highlight.
         """
 
-        if update:
-            if hasattr(self, "_set_new_value"):
-                self._set_new_value()
+        if update and hasattr(self, "_set_new_value"):
+            self._set_new_value()
 
         if not hl and self._hl_rect is not None:
             self._hl_rect.deactivate()
@@ -208,7 +209,7 @@ class RelativeTextUpdatable(RelativeTextBase, UpdatableMixin):
 
     def _align_with_anchor(
         self,
-        new_instance: "RelativeTextUpdatable",
+        new_instance: RelativeTextUpdatable,
     ) -> None:
         """Align new instance based on anchor.
 
@@ -279,9 +280,8 @@ class SingleRelativeTextMixin(AlgoManimBase):
         if not hasattr(self, "_hl_rect") or not isinstance(self._hl_rect, HLRect):
             raise ValueError("Object must have _hl_rect attribute of HLRect type")
 
-        if hl:
-            if self._hl_rect is None:
-                hl = False
+        if hl and self._hl_rect is None:
+            hl = False
 
         if hasattr(self, "_text_mob") and isinstance(self._text_mob, mn.Text):
             self._text_mob.set_color(color)

@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 from abc import abstractmethod
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import manim as mn
@@ -7,8 +7,8 @@ import manim as mn
 from .linear_container import LinearContainerStructure
 
 if TYPE_CHECKING:
-    from algomanim.datastructures.string import String
     from algomanim.datastructures.array import Array
+    from algomanim.datastructures.string import String
 
 
 @dataclass(frozen=True)

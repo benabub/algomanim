@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
+
 import manim as mn
 
 from algomanim.core.base import AlgoManimBase
@@ -17,7 +18,6 @@ class UpdatableMixin(AlgoManimBase, ABC):
         Returns:
             New instance with the same configuration and updated data.
         """
-        pass
 
     @abstractmethod
     def _update_internal_state(self, new_instance: Any) -> None:
@@ -29,7 +29,6 @@ class UpdatableMixin(AlgoManimBase, ABC):
         Args:
             new_instance: The instance to copy state from.
         """
-        pass
 
     def _set_new_value(self) -> None:
         """Update internal data from callable without scene animation.

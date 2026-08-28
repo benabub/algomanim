@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import manim as mn
 import numpy as np
-
 from manim import ManimColor
 
 

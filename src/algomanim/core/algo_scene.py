@@ -1,6 +1,8 @@
-import manim as mn
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Generator, Any
+from typing import Any
+
+import manim as mn
 
 
 class AlgoScene(mn.Scene):

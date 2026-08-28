@@ -1,10 +1,13 @@
-from typing import Any, Literal, Mapping
-from collections.abc import Collection
-from dataclasses import dataclass
-import numpy as np
-import manim as mn
-from manim import ManimColor
+from __future__ import annotations
+
 import math
+from collections.abc import Collection, Mapping
+from dataclasses import dataclass
+from typing import Any, Literal
+
+import manim as mn
+import numpy as np
+from manim import ManimColor
 
 from .base import AlgoManimBase
 
@@ -75,7 +78,7 @@ class LinearContainerStructure(AlgoManimBase):
         fill_color: ManimColor | str = mn.GRAY,
         bg_color: ManimColor | str = mn.DARK_GRAY,
         # ---- value colors mode ----
-        value_colors_map: dict[Any, list[ManimColor | str]] = {},
+        value_colors_map: dict[Any, list[ManimColor | str]] | None = None,
         # ---- highlight containers colors ----
         color_containers_with_value: ManimColor | str = mn.BLACK,
         color_1: ManimColor | str = COLORS.color_1,
@@ -119,6 +122,8 @@ class LinearContainerStructure(AlgoManimBase):
         self._bottom_pointers_colors: dict[int, list[ManimColor | str]] = {}
 
         # ---- value colors mode ----
+        if value_colors_map is None:
+            value_colors_map = {}
         self._value_colors_map = value_colors_map
 
         # ---- font ----
@@ -202,13 +207,15 @@ class LinearContainerStructure(AlgoManimBase):
 
     def activate_value_colors_mode(
         self,
-        value_colors_map: dict[Any, list[ManimColor | str]] = {},
+        value_colors_map: dict[Any, list[ManimColor | str]] | None = None,
     ) -> None:
         """Activate value-based coloring mode with the given mapping.
 
         Args:
             value_colors_map: Dictionary mapping values to [container_color, text_color].
         """
+        if value_colors_map is None:
+            value_colors_map = {}
         self._value_colors_map = value_colors_map
 
     def deactivate_value_colors_mode(self) -> None:
@@ -296,7 +303,7 @@ class LinearContainerStructure(AlgoManimBase):
 
     @staticmethod
     def _preserve_highlights_states(
-        new_group: "LinearContainerStructure",
+        new_group: LinearContainerStructure,
         status: dict,
     ):
         """Apply saved highlight states to a new group.
@@ -516,9 +523,9 @@ class LinearContainerStructure(AlgoManimBase):
         rgb_list = [LinearContainerStructure._color_to_rgb(c) for c in colors]
         n = len(rgb_list)
 
-        r = int(math.ceil(sum(v[0] for v in rgb_list) / n))
-        g = int(math.ceil(sum(v[1] for v in rgb_list) / n))
-        b = int(math.ceil(sum(v[2] for v in rgb_list) / n))
+        r = math.ceil(sum(v[0] for v in rgb_list) / n)
+        g = math.ceil(sum(v[1] for v in rgb_list) / n)
+        b = math.ceil(sum(v[2] for v in rgb_list) / n)
 
         return f"#{r:02x}{g:02x}{b:02x}".upper()
 

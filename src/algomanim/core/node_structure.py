@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import manim as mn
 from manim import ManimColor
+
 from .base import AlgoManimBase
 
 
