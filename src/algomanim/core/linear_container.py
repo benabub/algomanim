@@ -108,7 +108,7 @@ class LinearContainerStructure(AlgoManimBase):
         self._pointers: Literal["top", "bottom", "both"] | None = pointers
         if pointers_mode not in [3, 5]:
             raise ValueError("pointers_mode must be 3 or 5")
-        self._pointers_mode = pointers_mode
+        self._pointers_mode: Literal[3, 5] = pointers_mode
 
         # --- mobjects ---
         self._containers_mob = mn.VGroup()

@@ -118,24 +118,7 @@ class LinkedList(LinearContainerStructure, NodeStructure, UpdatableMixin):
         self._radius = radius
         # ---- direction ----
         self._direction = direction
-        # --- node colors ---
-        self._node_color = node_color
-        self._fill_color = fill_color
-        self._bg_color = bg_color
-        # -- position --
-        self._vector = vector
-        self._mob_center = mob_center
-        self._align_left = align_left
-        self._align_right = align_right
-        self._align_top = align_top
-        self._align_bottom = align_bottom
-        # -- font --
-        self._font = font
-        self._text_color = text_color
-        self._weight = weight
-        # ---- pointers ----
-        self._pointers = pointers
-        self._pointers_mode: Literal[3, 5] = pointers_mode
+
         # ---- anchor ----
         if not (align_left or align_right) and anchor is not None:
             if anchor not in ["start", "end"]:

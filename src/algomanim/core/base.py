@@ -47,6 +47,7 @@ class AlgoManimBase(mn.VGroup):
         self,
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject | None = None,
+        # mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,

@@ -76,6 +76,7 @@ class Array(RectangleCellsStructure, UpdatableMixin):
         # ---- position ----
         vector: np.ndarray = mn.ORIGIN,
         mob_center: mn.Mobject | None = None,
+        # mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -149,32 +150,12 @@ class Array(RectangleCellsStructure, UpdatableMixin):
         ):
             raise ValueError("direction must be mn.RIGHT or mn.UP or mn.DOWN")
         self._direction = direction
-        # ---- pointers ----
-        self._pointers = pointers
-        self._pointers_mode: Literal[3, 5] = pointers_mode
-        # ---- frame ----
-        self._frame_from = frame_from
-        # -- position --
-        self._vector = vector
-        self._mob_center = mob_center
-        self._align_left = align_left
-        self._align_right = align_right
-        self._align_top = align_top
-        self._align_bottom = align_bottom
-        self._align_screen = align_screen
-        self._screen_buff = screen_buff
-        # -- font --
-        self._font = font
+
         if frame_from:
             self._font_size = frame_from._font_size
         else:
             self._font_size = font_size
-        self._text_color = text_color
-        self._weight = weight
-        # ---- cell colors ----
-        self._container_color = container_color
-        self._bg_color = bg_color
-        self._fill_color = fill_color
+
         # ---- cell params ----
         self._lock_width = lock_width
         if cell_params_auto:

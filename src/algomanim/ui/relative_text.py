@@ -1,15 +1,17 @@
-from typing import Any, Callable, Literal, Tuple
+from __future__ import annotations
 
-import numpy as np
+from typing import Any, Callable, Literal
+
 import manim as mn
+import numpy as np
 from manim import ManimColor
 
+from algomanim.core.paths.hl_rect import HLRect
 from algomanim.core.relative_text_base import (
     RelativeTextBase,
     RelativeTextUpdatable,
     SingleRelativeTextMixin,
 )
-from algomanim.core.paths.hl_rect import HLRect
 
 
 class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
@@ -39,9 +41,9 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
 
     def __init__(
         self,
-        input: Tuple[str, Callable[[], Any], str | ManimColor],
+        input: tuple[str, Callable[[], Any], str | ManimColor],
         # --- position ---
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
@@ -130,7 +132,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
 
         return self._create_text_mob(text, self._color)
 
-    def _update_internal_state(self, new_instance: "RelativeTextValue") -> None:
+    def _update_internal_state(self, new_instance: RelativeTextValue) -> None:
         """Update the current instance with data from a new instance.
 
         Copies data, mobject references, and highlight states from the new instance.
@@ -159,7 +161,7 @@ class RelativeTextValue(RelativeTextUpdatable, SingleRelativeTextMixin):
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
 
-    def _create_new_instance(self) -> "RelativeTextValue":
+    def _create_new_instance(self) -> RelativeTextValue:
         """Create a new RelativeTextValue instance with current variable values.
 
         Returns:
@@ -225,9 +227,9 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
 
     def __init__(
         self,
-        *inputs: Tuple[str, Callable[[], Any], str | ManimColor],
+        *inputs: tuple[str, Callable[[], Any], str | ManimColor],
         # --- position ---
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
@@ -311,7 +313,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
             mn.RIGHT, buff=self._buff, aligned_edge=self._items_align_edge
         )
 
-    def _update_internal_state(self, new_instance: "RelativeTextValueGroup") -> None:
+    def _update_internal_state(self, new_instance: RelativeTextValueGroup) -> None:
         """Update the current instance with data from a new instance.
 
         Copies data, mobject references, and highlight states from the new instance.
@@ -338,7 +340,7 @@ class RelativeTextValueGroup(RelativeTextUpdatable):
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
 
-    def _create_new_instance(self) -> "RelativeTextValueGroup":
+    def _create_new_instance(self) -> RelativeTextValueGroup:
         """Create a new RelativeTextValue instance with current variable values.
 
         Returns:
@@ -403,7 +405,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         self,
         input: Callable[[], Any],
         # --- position ---
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
@@ -443,7 +445,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         self._quoted_str = quoted_str
 
         if self._quoted_str and isinstance(input(), str):
-            self._text = f'"{str(input())}"'
+            self._text = f'"{input()!s}"'
         else:
             self._text = str(input())
 
@@ -504,7 +506,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         measure = self._create_text_mob('""', mn.BLACK)
         return measure.height * 1.5
 
-    def _update_internal_state(self, new_instance: "RelativeTextActive") -> None:
+    def _update_internal_state(self, new_instance: RelativeTextActive) -> None:
         """Update the current instance with data from a new instance.
 
         Copies data, mobject references, and highlight states from the new instance.
@@ -532,7 +534,7 @@ class RelativeTextActive(RelativeTextUpdatable, SingleRelativeTextMixin):
         # sync pure geometry hierarchy
         self.submobjects = new_instance.submobjects.copy()
 
-    def _create_new_instance(self) -> "RelativeTextActive":
+    def _create_new_instance(self) -> RelativeTextActive:
         """Create a new RelativeTextActive instance with current variable values.
 
         Returns:
@@ -594,7 +596,7 @@ class RelativeText(RelativeTextBase, SingleRelativeTextMixin):
         self,
         text: str,
         # --- position ---
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         vector: np.ndarray = mn.ORIGIN,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,

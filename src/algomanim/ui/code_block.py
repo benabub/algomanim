@@ -1,5 +1,7 @@
-import numpy as np
+from __future__ import annotations
+
 import manim as mn
+import numpy as np
 from manim import ManimColor
 
 from ..core.code_block_base import CodeBlockBase
@@ -43,7 +45,7 @@ class CodeBlock(CodeBlockBase):
         head: str = "",
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -216,7 +218,7 @@ class CodeBlockLense(CodeBlockBase):
         limit: int = 13,
         # --- position ---
         vector: np.ndarray = mn.ORIGIN,
-        mob_center: mn.Mobject = mn.Dot(mn.ORIGIN),
+        mob_center: mn.Mobject | None = None,
         align_left: mn.Mobject | None = None,
         align_right: mn.Mobject | None = None,
         align_top: mn.Mobject | None = None,
@@ -490,10 +492,9 @@ class CodeBlockLense(CodeBlockBase):
         # --- apply new highlights ---
         for i in range(len(new_code_vgroup)):
             global_idx = start_idx + i
-            if global_idx in indices:
-                if self._code_text_mobs[global_idx]:
-                    new_code_vgroup[i][1].set_color(code_text_highlight_color)
-                    new_code_vgroup[i][0].set_fill_color(code_rect_highlight_color)
+            if global_idx in indices and self._code_text_mobs[global_idx]:
+                new_code_vgroup[i][1].set_color(code_text_highlight_color)
+                new_code_vgroup[i][0].set_fill_color(code_rect_highlight_color)
 
         # --- update ---
         self._highlighted_indices = set(indices)
