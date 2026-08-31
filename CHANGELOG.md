@@ -401,3 +401,16 @@
 - `AlgoManimBase`: `group_update()`: handle first-appear mobjects without `FadeOut` animation
 - `RelativeTextBase`: `first_appear()` logic
 - `RelativeTextUpdatable`: `update_value()`: call `first_appear()` if self not in scene
+
+---
+
+# [0.5.4] - 2026-08-31
+
+## Added
+- `TitleShorts`: New title class for YouTube Shorts format
+- `CloseBanner`: New class for CodeBlocks closing banner
+- `grid()`: Added vertical video support
+
+## Fixed
+- `{Array, String, LinkedList}`: Removed duplicate attribute initializations
+- All New Ruff warnings
