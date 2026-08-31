@@ -1741,7 +1741,7 @@ class Example_array(mn.Scene):
                 "posittion + update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
                 text_color=mn.BLACK,
-                font_size=50,
+                font_size=30,
             )
             group_appear(self, center, title)
 
@@ -2860,7 +2860,7 @@ class Example_string(mn.Scene):
                 "posittion + update_value()",
                 vector=mn.LEFT * 4.4 + mn.UP * 3.2,
                 text_color=mn.BLACK,
-                font_size=50,
+                font_size=30,
             )
             group_appear(self, center, text_title)
 
