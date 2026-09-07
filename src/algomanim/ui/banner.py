@@ -84,3 +84,30 @@ class CloseBanner(AlgoManimBase):
         self._svg_mob.shift(svg_shift)
         self.add(self._svg_mob)
 
+    def pulsate(
+        self,
+        scene: mn.Scene,
+        changes: int = 5,
+        run_time: float = 0.5,
+        zoom: float = 1.1,
+    ):
+        """Animate the SVG mobject with a pulsating scale effect.
+
+        Alternates scaling up and down by the zoom factor for the specified
+        number of cycles. Each cycle consists of one scale-up and one scale-down.
+
+        Args:
+            scene: The Manim scene to play the animation in.
+            changes: Number of pulsation cycles.
+            run_time: Duration of each individual scale animation.
+            zoom: Scale factor for the pulse. Values > 1 scale up, < 1 scale down.
+        """
+        if self._svg_mob is None:
+            return
+
+        for _ in range(changes):
+            scene.play(
+                self._svg_mob.animate.scale(zoom),
+                run_time=run_time,
+            )
+            zoom = 1 / zoom
