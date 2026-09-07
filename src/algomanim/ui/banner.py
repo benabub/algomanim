@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import manim as mn
+import numpy as np
 from manim import ManimColor
 
+from ..core.base import AlgoManimBase
 from ..core.code_block_base import CodeBlockBase
 
 
-class CloseBanner(mn.VGroup):
+class CloseBanner(AlgoManimBase):
     """Banner that overlays a code block with text and a background rectangle.
 
     Args:
@@ -33,8 +35,13 @@ class CloseBanner(mn.VGroup):
         font_sizes: tuple[int, ...] = (),
         text_color: ManimColor | str = mn.WHITE,
         text_inter_buff: float = 0.8,
+        text_shift: np.ndarray | None = mn.DOWN * 1.2,
         # --- rectangle ---
         bg_color: ManimColor | str = mn.PINK,
+        # --- svg ---
+        svg_path: str | None = None,
+        svg_shift: np.ndarray = mn.UP * 2,
+        svg_height: float = 1.5,
     ):
         super().__init__()
 
@@ -65,4 +72,15 @@ class CloseBanner(mn.VGroup):
         )
         self._text_mobs.arrange(mn.DOWN, buff=text_inter_buff)
         self._text_mobs.move_to(self._rect_mob)
+        if text_shift is not None:
+            self._text_mobs.shift(text_shift)
         self.add(self._text_mobs)
+
+        if not svg_path:
+            self._svg_mob = None
+            return
+        self._svg_mob = mn.SVGMobject(svg_path, height=svg_height)
+        self._svg_mob.move_to(self._rect_mob)
+        self._svg_mob.shift(svg_shift)
+        self.add(self._svg_mob)
+
